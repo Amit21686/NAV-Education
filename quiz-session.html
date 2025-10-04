@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Session | Quantum Quiz Blaster</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;600;700&display=swap');
+        :root {
+            --primary: #6d28d9;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .glow {
+            text-shadow: 0 0 10px rgba(109, 40, 217, 0.7);
+        }
+        .btn-glow:hover {
+            box-shadow: 0 0 15px rgba(109, 40, 217, 0.5);
+        }
+        .vanta-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.2;
+        }
+        .quiz-card {
+            transition: all 0.3s ease;
+        }
+        .quiz-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+        .progress-ring {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .answer-option {
+            transition: all 0.2s ease;
+        }
+        .answer-option:hover:not(.correct):not(.incorrect) { /* Only apply hover to un-validated options */
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+        }
+        /* Custom styles for validated states */
+        .answer-option.correct {
+            background-color: rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+        }
+        .answer-option.incorrect {
+            background-color: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+        }
+        .answer-option.selected {
+             /* This class is now used only for pre-validation choice */
+            background-color: rgba(109, 40, 217, 0.2);
+            border-color: #6d28d9;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(109, 40, 217, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(109, 40, 217, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(109, 40, 217, 0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+    <div id="vanta-bg" class="vanta-bg"></div>
+
+    <header class="sticky top-0 z-20 bg-gray-900/80 backdrop-blur-lg border-b border-gray-800">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
+                            <i data-feather="zap" class="text-white w-4 h-4"></i>
+                        </div>
+                        <span class="font-orbitron font-bold">QuantumQuiz</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-2 bg-gray-800 px-3 py-1 rounded-full">
+                        <i data-feather="award" class="text-yellow-400 w-4 h-4"></i>
+                        <span>Rank: <span class="font-bold">#1,234</span></span>
+                    </div>
+                    <div class="flex items-center space-x-2 bg-gray-800 px-3 py-1 rounded-full">
+                        <i data-feather="star" class="text-accent-500 w-4 h-4"></i>
+                        <span>Points: <span class="font-bold">4,567</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                <div>
+                    <h1 class="font-orbitron text-2xl font-bold mb-1">Science & Technology</h1>
+                    <p class="text-gray-400">Test your knowledge about space, physics and technology</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex items-center space-x-4">
+                    <div class="bg-gray-800 px-4 py-2 rounded-full flex items-center">
+                        <i data-feather="clock" class="text-accent-500 mr-2 w-4 h-4"></i>
+                        <span>15:00</span>
+                    </div>
+                    <div class="bg-gray-800 px-4 py-2 rounded-full">
+                        <span>Question <span class="text-primary-500 font-bold">5</span>/10</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full bg-gray-800 rounded-full h-2.5 mb-8">
+                <div class="bg-gradient-to-r from-primary-500 to-secondary-500 h-2.5 rounded-full" style="width: 50%"></div>
+            </div>
+
+            <div class="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-8 border border-gray-700 mb-8 fade-in">
+                <div class="flex items-center justify-between mb-6">
+                    <span class="text-sm font-medium text-gray-500">Question #5</span>
+                    <div class="flex items-center text-sm font-medium">
+                        <i data-feather="clock" class="w-4 h-4 mr-1 text-accent-500"></i>
+                        <span id="question-timer">0:12</span>
+                    </div>
+                </div>
+                <h2 class="text-xl font-bold mb-6">Which of these is NOT one of the four fundamental forces of nature?</h2>
+
+                <div class="grid grid-cols-1 gap-4 mb-8">
+                    <div class="answer-option bg-gray-700 hover:bg-gray-600 rounded-xl p-4 cursor-pointer transition-all border border-gray-600">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center mr-4">
+                                <span class="font-bold">A</span>
+                            </div>
+                            <span>Gravity</span>
+                        </div>
+                    </div>
+                    <div class="answer-option bg-gray-700 hover:bg-gray-600 rounded-xl p-4 cursor-pointer transition-all border border-gray-600">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center mr-4">
+                                <span class="font-bold">B</span>
+                            </div>
+                            <span>Electromagnetism</span>
+                        </div>
+                    </div>
+                    <div class="answer-option correct bg-secondary-500/20 rounded-xl p-4 cursor-pointer transition-all border border-secondary-500">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-secondary-500 flex items-center justify-center mr-4">
+                                <i data-feather="check" class="text-white w-5 h-5"></i>
+                            </div>
+                            <span class="font-bold text-secondary-300">Friction</span>
+                        </div>
+                    </div>
+                    <div class="answer-option bg-gray-700 hover:bg-gray-600 rounded-xl p-4 cursor-pointer transition-all border border-gray-600">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center mr-4">
+                                <span class="font-bold">D</span>
+                            </div>
+                            <span>Strong nuclear force</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-green-900/30 border border-green-800 rounded-xl p-4">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-green-500/30 flex items-center justify-center mr-3">
+                            <i data-feather="check" class="text-green-500"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-green-400">Correct!</h3>
+                            <p class="text-gray-300 text-sm">Friction is not a fundamental force. The four fundamental forces are gravity, electromagnetism, strong nuclear force, and weak nuclear force.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between">
+                <button class="px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-full text-white font-medium transition-all">
+                    <i data-feather="arrow-left" class="mr-2"></i> Previous
+                </button>
+                <button class="px-6 py-3 bg-primary-500 hover:bg-primary-600 rounded-full text-white font-medium transition-all flex items-center pulse">
+                    Next Question <i data-feather="arrow-right" class="ml-2"></i>
+                </button>
+            </div>
+
+            <div class="mt-12 bg-gradient-to-r from-primary-500/10 to-accent-500/10 rounded-2xl p-6 border border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">Current Streak</h3>
+                        <p class="text-gray-400 text-sm">Answer 5 more correctly to unlock a bonus!</p>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center mr-4">
+                            <span class="font-bold text-xl">3</span>
+                        </div>
+                        <i data-feather="arrow-right" class="text-gray-500 mr-4"></i>
+                        <div class="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center">
+                            <span class="font-bold text-xl">5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        // Initialize Vanta.js background
+        VANTA.NET({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x6d28d9,
+            backgroundColor: 0x111827,
+            points: 12.00,
+            maxDistance: 22.00,
+            spacing: 18.00
+        });
+
+        // Initialize feather icons
+        feather.replace();
+
+        // Quiz functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            // Select answer options
+            const answerOptions = document.querySelectorAll('.answer-option');
+            const feedbackDiv = document.querySelector('.bg-green-900\/30');
+            const timerElement = document.getElementById('question-timer');
+
+            // --- ANSWER SELECTION LOGIC ---
+            answerOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Do not allow re-selection if a correct/incorrect class is already applied
+                    if (document.querySelector('.answer-option.correct') || document.querySelector('.answer-option.incorrect')) return;
+
+                    // Remove selected class from all options
+                    answerOptions.forEach(opt => {
+                        opt.classList.remove('selected');
+                        opt.classList.remove('border-primary-500');
+                    });
+
+                    // Add selected class to clicked option and visually mark it
+                    this.classList.add('selected');
+                    this.classList.add('border-primary-500');
+                    this.querySelector('.w-8.h-8').classList.remove('bg-gray-600');
+                    this.querySelector('.w-8.h-8').classList.add('bg-primary-500');
+
+                    // NOTE: The rest of the validation (adding 'correct'/'incorrect' and showing feedback)
+                    // would typically happen on a server response, but for a static demo,
+                    // we'd hardcode the visual update like in the FIXED HTML structure.
+                });
+            });
+
+            // --- TIMER COUNTDOWN ---
+            let timeLeft = 12; // Start from 0:12 as shown in the HTML
+            
+            // Function to update the timer display
+            const updateTimerDisplay = () => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            };
+            
+            const timer = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    timerElement.classList.add('text-red-500');
+                    // Handle time up (e.g., auto-submit, move to next question)
+                }
+            }, 1000);
+            
+            // Initial call to set the display correctly (though the HTML already does this)
+            // updateTimerDisplay(); 
+        });
+    </script>
+</body>
+</html>
