@@ -1,20 +1,445 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NAV Education</title>
-
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0d6efd">
-
-  <!-- Redirect immediately to your GitHub Pages -->
-  <script>
-    window.location.href = "https://amit21686.github.io/NAV_Education/";
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Quiz Blaster</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;600;700&display=swap');
+        :root {
+            --primary: #6d28d9;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .glow {
+            text-shadow: 0 0 10px rgba(109, 40, 217, 0.7);
+        }
+        .btn-glow:hover {
+            box-shadow: 0 0 15px rgba(109, 40, 217, 0.5);
+        }
+        .vanta-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        .quiz-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+        .progress-ring {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .theme-toggle {
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: rotate(30deg);
+        }
+        /* Custom hover for non-selected answers */
+        .answer-option:not(.selected):hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+        }
+        /* Style for the correct, selected answer */
+        .answer-option.correct {
+             transform: scale(1.02);
+             box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); /* secondary glow */
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            500: '#6d28d9',
+                            600: '#5b21b6',
+                        },
+                        secondary: {
+                            500: '#10b981',
+                            600: '#059669',
+                        },
+                        accent: {
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-  <p>Opening NAV Education...</p>
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+    <div id="vanta-bg" class="vanta-bg"></div>
+
+    <header class="relative z-10">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center" role="img" aria-label="Quantum Quiz Logo">
+                        <i data-feather="zap" class="text-white"></i>
+                    </div>
+                    <h1 class="font-orbitron text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-secondary-500"> QuantumQuiz </h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" class="theme-toggle w-10 h-10 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center" aria-label="Toggle Dark/Light Theme">
+                        <i data-feather="moon" class="text-yellow-400"></i>
+                    </button>
+                    <button class="px-4 py-2 rounded-full bg-primary-500 hover:bg-primary-600 text-white font-medium btn-glow transition-all" aria-label="Sign In">
+                        <i data-feather="user" class="mr-2"></i> Sign In
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="relative z-10 py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 class="font-orbitron text-4xl md:text-6xl font-bold mb-6 glow"> Test Your Knowledge <span class="text-accent-500">Across</span> The Universe </h2>
+                <p class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto"> Challenge yourself with our futuristic quiz platform featuring thousands of questions across multiple categories and difficulty levels. </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button class="px-8 py-4 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 text-white font-bold text-lg btn-glow transition-all flex items-center justify-center">
+                        <i data-feather="play" class="mr-2"></i> Start Quiz Now
+                    </button>
+                    <button class="px-8 py-4 rounded-full bg-gray-800 hover:bg-gray-700 text-white font-bold text-lg transition-all flex items-center justify-center">
+                        <i data-feather="award" class="mr-2"></i> View Leaderboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="relative z-10 py-16 bg-gray-800/50 backdrop-blur-lg">
+        <div class="container mx-auto px-4">
+            <h2 class="font-orbitron text-3xl font-bold text-center mb-12"> <span class="text-primary-500">Explore</span> Categories </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="quiz-card bg-gray-800 rounded-2xl p-6 transition-all cursor-pointer border border-gray-700 hover:border-secondary-500" role="button" tabindex="0" aria-label="Science Category Quiz">
+                    <div class="w-16 h-16 rounded-xl bg-primary-500/20 flex items-center justify-center mb-4">
+                        <i data-feather="atom" class="text-primary-500 w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-2">Science</h3>
+                    <p class="text-gray-400 mb-4">Explore the wonders of physics, chemistry and biology</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500">12 quizzes</span>
+                        <span class="text-sm font-bold text-secondary-500">Advanced</span>
+                    </div>
+                </div>
+                <div class="quiz-card bg-gray-800 rounded-2xl p-6 transition-all cursor-pointer border border-gray-700 hover:border-secondary-500" role="button" tabindex="0" aria-label="Technology Category Quiz">
+                    <div class="w-16 h-16 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4">
+                        <i data-feather="cpu" class="text-blue-500 w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-2">Technology</h3>
+                    <p class="text-gray-400 mb-4">AI, programming, gadgets and future tech</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500">24 quizzes</span>
+                        <span class="text-sm font-bold text-accent-500">Intermediate</span>
+                    </div>
+                </div>
+                <div class="quiz-card bg-gray-800 rounded-2xl p-6 transition-all cursor-pointer border border-gray-700 hover:border-secondary-500" role="button" tabindex="0" aria-label="History Category Quiz">
+                    <div class="w-16 h-16 rounded-xl bg-amber-500/20 flex items-center justify-center mb-4">
+                        <i data-feather="clock" class="text-amber-500 w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-2">History</h3>
+                    <p class="text-gray-400 mb-4">From ancient civilizations to modern events</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500">18 quizzes</span>
+                        <span class="text-sm font-bold text-green-500">Beginner</span>
+                    </div>
+                </div>
+                <div class="quiz-card bg-gray-800 rounded-2xl p-6 transition-all cursor-pointer border border-gray-700 hover:border-secondary-500" role="button" tabindex="0" aria-label="Pop Culture Category Quiz">
+                    <div class="w-16 h-16 rounded-xl bg-pink-500/20 flex items-center justify-center mb-4">
+                        <i data-feather="film" class="text-pink-500 w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-2">Pop Culture</h3>
+                    <p class="text-gray-400 mb-4">Movies, music, celebrities and trends</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500">15 quizzes</span>
+                        <span class="text-sm font-bold text-purple-500">Casual</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="relative z-10 py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="font-orbitron text-3xl font-bold text-center mb-4"> <span class="text-primary-500">Next-Level</span> Quiz Features </h2>
+            <p class="text-center text-gray-400 max-w-2xl mx-auto mb-12"> We've revolutionized the quiz experience with cutting-edge features </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-800/50 backdrop-blur-md rounded-2xl p-8 border border-gray-700">
+                    <div class="w-14 h-14 rounded-xl bg-secondary-500/20 flex items-center justify-center mb-6">
+                        <i data-feather="trending-up" class="text-secondary-500"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-3">Real-time Leaderboard</h3>
+                    <p class="text-gray-400 mb-4">Compete against players worldwide with live ranking updates</p>
+                    <div class="h-40 bg-gray-900 rounded-xl p-4 flex items-center justify-center" aria-label="Bar chart showing leader board rankings">
+                        <div class="flex items-end space-x-2 h-24">
+                            <div class="w-6 bg-accent-500 rounded-t-md" style="height: 20%;"></div>
+                            <div class="w-6 bg-secondary-500 rounded-t-md" style="height: 60%;"></div>
+                            <div class="w-6 bg-primary-500 rounded-t-md" style="height: 100%;"></div>
+                            <div class="w-6 bg-secondary-500 rounded-t-md" style="height: 40%;"></div>
+                            <div class="w-6 bg-gray-600 rounded-t-md" style="height: 30%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-800/50 backdrop-blur-md rounded-2xl p-8 border border-gray-700">
+                    <div class="w-14 h-14 rounded-xl bg-primary-500/20 flex items-center justify-center mb-6">
+                        <i data-feather="users" class="text-primary-500"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-3">Battle Royale Mode</h3>
+                    <p class="text-gray-400 mb-4">Challenge friends or random opponents in real-time quiz battles</p>
+                    <div class="h-40 bg-gray-900 rounded-xl p-4 flex items-center justify-center" aria-label="Progress circle showing 2 out of 4 players">
+                        <div class="relative w-24 h-24">
+                            <svg class="w-full h-full" viewBox="0 0 100 100">
+                                <circle class="text-gray-700" stroke-width="8" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50"/>
+                                <circle class="progress-ring text-primary-500" stroke-width="8" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" stroke-dasharray="251.2" stroke-dashoffset="125.6"/>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="font-bold text-xl">2/4</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-800/50 backdrop-blur-md rounded-2xl p-8 border border-gray-700">
+                    <div class="w-14 h-14 rounded-xl bg-accent-500/20 flex items-center justify-center mb-6">
+                        <i data-feather="calendar" class="text-accent-500"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-3">Daily Challenges</h3>
+                    <p class="text-gray-400 mb-4">Special themed quizzes with exclusive rewards</p>
+                    <div class="h-40 bg-gray-900 rounded-xl p-4 flex flex-col items-center justify-center" aria-label="Daily challenge indicator">
+                        <div class="flex items-center mb-4">
+                            <div class="w-8 h-8 bg-accent-500 rounded-full flex items-center justify-center mr-2">
+                                <i data-feather="award" class="w-4 h-4 text-white"></i>
+                            </div>
+                            <span class="font-bold">5x XP Today!</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <div class="w-3 h-3 bg-gray-600 rounded-full"></div>
+                            <div class="w-3 h-3 bg-gray-600 rounded-full"></div>
+                            <div class="w-3 h-3 bg-accent-500 rounded-full"></div>
+                            <div class="w-3 h-3 bg-gray-600 rounded-full"></div>
+                            <div class="w-3 h-3 bg-gray-600 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="relative z-10 py-16 bg-gradient-to-br from-gray-900 to-gray-800/50">
+        <div class="container mx-auto px-4">
+            <h2 class="font-orbitron text-3xl font-bold text-center mb-12"> <span class="text-primary-500">Try</span> A Sample Question </h2>
+            <div class="max-w-2xl mx-auto bg-gray-800 rounded-2xl p-8 border border-gray-700" role="form" aria-live="polite">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <div class="text-sm font-medium text-gray-500"> Question <span class="text-white">1</span> of 10 </div>
+                    <div class="flex items-center text-sm font-medium">
+                        <i data-feather="clock" class="w-4 h-4 mr-1 text-accent-500"></i>
+                        <span>0:15</span>
+                    </div>
+                </div>
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold mb-4">Which planet in our solar system has the most moons?</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" role="radiogroup" aria-label="Quiz Answer Options">
+                        <div class="answer-option bg-gray-700 hover:bg-gray-600 rounded-xl p-4 cursor-pointer transition-all border border-gray-600" role="radio" aria-checked="false" tabindex="0">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center mr-3">
+                                    <span class="font-bold">A</span>
+                                </div>
+                                <span>Jupiter</span>
+                            </div>
+                        </div>
+                        <div class="answer-option correct bg-secondary-500/20 rounded-xl p-4 cursor-pointer transition-all border border-secondary-500 shadow-lg shadow-secondary-500/30" role="radio" aria-checked="true" tabindex="0">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-secondary-500 flex items-center justify-center mr-3">
+                                    <i data-feather="check" class="text-white w-4 h-4"></i>
+                                </div>
+                                <span class="font-bold text-secondary-300">Saturn (Correct!)</span>
+                            </div>
+                        </div>
+                        <div class="answer-option bg-gray-700 hover:bg-gray-600 rounded-xl p-4 cursor-pointer transition-all border border-gray-600" role="radio" aria-checked="false" tabindex="0">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center mr-3">
+                                    <span class="font-bold">C</span>
+                                </div>
+                                <span>Neptune</span>
+                            </div>
+                        </div>
+                        <div class="answer-option bg-gray-700 hover:bg-gray-600 rounded-xl p-4 cursor-pointer transition-all border border-gray-600" role="radio" aria-checked="false" tabindex="0">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center mr-3">
+                                    <span class="font-bold">D</span>
+                                </div>
+                                <span>Uranus</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button class="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-full text-white font-medium transition-all">
+                        <i data-feather="help-circle" class="mr-2"></i> Hint
+                    </button>
+                    <button class="px-6 py-3 bg-primary-500 hover:bg-primary-600 rounded-full text-white font-medium transition-all">
+                        Next Question <i data-feather="arrow-right" class="ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="relative z-10 py-16">
+        <div class="container mx-auto px-4">
+            <div class="bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-3xl p-12 text-center backdrop-blur-lg">
+                <h2 class="font-orbitron text-3xl md:text-4xl font-bold mb-6"> Ready to <span class="text-accent-500">Blast Off</span>? </h2>
+                <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto"> Join thousands of players testing their knowledge and climbing the leaderboards daily. </p>
+                <button class="px-8 py-4 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 text-white font-bold text-lg btn-glow transition-all flex items-center justify-center mx-auto">
+                    <i data-feather="rocket" class="mr-2"></i> Launch Quiz Now
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <footer class="relative z-10 py-12 bg-gray-900/50 backdrop-blur-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-2 mb-6 md:mb-0">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
+                        <i data-feather="zap" class="text-white w-4 h-4"></i>
+                    </div>
+                    <h2 class="font-orbitron text-xl font-bold"> QuantumQuiz </h2>
+                </div>
+                <div class="flex space-x-6" role="navigation" aria-label="Social Media Links">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Link to Twitter">
+                        <i data-feather="twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Link to Facebook">
+                        <i data-feather="facebook"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Link to Instagram">
+                        <i data-feather="instagram"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Link to GitHub">
+                        <i data-feather="github"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 mb-4 md:mb-0"> © 2023 QuantumQuiz. All rights reserved. </p>
+                <div class="flex space-x-6" role="navigation" aria-label="Legal and Contact Links">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Vanta.js background
+        VANTA.GLOBE({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x6d28d9,
+            backgroundColor: 0x111827,
+            size: 0.8
+        });
+
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        
+        // Initial theme check (optional: for persistent theme across loads)
+        if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+            html.classList.remove('dark');
+            themeToggle.querySelector('i').setAttribute('data-feather', 'sun');
+        } else {
+            html.classList.add('dark');
+            themeToggle.querySelector('i').setAttribute('data-feather', 'moon');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            const icon = themeToggle.querySelector('i');
+
+            // Store theme preference
+            localStorage.theme = isDark ? 'dark' : 'light';
+
+            // Update icon
+            icon.setAttribute('data-feather', isDark ? 'moon' : 'sun');
+            feather.replace(); // Re-render icons after changing attribute
+        });
+
+        // Initialize feather icons
+        feather.replace();
+
+        // Animate elements on scroll (initial elements fade in)
+        const animateOnLoad = () => {
+            const elements = document.querySelectorAll('.quiz-card, .answer-option');
+            anime({
+                targets: elements,
+                opacity: [0, 1],
+                translateY: [20, 0],
+                delay: anime.stagger(100) // Stagger effects by 100ms
+            });
+        };
+
+        // Run animations when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            animateOnLoad();
+
+            // Animate the progress ring
+            const circle = document.querySelector('.progress-ring');
+            if (circle) {
+                const radius = circle.r.baseVal.value;
+                const circumference = radius * 2 * Math.PI;
+                circle.style.strokeDasharray = `${circumference} ${circumference}`;
+                circle.style.strokeDashoffset = `${circumference}`;
+                
+                // Animation logic (e.g., fill to 50% for 2/4)
+                const percentage = 50; // (2/4) * 100
+                const offset = circumference - (percentage / 100) * circumference;
+                
+                anime({
+                    targets: circle,
+                    strokeDashoffset: offset,
+                    easing: 'easeInOutQuad',
+                    duration: 1000
+                });
+            }
+        });
+    </script>
 </body>
 </html>
