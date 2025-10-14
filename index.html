@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyNotes - Your Educational Companion</title>
+    <title>StudyMaster - Complete Notes Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css">
     <style>
         * {
             margin: 0;
@@ -17,308 +18,442 @@
             --primary: #4361ee;
             --secondary: #3a0ca3;
             --accent: #4cc9f0;
-            --light: #f8f9fa;
-            --dark: #212529;
             --success: #4bb543;
             --warning: #ffcc00;
             --danger: #dc3545;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+        }
+
+        [data-theme="dark"] {
+            --light: #1a1a1a;
+            --dark: #f8f9fa;
+            --primary: #5a7dff;
+            --secondary: #6d28d9;
         }
 
         body {
-            background-color: #f5f7fb;
+            background-color: var(--light);
             color: var(--dark);
             line-height: 1.6;
+            transition: all 0.3s ease;
         }
 
         .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+            display: flex;
+            min-height: 100vh;
         }
 
-        /* Header Styles */
-        header {
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 1rem 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-content {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
-        }
-
-        .logo i {
-            font-size: 2rem;
-        }
-
-        .logo h1 {
-            font-size: 1.8rem;
+            gap: 12px;
+            font-size: 1.5rem;
             font-weight: 700;
         }
 
-        nav ul {
+        .header-actions {
             display: flex;
-            list-style: none;
-            gap: 20px;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 5px 10px;
-            border-radius: 4px;
-            transition: background 0.3s;
-        }
-
-        nav a:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        /* Hero Section */
-        .hero {
-            padding: 3rem 0;
-            text-align: center;
-            background: linear-gradient(rgba(67, 97, 238, 0.1), rgba(58, 12, 163, 0.1));
-        }
-
-        .hero h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--secondary);
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto 2rem;
-            color: #555;
-        }
-
-        .search-box {
-            max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 15px 20px;
-            border-radius: 50px;
-            border: 2px solid var(--primary);
-            font-size: 1rem;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .search-box button {
-            position: absolute;
-            right: 10px;
-            top: 10px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .search-box button:hover {
-            background: var(--secondary);
-        }
-
-        /* Main Content */
-        .main-content {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 30px;
-            padding: 2rem 0;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .sidebar h3 {
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--accent);
-            color: var(--secondary);
-        }
-
-        .subject-list {
-            list-style: none;
-        }
-
-        .subject-list li {
-            margin-bottom: 10px;
-        }
-
-        .subject-list a {
-            display: flex;
+            gap: 1rem;
             align-items: center;
-            gap: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            color: var(--dark);
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-
-        .subject-list a:hover, .subject-list a.active {
-            background: rgba(67, 97, 238, 0.1);
-            color: var(--primary);
-        }
-
-        .subject-list i {
-            width: 20px;
-            text-align: center;
-        }
-
-        /* Notes Section */
-        .notes-section {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .notes-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #eee;
-        }
-
-        .notes-header h2 {
-            color: var(--secondary);
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
         }
 
         .btn {
-            padding: 8px 15px;
+            padding: 8px 16px;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: 500;
             transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: var(--accent);
             color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--secondary);
         }
 
         .btn-outline {
             background: transparent;
-            border: 1px solid var(--primary);
+            border: 1px solid white;
+            color: white;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            border-right: 1px solid #e1e5e9;
+            height: calc(100vh - var(--header-height));
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        [data-theme="dark"] .sidebar {
+            background: #2d2d2d;
+            border-right-color: #444;
+        }
+
+        .sidebar-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        [data-theme="dark"] .sidebar-section {
+            border-bottom-color: #444;
+        }
+
+        .sidebar-section h3 {
+            margin-bottom: 1rem;
+            color: var(--secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .subject-list, .action-list {
+            list-style: none;
+        }
+
+        .subject-list li, .action-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        .subject-list a, .action-list a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        [data-theme="dark"] .subject-list a,
+        [data-theme="dark"] .action-list a {
+            color: #e1e5e9;
+        }
+
+        .subject-list a:hover, 
+        .subject-list a.active,
+        .action-list a:hover {
+            background: rgba(67, 97, 238, 0.1);
             color: var(--primary);
         }
 
-        .btn-outline:hover {
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 2rem;
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        .notes-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .notes-container {
+            background: #2d2d2d;
+        }
+
+        .notes-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e1e5e9;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        [data-theme="dark"] .notes-header {
+            border-bottom-color: #444;
+        }
+
+        .notes-title {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .notes-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .notes-body {
+            padding: 2rem;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: #f8f9fa;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e1e5e9;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        [data-theme="dark"] .toolbar {
+            background: #3d3d3d;
+            border-bottom-color: #555;
+        }
+
+        .toolbar-group {
+            display: flex;
+            gap: 2px;
+            background: white;
+            padding: 4px;
+            border-radius: 6px;
+            border: 1px solid #e1e5e9;
+        }
+
+        [data-theme="dark"] .toolbar-group {
+            background: #444;
+            border-color: #666;
+        }
+
+        .toolbar-btn {
+            padding: 6px 10px;
+            border: none;
+            background: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--dark);
+            transition: all 0.3s;
+        }
+
+        [data-theme="dark"] .toolbar-btn {
+            color: #e1e5e9;
+        }
+
+        .toolbar-btn:hover {
             background: rgba(67, 97, 238, 0.1);
         }
 
-        .notes-content {
-            max-height: 500px;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
+        /* Note Content Styles */
         .chapter {
-            margin-bottom: 30px;
+            margin-bottom: 3rem;
             border-left: 4px solid var(--accent);
-            padding-left: 15px;
+            padding-left: 1.5rem;
         }
 
-        .chapter h3 {
+        .chapter-title {
+            font-size: 1.8rem;
             color: var(--secondary);
-            margin-bottom: 10px;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
         }
 
-        .chapter-content {
-            background: #f9fafc;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
+        .section {
+            margin-bottom: 2rem;
         }
 
-        .chapter-content h4 {
+        .section-title {
+            font-size: 1.3rem;
             color: var(--primary);
-            margin-bottom: 10px;
+            margin-bottom: 1rem;
+            font-weight: 600;
         }
 
-        .chapter-content ul, .chapter-content ol {
-            margin-left: 20px;
-            margin-bottom: 10px;
+        .content-box {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary);
         }
 
-        .chapter-content li {
-            margin-bottom: 5px;
+        [data-theme="dark"] .content-box {
+            background: #3d3d3d;
         }
 
         .key-points {
             background: #fff9e6;
-            padding: 15px;
-            border-radius: 5px;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
             border-left: 4px solid var(--warning);
         }
 
-        .key-points h4 {
-            color: #b38f00;
-            margin-bottom: 10px;
+        [data-theme="dark"] .key-points {
+            background: #4a4a3d;
         }
 
         .formulas {
             background: #e6f7ff;
-            padding: 15px;
-            border-radius: 5px;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
             border-left: 4px solid var(--accent);
         }
 
-        .formulas h4 {
-            color: var(--accent);
-            margin-bottom: 10px;
+        [data-theme="dark"] .formulas {
+            background: #3d4a4a;
         }
 
         .formula {
-            font-family: 'Courier New', monospace;
+            font-family: 'KaTeX_Math', 'Times New Roman', serif;
             background: white;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 0.5rem 0;
+            border: 1px solid #e1e5e9;
+            font-size: 1.1rem;
         }
 
+        [data-theme="dark"] .formula {
+            background: #444;
+            border-color: #666;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        [data-theme="dark"] .data-table {
+            background: #3d3d3d;
+        }
+
+        .data-table th {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        [data-theme="dark"] .data-table td {
+            border-bottom-color: #555;
+        }
+
+        .data-table tr:hover {
+            background: rgba(67, 97, 238, 0.05);
+        }
+
+        [data-theme="dark"] .data-table tr:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        /* Editor */
+        .editor {
+            min-height: 300px;
+            padding: 1.5rem;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            margin: 1rem 0;
+            background: white;
+        }
+
+        [data-theme="dark"] .editor {
+            background: #3d3d3d;
+            border-color: #555;
+        }
+
+        .editor:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Search */
+        .search-container {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 16px;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            color: var(--dark);
+        }
+
+        [data-theme="dark"] .search-input {
+            background: #3d3d3d;
+            border-color: #555;
+            color: #e1e5e9;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+        }
+
+        /* Loading */
         .loading {
             text-align: center;
-            padding: 2rem;
+            padding: 3rem;
             color: var(--primary);
         }
 
@@ -326,236 +461,310 @@
             background: #ffe6e6;
             color: var(--danger);
             padding: 1rem;
-            border-radius: 5px;
+            border-radius: 8px;
             margin: 1rem 0;
         }
 
-        /* Footer */
-        footer {
-            background: var(--dark);
-            color: white;
-            padding: 2rem 0;
-            margin-top: 3rem;
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 30px;
-        }
-
-        .footer-section {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .footer-section h3 {
-            margin-bottom: 15px;
-            color: var(--accent);
-        }
-
-        .footer-section p {
-            margin-bottom: 10px;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .social-links a {
-            color: white;
-            font-size: 1.2rem;
-            transition: color 0.3s;
-        }
-
-        .social-links a:hover {
-            color: var(--accent);
-        }
-
-        .copyright {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid #444;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 900px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .sidebar {
-                order: 2;
-            }
-            
-            .notes-section {
-                order: 1;
-            }
-            
-            .header-content {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
+        [data-theme="dark"] .error {
+            background: #4a3d3d;
         }
     </style>
 </head>
-<body>
+<body data-theme="light">
     <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-book-open"></i>
-                    <h1>StudyNotes</h1>
-                </div>
-                <nav>
-                    <ul>
-                        <li><a href="#" class="active">Home</a></li>
-                        <li><a href="#">Subjects</a></li>
-                        <li><a href="#">Chapters</a></li>
-                        <li><a href="#">Resources</a></li>
-                        <li><a href="#">About</a></li>
-                    </ul>
-                </nav>
-            </div>
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <span>StudyMaster</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-outline" id="themeToggle">
+                <i class="fas fa-moon"></i> Dark Mode
+            </button>
+            <button class="btn btn-primary" id="newNoteBtn">
+                <i class="fas fa-plus"></i> New Note
+            </button>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h2>Master Your Subjects with Comprehensive Notes</h2>
-            <p>Access well-structured notes for all subjects, complete with key points, formulas, and examples to excel in your studies.</p>
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search for subjects, chapters, or topics...">
-                <button id="searchBtn"><i class="fas fa-search"></i> Search</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main Content -->
     <div class="container">
-        <div class="main-content">
-            <!-- Sidebar -->
-            <aside class="sidebar">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="search-container">
+                    <input type="text" class="search-input" id="globalSearch" placeholder="Search notes...">
+                    <button class="search-btn" id="searchButton">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
                 <h3>Subjects</h3>
                 <ul class="subject-list" id="subjectList">
-                    <li><a href="#" data-subject="mathematics" class="active"><i class="fas fa-calculator"></i> Mathematics</a></li>
-                    <li><a href="#" data-subject="physics"><i class="fas fa-flask"></i> Physics</a></li>
-                    <li><a href="#" data-subject="chemistry"><i class="fas fa-atom"></i> Chemistry</a></li>
-                    <li><a href="#" data-subject="biology"><i class="fas fa-dna"></i> Biology</a></li>
+                    <!-- Subjects will be loaded here -->
                 </ul>
+            </div>
 
-                <h3 style="margin-top: 30px;">Quick Actions</h3>
-                <ul class="subject-list">
-                    <li><a href="#"><i class="fas fa-bookmark"></i> Bookmarked Notes</a></li>
-                    <li><a href="#" id="downloadAll"><i class="fas fa-download"></i> Download All Notes</a></li>
-                    <li><a href="#" id="printNotes"><i class="fas fa-print"></i> Print Notes</a></li>
+            <div class="sidebar-section">
+                <h3>Quick Actions</h3>
+                <ul class="action-list">
+                    <li><a href="#" id="bookmarksBtn"><i class="fas fa-bookmark"></i> Bookmarked</a></li>
+                    <li><a href="#" id="recentBtn"><i class="fas fa-history"></i> Recent Notes</a></li>
+                    <li><a href="#" id="flashcardsBtn"><i class="fas fa-layer-group"></i> Flashcards</a></li>
+                    <li><a href="#" id="exportBtn"><i class="fas fa-download"></i> Export All</a></li>
                 </ul>
-            </aside>
+            </div>
 
-            <!-- Notes Section -->
-            <section class="notes-section">
+            <div class="sidebar-section">
+                <h3>Tools</h3>
+                <ul class="action-list">
+                    <li><a href="#" id="calculatorBtn"><i class="fas fa-calculator"></i> Calculator</a></li>
+                    <li><a href="#" id="dictionaryBtn"><i class="fas fa-book"></i> Dictionary</a></li>
+                    <li><a href="#" id="timerBtn"><i class="fas fa-clock"></i> Study Timer</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="notes-container">
                 <div class="notes-header">
-                    <h2 id="notesTitle">Select a Subject</h2>
-                    <div class="action-buttons">
-                        <button class="btn btn-outline" id="bookmarkBtn"><i class="fas fa-bookmark"></i> Bookmark</button>
-                        <button class="btn btn-primary" id="downloadBtn"><i class="fas fa-download"></i> Download PDF</button>
+                    <h1 class="notes-title" id="notesTitle">Welcome to StudyMaster</h1>
+                    <div class="notes-actions">
+                        <button class="btn btn-outline" id="bookmarkBtn">
+                            <i class="far fa-bookmark"></i> Bookmark
+                        </button>
+                        <button class="btn btn-outline" id="printBtn">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                        <button class="btn btn-primary" id="shareBtn">
+                            <i class="fas fa-share"></i> Share
+                        </button>
                     </div>
                 </div>
 
-                <div class="notes-content" id="notesContent">
-                    <div class="loading">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading notes data...</p>
+                <!-- Toolbar -->
+                <div class="toolbar" id="toolbar">
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn" data-command="bold"><i class="fas fa-bold"></i></button>
+                        <button class="toolbar-btn" data-command="italic"><i class="fas fa-italic"></i></button>
+                        <button class="toolbar-btn" data-command="underline"><i class="fas fa-underline"></i></button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn" data-command="insertUnorderedList"><i class="fas fa-list-ul"></i></button>
+                        <button class="toolbar-btn" data-command="insertOrderedList"><i class="fas fa-list-ol"></i></button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn" data-command="createLink"><i class="fas fa-link"></i></button>
+                        <button class="toolbar-btn" data-command="insertImage"><i class="fas fa-image"></i></button>
+                        <button class="toolbar-btn" data-command="insertTable"><i class="fas fa-table"></i></button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn" data-command="formatBlock" data-value="h2"><i class="fas fa-heading"></i> H2</button>
+                        <button class="toolbar-btn" data-command="formatBlock" data-value="h3"><i class="fas fa-heading"></i> H3</button>
                     </div>
                 </div>
-            </section>
-        </div>
+
+                <!-- Notes Body -->
+                <div class="notes-body" id="notesContent">
+                    <div class="welcome-message">
+                        <h2>Welcome to Your Complete Notes Platform</h2>
+                        <p>Select a subject from the sidebar to start viewing notes, or create new notes using the editor above.</p>
+                        
+                        <div class="content-box">
+                            <h3>Features Available:</h3>
+                            <ul>
+                                <li>📝 Rich Text Editor with formatting tools</li>
+                                <li>📚 Multiple subjects and chapters</li>
+                                <li>🔍 Advanced search functionality</li>
+                                <li>📊 Tables and data visualization</li>
+                                <li>🧮 Mathematical equations support</li>
+                                <li>🎨 Dark/Light theme</li>
+                                <li>💾 Export and sharing options</li>
+                                <li>🔖 Bookmarking system</li>
+                                <li>📱 Responsive design</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>About StudyNotes</h3>
-                    <p>StudyNotes provides comprehensive, well-structured educational notes for students of all levels.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-github"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-linkedin"></i></a>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <p><a href="#">Home</a></p>
-                    <p><a href="#">Subjects</a></p>
-                    <p><a href="#">Chapters</a></p>
-                    <p><a href="#">Contact</a></p>
-                </div>
-                <div class="footer-section">
-                    <h3>Project Info</h3>
-                    <p>Hosted on GitHub Pages</p>
-                    <p>Open Source</p>
-                    <p>Contributions Welcome</p>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>&copy; 2023 StudyNotes. Hosted on GitHub Pages.</p>
-            </div>
-        </div>
-    </footer>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/contrib/auto-render.min.js"></script>
+    
     <script>
         // Notes Manager Class
-        class NotesManager {
+        class StudyMaster {
             constructor() {
                 this.notesData = null;
                 this.currentSubject = null;
                 this.currentChapter = null;
+                this.bookmarks = new Set();
+                this.theme = 'light';
                 this.init();
             }
 
             async init() {
                 await this.loadNotesData();
                 this.setupEventListeners();
-                this.displaySubject('mathematics');
+                this.renderSubjects();
+                this.setupEditor();
             }
 
             async loadNotesData() {
                 try {
-                    // Load notes from JSON file
-                    const response = await fetch('notes.json');
-                    if (!response.ok) {
-                        throw new Error('Failed to load notes data');
-                    }
-                    this.notesData = await response.json();
-                    this.populateSubjects();
+                    // In a real app, this would fetch from your JSON file
+                    // For now, we'll use sample data
+                    this.notesData = await this.getSampleData();
                 } catch (error) {
                     console.error('Error loading notes:', error);
-                    this.showError('Failed to load notes data. Please check if notes.json exists.');
+                    this.showError('Failed to load notes data.');
                 }
             }
 
-            populateSubjects() {
+            getSampleData() {
+                return {
+                    subjects: [
+                        {
+                            id: 'mathematics',
+                            name: 'Mathematics',
+                            icon: 'calculator',
+                            description: 'Algebra, Calculus, Geometry, Statistics',
+                            color: '#4361ee',
+                            chapters: [
+                                {
+                                    id: 'algebra-basics',
+                                    title: 'Algebra Basics',
+                                    content: this.getMathContent()
+                                },
+                                {
+                                    id: 'calculus',
+                                    title: 'Calculus Fundamentals',
+                                    content: this.getCalculusContent()
+                                }
+                            ]
+                        },
+                        {
+                            id: 'physics',
+                            name: 'Physics',
+                            icon: 'atom',
+                            description: 'Mechanics, Thermodynamics, Electromagnetism',
+                            color: '#f72585',
+                            chapters: [
+                                {
+                                    id: 'mechanics',
+                                    title: 'Classical Mechanics',
+                                    content: this.getPhysicsContent()
+                                }
+                            ]
+                        },
+                        {
+                            id: 'china-geography',
+                            name: 'China Geography',
+                            icon: 'globe-asia',
+                            description: 'Provinces, Cities, and Administrative Divisions',
+                            color: '#de2910',
+                            chapters: [
+                                {
+                                    id: 'provinces',
+                                    title: 'Provinces & Administrative Divisions',
+                                    content: this.getChinaGeographyContent()
+                                }
+                            ]
+                        }
+                    ]
+                };
+            }
+
+            getMathContent() {
+                return {
+                    introduction: "Algebra is the branch of mathematics that deals with symbols and the rules for manipulating those symbols. It's a unifying thread of almost all of mathematics.",
+                    sections: [
+                        {
+                            title: "Basic Concepts",
+                            content: "Algebra uses variables like x, y, z to represent unknown values. These variables can be combined using arithmetic operations.",
+                            type: "text"
+                        },
+                        {
+                            title: "Key Formulas",
+                            content: [
+                                "Quadratic Formula: $$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$",
+                                "Binomial Theorem: $$(a + b)^n = \\sum_{k=0}^n \\binom{n}{k} a^{n-k} b^k$$"
+                            ],
+                            type: "formulas"
+                        },
+                        {
+                            title: "Important Points",
+                            content: [
+                                "Equations must maintain balance on both sides",
+                                "Variables represent unknown quantities",
+                                "Algebraic expressions can be simplified"
+                            ],
+                            type: "keyPoints"
+                        }
+                    ]
+                };
+            }
+
+            getChinaGeographyContent() {
+                return {
+                    introduction: "The People's Republic of China has 34 provincial-level administrative divisions, including provinces, autonomous regions, municipalities, and special administrative regions.",
+                    sections: [
+                        {
+                            title: "Administrative Structure",
+                            content: "China's administrative divisions are organized into three main levels: provincial, prefectural, and county levels.",
+                            type: "text"
+                        },
+                        {
+                            title: "Major Provinces Data",
+                            content: this.getChinaProvincesData(),
+                            type: "table"
+                        },
+                        {
+                            title: "Key Facts",
+                            content: [
+                                "Total of 34 provincial-level divisions",
+                                "4 Direct-controlled municipalities",
+                                "5 Autonomous regions",
+                                "2 Special administrative regions",
+                                "23 Provinces"
+                            ],
+                            type: "keyPoints"
+                        }
+                    ]
+                };
+            }
+
+            getChinaProvincesData() {
+                return {
+                    headers: ["Province", "Capital", "Population", "Area (km²)", "Type"],
+                    rows: [
+                        ["Guangdong", "Guangzhou", "126,012,510", "179,800", "Province"],
+                        ["Shandong", "Jinan", "101,527,453", "157,100", "Province"],
+                        ["Henan", "Zhengzhou", "99,365,519", "167,000", "Province"],
+                        ["Jiangsu", "Nanjing", "84,748,016", "107,200", "Province"],
+                        ["Beijing", "Beijing", "21,893,095", "16,410", "Municipality"],
+                        ["Shanghai", "Shanghai", "24,870,895", "6,340", "Municipality"]
+                    ]
+                };
+            }
+
+            renderSubjects() {
                 const subjectList = document.getElementById('subjectList');
                 subjectList.innerHTML = '';
 
                 this.notesData.subjects.forEach(subject => {
                     const li = document.createElement('li');
                     li.innerHTML = `
-                        <a href="#" data-subject="${subject.id}" class="${subject.id === 'mathematics' ? 'active' : ''}">
-                            <i class="fas fa-${subject.icon}"></i> ${subject.name}
+                        <a href="#" data-subject="${subject.id}" style="border-left: 3px solid ${subject.color}">
+                            <i class="fas fa-${subject.icon}"></i> 
+                            <div>
+                                <div>${subject.name}</div>
+                                <small style="opacity: 0.7; font-size: 0.8rem;">${subject.description}</small>
+                            </div>
                         </a>
                     `;
                     subjectList.appendChild(li);
@@ -563,31 +772,41 @@
             }
 
             setupEventListeners() {
+                // Theme toggle
+                document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
+                
                 // Subject selection
                 document.getElementById('subjectList').addEventListener('click', (e) => {
                     e.preventDefault();
-                    if (e.target.tagName === 'A') {
-                        const subjectId = e.target.getAttribute('data-subject');
+                    const subjectLink = e.target.closest('a');
+                    if (subjectLink) {
+                        const subjectId = subjectLink.getAttribute('data-subject');
                         this.displaySubject(subjectId);
                     }
                 });
 
-                // Search functionality
-                document.getElementById('searchBtn').addEventListener('click', () => this.searchNotes());
-                document.getElementById('searchInput').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.searchNotes();
+                // Toolbar buttons
+                document.getElementById('toolbar').addEventListener('click', (e) => {
+                    if (e.target.closest('.toolbar-btn')) {
+                        this.handleToolbarClick(e.target.closest('.toolbar-btn'));
+                    }
                 });
 
                 // Action buttons
-                document.getElementById('bookmarkBtn').addEventListener('click', () => this.bookmarkCurrent());
-                document.getElementById('downloadBtn').addEventListener('click', () => this.downloadNotes());
-                document.getElementById('downloadAll').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.downloadAllNotes();
+                document.getElementById('bookmarkBtn').addEventListener('click', () => this.toggleBookmark());
+                document.getElementById('printBtn').addEventListener('click', () => window.print());
+                document.getElementById('shareBtn').addEventListener('click', () => this.shareNotes());
+
+                // Search
+                document.getElementById('searchButton').addEventListener('click', () => this.searchNotes());
+                document.getElementById('globalSearch').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.searchNotes();
                 });
-                document.getElementById('printNotes').addEventListener('click', (e) => {
+
+                // Quick actions
+                document.getElementById('bookmarksBtn').addEventListener('click', (e) => {
                     e.preventDefault();
-                    window.print();
+                    this.showBookmarks();
                 });
             }
 
@@ -596,146 +815,167 @@
                 if (!subject) return;
 
                 this.currentSubject = subject;
-                
-                // Update active subject in sidebar
-                document.querySelectorAll('#subjectList a').forEach(a => {
-                    a.classList.remove('active');
-                });
-                document.querySelector(`#subjectList a[data-subject="${subjectId}"]`).classList.add('active');
-
-                // Update notes title
                 document.getElementById('notesTitle').textContent = subject.name;
-
-                // Display chapters
-                this.displayChapters(subject.chapters);
+                
+                // Display first chapter by default
+                if (subject.chapters.length > 0) {
+                    this.displayChapter(subject.chapters[0]);
+                }
             }
 
-            displayChapters(chapters) {
+            displayChapter(chapter) {
+                this.currentChapter = chapter;
                 const notesContent = document.getElementById('notesContent');
                 
-                if (!chapters || chapters.length === 0) {
-                    notesContent.innerHTML = '<div class="error">No chapters available for this subject.</div>';
-                    return;
-                }
-
-                let html = '';
-                chapters.forEach(chapter => {
-                    html += this.createChapterHTML(chapter);
-                });
-
-                notesContent.innerHTML = html;
-            }
-
-            createChapterHTML(chapter) {
-                return `
-                    <div class="chapter" data-chapter="${chapter.id}">
-                        <h3>${chapter.title}</h3>
-                        <div class="chapter-content">
-                            <h4>Introduction</h4>
+                let html = `
+                    <div class="chapter">
+                        <h1 class="chapter-title">${chapter.title}</h1>
+                        <div class="content-box">
                             <p>${chapter.content.introduction}</p>
                         </div>
-                        ${chapter.content.keyPoints ? `
-                        <div class="key-points">
-                            <h4>Key Points</h4>
-                            <ul>
-                                ${chapter.content.keyPoints.map(point => `<li>${point}</li>`).join('')}
-                            </ul>
-                        </div>
-                        ` : ''}
-                        ${chapter.content.formulas && chapter.content.formulas.length > 0 ? `
-                        <div class="formulas">
-                            <h4>Important Formulas</h4>
-                            ${chapter.content.formulas.map(formula => `
-                                <p><strong>${formula.name}:</strong></p>
-                                <div class="formula">${formula.expression}</div>
-                            `).join('')}
-                        </div>
-                        ` : ''}
-                        ${chapter.content.examples ? `
-                        <div class="chapter-content">
-                            <h4>Examples</h4>
-                            ${chapter.content.examples}
-                        </div>
-                        ` : ''}
-                    </div>
                 `;
-            }
 
-            searchNotes() {
-                const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-                if (!searchTerm) return;
-
-                const results = [];
-                
-                this.notesData.subjects.forEach(subject => {
-                    subject.chapters.forEach(chapter => {
-                        const content = JSON.stringify(chapter).toLowerCase();
-                        if (content.includes(searchTerm)) {
-                            results.push({ subject, chapter });
-                        }
-                    });
+                chapter.content.sections.forEach(section => {
+                    html += `<div class="section">`;
+                    html += `<h2 class="section-title">${section.title}</h2>`;
+                    
+                    switch(section.type) {
+                        case 'text':
+                            html += `<p>${section.content}</p>`;
+                            break;
+                        case 'keyPoints':
+                            html += `<div class="key-points"><ul>`;
+                            section.content.forEach(point => {
+                                html += `<li>${point}</li>`;
+                            });
+                            html += `</ul></div>`;
+                            break;
+                        case 'formulas':
+                            html += `<div class="formulas">`;
+                            section.content.forEach(formula => {
+                                html += `<div class="formula">${formula}</div>`;
+                            });
+                            html += `</div>`;
+                            break;
+                        case 'table':
+                            html += this.renderTable(section.content);
+                            break;
+                    }
+                    
+                    html += `</div>`;
                 });
 
-                this.displaySearchResults(results, searchTerm);
-            }
-
-            displaySearchResults(results, searchTerm) {
-                const notesContent = document.getElementById('notesContent');
-                
-                if (results.length === 0) {
-                    notesContent.innerHTML = `
-                        <div class="error">
-                            No results found for "${searchTerm}".
-                        </div>
-                    `;
-                    return;
-                }
-
-                let html = `<h3>Search Results for "${searchTerm}"</h3>`;
-                results.forEach(({ subject, chapter }) => {
-                    html += this.createChapterHTML(chapter);
-                });
-
+                html += `</div>`;
                 notesContent.innerHTML = html;
+
+                // Render Math equations
+                renderMathInElement(notesContent, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ]
+                });
             }
 
-            bookmarkCurrent() {
-                const btn = document.getElementById('bookmarkBtn');
-                const isBookmarked = btn.classList.contains('bookmarked');
+            renderTable(tableData) {
+                let html = `<div class="table-container"><table class="data-table"><thead><tr>`;
                 
-                if (isBookmarked) {
-                    btn.classList.remove('bookmarked');
-                    btn.innerHTML = '<i class="fas fa-bookmark"></i> Bookmark';
+                tableData.headers.forEach(header => {
+                    html += `<th>${header}</th>`;
+                });
+                html += `</tr></thead><tbody>`;
+                
+                tableData.rows.forEach(row => {
+                    html += `<tr>`;
+                    row.forEach(cell => {
+                        html += `<td>${cell}</td>`;
+                    });
+                    html += `</tr>`;
+                });
+                
+                html += `</tbody></table></div>`;
+                return html;
+            }
+
+            handleToolbarClick(button) {
+                const command = button.getAttribute('data-command');
+                const value = button.getAttribute('data-value');
+                
+                document.execCommand(command, false, value);
+            }
+
+            toggleBookmark() {
+                if (!this.currentChapter) return;
+                
+                const bookmarkKey = `${this.currentSubject.id}-${this.currentChapter.id}`;
+                const btn = document.getElementById('bookmarkBtn');
+                
+                if (this.bookmarks.has(bookmarkKey)) {
+                    this.bookmarks.delete(bookmarkKey);
+                    btn.innerHTML = '<i class="far fa-bookmark"></i> Bookmark';
                     this.showMessage('Removed from bookmarks');
                 } else {
-                    btn.classList.add('bookmarked');
+                    this.bookmarks.add(bookmarkKey);
                     btn.innerHTML = '<i class="fas fa-bookmark"></i> Bookmarked';
                     this.showMessage('Added to bookmarks');
                 }
             }
 
-            downloadNotes() {
-                this.showMessage('Preparing download... (This would generate a PDF in a real implementation)');
+            toggleTheme() {
+                this.theme = this.theme === 'light' ? 'dark' : 'light';
+                document.body.setAttribute('data-theme', this.theme);
+                
+                const btn = document.getElementById('themeToggle');
+                btn.innerHTML = this.theme === 'light' 
+                    ? '<i class="fas fa-moon"></i> Dark Mode'
+                    : '<i class="fas fa-sun"></i> Light Mode';
             }
 
-            downloadAllNotes() {
-                this.showMessage('Preparing all notes download...');
+            searchNotes() {
+                const query = document.getElementById('globalSearch').value.trim();
+                if (!query) return;
+                
+                this.showMessage(`Searching for: ${query}`);
+                // Implement search functionality here
+            }
+
+            showBookmarks() {
+                if (this.bookmarks.size === 0) {
+                    this.showMessage('No bookmarks yet');
+                    return;
+                }
+                
+                this.showMessage(`You have ${this.bookmarks.size} bookmarked notes`);
             }
 
             showMessage(message) {
-                // Simple notification - you could replace this with a toast notification
-                alert(message);
+                // Simple notification - can be enhanced with toast notifications
+                console.log(message);
+                alert(message); // Replace with better notification system
             }
 
             showError(message) {
                 const notesContent = document.getElementById('notesContent');
                 notesContent.innerHTML = `<div class="error">${message}</div>`;
             }
+
+            setupEditor() {
+                // Rich text editor setup
+                // This is a basic implementation - can be enhanced with libraries like Quill.js
+            }
+
+            shareNotes() {
+                if (!this.currentChapter) return;
+                
+                const subject = this.currentSubject.name;
+                const chapter = this.currentChapter.title;
+                this.showMessage(`Sharing: ${subject} - ${chapter}`);
+            }
         }
 
-        // Initialize the notes manager when the page loads
+        // Initialize the application
         document.addEventListener('DOMContentLoaded', () => {
-            new NotesManager();
+            window.studyMaster = new StudyMaster();
         });
     </script>
 </body>
