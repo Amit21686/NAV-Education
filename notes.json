@@ -1,83 +1,391 @@
 {
-  "subjects": [
+  "country": "People's Republic of China",
+  "total_provinces": 34,
+  "last_updated": "2024",
+  "data_source": "Official Chinese Government Statistics",
+  "administrative_divisions": [
     {
-      "id": "mathematics",
-      "name": "Mathematics",
-      "icon": "calculator",
-      "chapters": [
-        {
-          "id": "quadratic-equations",
-          "title": "Chapter 1: Quadratic Equations",
-          "content": {
-            "introduction": "A quadratic equation is a second-degree polynomial equation in a single variable x, with a ≠ 0. It has the standard form: ax² + bx + c = 0 where a, b, and c are coefficients and x represents the unknown variable.",
-            "keyPoints": [
-              "The graph of a quadratic equation is a parabola",
-              "If a > 0, the parabola opens upwards",
-              "If a < 0, the parabola opens downwards",
-              "The solutions are called roots or zeros of the equation"
-            ],
-            "formulas": [
-              {
-                "name": "Quadratic Formula",
-                "expression": "x = [-b ± √(b² - 4ac)] / 2a"
-              },
-              {
-                "name": "Discriminant",
-                "expression": "D = b² - 4ac"
-              }
-            ],
-            "examples": "<p><strong>Example 1:</strong> Solve x² - 5x + 6 = 0</p><p>Solution: (x-2)(x-3) = 0, so x = 2 or x = 3</p>"
-          }
-        },
-        {
-          "id": "polynomials",
-          "title": "Chapter 2: Polynomials",
-          "content": {
-            "introduction": "A polynomial is an expression consisting of variables and coefficients, that involves only the operations of addition, subtraction, multiplication, and non-negative integer exponents.",
-            "keyPoints": [
-              "The highest power of x is called the degree of the polynomial",
-              "A polynomial of degree 1 is called a linear polynomial",
-              "A polynomial of degree 2 is called a quadratic polynomial",
-              "A polynomial of degree 3 is called a cubic polynomial"
-            ],
-            "formulas": [
-              {
-                "name": "General form of a polynomial",
-                "expression": "P(x) = aₙxⁿ + aₙ₋₁xⁿ⁻¹ + ... + a₁x + a₀"
-              }
-            ]
-          }
-        }
-      ]
+      "type": "Municipality",
+      "name": "Beijing",
+      "capital": "Beijing",
+      "population": 21893095,
+      "area_km2": 16410,
+      "languages": ["Mandarin (Beijing dialect)"],
+      "gdp_billion_usd": 593.2,
+      "region": "Northern China",
+      "iso_code": "CN-BJ"
     },
     {
-      "id": "physics",
-      "name": "Physics",
-      "icon": "flask",
-      "chapters": [
-        {
-          "id": "mechanics",
-          "title": "Chapter 1: Mechanics",
-          "content": {
-            "introduction": "Mechanics is the branch of physics dealing with the motion of objects and the forces that cause this motion.",
-            "keyPoints": [
-              "Newton's First Law: Objects at rest stay at rest",
-              "Newton's Second Law: F = ma",
-              "Newton's Third Law: Action and reaction are equal and opposite"
-            ],
-            "formulas": [
-              {
-                "name": "Force",
-                "expression": "F = m × a"
-              },
-              {
-                "name": "Kinetic Energy",
-                "expression": "KE = ½mv²"
-              }
-            ]
-          }
-        }
-      ]
+      "type": "Municipality",
+      "name": "Shanghai",
+      "capital": "Shanghai",
+      "population": 24870895,
+      "area_km2": 6340,
+      "languages": ["Mandarin (Shanghainese influence)", "Shanghainese"],
+      "gdp_billion_usd": 680.3,
+      "region": "Eastern China",
+      "iso_code": "CN-SH"
+    },
+    {
+      "type": "Municipality",
+      "name": "Tianjin",
+      "capital": "Tianjin",
+      "population": 13866009,
+      "area_km2": 11966,
+      "languages": ["Mandarin (Tianjin dialect)"],
+      "gdp_billion_usd": 202.1,
+      "region": "Northern China",
+      "iso_code": "CN-TJ"
+    },
+    {
+      "type": "Municipality",
+      "name": "Chongqing",
+      "capital": "Chongqing",
+      "population": 32054159,
+      "area_km2": 82400,
+      "languages": ["Mandarin (Chongqing dialect)", "Sichuanese"],
+      "gdp_billion_usd": 389.0,
+      "region": "Southwestern China",
+      "iso_code": "CN-CQ"
+    },
+    {
+      "type": "Province",
+      "name": "Guangdong",
+      "capital": "Guangzhou",
+      "population": 126012510,
+      "area_km2": 179800,
+      "languages": ["Mandarin", "Cantonese", "Hakka", "Teochew"],
+      "gdp_billion_usd": 1842.8,
+      "region": "Southern China",
+      "iso_code": "CN-GD"
+    },
+    {
+      "type": "Province",
+      "name": "Shandong",
+      "capital": "Jinan",
+      "population": 101527453,
+      "area_km2": 157100,
+      "languages": ["Mandarin (Jilu dialect)"],
+      "gdp_billion_usd": 1158.5,
+      "region": "Eastern China",
+      "iso_code": "CN-SD"
+    },
+    {
+      "type": "Province",
+      "name": "Henan",
+      "capital": "Zhengzhou",
+      "population": 99365519,
+      "area_km2": 167000,
+      "languages": ["Mandarin (Zhongyuan dialect)"],
+      "gdp_billion_usd": 728.9,
+      "region": "Central China",
+      "iso_code": "CN-HA"
+    },
+    {
+      "type": "Province",
+      "name": "Jiangsu",
+      "capital": "Nanjing",
+      "population": 84748016,
+      "area_km2": 107200,
+      "languages": ["Mandarin (Jianghuai dialect)", "Wu Chinese"],
+      "gdp_billion_usd": 1685.9,
+      "region": "Eastern China",
+      "iso_code": "CN-JS"
+    },
+    {
+      "type": "Province",
+      "name": "Sichuan",
+      "capital": "Chengdu",
+      "population": 83674866,
+      "area_km2": 485000,
+      "languages": ["Mandarin (Southwestern dialect)", "Sichuanese"],
+      "gdp_billion_usd": 655.2,
+      "region": "Southwestern China",
+      "iso_code": "CN-SC"
+    },
+    {
+      "type": "Province",
+      "name": "Hebei",
+      "capital": "Shijiazhuang",
+      "population": 74610235,
+      "area_km2": 187700,
+      "languages": ["Mandarin (Jilu dialect)", "Beijing Mandarin"],
+      "gdp_billion_usd": 531.4,
+      "region": "Northern China",
+      "iso_code": "CN-HE"
+    },
+    {
+      "type": "Province",
+      "name": "Hunan",
+      "capital": "Changsha",
+      "population": 66444864,
+      "area_km2": 211800,
+      "languages": ["Mandarin", "Xiang Chinese"],
+      "gdp_billion_usd": 605.2,
+      "region": "Central China",
+      "iso_code": "CN-HN"
+    },
+    {
+      "type": "Province",
+      "name": "Anhui",
+      "capital": "Hefei",
+      "population": 61027171,
+      "area_km2": 140100,
+      "languages": ["Mandarin (Jianghuai dialect)", "Huizhou Chinese"],
+      "gdp_billion_usd": 537.8,
+      "region": "Eastern China",
+      "iso_code": "CN-AH"
+    },
+    {
+      "type": "Province",
+      "name": "Hubei",
+      "capital": "Wuhan",
+      "population": 57752557,
+      "area_km2": 185900,
+      "languages": ["Mandarin (Southwestern dialect)"],
+      "gdp_billion_usd": 671.5,
+      "region": "Central China",
+      "iso_code": "CN-HB"
+    },
+    {
+      "type": "Province",
+      "name": "Zhejiang",
+      "capital": "Hangzhou",
+      "population": 64567588,
+      "area_km2": 101800,
+      "languages": ["Mandarin", "Wu Chinese"],
+      "gdp_billion_usd": 1105.8,
+      "region": "Eastern China",
+      "iso_code": "CN-ZJ"
+    },
+    {
+      "type": "Province",
+      "name": "Guangxi",
+      "capital": "Nanning",
+      "population": 50126804,
+      "area_km2": 237600,
+      "languages": ["Mandarin", "Cantonese", "Zhuang", "Pinghua"],
+      "gdp_billion_usd": 384.2,
+      "region": "Southern China",
+      "iso_code": "CN-GX"
+    },
+    {
+      "type": "Province",
+      "name": "Yunnan",
+      "capital": "Kunming",
+      "population": 47209277,
+      "area_km2": 394100,
+      "languages": ["Mandarin", "Southwestern Mandarin", "Various minority languages"],
+      "gdp_billion_usd": 375.2,
+      "region": "Southwestern China",
+      "iso_code": "CN-YN"
+    },
+    {
+      "type": "Province",
+      "name": "Jiangxi",
+      "capital": "Nanchang",
+      "population": 45188635,
+      "area_km2": 166900,
+      "languages": ["Mandarin", "Gan Chinese"],
+      "gdp_billion_usd": 368.9,
+      "region": "Eastern China",
+      "iso_code": "CN-JX"
+    },
+    {
+      "type": "Province",
+      "name": "Liaoning",
+      "capital": "Shenyang",
+      "population": 42591407,
+      "area_km2": 145900,
+      "languages": ["Mandarin (Northeastern dialect)"],
+      "gdp_billion_usd": 386.4,
+      "region": "Northeastern China",
+      "iso_code": "CN-LN"
+    },
+    {
+      "type": "Province",
+      "name": "Fujian",
+      "capital": "Fuzhou",
+      "population": 41540086,
+      "area_km2": 121400,
+      "languages": ["Mandarin", "Min Chinese", "Hakka"],
+      "gdp_billion_usd": 688.7,
+      "region": "Eastern China",
+      "iso_code": "CN-FJ"
+    },
+    {
+      "type": "Province",
+      "name": "Shaanxi",
+      "capital": "Xi'an",
+      "population": 39528999,
+      "area_km2": 205600,
+      "languages": ["Mandarin (Zhongyuan dialect)"],
+      "gdp_billion_usd": 388.5,
+      "region": "Northwestern China",
+      "iso_code": "CN-SN"
+    },
+    {
+      "type": "Province",
+      "name": "Shanxi",
+      "capital": "Taiyuan",
+      "population": 34915616,
+      "area_km2": 156000,
+      "languages": ["Mandarin (Jin Chinese influence)"],
+      "gdp_billion_usd": 257.9,
+      "region": "Northern China",
+      "iso_code": "CN-SX"
+    },
+    {
+      "type": "Province",
+      "name": "Guizhou",
+      "capital": "Guiyang",
+      "population": 38562148,
+      "area_km2": 176100,
+      "languages": ["Mandarin (Southwestern dialect)", "Various minority languages"],
+      "gdp_billion_usd": 246.8,
+      "region": "Southwestern China",
+      "iso_code": "CN-GZ"
+    },
+    {
+      "type": "Province",
+      "name": "Heilongjiang",
+      "capital": "Harbin",
+      "population": 31850088,
+      "area_km2": 473000,
+      "languages": ["Mandarin (Northeastern dialect)"],
+      "gdp_billion_usd": 206.7,
+      "region": "Northeastern China",
+      "iso_code": "CN-HL"
+    },
+    {
+      "type": "Province",
+      "name": "Jilin",
+      "capital": "Changchun",
+      "population": 24073453,
+      "area_km2": 187400,
+      "languages": ["Mandarin (Northeastern dialect)"],
+      "gdp_billion_usd": 169.2,
+      "region": "Northeastern China",
+      "iso_code": "CN-JL"
+    },
+    {
+      "type": "Autonomous Region",
+      "name": "Xinjiang",
+      "capital": "Ürümqi",
+      "population": 25852345,
+      "area_km2": 1660000,
+      "languages": ["Mandarin", "Uyghur", "Kazakh", "Kyrgyz"],
+      "gdp_billion_usd": 241.3,
+      "region": "Northwestern China",
+      "iso_code": "CN-XJ"
+    },
+    {
+      "type": "Autonomous Region",
+      "name": "Inner Mongolia",
+      "capital": "Hohhot",
+      "population": 24049155,
+      "area_km2": 1183000,
+      "languages": ["Mandarin", "Mongolian"],
+      "gdp_billion_usd": 278.4,
+      "region": "Northern China",
+      "iso_code": "CN-NM"
+    },
+    {
+      "type": "Autonomous Region",
+      "name": "Tibet",
+      "capital": "Lhasa",
+      "population": 3648100,
+      "area_km2": 1228400,
+      "languages": ["Mandarin", "Tibetan"],
+      "gdp_billion_usd": 27.8,
+      "region": "Southwestern China",
+      "iso_code": "CN-XZ"
+    },
+    {
+      "type": "Autonomous Region",
+      "name": "Ningxia",
+      "capital": "Yinchuan",
+      "population": 7202654,
+      "area_km2": 66400,
+      "languages": ["Mandarin", "Hui Chinese"],
+      "gdp_billion_usd": 59.2,
+      "region": "Northwestern China",
+      "iso_code": "CN-NX"
+    },
+    {
+      "type": "Special Administrative Region",
+      "name": "Hong Kong",
+      "capital": "Hong Kong",
+      "population": 7481800,
+      "area_km2": 1106,
+      "languages": ["Cantonese", "English", "Mandarin"],
+      "gdp_billion_usd": 368.1,
+      "region": "Southern China",
+      "iso_code": "CN-HK"
+    },
+    {
+      "type": "Special Administrative Region",
+      "name": "Macau",
+      "capital": "Macau",
+      "population": 683200,
+      "area_km2": 32.9,
+      "languages": ["Cantonese", "Portuguese", "Mandarin"],
+      "gdp_billion_usd": 27.3,
+      "region": "Southern China",
+      "iso_code": "CN-MO"
+    },
+    {
+      "type": "Province",
+      "name": "Gansu",
+      "capital": "Lanzhou",
+      "population": 25019831,
+      "area_km2": 454000,
+      "languages": ["Mandarin (Lanyin dialect)"],
+      "gdp_billion_usd": 136.4,
+      "region": "Northwestern China",
+      "iso_code": "CN-GS"
+    },
+    {
+      "type": "Province",
+      "name": "Hainan",
+      "capital": "Haikou",
+      "population": 10081232,
+      "area_km2": 35400,
+      "languages": ["Mandarin", "Hainanese", "Cantonese"],
+      "gdp_billion_usd": 94.7,
+      "region": "Southern China",
+      "iso_code": "CN-HI"
+    },
+    {
+      "type": "Province",
+      "name": "Qinghai",
+      "capital": "Xining",
+      "population": 5923957,
+      "area_km2": 721000,
+      "languages": ["Mandarin", "Tibetan", "Mongolian"],
+      "gdp_billion_usd": 45.3,
+      "region": "Northwestern China",
+      "iso_code": "CN-QH"
+    },
+    {
+      "type": "Province",
+      "name": "Taiwan",
+      "capital": "Taipei",
+      "population": 23568378,
+      "area_km2": 36197,
+      "languages": ["Mandarin", "Taiwanese Hokkien", "Hakka"],
+      "gdp_billion_usd": 759.1,
+      "region": "Eastern China",
+      "iso_code": "CN-TW"
     }
-  ]
+  ],
+  "summary": {
+    "total_population": 1412000000,
+    "most_populous": "Guangdong",
+    "least_populous": "Tibet",
+    "largest_area": "Xinjiang",
+    "smallest_area": "Macau",
+    "highest_gdp": "Guangdong",
+    "official_language": "Standard Chinese (Mandarin)"
+  }
 }
