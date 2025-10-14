@@ -1,0 +1,83 @@
+{
+  "subjects": [
+    {
+      "id": "mathematics",
+      "name": "Mathematics",
+      "icon": "calculator",
+      "chapters": [
+        {
+          "id": "quadratic-equations",
+          "title": "Chapter 1: Quadratic Equations",
+          "content": {
+            "introduction": "A quadratic equation is a second-degree polynomial equation in a single variable x, with a ≠ 0. It has the standard form: ax² + bx + c = 0 where a, b, and c are coefficients and x represents the unknown variable.",
+            "keyPoints": [
+              "The graph of a quadratic equation is a parabola",
+              "If a > 0, the parabola opens upwards",
+              "If a < 0, the parabola opens downwards",
+              "The solutions are called roots or zeros of the equation"
+            ],
+            "formulas": [
+              {
+                "name": "Quadratic Formula",
+                "expression": "x = [-b ± √(b² - 4ac)] / 2a"
+              },
+              {
+                "name": "Discriminant",
+                "expression": "D = b² - 4ac"
+              }
+            ],
+            "examples": "<p><strong>Example 1:</strong> Solve x² - 5x + 6 = 0</p><p>Solution: (x-2)(x-3) = 0, so x = 2 or x = 3</p>"
+          }
+        },
+        {
+          "id": "polynomials",
+          "title": "Chapter 2: Polynomials",
+          "content": {
+            "introduction": "A polynomial is an expression consisting of variables and coefficients, that involves only the operations of addition, subtraction, multiplication, and non-negative integer exponents.",
+            "keyPoints": [
+              "The highest power of x is called the degree of the polynomial",
+              "A polynomial of degree 1 is called a linear polynomial",
+              "A polynomial of degree 2 is called a quadratic polynomial",
+              "A polynomial of degree 3 is called a cubic polynomial"
+            ],
+            "formulas": [
+              {
+                "name": "General form of a polynomial",
+                "expression": "P(x) = aₙxⁿ + aₙ₋₁xⁿ⁻¹ + ... + a₁x + a₀"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "physics",
+      "name": "Physics",
+      "icon": "flask",
+      "chapters": [
+        {
+          "id": "mechanics",
+          "title": "Chapter 1: Mechanics",
+          "content": {
+            "introduction": "Mechanics is the branch of physics dealing with the motion of objects and the forces that cause this motion.",
+            "keyPoints": [
+              "Newton's First Law: Objects at rest stay at rest",
+              "Newton's Second Law: F = ma",
+              "Newton's Third Law: Action and reaction are equal and opposite"
+            ],
+            "formulas": [
+              {
+                "name": "Force",
+                "expression": "F = m × a"
+              },
+              {
+                "name": "Kinetic Energy",
+                "expression": "KE = ½mv²"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
