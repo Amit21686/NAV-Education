@@ -2,981 +2,1478 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyMaster - Complete Notes Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NAV Education - Home</title>
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="NAV Education - Smart Learning Platform">
+    <meta name="description" content="Master UI/UX Design, Web Development, and Data Science with personalized learning paths">
+    <meta name="keywords" content="education, learning, courses, ui/ux, web development, data science">
+    <meta name="author" content="NAV Education">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#6366f1" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://naveducation.com">
+    <meta property="og:title" content="NAV Education - Smart Learning Platform">
+    <meta property="og:description" content="Master UI/UX Design, Web Development, and Data Science with personalized learning paths">
+    <meta property="og:image" content="https://naveducation.com/og-image.jpg">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://naveducation.com">
+    <meta property="twitter:title" content="NAV Education - Smart Learning Platform">
+    <meta property="twitter:description" content="Master UI/UX Design, Web Development, and Data Science with personalized learning paths">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css">
+    
+    <!-- Appwrite SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- PWA Support -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192x192.png">
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* Additional page-specific styles */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-sm);
+            margin: var(--space-lg) 0;
         }
-
-        :root {
-            --primary: #4361ee;
-            --secondary: #3a0ca3;
-            --accent: #4cc9f0;
-            --success: #4bb543;
-            --warning: #ffcc00;
-            --danger: #dc3545;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --sidebar-width: 280px;
-            --header-height: 70px;
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            text-align: center;
+            transition: all var(--transition-fast);
+            cursor: pointer;
         }
-
-        [data-theme="dark"] {
-            --light: #1a1a1a;
-            --dark: #f8f9fa;
-            --primary: #5a7dff;
-            --secondary: #6d28d9;
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
         }
-
-        body {
-            background-color: var(--light);
-            color: var(--dark);
-            line-height: 1.6;
-            transition: all 0.3s ease;
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.2;
         }
-
-        .container {
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .section-header {
             display: flex;
-            min-height: 100vh;
+            align-items: center;
+            justify-content: space-between;
+            margin: var(--space-lg) 0 var(--space-sm);
         }
-
-        /* Header */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--header-height);
+        
+        .section-header h3 {
+            margin: 0;
+            color: var(--text);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .view-all {
+            color: var(--primary);
+            font-size: 0.85rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: gap var(--transition-fast);
+        }
+        
+        .view-all:hover {
+            gap: 8px;
+        }
+        
+        .streak-badge {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            color: white;
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .streak-badge i {
+            font-size: 0.9rem;
+        }
+        
+        .recommendation-chip {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-full);
+            color: var(--text);
+            font-size: 0.85rem;
+            margin-right: var(--space-sm);
+            margin-bottom: var(--space-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .recommendation-chip:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .recommendation-chip i {
+            margin-right: 4px;
+        }
+        
+        .motivation-quote {
+            background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1));
+            border-left: 4px solid var(--primary);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin: var(--space-lg) 0;
+            font-style: italic;
+            color: var(--text-muted);
+            position: relative;
+        }
+        
+        .motivation-quote::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-size: 4rem;
+            color: var(--primary);
+            opacity: 0.2;
+            font-family: serif;
+        }
+        
+        .motivation-quote p {
+            position: relative;
+            z-index: 1;
+            margin-bottom: var(--space-xs);
+            font-size: 1rem;
+        }
+        
+        .motivation-quote .author {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-style: normal;
+            font-weight: 500;
+            text-align: right;
+        }
+        
+        .continue-learning-card {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
             color: white;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 2rem;
-            z-index: 1000;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
+            margin-bottom: var(--space-lg);
             cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s;
+            transition: all var(--transition-fast);
+        }
+        
+        .continue-learning-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .continue-learning-left {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: var(--space-md);
         }
-
-        .btn-primary {
-            background: var(--accent);
-            color: white;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid white;
-            color: white;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: white;
-            border-right: 1px solid #e1e5e9;
-            height: calc(100vh - var(--header-height));
-            position: fixed;
-            top: var(--header-height);
-            left: 0;
-            overflow-y: auto;
-            transition: transform 0.3s ease;
-        }
-
-        [data-theme="dark"] .sidebar {
-            background: #2d2d2d;
-            border-right-color: #444;
-        }
-
-        .sidebar-section {
-            padding: 1.5rem;
-            border-bottom: 1px solid #e1e5e9;
-        }
-
-        [data-theme="dark"] .sidebar-section {
-            border-bottom-color: #444;
-        }
-
-        .sidebar-section h3 {
-            margin-bottom: 1rem;
-            color: var(--secondary);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .subject-list, .action-list {
-            list-style: none;
-        }
-
-        .subject-list li, .action-list li {
-            margin-bottom: 0.5rem;
-        }
-
-        .subject-list a, .action-list a {
+        
+        .continue-learning-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.2);
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 12px;
-            border-radius: 6px;
-            color: var(--dark);
-            text-decoration: none;
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-
-        [data-theme="dark"] .subject-list a,
-        [data-theme="dark"] .action-list a {
-            color: #e1e5e9;
-        }
-
-        .subject-list a:hover, 
-        .subject-list a.active,
-        .action-list a:hover {
-            background: rgba(67, 97, 238, 0.1);
-            color: var(--primary);
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: var(--sidebar-width);
-            margin-top: var(--header-height);
-            padding: 2rem;
-            min-height: calc(100vh - var(--header-height));
-        }
-
-        .notes-container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-
-        [data-theme="dark"] .notes-container {
-            background: #2d2d2d;
-        }
-
-        .notes-header {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid #e1e5e9;
-            display: flex;
-            justify-content: between;
-            align-items: center;
-        }
-
-        [data-theme="dark"] .notes-header {
-            border-bottom-color: #444;
-        }
-
-        .notes-title {
+            justify-content: center;
             font-size: 1.5rem;
-            color: var(--secondary);
+        }
+        
+        .continue-learning-info h4 {
             font-weight: 600;
+            margin-bottom: 4px;
         }
-
-        .notes-actions {
+        
+        .continue-learning-info p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+        
+        .continue-learning-play {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: var(--radius-full);
             display: flex;
-            gap: 0.5rem;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
         }
-
-        .notes-body {
-            padding: 2rem;
-            max-height: calc(100vh - 200px);
-            overflow-y: auto;
+        
+        .deadline-card {
+            border-left: 4px solid #f59e0b;
+            margin-bottom: var(--space-sm);
         }
-
-        /* Toolbar */
-        .toolbar {
-            background: #f8f9fa;
-            padding: 1rem 2rem;
-            border-bottom: 1px solid #e1e5e9;
+        
+        .achievement-grid {
             display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        [data-theme="dark"] .toolbar {
-            background: #3d3d3d;
-            border-bottom-color: #555;
-        }
-
-        .toolbar-group {
-            display: flex;
-            gap: 2px;
-            background: white;
-            padding: 4px;
-            border-radius: 6px;
-            border: 1px solid #e1e5e9;
-        }
-
-        [data-theme="dark"] .toolbar-group {
-            background: #444;
-            border-color: #666;
-        }
-
-        .toolbar-btn {
-            padding: 6px 10px;
-            border: none;
-            background: none;
-            border-radius: 4px;
-            cursor: pointer;
-            color: var(--dark);
-            transition: all 0.3s;
-        }
-
-        [data-theme="dark"] .toolbar-btn {
-            color: #e1e5e9;
-        }
-
-        .toolbar-btn:hover {
-            background: rgba(67, 97, 238, 0.1);
-        }
-
-        /* Note Content Styles */
-        .chapter {
-            margin-bottom: 3rem;
-            border-left: 4px solid var(--accent);
-            padding-left: 1.5rem;
-        }
-
-        .chapter-title {
-            font-size: 1.8rem;
-            color: var(--secondary);
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-        }
-
-        .section {
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.3rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-
-        .content-box {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid var(--primary);
-        }
-
-        [data-theme="dark"] .content-box {
-            background: #3d3d3d;
-        }
-
-        .key-points {
-            background: #fff9e6;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid var(--warning);
-        }
-
-        [data-theme="dark"] .key-points {
-            background: #4a4a3d;
-        }
-
-        .formulas {
-            background: #e6f7ff;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid var(--accent);
-        }
-
-        [data-theme="dark"] .formulas {
-            background: #3d4a4a;
-        }
-
-        .formula {
-            font-family: 'KaTeX_Math', 'Times New Roman', serif;
-            background: white;
-            padding: 1rem;
-            border-radius: 6px;
-            margin: 0.5rem 0;
-            border: 1px solid #e1e5e9;
-            font-size: 1.1rem;
-        }
-
-        [data-theme="dark"] .formula {
-            background: #444;
-            border-color: #666;
-        }
-
-        .table-container {
+            gap: var(--space-sm);
             overflow-x: auto;
-            margin: 1.5rem 0;
+            padding: var(--space-sm) 0 var(--space-md);
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--border);
         }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        
+        .achievement-grid::-webkit-scrollbar {
+            height: 4px;
         }
-
-        [data-theme="dark"] .data-table {
-            background: #3d3d3d;
+        
+        .achievement-grid::-webkit-scrollbar-track {
+            background: var(--border);
+            border-radius: var(--radius-full);
         }
-
-        .data-table th {
+        
+        .achievement-grid::-webkit-scrollbar-thumb {
             background: var(--primary);
-            color: white;
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
+            border-radius: var(--radius-full);
         }
-
-        .data-table td {
-            padding: 1rem;
-            border-bottom: 1px solid #e1e5e9;
+        
+        .achievement-item {
+            min-width: 100px;
+            text-align: center;
+            padding: var(--space-sm);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
         }
-
-        [data-theme="dark"] .data-table td {
-            border-bottom-color: #555;
-        }
-
-        .data-table tr:hover {
-            background: rgba(67, 97, 238, 0.05);
-        }
-
-        [data-theme="dark"] .data-table tr:hover {
-            background: rgba(67, 97, 238, 0.1);
-        }
-
-        /* Editor */
-        .editor {
-            min-height: 300px;
-            padding: 1.5rem;
-            border: 1px solid #e1e5e9;
-            border-radius: 8px;
-            margin: 1rem 0;
-            background: white;
-        }
-
-        [data-theme="dark"] .editor {
-            background: #3d3d3d;
-            border-color: #555;
-        }
-
-        .editor:focus {
-            outline: none;
+        
+        .achievement-item:hover {
+            transform: translateY(-2px);
             border-color: var(--primary);
         }
-
-        /* Search */
-        .search-container {
-            position: relative;
-            margin-bottom: 1rem;
+        
+        .achievement-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-full);
+            margin: 0 auto var(--space-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
         }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 45px 12px 16px;
-            border: 1px solid #e1e5e9;
-            border-radius: 8px;
+        
+        .achievement-icon.books { background: linear-gradient(135deg, #34d399, #10b981); }
+        .achievement-icon.learner { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
+        
+        .achievement-title {
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        .activity-feed {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--bg);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1rem;
+        }
+        
+        .activity-details h5 {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        
+        .activity-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        
+        .activity-points {
+            color: var(--success);
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        
+        .daily-challenge {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            color: white;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .challenge-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+        }
+        
+        .challenge-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .challenge-reward {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin: var(--space-md) 0;
+            padding: var(--space-sm);
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-md);
+        }
+        
+        .challenge-progress {
+            margin-top: var(--space-md);
+        }
+        
+        .challenge-progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .challenge-progress-fill {
+            height: 100%;
+            width: 33%;
             background: white;
-            color: var(--dark);
+            border-radius: var(--radius-full);
         }
-
-        [data-theme="dark"] .search-input {
-            background: #3d3d3d;
-            border-color: #555;
-            color: #e1e5e9;
+        
+        /* Profile Menu */
+        .profile-menu {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            min-width: 200px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            display: none;
+            box-shadow: var(--shadow-lg);
         }
-
-        .search-btn {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--primary);
+        
+        .profile-menu.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .profile-menu-header {
+            padding: var(--space-sm) var(--space-md);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .profile-menu-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .profile-menu-email {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            color: var(--text);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
             cursor: pointer;
         }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-        }
-
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 3rem;
+        
+        .profile-menu-item:hover {
+            background: var(--bg-card-hover);
             color: var(--primary);
         }
-
-        .error {
-            background: #ffe6e6;
-            color: var(--danger);
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 1rem 0;
+        
+        .profile-menu-item i {
+            width: 20px;
+            color: var(--primary);
         }
-
-        [data-theme="dark"] .error {
-            background: #4a3d3d;
+        
+        .profile-menu-divider {
+            height: 1px;
+            background: var(--border);
+            margin: var(--space-sm) 0;
+        }
+        
+        /* Sync Status */
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm);
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            margin: var(--space-sm) 0;
+            color: var(--success);
+            font-size: 0.8rem;
+            border: 1px solid var(--border);
+        }
+        
+        .sync-status i {
+            font-size: 1rem;
+        }
+        
+        /* Welcome Card Enhancement */
+        .welcome-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-stats {
+            display: flex;
+            gap: var(--space-md);
+            margin-top: var(--space-md);
+            padding-top: var(--space-md);
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .welcome-stat {
+            flex: 1;
+        }
+        
+        .welcome-stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        .welcome-stat-label {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+        
+        /* Loading Spinner */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            max-width: 320px;
+            text-align: center;
+            border: 1px solid var(--border);
+            animation: modalPop 0.3s ease;
+        }
+        
+        @keyframes modalPop {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* Banner Styles */
+        .banner-container {
+            width: 100%;
+            margin: var(--space-lg) 0;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-fast);
+            animation: fadeInBanner 0.8s ease;
+        }
+        
+        .banner-container:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .banner-container:active {
+            transform: translateY(0);
+        }
+        
+        .banner-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: var(--radius-xl);
+            transition: transform var(--transition-fast);
+        }
+        
+        .banner-container:hover .banner-image {
+            transform: scale(1.02);
+        }
+        
+        @keyframes fadeInBanner {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
-<body data-theme="light">
-    <!-- Header -->
-    <header class="header">
-        <div class="logo">
-            <i class="fas fa-graduation-cap"></i>
-            <span>StudyMaster</span>
-        </div>
-        <div class="header-actions">
-            <button class="btn btn-outline" id="themeToggle">
-                <i class="fas fa-moon"></i> Dark Mode
-            </button>
-            <button class="btn btn-primary" id="newNoteBtn">
-                <i class="fas fa-plus"></i> New Note
-            </button>
-        </div>
-    </header>
-
-    <div class="container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-section">
-                <div class="search-container">
-                    <input type="text" class="search-input" id="globalSearch" placeholder="Search notes...">
-                    <button class="search-btn" id="searchButton">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="sidebar-section">
-                <h3>Subjects</h3>
-                <ul class="subject-list" id="subjectList">
-                    <!-- Subjects will be loaded here -->
-                </ul>
-            </div>
-
-            <div class="sidebar-section">
-                <h3>Quick Actions</h3>
-                <ul class="action-list">
-                    <li><a href="#" id="bookmarksBtn"><i class="fas fa-bookmark"></i> Bookmarked</a></li>
-                    <li><a href="#" id="recentBtn"><i class="fas fa-history"></i> Recent Notes</a></li>
-                    <li><a href="#" id="flashcardsBtn"><i class="fas fa-layer-group"></i> Flashcards</a></li>
-                    <li><a href="#" id="exportBtn"><i class="fas fa-download"></i> Export All</a></li>
-                </ul>
-            </div>
-
-            <div class="sidebar-section">
-                <h3>Tools</h3>
-                <ul class="action-list">
-                    <li><a href="#" id="calculatorBtn"><i class="fas fa-calculator"></i> Calculator</a></li>
-                    <li><a href="#" id="dictionaryBtn"><i class="fas fa-book"></i> Dictionary</a></li>
-                    <li><a href="#" id="timerBtn"><i class="fas fa-clock"></i> Study Timer</a></li>
-                </ul>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="notes-container">
-                <div class="notes-header">
-                    <h1 class="notes-title" id="notesTitle">Welcome to StudyMaster</h1>
-                    <div class="notes-actions">
-                        <button class="btn btn-outline" id="bookmarkBtn">
-                            <i class="far fa-bookmark"></i> Bookmark
-                        </button>
-                        <button class="btn btn-outline" id="printBtn">
-                            <i class="fas fa-print"></i> Print
-                        </button>
-                        <button class="btn btn-primary" id="shareBtn">
-                            <i class="fas fa-share"></i> Share
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Toolbar -->
-                <div class="toolbar" id="toolbar">
-                    <div class="toolbar-group">
-                        <button class="toolbar-btn" data-command="bold"><i class="fas fa-bold"></i></button>
-                        <button class="toolbar-btn" data-command="italic"><i class="fas fa-italic"></i></button>
-                        <button class="toolbar-btn" data-command="underline"><i class="fas fa-underline"></i></button>
-                    </div>
-                    <div class="toolbar-group">
-                        <button class="toolbar-btn" data-command="insertUnorderedList"><i class="fas fa-list-ul"></i></button>
-                        <button class="toolbar-btn" data-command="insertOrderedList"><i class="fas fa-list-ol"></i></button>
-                    </div>
-                    <div class="toolbar-group">
-                        <button class="toolbar-btn" data-command="createLink"><i class="fas fa-link"></i></button>
-                        <button class="toolbar-btn" data-command="insertImage"><i class="fas fa-image"></i></button>
-                        <button class="toolbar-btn" data-command="insertTable"><i class="fas fa-table"></i></button>
-                    </div>
-                    <div class="toolbar-group">
-                        <button class="toolbar-btn" data-command="formatBlock" data-value="h2"><i class="fas fa-heading"></i> H2</button>
-                        <button class="toolbar-btn" data-command="formatBlock" data-value="h3"><i class="fas fa-heading"></i> H3</button>
-                    </div>
-                </div>
-
-                <!-- Notes Body -->
-                <div class="notes-body" id="notesContent">
-                    <div class="welcome-message">
-                        <h2>Welcome to Your Complete Notes Platform</h2>
-                        <p>Select a subject from the sidebar to start viewing notes, or create new notes using the editor above.</p>
-                        
-                        <div class="content-box">
-                            <h3>Features Available:</h3>
-                            <ul>
-                                <li>📝 Rich Text Editor with formatting tools</li>
-                                <li>📚 Multiple subjects and chapters</li>
-                                <li>🔍 Advanced search functionality</li>
-                                <li>📊 Tables and data visualization</li>
-                                <li>🧮 Mathematical equations support</li>
-                                <li>🎨 Dark/Light theme</li>
-                                <li>💾 Export and sharing options</li>
-                                <li>🔖 Bookmarking system</li>
-                                <li>📱 Responsive design</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/contrib/auto-render.min.js"></script>
-    
+    <div class="container">
+        <!-- Header Section -->
+        <header class="app-header">
+            <div class="brand">
+                <h1>NAV <span>Education</span></h1>
+            </div>
+            
+            <div class="flex" style="gap: var(--space-sm);">
+                <!-- Notification Bell -->
+                <div class="profile-icon" id="notificationBtn">
+                    <i class="far fa-bell"></i>
+                    <span class="badge" id="notificationBadge" style="position: absolute; top: -2px; right: -2px; display: none;">3</span>
+                </div>
+                
+                <!-- Profile Icon with Avatar -->
+                <div class="profile-icon" id="profileBtn">
+                    <img id="headerAvatar" src="" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: none;">
+                    <span id="headerEmoji">👤</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Profile Menu -->
+        <div id="profileMenu" class="profile-menu">
+            <div class="profile-menu-header">
+                <div class="profile-menu-name" id="menuUserName">Amit Kumar</div>
+                <div class="profile-menu-email" id="menuUserEmail">amit.kumar@example.com</div>
+            </div>
+            <div class="profile-menu-item" onclick="window.location.href='profile.html'">
+                <i class="fas fa-user"></i>
+                <span>View Profile</span>
+            </div>
+            <div class="profile-menu-item" onclick="window.location.href='settings.html'">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </div>
+            <div class="profile-menu-divider"></div>
+            <div class="profile-menu-item" onclick="showStats()">
+                <i class="fas fa-chart-line"></i>
+                <span>Learning Stats</span>
+            </div>
+            <div class="profile-menu-item" onclick="showAchievements()">
+                <i class="fas fa-trophy"></i>
+                <span>Achievements</span>
+            </div>
+            <div class="profile-menu-divider"></div>
+            <div class="profile-menu-item" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </div>
+        </div>
+
+        <!-- Sync Status -->
+        <div class="sync-status" id="syncStatus" style="display: none;">
+            <i class="fas fa-check-circle"></i>
+            <span>Settings synced</span>
+        </div>
+
+        <!-- Welcome Section -->
+        <section class="welcome-card">
+            <div class="flex-between" style="margin-bottom: var(--space-md);">
+                <h2 id="welcomeText">Welcome Back, Amit 👋</h2>
+                <div class="streak-badge" id="streakBadge">
+                    <i class="fas fa-fire"></i>
+                    <span id="streakCount">7</span> day streak
+                </div>
+            </div>
+            
+            <p id="welcomeMessage">Keep learning consistently. You're doing great!</p>
+
+            <!-- Progress Section -->
+            <div class="progress-wrapper">
+                <div class="progress-header">
+                    <span>Today's Progress</span>
+                    <span id="progressLabel">20% Completed</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="mainProgress" style="width: 20%;"></div>
+                </div>
+                
+                <!-- Mini Stats -->
+                <div class="flex-between" style="margin-top: var(--space-sm);">
+                    <span style="font-size: 0.75rem; opacity: 0.8;">
+                        <i class="far fa-clock"></i> <span id="todayHours">2.5</span> hrs today
+                    </span>
+                    <span style="font-size: 0.75rem; opacity: 0.8;">
+                        <i class="far fa-calendar"></i> Goal: <span id="dailyGoal">4</span> hrs
+                    </span>
+                </div>
+            </div>
+
+            <!-- Welcome Stats -->
+            <div class="welcome-stats">
+                <div class="welcome-stat">
+                    <div class="welcome-stat-value" id="totalCourses">3</div>
+                    <div class="welcome-stat-label">Courses</div>
+                </div>
+                <div class="welcome-stat">
+                    <div class="welcome-stat-value" id="totalHours">28</div>
+                    <div class="welcome-stat-label">Hours</div>
+                </div>
+                <div class="welcome-stat">
+                    <div class="welcome-stat-value" id="totalBadges">5</div>
+                    <div class="welcome-stat-label">Badges</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Banner Section -->
+        <div class="banner-container" onclick="window.location.href='https://naveducation.com'">
+            <img src="https://raw.githubusercontent.com/Amit21686/NAV_Education/refs/heads/main/images/NAV%20Education%20banner.png" 
+                 alt="NAV Education Banner" 
+                 class="banner-image">
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="stat-card" onclick="showCourseStats()">
+                <div class="stat-value" id="coursesEnrolled">3</div>
+                <div class="stat-label">Enrolled</div>
+            </div>
+            <div class="stat-card" onclick="showTimeStats()">
+                <div class="stat-value" id="hoursLearned">28</div>
+                <div class="stat-label">Hours</div>
+            </div>
+            <div class="stat-card" onclick="showAchievementStats()">
+                <div class="stat-value" id="achievements">5</div>
+                <div class="stat-label">Badges</div>
+            </div>
+        </div>
+
+        <!-- Motivation Quote -->
+        <div class="motivation-quote">
+            <p id="motivationText">The expert in anything was once a beginner.</p>
+            <div class="author">- NAV Education</div>
+        </div>
+
+        <!-- Your Courses Section -->
+        <div class="section-header">
+            <h3>
+                <i class="fas fa-book-open" style="color: var(--primary);"></i>
+                Your Courses
+            </h3>
+            <a href="library.html" class="view-all">
+                View All <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <!-- Course Cards -->
+        <div class="card" data-course-id="ui-ux-101" data-progress="70" data-category="design" onclick="openCourse('ui-ux-101')">
+            <div class="card-left">
+                <span class="card-icon">🎨</span>
+                <div>
+                    <span class="card-title">UI/UX Design Masterclass</span>
+                    <div style="font-size: 0.7rem; color: var(--text-muted);">12 lessons remaining</div>
+                </div>
+            </div>
+            <div class="card-right">
+                <span>70%</span>
+                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+            </div>
+        </div>
+
+        <div class="card" data-course-id="web-dev-101" data-progress="45" data-category="development" onclick="openCourse('web-dev-101')">
+            <div class="card-left">
+                <span class="card-icon">💻</span>
+                <div>
+                    <span class="card-title">Full Stack Web Development</span>
+                    <div style="font-size: 0.7rem; color: var(--text-muted);">8 lessons remaining</div>
+                </div>
+            </div>
+            <div class="card-right">
+                <span>45%</span>
+                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+            </div>
+            <span class="badge badge-success" style="position: absolute; top: 8px; right: 60px;">Popular</span>
+        </div>
+
+        <div class="card" data-course-id="data-science-101" data-progress="20" data-category="data" onclick="openCourse('data-science-101')">
+            <div class="card-left">
+                <span class="card-icon">📊</span>
+                <div>
+                    <span class="card-title">Data Science Fundamentals</span>
+                    <div style="font-size: 0.7rem; color: var(--text-muted);">15 lessons remaining</div>
+                </div>
+            </div>
+            <div class="card-right">
+                <span>20%</span>
+                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+            </div>
+        </div>
+
+        <!-- Continue Learning Section -->
+        <div class="section-header">
+            <h3>
+                <i class="fas fa-play-circle" style="color: var(--primary);"></i>
+                Continue Learning
+            </h3>
+        </div>
+
+        <div class="continue-learning-card" onclick="continueLearning()">
+            <div class="continue-learning-left">
+                <div class="continue-learning-icon">
+                    <i class="fas fa-paint-brush"></i>
+                </div>
+                <div class="continue-learning-info">
+                    <h4>Figma Advanced Components</h4>
+                    <p><i class="far fa-clock"></i> 15 min left • UI/UX Design</p>
+                </div>
+            </div>
+            <div class="continue-learning-play">
+                <i class="fas fa-play"></i>
+            </div>
+        </div>
+
+        <!-- Recommended For You -->
+        <div class="section-header">
+            <h3>
+                <i class="fas fa-star" style="color: var(--primary);"></i>
+                Recommended For You
+            </h3>
+        </div>
+
+        <div style="margin-bottom: var(--space-md);">
+            <span class="recommendation-chip" onclick="searchTopic('react')">
+                <i class="fab fa-react"></i> React.js
+            </span>
+            <span class="recommendation-chip" onclick="searchTopic('python')">
+                <i class="fab fa-python"></i> Python
+            </span>
+            <span class="recommendation-chip" onclick="searchTopic('figma')">
+                <i class="fab fa-figma"></i> Figma
+            </span>
+            <span class="recommendation-chip" onclick="searchTopic('sql')">
+                <i class="fas fa-database"></i> SQL
+            </span>
+            <span class="recommendation-chip" onclick="searchTopic('machine-learning')">
+                <i class="fas fa-robot"></i> ML
+            </span>
+        </div>
+
+        <!-- Upcoming Deadlines -->
+        <div class="section-header">
+            <h3>
+                <i class="fas fa-clock" style="color: var(--primary);"></i>
+                Upcoming Deadlines
+            </h3>
+        </div>
+
+        <div class="card deadline-card" onclick="viewDeadline()">
+            <div>
+                <div style="font-weight: 500; margin-bottom: 4px;">UI/UX Design Project</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Due in 2 days</div>
+            </div>
+            <span class="badge badge-warning">Pending</span>
+        </div>
+
+        <div class="card deadline-card" onclick="viewDeadline()">
+            <div>
+                <div style="font-weight: 500; margin-bottom: 4px;">JavaScript Assignment</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Due in 5 days</div>
+            </div>
+            <span class="badge" style="background: #10b981;">On Track</span>
+        </div>
+
+        <!-- Achievements Section -->
+        <div class="section-header">
+            <h3>
+                <i class="fas fa-trophy" style="color: var(--primary);"></i>
+                Recent Achievements
+            </h3>
+            <a href="#" class="view-all" onclick="showAllAchievements()">
+                View All <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="achievement-grid">
+            <div class="achievement-item">
+                <div class="achievement-icon">
+                    ⚡
+                </div>
+                <div class="achievement-title">7 Day Streak</div>
+            </div>
+            <div class="achievement-item">
+                <div class="achievement-icon books">
+                    📚
+                </div>
+                <div class="achievement-title">5 Courses</div>
+            </div>
+            <div class="achievement-item">
+                <div class="achievement-icon learner">
+                    💡
+                </div>
+                <div class="achievement-title">Quick Learner</div>
+            </div>
+            <div class="achievement-item">
+                <div class="achievement-icon" style="background: linear-gradient(135deg, #f43f5e, #e11d48);">
+                    🏆
+                </div>
+                <div class="achievement-title">Top Performer</div>
+            </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="section-header">
+            <h3>
+                <i class="fas fa-rss" style="color: var(--primary);"></i>
+                Recent Activity
+            </h3>
+        </div>
+
+        <div class="activity-feed">
+            <div class="activity-item">
+                <div class="activity-left">
+                    <div class="activity-icon">📝</div>
+                    <div class="activity-details">
+                        <h5>Completed JavaScript Module</h5>
+                        <div class="activity-time">2 hours ago</div>
+                    </div>
+                </div>
+                <span class="activity-points">+50 pts</span>
+            </div>
+            <div class="activity-item">
+                <div class="activity-left">
+                    <div class="activity-icon">📚</div>
+                    <div class="activity-details">
+                        <h5>Started Data Science Course</h5>
+                        <div class="activity-time">Yesterday</div>
+                    </div>
+                </div>
+                <span class="activity-points">+20 pts</span>
+            </div>
+            <div class="activity-item">
+                <div class="activity-left">
+                    <div class="activity-icon">🏆</div>
+                    <div class="activity-details">
+                        <h5>Earned 'Quick Learner' Badge</h5>
+                        <div class="activity-time">2 days ago</div>
+                    </div>
+                </div>
+                <span class="activity-points">+100 pts</span>
+            </div>
+        </div>
+
+        <!-- Daily Challenge -->
+        <div class="daily-challenge">
+            <div class="challenge-header">
+                <span class="challenge-badge">DAILY CHALLENGE</span>
+                <i class="fas fa-gem"></i>
+            </div>
+            <h4 style="margin-bottom: var(--space-sm);">Complete 3 lessons today</h4>
+            <div class="challenge-reward">
+                <i class="fas fa-star"></i>
+                <span>Reward: 100 XP + Streak Freeze</span>
+            </div>
+            <div class="challenge-progress">
+                <div class="challenge-progress-bar">
+                    <div class="challenge-progress-fill" style="width: 33%;"></div>
+                </div>
+                <div style="font-size: 0.75rem; text-align: right; opacity: 0.9;">1/3 completed</div>
+            </div>
+        </div>
+
+        <!-- Space for bottom nav -->
+        <div style="height: 40px;"></div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item active" data-page="home">
+            <div class="nav-icon"><i class="fas fa-home"></i></div>
+            <span>Home</span>
+        </a>
+        <a href="search.html" class="nav-item" data-page="search">
+            <div class="nav-icon"><i class="fas fa-search"></i></div>
+            <span>Search</span>
+        </a>
+        <a href="library.html" class="nav-item" data-page="library">
+            <div class="nav-icon"><i class="fas fa-book"></i></div>
+            <span>Library</span>
+        </a>
+        <a href="settings.html" class="nav-item" data-page="settings">
+            <div class="nav-icon"><i class="fas fa-cog"></i></div>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast"></div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="modal-title" id="modalTitle">Confirm Action</h3>
+            <p class="modal-message" id="modalMessage">Are you sure you want to proceed?</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="hideModal()">Cancel</button>
+                <button class="btn btn-danger" id="modalConfirmBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Notes Manager Class
-        class StudyMaster {
-            constructor() {
-                this.notesData = null;
-                this.currentSubject = null;
-                this.currentChapter = null;
-                this.bookmarks = new Set();
-                this.theme = 'light';
-                this.init();
-            }
+        // ==================== APPWRITE CONFIGURATION ====================
+        const client = new Appwrite.Client();
+        
+        client
+            .setEndpoint("https://sgp.cloud.appwrite.io/v1")
+            .setProject("nav-education");
 
-            async init() {
-                await this.loadNotesData();
-                this.setupEventListeners();
-                this.renderSubjects();
-                this.setupEditor();
-            }
+        const account = new Appwrite.Account(client);
 
-            async loadNotesData() {
-                try {
-                    // In a real app, this would fetch from your JSON file
-                    // For now, we'll use sample data
-                    this.notesData = await this.getSampleData();
-                } catch (error) {
-                    console.error('Error loading notes:', error);
-                    this.showError('Failed to load notes data.');
-                }
-            }
+        // ==================== GLOBAL STATE ====================
+        let currentUser = null;
+        let activeToast = null;
+        let activeModal = null;
 
-            getSampleData() {
-                return {
-                    subjects: [
-                        {
-                            id: 'mathematics',
-                            name: 'Mathematics',
-                            icon: 'calculator',
-                            description: 'Algebra, Calculus, Geometry, Statistics',
-                            color: '#4361ee',
-                            chapters: [
-                                {
-                                    id: 'algebra-basics',
-                                    title: 'Algebra Basics',
-                                    content: this.getMathContent()
-                                },
-                                {
-                                    id: 'calculus',
-                                    title: 'Calculus Fundamentals',
-                                    content: this.getCalculusContent()
-                                }
-                            ]
-                        },
-                        {
-                            id: 'physics',
-                            name: 'Physics',
-                            icon: 'atom',
-                            description: 'Mechanics, Thermodynamics, Electromagnetism',
-                            color: '#f72585',
-                            chapters: [
-                                {
-                                    id: 'mechanics',
-                                    title: 'Classical Mechanics',
-                                    content: this.getPhysicsContent()
-                                }
-                            ]
-                        },
-                        {
-                            id: 'china-geography',
-                            name: 'China Geography',
-                            icon: 'globe-asia',
-                            description: 'Provinces, Cities, and Administrative Divisions',
-                            color: '#de2910',
-                            chapters: [
-                                {
-                                    id: 'provinces',
-                                    title: 'Provinces & Administrative Divisions',
-                                    content: this.getChinaGeographyContent()
-                                }
-                            ]
-                        }
-                    ]
-                };
-            }
-
-            getMathContent() {
-                return {
-                    introduction: "Algebra is the branch of mathematics that deals with symbols and the rules for manipulating those symbols. It's a unifying thread of almost all of mathematics.",
-                    sections: [
-                        {
-                            title: "Basic Concepts",
-                            content: "Algebra uses variables like x, y, z to represent unknown values. These variables can be combined using arithmetic operations.",
-                            type: "text"
-                        },
-                        {
-                            title: "Key Formulas",
-                            content: [
-                                "Quadratic Formula: $$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$",
-                                "Binomial Theorem: $$(a + b)^n = \\sum_{k=0}^n \\binom{n}{k} a^{n-k} b^k$$"
-                            ],
-                            type: "formulas"
-                        },
-                        {
-                            title: "Important Points",
-                            content: [
-                                "Equations must maintain balance on both sides",
-                                "Variables represent unknown quantities",
-                                "Algebraic expressions can be simplified"
-                            ],
-                            type: "keyPoints"
-                        }
-                    ]
-                };
-            }
-
-            getChinaGeographyContent() {
-                return {
-                    introduction: "The People's Republic of China has 34 provincial-level administrative divisions, including provinces, autonomous regions, municipalities, and special administrative regions.",
-                    sections: [
-                        {
-                            title: "Administrative Structure",
-                            content: "China's administrative divisions are organized into three main levels: provincial, prefectural, and county levels.",
-                            type: "text"
-                        },
-                        {
-                            title: "Major Provinces Data",
-                            content: this.getChinaProvincesData(),
-                            type: "table"
-                        },
-                        {
-                            title: "Key Facts",
-                            content: [
-                                "Total of 34 provincial-level divisions",
-                                "4 Direct-controlled municipalities",
-                                "5 Autonomous regions",
-                                "2 Special administrative regions",
-                                "23 Provinces"
-                            ],
-                            type: "keyPoints"
-                        }
-                    ]
-                };
-            }
-
-            getChinaProvincesData() {
-                return {
-                    headers: ["Province", "Capital", "Population", "Area (km²)", "Type"],
-                    rows: [
-                        ["Guangdong", "Guangzhou", "126,012,510", "179,800", "Province"],
-                        ["Shandong", "Jinan", "101,527,453", "157,100", "Province"],
-                        ["Henan", "Zhengzhou", "99,365,519", "167,000", "Province"],
-                        ["Jiangsu", "Nanjing", "84,748,016", "107,200", "Province"],
-                        ["Beijing", "Beijing", "21,893,095", "16,410", "Municipality"],
-                        ["Shanghai", "Shanghai", "24,870,895", "6,340", "Municipality"]
-                    ]
-                };
-            }
-
-            renderSubjects() {
-                const subjectList = document.getElementById('subjectList');
-                subjectList.innerHTML = '';
-
-                this.notesData.subjects.forEach(subject => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `
-                        <a href="#" data-subject="${subject.id}" style="border-left: 3px solid ${subject.color}">
-                            <i class="fas fa-${subject.icon}"></i> 
-                            <div>
-                                <div>${subject.name}</div>
-                                <small style="opacity: 0.7; font-size: 0.8rem;">${subject.description}</small>
-                            </div>
-                        </a>
-                    `;
-                    subjectList.appendChild(li);
-                });
-            }
-
-            setupEventListeners() {
-                // Theme toggle
-                document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
+        // ==================== CHECK AUTHENTICATION ====================
+        async function checkAuth() {
+            try {
+                const user = await account.get();
+                currentUser = user;
                 
-                // Subject selection
-                document.getElementById('subjectList').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const subjectLink = e.target.closest('a');
-                    if (subjectLink) {
-                        const subjectId = subjectLink.getAttribute('data-subject');
-                        this.displaySubject(subjectId);
-                    }
-                });
-
-                // Toolbar buttons
-                document.getElementById('toolbar').addEventListener('click', (e) => {
-                    if (e.target.closest('.toolbar-btn')) {
-                        this.handleToolbarClick(e.target.closest('.toolbar-btn'));
-                    }
-                });
-
-                // Action buttons
-                document.getElementById('bookmarkBtn').addEventListener('click', () => this.toggleBookmark());
-                document.getElementById('printBtn').addEventListener('click', () => window.print());
-                document.getElementById('shareBtn').addEventListener('click', () => this.shareNotes());
-
-                // Search
-                document.getElementById('searchButton').addEventListener('click', () => this.searchNotes());
-                document.getElementById('globalSearch').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.searchNotes();
-                });
-
-                // Quick actions
-                document.getElementById('bookmarksBtn').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.showBookmarks();
-                });
-            }
-
-            displaySubject(subjectId) {
-                const subject = this.notesData.subjects.find(s => s.id === subjectId);
-                if (!subject) return;
-
-                this.currentSubject = subject;
-                document.getElementById('notesTitle').textContent = subject.name;
+                // Load user data from localStorage or Appwrite
+                loadUserData(user);
                 
-                // Display first chapter by default
-                if (subject.chapters.length > 0) {
-                    this.displayChapter(subject.chapters[0]);
-                }
-            }
-
-            displayChapter(chapter) {
-                this.currentChapter = chapter;
-                const notesContent = document.getElementById('notesContent');
-                
-                let html = `
-                    <div class="chapter">
-                        <h1 class="chapter-title">${chapter.title}</h1>
-                        <div class="content-box">
-                            <p>${chapter.content.introduction}</p>
-                        </div>
-                `;
-
-                chapter.content.sections.forEach(section => {
-                    html += `<div class="section">`;
-                    html += `<h2 class="section-title">${section.title}</h2>`;
-                    
-                    switch(section.type) {
-                        case 'text':
-                            html += `<p>${section.content}</p>`;
-                            break;
-                        case 'keyPoints':
-                            html += `<div class="key-points"><ul>`;
-                            section.content.forEach(point => {
-                                html += `<li>${point}</li>`;
-                            });
-                            html += `</ul></div>`;
-                            break;
-                        case 'formulas':
-                            html += `<div class="formulas">`;
-                            section.content.forEach(formula => {
-                                html += `<div class="formula">${formula}</div>`;
-                            });
-                            html += `</div>`;
-                            break;
-                        case 'table':
-                            html += this.renderTable(section.content);
-                            break;
-                    }
-                    
-                    html += `</div>`;
-                });
-
-                html += `</div>`;
-                notesContent.innerHTML = html;
-
-                // Render Math equations
-                renderMathInElement(notesContent, {
-                    delimiters: [
-                        {left: '$$', right: '$$', display: true},
-                        {left: '$', right: '$', display: false}
-                    ]
-                });
-            }
-
-            renderTable(tableData) {
-                let html = `<div class="table-container"><table class="data-table"><thead><tr>`;
-                
-                tableData.headers.forEach(header => {
-                    html += `<th>${header}</th>`;
-                });
-                html += `</tr></thead><tbody>`;
-                
-                tableData.rows.forEach(row => {
-                    html += `<tr>`;
-                    row.forEach(cell => {
-                        html += `<td>${cell}</td>`;
-                    });
-                    html += `</tr>`;
-                });
-                
-                html += `</tbody></table></div>`;
-                return html;
-            }
-
-            handleToolbarClick(button) {
-                const command = button.getAttribute('data-command');
-                const value = button.getAttribute('data-value');
-                
-                document.execCommand(command, false, value);
-            }
-
-            toggleBookmark() {
-                if (!this.currentChapter) return;
-                
-                const bookmarkKey = `${this.currentSubject.id}-${this.currentChapter.id}`;
-                const btn = document.getElementById('bookmarkBtn');
-                
-                if (this.bookmarks.has(bookmarkKey)) {
-                    this.bookmarks.delete(bookmarkKey);
-                    btn.innerHTML = '<i class="far fa-bookmark"></i> Bookmark';
-                    this.showMessage('Removed from bookmarks');
-                } else {
-                    this.bookmarks.add(bookmarkKey);
-                    btn.innerHTML = '<i class="fas fa-bookmark"></i> Bookmarked';
-                    this.showMessage('Added to bookmarks');
-                }
-            }
-
-            toggleTheme() {
-                this.theme = this.theme === 'light' ? 'dark' : 'light';
-                document.body.setAttribute('data-theme', this.theme);
-                
-                const btn = document.getElementById('themeToggle');
-                btn.innerHTML = this.theme === 'light' 
-                    ? '<i class="fas fa-moon"></i> Dark Mode'
-                    : '<i class="fas fa-sun"></i> Light Mode';
-            }
-
-            searchNotes() {
-                const query = document.getElementById('globalSearch').value.trim();
-                if (!query) return;
-                
-                this.showMessage(`Searching for: ${query}`);
-                // Implement search functionality here
-            }
-
-            showBookmarks() {
-                if (this.bookmarks.size === 0) {
-                    this.showMessage('No bookmarks yet');
-                    return;
-                }
-                
-                this.showMessage(`You have ${this.bookmarks.size} bookmarked notes`);
-            }
-
-            showMessage(message) {
-                // Simple notification - can be enhanced with toast notifications
-                console.log(message);
-                alert(message); // Replace with better notification system
-            }
-
-            showError(message) {
-                const notesContent = document.getElementById('notesContent');
-                notesContent.innerHTML = `<div class="error">${message}</div>`;
-            }
-
-            setupEditor() {
-                // Rich text editor setup
-                // This is a basic implementation - can be enhanced with libraries like Quill.js
-            }
-
-            shareNotes() {
-                if (!this.currentChapter) return;
-                
-                const subject = this.currentSubject.name;
-                const chapter = this.currentChapter.title;
-                this.showMessage(`Sharing: ${subject} - ${chapter}`);
+            } catch (error) {
+                console.log('No active session:', error);
+                // Redirect to login if not authenticated
+                window.location.href = 'auth.html';
             }
         }
 
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', () => {
-            window.studyMaster = new StudyMaster();
+        // ==================== LOAD USER DATA ====================
+        function loadUserData(user) {
+            // Load from localStorage first, then from Appwrite if needed
+            const savedName = localStorage.getItem('nav_userName');
+            const savedEmail = localStorage.getItem('nav_userEmail');
+            
+            // Update UI with user data
+            if (savedName) {
+                document.getElementById('welcomeText').innerHTML = `Welcome Back, ${savedName} 👋`;
+                document.getElementById('menuUserName').textContent = savedName;
+            } else if (user.name) {
+                document.getElementById('welcomeText').innerHTML = `Welcome Back, ${user.name} 👋`;
+                document.getElementById('menuUserName').textContent = user.name;
+                localStorage.setItem('nav_userName', user.name);
+            }
+            
+            if (savedEmail) {
+                document.getElementById('menuUserEmail').textContent = savedEmail;
+            } else if (user.email) {
+                document.getElementById('menuUserEmail').textContent = user.email;
+                localStorage.setItem('nav_userEmail', user.email);
+            }
+            
+            // Load avatar
+            const savedAvatar = localStorage.getItem('nav_profileAvatar');
+            if (savedAvatar) {
+                updateHeaderAvatar(savedAvatar);
+            }
+            
+            // Load theme
+            loadTheme();
+            
+            // Load progress
+            loadProgress();
+            
+            // Load stats
+            loadStats();
+        }
+
+        // ==================== HEADER AVATAR ====================
+        function updateHeaderAvatar(imageData) {
+            const headerAvatar = document.getElementById('headerAvatar');
+            const headerEmoji = document.getElementById('headerEmoji');
+            
+            if (imageData && headerAvatar && headerEmoji) {
+                headerAvatar.src = imageData;
+                headerAvatar.style.display = 'block';
+                headerEmoji.style.display = 'none';
+            }
+        }
+
+        // ==================== LOAD THEME ====================
+        function loadTheme() {
+            const darkMode = localStorage.getItem('nav_darkMode');
+            if (darkMode !== null) {
+                document.body.classList.toggle('light-theme', darkMode === 'false');
+            }
+            
+            const accentColor = localStorage.getItem('nav_accentColor');
+            if (accentColor) {
+                document.documentElement.style.setProperty('--primary', accentColor);
+            }
+        }
+
+        // ==================== LOAD PROGRESS ====================
+        function loadProgress() {
+            const progress = localStorage.getItem('nav_progress') || 20;
+            const bar = document.getElementById('mainProgress');
+            const label = document.getElementById('progressLabel');
+            
+            if (bar) {
+                bar.style.width = progress + '%';
+            }
+            if (label) {
+                label.textContent = progress + '% Completed';
+            }
+            
+            // Load streak
+            const streak = localStorage.getItem('nav_streak') || 7;
+            document.getElementById('streakCount').textContent = streak;
+            
+            // Load daily goal
+            const studyHours = localStorage.getItem('nav_studyHours') || 4;
+            document.getElementById('dailyGoal').textContent = studyHours;
+        }
+
+        // ==================== LOAD STATS ====================
+        function loadStats() {
+            const stats = JSON.parse(localStorage.getItem('nav_stats')) || {
+                courses: 3,
+                hours: 28,
+                badges: 5,
+                totalCourses: 3,
+                totalHours: 28,
+                totalBadges: 5
+            };
+            
+            document.getElementById('coursesEnrolled').textContent = stats.courses;
+            document.getElementById('hoursLearned').textContent = stats.hours;
+            document.getElementById('achievements').textContent = stats.badges;
+            document.getElementById('totalCourses').textContent = stats.totalCourses;
+            document.getElementById('totalHours').textContent = stats.totalHours;
+            document.getElementById('totalBadges').textContent = stats.totalBadges;
+            
+            // Load today's hours
+            const todayHours = localStorage.getItem('nav_todayHours') || 2.5;
+            document.getElementById('todayHours').textContent = todayHours;
+        }
+
+        // ==================== PROFILE MENU ====================
+        document.getElementById('profileBtn')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('active');
         });
+
+        document.addEventListener('click', function() {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.remove('active');
+        });
+
+        // ==================== PROFILE MENU ACTIONS ====================
+        function showStats() {
+            showToast('Learning statistics coming soon!', 'info');
+        }
+
+        function showAchievements() {
+            showToast('Achievements gallery coming soon!', 'info');
+        }
+
+        async function logout() {
+            showModal('Logout', 'Are you sure you want to logout?', async () => {
+                try {
+                    await account.deleteSession('current');
+                    localStorage.clear();
+                    showToast('Logged out successfully', 'success');
+                    setTimeout(() => window.location.href = 'auth.html', 1000);
+                } catch (error) {
+                    showToast('Error logging out', 'error');
+                }
+            });
+        }
+
+        // ==================== NOTIFICATION ====================
+        document.getElementById('notificationBtn')?.addEventListener('click', function() {
+            showToast('No new notifications');
+        });
+
+        // ==================== COURSE ACTIONS ====================
+        function openCourse(courseId) {
+            showToast(`Opening course...`);
+        }
+
+        function continueLearning() {
+            showToast('Continuing your last lesson...');
+        }
+
+        function searchTopic(topic) {
+            showToast(`Searching for ${topic} courses...`);
+            setTimeout(() => {
+                window.location.href = `search.html?q=${topic}`;
+            }, 500);
+        }
+
+        function viewDeadline() {
+            showToast('Viewing deadline details...');
+        }
+
+        function showAllAchievements() {
+            showToast('All achievements coming soon!');
+        }
+
+        function showCourseStats() {
+            showToast('Your course statistics');
+        }
+
+        function showTimeStats() {
+            showToast('Your learning time statistics');
+        }
+
+        function showAchievementStats() {
+            showToast('Your achievement statistics');
+        }
+
+        // ==================== UPDATE MOTIVATION QUOTE ====================
+        function updateMotivationQuote() {
+            const hour = new Date().getHours();
+            const quoteElement = document.getElementById('motivationText');
+            
+            const quotes = [
+                'The expert in anything was once a beginner.',
+                'Every day is a learning opportunity.',
+                'Progress, not perfection.',
+                'Small steps lead to big results.',
+                'Your future is created by what you do today.'
+            ];
+            
+            if (hour < 12) {
+                quoteElement.textContent = 'Morning is when the magic happens. Start learning!';
+            } else if (hour < 17) {
+                quoteElement.textContent = 'Keep pushing forward. Every hour counts!';
+            } else if (hour < 20) {
+                quoteElement.textContent = 'Great job today! Finish strong!';
+            } else {
+                quoteElement.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+            }
+        }
+
+        // ==================== LOADING FUNCTIONS ====================
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+        }
+
+        function showLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.classList.add('active');
+            }
+        }
+
+        // ==================== MODAL FUNCTIONS ====================
+        function showModal(title, message, confirmCallback) {
+            const modal = document.getElementById('confirmModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+            
+            if (modalTitle) modalTitle.textContent = title;
+            if (modalMessage) modalMessage.textContent = message;
+            
+            if (confirmBtn) {
+                confirmBtn.onclick = function() {
+                    hideModal();
+                    if (confirmCallback) confirmCallback();
+                };
+            }
+            
+            modal.classList.add('active');
+        }
+        
+        function hideModal() {
+            const modal = document.getElementById('confirmModal');
+            modal.classList.remove('active');
+        }
+
+        // ==================== TOAST NOTIFICATIONS ====================
+        function showToast(message, type = 'info', duration = 2200) {
+            if (activeToast) {
+                activeToast.classList.remove('show');
+                setTimeout(() => {
+                    if (activeToast.parentNode) {
+                        activeToast.parentNode.removeChild(activeToast);
+                    }
+                    activeToast = null;
+                }, 300);
+            }
+
+            const toast = document.getElementById('toastContainer');
+            toast.className = `toast ${type}`;
+            
+            const icon = document.createElement('i');
+            switch(type) {
+                case 'success':
+                    icon.className = 'fas fa-check-circle';
+                    break;
+                case 'error':
+                    icon.className = 'fas fa-exclamation-circle';
+                    break;
+                case 'warning':
+                    icon.className = 'fas fa-exclamation-triangle';
+                    break;
+                default:
+                    icon.className = 'fas fa-info-circle';
+            }
+            
+            toast.innerHTML = '';
+            toast.appendChild(icon);
+            toast.appendChild(document.createTextNode(' ' + message));
+            
+            toast.classList.add('show');
+            activeToast = toast;
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        // ==================== BANNER CLICK TRACKING ====================
+        function initBannerTracking() {
+            const banner = document.querySelector('.banner-container');
+            if (banner) {
+                banner.addEventListener('click', function() {
+                    const clicks = parseInt(localStorage.getItem('nav_bannerClicks') || '0');
+                    localStorage.setItem('nav_bannerClicks', (clicks + 1).toString());
+                    localStorage.setItem('nav_lastBannerClick', new Date().toISOString());
+                });
+            }
+        }
+
+        // ==================== PAGE TRANSITIONS ====================
+        document.querySelectorAll('.nav-item').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                const currentPage = window.location.pathname.split('/').pop();
+                
+                if (href && href !== currentPage) {
+                    e.preventDefault();
+                    document.body.classList.add('page-fade');
+                    
+                    setTimeout(() => {
+                        window.location.href = href;
+                    }, 250);
+                }
+            });
+        });
+
+        // Close modal on outside click
+        document.getElementById('confirmModal')?.addEventListener('click', function(e) {
+            if (e.target === this) hideModal();
+        });
+
+        // ==================== OFFLINE DETECTION ====================
+        window.addEventListener('online', () => showToast('You are back online 📶', 'success'));
+        window.addEventListener('offline', () => showToast('You are offline ✈️', 'warning'));
+
+        // ==================== DOUBLE TAP PROTECTION ====================
+        let lastTap = 0;
+        document.addEventListener('touchend', function(e) {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            if (tapLength < 300 && tapLength > 0) {
+                e.preventDefault();
+            }
+            lastTap = currentTime;
+        });
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', async function() {
+            showLoading();
+            
+            // Check authentication
+            await checkAuth();
+            
+            // Update motivation quote
+            updateMotivationQuote();
+            
+            // Initialize banner tracking
+            initBannerTracking();
+            
+            // Hide loading
+            setTimeout(hideLoading, 500);
+        });
+
+        window.addEventListener('load', hideLoading);
+        setTimeout(hideLoading, 2000);
+
+        // ==================== SERVICE WORKER ====================
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(err => {
+                    console.log('ServiceWorker registration failed');
+                });
+            });
+        }
+
+        // Export functions to global scope
+        window.showToast = showToast;
+        window.showModal = showModal;
+        window.hideModal = hideModal;
+        window.showStats = showStats;
+        window.showAchievements = showAchievements;
+        window.logout = logout;
+        window.openCourse = openCourse;
+        window.continueLearning = continueLearning;
+        window.searchTopic = searchTopic;
+        window.viewDeadline = viewDeadline;
+        window.showAllAchievements = showAllAchievements;
+        window.showCourseStats = showCourseStats;
+        window.showTimeStats = showTimeStats;
+        window.showAchievementStats = showAchievementStats;
     </script>
 </body>
 </html>
