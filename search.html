@@ -1,0 +1,2110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Search | NAV Education</title>
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="NAV Education - Search Courses">
+    <meta name="description" content="Search thousands of courses, materials, and learning resources">
+    <meta name="keywords" content="search, courses, learning, education, topics">
+    <meta name="author" content="NAV Education">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#6366f1" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Search page specific styles */
+        .search-container {
+            padding-bottom: 100px;
+        }
+        
+        /* Search Header */
+        .search-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            color: white;
+            margin-bottom: var(--space-lg);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .search-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        .search-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: var(--space-xs);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .search-header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+            position: relative;
+            z-index: 1;
+            margin-bottom: var(--space-lg);
+        }
+        
+        /* Search Box */
+        .search-box {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .search-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        
+        .search-input-wrapper i {
+            position: absolute;
+            left: var(--space-md);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            transition: color var(--transition-fast);
+        }
+        
+        .search-input-wrapper.focused i {
+            color: var(--primary);
+        }
+        
+        .search-main-input {
+            width: 100%;
+            padding: var(--space-md) var(--space-md) var(--space-md) 45px;
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: var(--radius-full);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: all var(--transition-fast);
+            backdrop-filter: blur(10px);
+        }
+        
+        .search-main-input:focus {
+            outline: none;
+            border-color: white;
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .search-main-input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .clear-search {
+            position: absolute;
+            right: var(--space-md);
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+            font-size: 1.1rem;
+        }
+        
+        .clear-search.visible {
+            opacity: 0.8;
+        }
+        
+        .clear-search:hover {
+            opacity: 1;
+        }
+        
+        /* Search Stats */
+        .search-stats {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: var(--space-md) 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .result-count {
+            background: var(--bg-card);
+            padding: var(--space-xs) var(--space-md);
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border);
+        }
+        
+        /* Filter Chips */
+        .filter-chips {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+            margin: var(--space-md) 0;
+        }
+        
+        .filter-chip {
+            padding: var(--space-xs) var(--space-md);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-full);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .filter-chip i {
+            font-size: 0.8rem;
+        }
+        
+        .filter-chip:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .filter-chip.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        .filter-chip.active i {
+            color: white;
+        }
+        
+        /* Category Pills */
+        .category-pills {
+            display: flex;
+            gap: var(--space-sm);
+            overflow-x: auto;
+            padding: var(--space-sm) 0 var(--space-md);
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .category-pills::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .category-pill {
+            padding: var(--space-sm) var(--space-lg);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-full);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .category-pill i {
+            font-size: 0.9rem;
+        }
+        
+        .category-pill:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .category-pill.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        /* Sort Dropdown */
+        .sort-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: var(--space-lg) 0 var(--space-md);
+        }
+        
+        .sort-dropdown {
+            position: relative;
+        }
+        
+        .sort-btn {
+            padding: var(--space-sm) var(--space-md);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text);
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .sort-btn:hover {
+            border-color: var(--primary);
+        }
+        
+        .sort-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: var(--space-sm);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
+            min-width: 180px;
+            display: none;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+        
+        .sort-menu.active {
+            display: block;
+            animation: slideDown 0.2s ease;
+        }
+        
+        .sort-option {
+            padding: var(--space-sm) var(--space-md);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .sort-option:hover {
+            background: var(--bg-card-hover);
+            color: var(--primary);
+        }
+        
+        .sort-option.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .sort-option i {
+            width: 16px;
+            font-size: 0.8rem;
+        }
+        
+        /* View Toggle */
+        .view-toggle {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 2px;
+        }
+        
+        .view-btn {
+            padding: var(--space-xs) var(--space-sm);
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-size: 1rem;
+        }
+        
+        .view-btn:hover {
+            color: var(--primary);
+        }
+        
+        .view-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Search Results Grid */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+            margin: var(--space-lg) 0;
+        }
+        
+        .results-grid.list-view {
+            grid-template-columns: 1fr;
+        }
+        
+        /* Result Cards */
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+        
+        .result-card:hover::before {
+            opacity: 1;
+        }
+        
+        .result-card.list-view {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .result-card.list-view .result-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 2rem;
+        }
+        
+        .result-card.list-view .result-content {
+            flex: 1;
+        }
+        
+        .result-card.list-view .result-footer {
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+        
+        .result-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .result-category {
+            font-size: 0.7rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        
+        .result-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .result-badge {
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: var(--radius-full);
+            background: var(--primary);
+            color: white;
+        }
+        
+        .result-badge.free {
+            background: #10b981;
+        }
+        
+        .result-badge.popular {
+            background: #f59e0b;
+        }
+        
+        .result-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .result-meta i {
+            margin-right: 2px;
+            font-size: 0.6rem;
+        }
+        
+        .result-description {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: var(--space-sm);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .result-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: var(--space-sm);
+        }
+        
+        .result-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #fbbf24;
+            font-size: 0.7rem;
+        }
+        
+        .result-rating span {
+            color: var(--text-muted);
+            margin-left: 2px;
+        }
+        
+        .result-price {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+        
+        .result-price.free {
+            color: #10b981;
+        }
+        
+        .result-action {
+            color: var(--primary);
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* Trending Topics */
+        .trending-section {
+            margin: var(--space-xl) 0;
+        }
+        
+        .trending-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+        }
+        
+        .trending-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text);
+        }
+        
+        .trending-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-sm);
+        }
+        
+        .trending-item {
+            text-align: center;
+            padding: var(--space-md);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .trending-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .trending-icon {
+            font-size: 1.8rem;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .trending-name {
+            font-weight: 500;
+            font-size: 0.8rem;
+            margin-bottom: 2px;
+        }
+        
+        .trending-count {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+        
+        /* Recent Searches */
+        .recent-searches {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            margin: var(--space-lg) 0;
+        }
+        
+        .recent-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+        }
+        
+        .recent-header h4 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text);
+        }
+        
+        .clear-history {
+            color: var(--primary);
+            font-size: 0.8rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+        }
+        
+        .clear-history:hover {
+            background: var(--bg-card-hover);
+        }
+        
+        .recent-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+        }
+        
+        .recent-item {
+            padding: var(--space-xs) var(--space-md);
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            color: var(--text);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .recent-item i {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        
+        .recent-item:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .recent-item:hover i {
+            color: var(--primary);
+        }
+        
+        .recent-item .remove {
+            margin-left: 4px;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+        
+        .recent-item:hover .remove {
+            opacity: 0.5;
+        }
+        
+        .recent-item .remove:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
+        
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: var(--space-xl);
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            margin: var(--space-xl) 0;
+        }
+        
+        .no-results-icon {
+            font-size: 4rem;
+            margin-bottom: var(--space-md);
+            opacity: 0.5;
+        }
+        
+        .no-results h4 {
+            color: var(--text);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .no-results p {
+            color: var(--text-muted);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .suggestions {
+            display: flex;
+            gap: var(--space-sm);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .suggestion-chip {
+            padding: var(--space-xs) var(--space-md);
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-full);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .suggestion-chip:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        /* Loading Skeleton */
+        .skeleton-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .skeleton-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--border);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .skeleton-line {
+            height: 16px;
+            background: var(--border);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+        
+        .skeleton-line.short {
+            width: 60%;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Voice Search */
+        .voice-search-btn {
+            position: absolute;
+            right: 45px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity var(--transition-fast);
+            font-size: 1.1rem;
+        }
+        
+        .voice-search-btn:hover {
+            opacity: 1;
+        }
+        
+        .voice-search-btn.listening {
+            color: #f43f5e;
+            animation: pulse 1s infinite;
+        }
+        
+        /* Profile Menu */
+        .profile-menu {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            min-width: 200px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            display: none;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .profile-menu.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .profile-menu-header {
+            padding: var(--space-sm) var(--space-md);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .profile-menu-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .profile-menu-email {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            color: var(--text);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+            cursor: pointer;
+        }
+        
+        .profile-menu-item:hover {
+            background: var(--bg-card-hover);
+            color: var(--primary);
+        }
+        
+        .profile-menu-item i {
+            width: 20px;
+            color: var(--primary);
+        }
+        
+        .profile-menu-divider {
+            height: 1px;
+            background: var(--border);
+            margin: var(--space-sm) 0;
+        }
+        
+        /* Sync Status */
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm);
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            margin: var(--space-sm) 0;
+            color: var(--success);
+            font-size: 0.8rem;
+            border: 1px solid var(--border);
+        }
+        
+        .sync-status i {
+            font-size: 1rem;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            max-width: 320px;
+            text-align: center;
+            border: 1px solid var(--border);
+            animation: modalPop 0.3s ease;
+        }
+        
+        @keyframes modalPop {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .modal-icon {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: var(--space-md);
+        }
+        
+        /* Loading Spinner */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .trending-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-chips {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: var(--space-xs);
+            }
+            
+            .filter-chip {
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="container search-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand">
+                <h1>NAV <span>Education</span></h1>
+            </div>
+            
+            <div class="flex" style="gap: var(--space-sm);">
+                <!-- Notification Bell -->
+                <div class="profile-icon" id="notificationBtn">
+                    <i class="far fa-bell"></i>
+                    <span class="badge" id="notificationBadge" style="position: absolute; top: -2px; right: -2px; display: none;">3</span>
+                </div>
+                
+                <!-- Profile Icon with Avatar -->
+                <div class="profile-icon" id="profileBtn">
+                    <img id="headerAvatar" src="" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: none;">
+                    <span id="headerEmoji">👤</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Profile Menu -->
+        <div id="profileMenu" class="profile-menu">
+            <div class="profile-menu-header">
+                <div class="profile-menu-name" id="menuUserName">Amit Kumar</div>
+                <div class="profile-menu-email" id="menuUserEmail">amit.kumar@example.com</div>
+            </div>
+            <div class="profile-menu-item" onclick="window.location.href='profile.html'">
+                <i class="fas fa-user"></i>
+                <span>View Profile</span>
+            </div>
+            <div class="profile-menu-item" onclick="window.location.href='settings.html'">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </div>
+            <div class="profile-menu-divider"></div>
+            <div class="profile-menu-item" onclick="showStats()">
+                <i class="fas fa-chart-line"></i>
+                <span>Learning Stats</span>
+            </div>
+            <div class="profile-menu-item" onclick="showAchievements()">
+                <i class="fas fa-trophy"></i>
+                <span>Achievements</span>
+            </div>
+            <div class="profile-menu-divider"></div>
+            <div class="profile-menu-item" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </div>
+        </div>
+
+        <!-- Sync Status -->
+        <div class="sync-status" id="syncStatus" style="display: none;">
+            <i class="fas fa-check-circle"></i>
+            <span>Settings synced</span>
+        </div>
+
+        <!-- Search Header -->
+        <div class="search-header">
+            <h2>Search Courses</h2>
+            <p>Find the perfect course for your learning journey</p>
+            
+            <!-- Banner Section -->
+<div class="banner-container" onclick="window.location.href='https://naveducation.com'">
+    <img src="https://raw.githubusercontent.com/Amit21686/NAV_Education/refs/heads/main/images/NAV%20Education%20banner.png" 
+         alt="NAV Education Banner" 
+         class="banner-image">
+</div>
+
+            <!-- Search Box -->
+            <div class="search-box">
+                <div class="search-input-wrapper" id="searchWrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="mainSearchInput" class="search-main-input" placeholder="Search for courses, topics, or skills..." autofocus>
+                    <span class="voice-search-btn" id="voiceSearchBtn" onclick="toggleVoiceSearch()">
+                        <i class="fas fa-microphone"></i>
+                    </span>
+                    <span class="clear-search" id="clearSearch" onclick="clearSearch()">
+                        <i class="fas fa-times-circle"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Searches -->
+        <div class="recent-searches" id="recentSearches" style="display: none;">
+            <div class="recent-header">
+                <h4>
+                    <i class="fas fa-history" style="color: var(--primary);"></i>
+                    Recent Searches
+                </h4>
+                <span class="clear-history" onclick="clearSearchHistory()">
+                    <i class="fas fa-trash-alt"></i> Clear
+                </span>
+            </div>
+            <div class="recent-list" id="recentList"></div>
+        </div>
+
+        <!-- Category Pills -->
+        <div class="category-pills">
+            <div class="category-pill active" data-category="all" onclick="filterByCategory('all', this)">
+                <i class="fas fa-th-large"></i>
+                All
+            </div>
+            <div class="category-pill" data-category="design" onclick="filterByCategory('design', this)">
+                <i class="fas fa-paint-brush"></i>
+                Design
+            </div>
+            <div class="category-pill" data-category="development" onclick="filterByCategory('development', this)">
+                <i class="fas fa-code"></i>
+                Development
+            </div>
+            <div class="category-pill" data-category="data" onclick="filterByCategory('data', this)">
+                <i class="fas fa-chart-bar"></i>
+                Data Science
+            </div>
+            <div class="category-pill" data-category="business" onclick="filterByCategory('business', this)">
+                <i class="fas fa-briefcase"></i>
+                Business
+            </div>
+            <div class="category-pill" data-category="marketing" onclick="filterByCategory('marketing', this)">
+                <i class="fas fa-bullhorn"></i>
+                Marketing
+            </div>
+        </div>
+
+        <!-- Filter Chips -->
+        <div class="filter-chips">
+            <div class="filter-chip active" data-filter="all" onclick="applyContentFilter('all', this)">
+                <i class="fas fa-layer-group"></i>
+                All
+            </div>
+            <div class="filter-chip" data-filter="course" onclick="applyContentFilter('course', this)">
+                <i class="fas fa-book"></i>
+                Courses
+            </div>
+            <div class="filter-chip" data-filter="tutorial" onclick="applyContentFilter('tutorial', this)">
+                <i class="fas fa-video"></i>
+                Tutorials
+            </div>
+            <div class="filter-chip" data-filter="article" onclick="applyContentFilter('article', this)">
+                <i class="fas fa-newspaper"></i>
+                Articles
+            </div>
+            <div class="filter-chip" data-filter="book" onclick="applyContentFilter('book', this)">
+                <i class="fas fa-book-open"></i>
+                Books
+            </div>
+        </div>
+
+        <!-- Search Stats and Sort -->
+        <div class="search-stats">
+            <span class="result-count" id="resultCount">124 results</span>
+            <span id="searchTime">Found in 0.3s</span>
+        </div>
+
+        <!-- Sort Bar -->
+        <div class="sort-bar">
+            <div class="view-toggle">
+                <button class="view-btn active" onclick="toggleView('grid', this)" id="gridViewBtn">
+                    <i class="fas fa-th-large"></i>
+                </button>
+                <button class="view-btn" onclick="toggleView('list', this)" id="listViewBtn">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+            
+            <div class="sort-dropdown">
+                <button class="sort-btn" onclick="toggleSortMenu()">
+                    <i class="fas fa-sort-amount-down"></i>
+                    Sort by: Relevance
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="sort-menu" id="sortMenu">
+                    <div class="sort-option active" data-sort="relevance" onclick="applySort('relevance', this)">
+                        <i class="fas fa-star"></i>
+                        Relevance
+                    </div>
+                    <div class="sort-option" data-sort="popular" onclick="applySort('popular', this)">
+                        <i class="fas fa-fire"></i>
+                        Most Popular
+                    </div>
+                    <div class="sort-option" data-sort="newest" onclick="applySort('newest', this)">
+                        <i class="fas fa-clock"></i>
+                        Newest
+                    </div>
+                    <div class="sort-option" data-sort="price-low" onclick="applySort('price-low', this)">
+                        <i class="fas fa-arrow-up"></i>
+                        Price: Low to High
+                    </div>
+                    <div class="sort-option" data-sort="price-high" onclick="applySort('price-high', this)">
+                        <i class="fas fa-arrow-down"></i>
+                        Price: High to Low
+                    </div>
+                    <div class="sort-option" data-sort="rating" onclick="applySort('rating', this)">
+                        <i class="fas fa-star"></i>
+                        Top Rated
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Results -->
+        <div class="results-grid" id="resultsGrid">
+            <!-- Results will be populated by JavaScript -->
+        </div>
+
+        <!-- Loading Skeleton (hidden by default) -->
+        <div id="loadingSkeleton" style="display: none;">
+            <div class="results-grid">
+                <div class="skeleton-card">
+                    <div class="skeleton-icon"></div>
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                </div>
+                <div class="skeleton-card">
+                    <div class="skeleton-icon"></div>
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                </div>
+                <div class="skeleton-card">
+                    <div class="skeleton-icon"></div>
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                </div>
+                <div class="skeleton-card">
+                    <div class="skeleton-icon"></div>
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line short"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Results -->
+        <div id="noResults" class="no-results" style="display: none;">
+            <div class="no-results-icon">🔍</div>
+            <h4>No results found</h4>
+            <p>We couldn't find any matches for your search. Try different keywords.</p>
+            <div class="suggestions">
+                <span class="suggestion-chip" onclick="searchSuggestion('web development')">Web Development</span>
+                <span class="suggestion-chip" onclick="searchSuggestion('ui/ux design')">UI/UX Design</span>
+                <span class="suggestion-chip" onclick="searchSuggestion('data science')">Data Science</span>
+                <span class="suggestion-chip" onclick="searchSuggestion('python')">Python</span>
+            </div>
+        </div>
+
+        <!-- Trending Topics -->
+        <div class="trending-section">
+            <div class="trending-header">
+                <h3>
+                    <i class="fas fa-fire" style="color: var(--primary);"></i>
+                    Trending Now
+                </h3>
+                <a href="#" class="view-all" onclick="viewAllTrending()">
+                    View All <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="trending-grid">
+                <div class="trending-item" onclick="searchTrending('web development')">
+                    <div class="trending-icon">💻</div>
+                    <div class="trending-name">Web Dev</div>
+                    <div class="trending-count">2.5k+ searches</div>
+                </div>
+                <div class="trending-item" onclick="searchTrending('ui/ux')">
+                    <div class="trending-icon">🎨</div>
+                    <div class="trending-name">UI/UX Design</div>
+                    <div class="trending-count">1.8k+ searches</div>
+                </div>
+                <div class="trending-item" onclick="searchTrending('data science')">
+                    <div class="trending-icon">📊</div>
+                    <div class="trending-name">Data Science</div>
+                    <div class="trending-count">1.2k+ searches</div>
+                </div>
+                <div class="trending-item" onclick="searchTrending('python')">
+                    <div class="trending-icon">🐍</div>
+                    <div class="trending-name">Python</div>
+                    <div class="trending-count">1.1k+ searches</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Space for bottom nav -->
+        <div style="height: 40px;"></div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item" data-page="home">
+            <div class="nav-icon"><i class="fas fa-home"></i></div>
+            <span>Home</span>
+        </a>
+        <a href="search.html" class="nav-item active" data-page="search">
+            <div class="nav-icon"><i class="fas fa-search"></i></div>
+            <span>Search</span>
+        </a>
+        <a href="library.html" class="nav-item" data-page="library">
+            <div class="nav-icon"><i class="fas fa-book"></i></div>
+            <span>Library</span>
+        </a>
+        <a href="settings.html" class="nav-item" data-page="settings">
+            <div class="nav-icon"><i class="fas fa-cog"></i></div>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast"></div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="modal-title" id="modalTitle">Confirm Action</h3>
+            <p class="modal-message" id="modalMessage">Are you sure you want to proceed?</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="hideModal()">Cancel</button>
+                <button class="btn btn-danger" id="modalConfirmBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== GLOBAL STATE ====================
+        // Search data
+        const searchData = [
+            {
+                id: 1,
+                title: 'Complete UI/UX Design Masterclass',
+                category: 'design',
+                type: 'course',
+                icon: '🎨',
+                description: 'Learn design thinking, Figma, Adobe XD, and create stunning interfaces.',
+                lessons: 48,
+                duration: '24 hours',
+                rating: 4.8,
+                reviews: 12500,
+                students: 15200,
+                price: 4999,
+                level: 'Beginner',
+                tags: ['Figma', 'Adobe XD', 'Prototyping'],
+                popular: true,
+                free: false
+            },
+            {
+                id: 2,
+                title: 'Full Stack Web Development Bootcamp',
+                category: 'development',
+                type: 'course',
+                icon: '💻',
+                description: 'Master HTML, CSS, JavaScript, React, Node.js, and MongoDB.',
+                lessons: 120,
+                duration: '60 hours',
+                rating: 4.9,
+                reviews: 25800,
+                students: 32500,
+                price: 7999,
+                level: 'Intermediate',
+                tags: ['React', 'Node.js', 'MongoDB'],
+                popular: true,
+                free: false
+            },
+            {
+                id: 3,
+                title: 'Data Science Fundamentals with Python',
+                category: 'data',
+                type: 'course',
+                icon: '📊',
+                description: 'Learn Python, Pandas, NumPy, and machine learning basics.',
+                lessons: 65,
+                duration: '32 hours',
+                rating: 4.7,
+                reviews: 8900,
+                students: 11200,
+                price: 5999,
+                level: 'Beginner',
+                tags: ['Python', 'Pandas', 'Machine Learning'],
+                popular: true,
+                free: false
+            },
+            {
+                id: 4,
+                title: 'JavaScript: The Advanced Concepts',
+                category: 'development',
+                type: 'course',
+                icon: '⚛️',
+                description: 'Deep dive into closures, prototypes, async patterns, and performance.',
+                lessons: 42,
+                duration: '18 hours',
+                rating: 4.9,
+                reviews: 15200,
+                students: 18900,
+                price: 3999,
+                level: 'Advanced',
+                tags: ['JavaScript', 'ES6', 'Async'],
+                popular: false,
+                free: false
+            },
+            {
+                id: 5,
+                title: 'Python for Beginners',
+                category: 'development',
+                type: 'tutorial',
+                icon: '🐍',
+                description: 'Start your coding journey with Python - the perfect first language.',
+                lessons: 30,
+                duration: '15 hours',
+                rating: 4.6,
+                reviews: 32100,
+                students: 45000,
+                price: 0,
+                level: 'Beginner',
+                tags: ['Python', 'Programming'],
+                popular: true,
+                free: true
+            },
+            {
+                id: 6,
+                title: 'Business Analytics with Excel',
+                category: 'business',
+                type: 'course',
+                icon: '📈',
+                description: 'Master Excel for business analysis, dashboards, and reporting.',
+                lessons: 35,
+                duration: '20 hours',
+                rating: 4.5,
+                reviews: 5600,
+                students: 7800,
+                price: 2999,
+                level: 'Beginner',
+                tags: ['Excel', 'Analytics'],
+                popular: false,
+                free: false
+            },
+            {
+                id: 7,
+                title: 'Digital Marketing Mastery',
+                category: 'marketing',
+                type: 'course',
+                icon: '📱',
+                description: 'SEO, Social Media, Google Ads, and Content Marketing strategies.',
+                lessons: 52,
+                duration: '28 hours',
+                rating: 4.7,
+                reviews: 7300,
+                students: 9500,
+                price: 4499,
+                level: 'Intermediate',
+                tags: ['SEO', 'Social Media', 'Ads'],
+                popular: true,
+                free: false
+            },
+            {
+                id: 8,
+                title: 'React Native: Build Mobile Apps',
+                category: 'development',
+                type: 'tutorial',
+                icon: '📱',
+                description: 'Create iOS and Android apps with React Native.',
+                lessons: 45,
+                duration: '22 hours',
+                rating: 4.8,
+                reviews: 4200,
+                students: 5800,
+                price: 3499,
+                level: 'Intermediate',
+                tags: ['React Native', 'Mobile'],
+                popular: false,
+                free: false
+            },
+            {
+                id: 9,
+                title: 'UI Animation Principles',
+                category: 'design',
+                type: 'article',
+                icon: '✨',
+                description: 'Learn the principles of UI animation and micro-interactions.',
+                lessons: 12,
+                duration: '3 hours',
+                rating: 4.4,
+                reviews: 1200,
+                students: 2500,
+                price: 0,
+                level: 'Intermediate',
+                tags: ['Animation', 'UI'],
+                popular: false,
+                free: true
+            },
+            {
+                id: 10,
+                title: 'Machine Learning A-Z',
+                category: 'data',
+                type: 'course',
+                icon: '🤖',
+                description: 'Learn ML algorithms, regression, classification, and clustering.',
+                lessons: 85,
+                duration: '40 hours',
+                rating: 4.9,
+                reviews: 18700,
+                students: 23400,
+                price: 8999,
+                level: 'Advanced',
+                tags: ['Machine Learning', 'AI'],
+                popular: true,
+                free: false
+            }
+        ];
+
+        // Current filters
+        let currentFilters = {
+            searchTerm: '',
+            category: 'all',
+            contentType: 'all',
+            sortBy: 'relevance',
+            viewMode: 'grid'
+        };
+
+        // Recent searches
+        let recentSearches = JSON.parse(localStorage.getItem('nav_recentSearches')) || [];
+
+        // Listen for storage events (changes in other tabs)
+        window.addEventListener('storage', function(e) {
+            if (e.key && e.key.startsWith('nav_')) {
+                loadUserSettings();
+                showSyncStatus();
+            }
+        });
+
+        // Listen for custom settings updated event
+        window.addEventListener('settingsUpdated', function(e) {
+            loadUserSettings();
+            showSyncStatus();
+        });
+
+        // ==================== PROFILE MENU ====================
+        document.getElementById('profileBtn')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', function() {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.remove('active');
+        });
+
+        // Close sort menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const sortMenu = document.getElementById('sortMenu');
+            const sortBtn = document.querySelector('.sort-btn');
+            if (!sortBtn?.contains(e.target) && !sortMenu?.contains(e.target)) {
+                sortMenu?.classList.remove('active');
+            }
+        });
+
+        // ==================== PROFILE FUNCTIONS ====================
+        function showStats() {
+            showToast('Learning statistics coming soon!');
+        }
+
+        function showAchievements() {
+            showToast('Achievements gallery coming soon!');
+        }
+
+        function logout() {
+            showModal('Logout', 'Are you sure you want to logout?', function() {
+                showToast('Logged out successfully');
+                setTimeout(() => window.location.href = 'index.html', 1000);
+            });
+        }
+
+        // ==================== NOTIFICATION ====================
+        document.getElementById('notificationBtn')?.addEventListener('click', function() {
+            showToast('No new notifications');
+        });
+
+        // ==================== LOAD USER SETTINGS ====================
+        function loadUserSettings() {
+            try {
+                // Load user name
+                const userName = localStorage.getItem('nav_userName');
+                if (userName) {
+                    document.getElementById('menuUserName').textContent = userName;
+                }
+
+                // Load user email
+                const userEmail = localStorage.getItem('nav_userEmail');
+                if (userEmail) {
+                    document.getElementById('menuUserEmail').textContent = userEmail;
+                }
+
+                // Load profile avatar
+                const profileAvatar = localStorage.getItem('nav_profileAvatar');
+                const headerAvatar = document.getElementById('headerAvatar');
+                const headerEmoji = document.getElementById('headerEmoji');
+                
+                if (profileAvatar && headerAvatar && headerEmoji) {
+                    headerAvatar.src = profileAvatar;
+                    headerAvatar.style.display = 'block';
+                    headerEmoji.style.display = 'none';
+                }
+
+                // Load theme
+                const darkMode = localStorage.getItem('nav_darkMode');
+                if (darkMode !== null) {
+                    document.body.classList.toggle('light-theme', darkMode === 'false');
+                }
+
+                // Load accent color
+                const accentColor = localStorage.getItem('nav_accentColor');
+                if (accentColor) {
+                    document.documentElement.style.setProperty('--primary', accentColor);
+                }
+
+            } catch (e) {
+                console.log('Error loading settings:', e);
+            }
+        }
+
+        // Show sync status
+        function showSyncStatus() {
+            const syncStatus = document.getElementById('syncStatus');
+            syncStatus.style.display = 'flex';
+            setTimeout(() => {
+                syncStatus.style.display = 'none';
+            }, 3000);
+        }
+
+        // ==================== SEARCH FUNCTIONS ====================
+        
+        // Initialize search
+        function initSearch() {
+            const searchInput = document.getElementById('mainSearchInput');
+            
+            // Load initial results
+            performSearch();
+            
+            // Search on input
+            searchInput.addEventListener('input', debounce(function() {
+                performSearch();
+                updateClearButton();
+            }, 300));
+            
+            // Focus effect
+            searchInput.addEventListener('focus', function() {
+                document.getElementById('searchWrapper').classList.add('focused');
+            });
+            
+            searchInput.addEventListener('blur', function() {
+                document.getElementById('searchWrapper').classList.remove('focused');
+            });
+            
+            // Load recent searches
+            displayRecentSearches();
+            
+            // Check for URL params
+            const urlParams = new URLSearchParams(window.location.search);
+            const queryParam = urlParams.get('q');
+            if (queryParam) {
+                searchInput.value = queryParam;
+                performSearch();
+                addToRecentSearches(queryParam);
+            }
+        }
+
+        // Debounce function
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Perform search
+        function performSearch() {
+            const searchTerm = document.getElementById('mainSearchInput').value.toLowerCase().trim();
+            currentFilters.searchTerm = searchTerm;
+            
+            // Show loading
+            document.getElementById('loadingSkeleton').style.display = 'block';
+            document.getElementById('resultsGrid').innerHTML = '';
+            
+            // Simulate network delay
+            setTimeout(() => {
+                // Filter results
+                let results = searchData.filter(item => {
+                    // Filter by search term
+                    if (searchTerm && !item.title.toLowerCase().includes(searchTerm) && 
+                        !item.description.toLowerCase().includes(searchTerm) &&
+                        !item.tags.some(tag => tag.toLowerCase().includes(searchTerm))) {
+                        return false;
+                    }
+                    
+                    // Filter by category
+                    if (currentFilters.category !== 'all' && item.category !== currentFilters.category) {
+                        return false;
+                    }
+                    
+                    // Filter by content type
+                    if (currentFilters.contentType !== 'all' && item.type !== currentFilters.contentType) {
+                        return false;
+                    }
+                    
+                    return true;
+                });
+                
+                // Sort results
+                results = sortResults(results);
+                
+                // Update UI
+                document.getElementById('loadingSkeleton').style.display = 'none';
+                
+                if (results.length === 0) {
+                    document.getElementById('noResults').style.display = 'block';
+                    document.getElementById('resultsGrid').innerHTML = '';
+                } else {
+                    document.getElementById('noResults').style.display = 'none';
+                    displayResults(results);
+                }
+                
+                // Update result count
+                document.getElementById('resultCount').textContent = `${results.length} results`;
+                
+                // Add to recent searches if there's a search term
+                if (searchTerm) {
+                    addToRecentSearches(searchTerm);
+                }
+            }, 500);
+        }
+
+        // Sort results
+        function sortResults(results) {
+            switch (currentFilters.sortBy) {
+                case 'popular':
+                    return results.sort((a, b) => b.students - a.students);
+                case 'newest':
+                    return results.sort((a, b) => b.id - a.id);
+                case 'price-low':
+                    return results.sort((a, b) => a.price - b.price);
+                case 'price-high':
+                    return results.sort((a, b) => b.price - a.price);
+                case 'rating':
+                    return results.sort((a, b) => b.rating - a.rating);
+                default:
+                    return results;
+            }
+        }
+
+        // Display results
+        function displayResults(results) {
+            const grid = document.getElementById('resultsGrid');
+            grid.innerHTML = '';
+            
+            results.forEach(item => {
+                const card = createResultCard(item);
+                grid.appendChild(card);
+            });
+        }
+
+        // Create result card
+        function createResultCard(item) {
+            const card = document.createElement('div');
+            card.className = `result-card ${currentFilters.viewMode === 'list' ? 'list-view' : ''}`;
+            card.setAttribute('data-category', item.category);
+            card.setAttribute('data-type', item.type);
+            card.setAttribute('data-id', item.id);
+            card.onclick = () => openResult(item.id);
+            
+            const priceDisplay = item.free ? 'Free' : `₹${item.price}`;
+            const priceClass = item.free ? 'free' : '';
+            
+            card.innerHTML = `
+                <div class="result-icon">${item.icon}</div>
+                <div class="result-content">
+                    <div class="result-category">${item.category.toUpperCase()}</div>
+                    <div class="result-title">
+                        ${item.title}
+                        ${item.popular ? '<span class="result-badge popular">Popular</span>' : ''}
+                        ${item.free ? '<span class="result-badge free">Free</span>' : ''}
+                    </div>
+                    <div class="result-meta">
+                        <span><i class="far fa-clock"></i> ${item.duration}</span>
+                        <span><i class="far fa-file-alt"></i> ${item.lessons} lessons</span>
+                        <span><i class="far fa-user"></i> ${formatNumber(item.students)}</span>
+                    </div>
+                    <div class="result-description">${item.description}</div>
+                    <div class="result-footer">
+                        <div class="result-rating">
+                            <i class="fas fa-star"></i>
+                            ${item.rating}
+                            <span>(${formatNumber(item.reviews)})</span>
+                        </div>
+                        <div class="result-price ${priceClass}">${priceDisplay}</div>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Format numbers
+        function formatNumber(num) {
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'k';
+            }
+            return num;
+        }
+
+        // Open result
+        function openResult(id) {
+            const item = searchData.find(i => i.id === id);
+            if (item) {
+                showToast(`Opening: ${item.title}`);
+                // In real app: window.location.href = `course.html?id=${id}`;
+            }
+        }
+
+        // Filter by category
+        function filterByCategory(category, element) {
+            // Update active pill
+            document.querySelectorAll('.category-pill').forEach(pill => {
+                pill.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            // Update filter
+            currentFilters.category = category;
+            performSearch();
+        }
+
+        // Apply content filter
+        function applyContentFilter(filter, element) {
+            // Update active chip
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            // Update filter
+            currentFilters.contentType = filter;
+            performSearch();
+        }
+
+        // Toggle view
+        function toggleView(mode, element) {
+            // Update active button
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            // Update view
+            currentFilters.viewMode = mode;
+            const grid = document.getElementById('resultsGrid');
+            grid.classList.toggle('list-view', mode === 'list');
+            
+            // Re-render results
+            performSearch();
+        }
+
+        // Toggle sort menu
+        function toggleSortMenu() {
+            document.getElementById('sortMenu').classList.toggle('active');
+        }
+
+        // Apply sort
+        function applySort(sort, element) {
+            // Update active option
+            document.querySelectorAll('.sort-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            // Update sort button text
+            const sortText = element.textContent.trim();
+            document.querySelector('.sort-btn').innerHTML = `
+                <i class="fas fa-sort-amount-down"></i>
+                Sort by: ${sortText}
+                <i class="fas fa-chevron-down"></i>
+            `;
+            
+            // Update filter
+            currentFilters.sortBy = sort;
+            
+            // Close menu
+            document.getElementById('sortMenu').classList.remove('active');
+            
+            // Re-sort results
+            performSearch();
+        }
+
+        // Update clear button
+        function updateClearButton() {
+            const searchInput = document.getElementById('mainSearchInput');
+            const clearBtn = document.getElementById('clearSearch');
+            
+            if (searchInput.value.length > 0) {
+                clearBtn.classList.add('visible');
+            } else {
+                clearBtn.classList.remove('visible');
+            }
+        }
+
+        // Clear search
+        function clearSearch() {
+            const searchInput = document.getElementById('mainSearchInput');
+            searchInput.value = '';
+            updateClearButton();
+            performSearch();
+            searchInput.focus();
+        }
+
+        // Recent searches functions
+        function addToRecentSearches(term) {
+            if (!term) return;
+            
+            // Remove if already exists
+            recentSearches = recentSearches.filter(t => t !== term);
+            
+            // Add to beginning
+            recentSearches.unshift(term);
+            
+            // Keep only last 5
+            if (recentSearches.length > 5) {
+                recentSearches.pop();
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('nav_recentSearches', JSON.stringify(recentSearches));
+            
+            // Display
+            displayRecentSearches();
+        }
+
+        function displayRecentSearches() {
+            const container = document.getElementById('recentSearches');
+            const list = document.getElementById('recentList');
+            
+            if (recentSearches.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            list.innerHTML = '';
+            
+            recentSearches.forEach(term => {
+                const item = document.createElement('span');
+                item.className = 'recent-item';
+                item.innerHTML = `
+                    <i class="fas fa-search"></i>
+                    ${term}
+                    <span class="remove" onclick="removeRecentSearch('${term}', event)">
+                        <i class="fas fa-times"></i>
+                    </span>
+                `;
+                item.onclick = (e) => {
+                    if (!e.target.closest('.remove')) {
+                        searchRecent(term);
+                    }
+                };
+                list.appendChild(item);
+            });
+        }
+
+        function searchRecent(term) {
+            document.getElementById('mainSearchInput').value = term;
+            performSearch();
+            addToRecentSearches(term);
+        }
+
+        function removeRecentSearch(term, event) {
+            event.stopPropagation();
+            recentSearches = recentSearches.filter(t => t !== term);
+            localStorage.setItem('nav_recentSearches', JSON.stringify(recentSearches));
+            displayRecentSearches();
+        }
+
+        function clearSearchHistory() {
+            showModal('Clear History', 'Clear all recent searches?', function() {
+                recentSearches = [];
+                localStorage.setItem('nav_recentSearches', JSON.stringify(recentSearches));
+                displayRecentSearches();
+                showToast('Search history cleared');
+            });
+        }
+
+        // Voice search
+        function toggleVoiceSearch() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+                
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+                
+                const voiceBtn = document.getElementById('voiceSearchBtn');
+                voiceBtn.classList.add('listening');
+                
+                recognition.start();
+                
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('mainSearchInput').value = transcript;
+                    performSearch();
+                    addToRecentSearches(transcript);
+                    voiceBtn.classList.remove('listening');
+                };
+                
+                recognition.onerror = function() {
+                    voiceBtn.classList.remove('listening');
+                    showToast('Voice search failed. Please try again.');
+                };
+                
+                recognition.onend = function() {
+                    voiceBtn.classList.remove('listening');
+                };
+            } else {
+                showToast('Voice search is not supported in your browser');
+            }
+        }
+
+        // Trending search
+        function searchTrending(term) {
+            document.getElementById('mainSearchInput').value = term;
+            performSearch();
+            addToRecentSearches(term);
+        }
+
+        // Search suggestion
+        function searchSuggestion(term) {
+            document.getElementById('mainSearchInput').value = term;
+            performSearch();
+            addToRecentSearches(term);
+        }
+
+        function viewAllTrending() {
+            showToast('All trending topics coming soon');
+        }
+
+        // ==================== LOADING FUNCTIONS ====================
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+        }
+
+        function showLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.classList.add('active');
+            }
+        }
+
+        // ==================== MODAL FUNCTIONS ====================
+        function showModal(title, message, confirmCallback) {
+            const modal = document.getElementById('confirmModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+            
+            if (modalTitle) modalTitle.textContent = title;
+            if (modalMessage) modalMessage.textContent = message;
+            
+            if (confirmBtn) {
+                confirmBtn.onclick = function() {
+                    hideModal();
+                    if (confirmCallback) confirmCallback();
+                };
+            }
+            
+            modal.classList.add('active');
+        }
+        
+        function hideModal() {
+            const modal = document.getElementById('confirmModal');
+            modal.classList.remove('active');
+        }
+
+        // ==================== TOAST ====================
+        function showToast(message, duration = 2200) {
+            const toast = document.getElementById('toastContainer');
+            if (!toast) return;
+            
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        // ==================== PAGE TRANSITIONS ====================
+        document.querySelectorAll('.nav-item').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href && href !== window.location.pathname.split('/').pop()) {
+                    e.preventDefault();
+                    document.body.classList.add('page-fade');
+                    setTimeout(() => {
+                        window.location.href = href;
+                    }, 250);
+                }
+            });
+        });
+
+        // Close modal on outside click
+        document.getElementById('confirmModal')?.addEventListener('click', function(e) {
+            if (e.target === this) hideModal();
+        });
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            hideLoading();
+            loadUserSettings();
+            initSearch();
+            
+            // Simulate loading
+            setTimeout(hideLoading, 500);
+        });
+
+        window.addEventListener('load', hideLoading);
+        setTimeout(hideLoading, 2000);
+
+        // Handle offline/online status
+        window.addEventListener('online', () => showToast('You are back online 📶'));
+        window.addEventListener('offline', () => showToast('You are offline ✈️'));
+
+        // Service Worker Registration for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(err => {
+                    console.log('ServiceWorker registration failed');
+                });
+            });
+        }
+    </script>
+</body>
+</html>
