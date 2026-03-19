@@ -411,11 +411,13 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            pointer-events: none;
         }
 
         .toast.show {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
         }
 
         .toast.success {
@@ -591,8 +593,66 @@
         const account = new Appwrite.Account(client);
 
         // ==================== GLOBAL VARIABLES ====================
-        let activeToast = null;
         let loadingOverlay = document.getElementById('loadingOverlay');
+
+        // ==================== FIXED TOAST FUNCTION ====================
+        function showToast(message, type = 'info', duration = 3000) {
+            const toast = document.getElementById('toastContainer');
+            if (!toast) return;
+            
+            // Clear any existing timeouts
+            if (window.toastTimeout) {
+                clearTimeout(window.toastTimeout);
+                window.toastTimeout = null;
+            }
+            
+            // Reset toast completely
+            toast.className = 'toast';
+            toast.innerHTML = '';
+            
+            // Add type class
+            toast.classList.add(type);
+            
+            // Add icon
+            const icon = document.createElement('i');
+            switch(type) {
+                case 'success':
+                    icon.className = 'fas fa-check-circle';
+                    break;
+                case 'error':
+                    icon.className = 'fas fa-exclamation-circle';
+                    break;
+                case 'warning':
+                    icon.className = 'fas fa-exclamation-triangle';
+                    break;
+                default:
+                    icon.className = 'fas fa-info-circle';
+            }
+            
+            toast.appendChild(icon);
+            toast.appendChild(document.createTextNode(' ' + message));
+            
+            // Force reflow to ensure animation works
+            void toast.offsetWidth;
+            
+            // Show toast
+            toast.classList.add('show');
+            
+            // Hide after duration
+            window.toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+                window.toastTimeout = null;
+            }, duration);
+        }
+
+        // ==================== LOADING FUNCTIONS ====================
+        function showLoading() {
+            loadingOverlay.classList.add('active');
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.remove('active');
+        }
 
         // ==================== TAB SWITCHING ====================
         function switchTab(tab) {
@@ -628,57 +688,6 @@
             }
         }
 
-        // ==================== LOADING FUNCTIONS ====================
-        function showLoading() {
-            loadingOverlay.classList.add('active');
-        }
-
-        function hideLoading() {
-            loadingOverlay.classList.remove('active');
-        }
-
-        // ==================== TOAST NOTIFICATIONS ====================
-        function showToast(message, type = 'info', duration = 3000) {
-            if (activeToast) {
-                activeToast.classList.remove('show');
-                setTimeout(() => {
-                    if (activeToast.parentNode) {
-                        activeToast.parentNode.removeChild(activeToast);
-                    }
-                    activeToast = null;
-                }, 300);
-            }
-
-            const toast = document.getElementById('toastContainer');
-            toast.className = `toast ${type}`;
-            
-            const icon = document.createElement('i');
-            switch(type) {
-                case 'success':
-                    icon.className = 'fas fa-check-circle';
-                    break;
-                case 'error':
-                    icon.className = 'fas fa-exclamation-circle';
-                    break;
-                case 'warning':
-                    icon.className = 'fas fa-exclamation-triangle';
-                    break;
-                default:
-                    icon.className = 'fas fa-info-circle';
-            }
-            
-            toast.innerHTML = '';
-            toast.appendChild(icon);
-            toast.appendChild(document.createTextNode(' ' + message));
-            
-            toast.classList.add('show');
-            activeToast = toast;
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, duration);
-        }
-
         // ==================== AUTHENTICATION FUNCTIONS ====================
 
         /**
@@ -687,7 +696,6 @@
         async function login() {
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
-            const rememberMe = document.getElementById('rememberMe').checked;
 
             if (!email || !password) {
                 showToast('Please enter email and password', 'error');
@@ -697,19 +705,15 @@
             showLoading();
 
             try {
-                // ✅ CORRECT: Using createEmailSession for email/password login
                 const session = await account.createEmailSession(email, password);
-                
-                // Get user details
                 const user = await account.get();
                 
-                // Save to localStorage
                 localStorage.setItem('nav_userName', user.name || email.split('@')[0]);
                 localStorage.setItem('nav_userEmail', user.email);
                 localStorage.setItem('nav_userId', user.$id);
                 localStorage.setItem('nav_sessionId', session.$id);
                 
-                if (rememberMe) {
+                if (document.getElementById('rememberMe').checked) {
                     localStorage.setItem('nav_rememberMe', 'true');
                 }
                 
@@ -767,7 +771,6 @@
             showLoading();
 
             try {
-                // Create account
                 const user = await account.create(
                     Appwrite.ID.unique(),
                     email,
@@ -775,15 +778,12 @@
                     name
                 );
 
-                // ✅ Auto login after signup
                 await account.createEmailSession(email, password);
                 
-                // Save to localStorage
                 localStorage.setItem('nav_userName', name);
                 localStorage.setItem('nav_userEmail', email);
                 localStorage.setItem('nav_userId', user.$id);
                 
-                // Initialize default settings
                 initializeUserSettings(name, email);
                 
                 showToast('Account created successfully!', 'success');
@@ -845,14 +845,13 @@
                 notifications: []
             };
 
-            // Save each setting with nav_ prefix
             Object.keys(defaultSettings).forEach(key => {
                 localStorage.setItem(`nav_${key}`, JSON.stringify(defaultSettings[key]));
             });
         }
 
         /**
-         * Forgot Password - ✅ UPDATED with correct repo URL
+         * Forgot Password
          */
         async function forgotPassword() {
             const email = document.getElementById('loginEmail').value.trim();
@@ -870,7 +869,6 @@
             showLoading();
 
             try {
-                // ✅ CORRECT URL with repo name
                 await account.createRecovery(
                     email,
                     "https://amit21686.github.io/NAV-Education/reset-password.html"
@@ -878,7 +876,6 @@
                 
                 showToast('Password reset link sent to your email!', 'success');
                 
-                // Show additional info
                 setTimeout(() => {
                     showToast(`Check inbox/spam for: ${email}`, 'info', 4000);
                 }, 1000);
@@ -903,12 +900,9 @@
          */
         async function checkExistingSession() {
             try {
-                const user = await account.get();
-                console.log('Already logged in as:', user.email);
-                // Already logged in, redirect to home
+                await account.get();
                 window.location.href = 'index.html';
             } catch (error) {
-                // Not logged in, stay on page
                 console.log('No active session');
             }
         }
@@ -923,13 +917,9 @@
 
         // ==================== EVENT LISTENERS ====================
         document.addEventListener('DOMContentLoaded', function() {
-            // Check for existing session
             checkExistingSession();
-            
-            // Fill demo credentials
             fillDemoCredentials();
             
-            // Enter key press for login/signup
             document.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     const activeForm = document.querySelector('.auth-form.active');
