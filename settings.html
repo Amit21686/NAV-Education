@@ -2,2090 +2,843 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Settings | NAV Education</title>
     
-    <!-- Primary Meta Tags -->
-    <meta name="title" content="NAV Education - Settings">
-    <meta name="description" content="Customize your learning experience with NAV Education settings">
-    <meta name="keywords" content="settings, preferences, profile, theme, notifications">
-    <meta name="author" content="NAV Education">
-    
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#6366f1" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)">
-    
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
     
     <style>
-        /* Settings page specific styles */
-        .settings-container {
-            padding-bottom: 100px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
-        
-        .settings-header {
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f52e0;
+            --secondary: #8b5cf6;
+            --accent: #f43f5e;
+            --bg: #020617;
+            --bg-card: rgba(30, 41, 59, 0.8);
+            --bg-card-hover: rgba(51, 65, 85, 0.8);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --error: #f43f5e;
+            --warning: #f59e0b;
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 14px;
+            --space-lg: 20px;
+            --space-xl: 24px;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-full: 9999px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        body.light-theme {
+            --bg: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f1f5f9;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #475569;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 70% 30%, rgba(99,102,241,0.12) 0%, transparent 70%);
+            animation: rotateBg 40s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes rotateBg { to { transform: rotate(360deg); } }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            padding: var(--space-md);
+            padding-bottom: 110px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-bottom: var(--space-lg);
         }
-        
+
+        .brand h1 { font-size: 1.6rem; font-weight: 600; }
+        .brand h1 span { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+        .icon-btn:active { transform: scale(0.95); border-color: var(--primary); }
+
+        /* Profile Header */
         .profile-header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: var(--radius-xl);
             padding: var(--space-xl);
-            color: white;
             text-align: center;
+            margin-bottom: var(--space-lg);
             position: relative;
             overflow: hidden;
-            margin-bottom: var(--space-lg);
         }
-        
-        .profile-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
-            animation: rotate 20s linear infinite;
-        }
-        
+
         .profile-avatar {
-            width: 150px;
-            height: 150px;
+            width: 120px;
+            height: 120px;
             background: rgba(255,255,255,0.2);
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
             margin: 0 auto var(--space-md);
             border: 4px solid rgba(255,255,255,0.3);
             position: relative;
-            z-index: 1;
             cursor: pointer;
-            transition: all var(--transition-fast);
             overflow: hidden;
         }
-        
-        .profile-avatar:hover {
-            transform: scale(1.05);
-            border-color: white;
-        }
-        
-        .profile-avatar:hover .avatar-overlay {
-            opacity: 1;
-        }
-        
-        .avatar-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-        
-        .avatar-image.show {
-            display: block;
-        }
-        
-        .avatar-emoji {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            font-size: 4rem;
-        }
-        
-        .avatar-emoji.hide {
-            display: none;
-        }
-        
+        .profile-avatar:hover .avatar-overlay { opacity: 1; }
+        .avatar-image { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .avatar-image.show { display: block; }
+        .avatar-emoji { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 3.5rem; }
+        .avatar-emoji.hide { display: none; }
         .avatar-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 1rem;
-            font-weight: 500;
-            opacity: 0;
-            transition: opacity var(--transition-fast);
-            backdrop-filter: blur(2px);
             gap: 8px;
-        }
-        
-        .avatar-overlay i {
-            font-size: 1.5rem;
-        }
-        
-        .avatar-edit-options {
-            position: absolute;
-            bottom: -50px;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
-            border-radius: var(--radius-lg);
-            padding: var(--space-md);
-            display: flex;
-            gap: var(--space-sm);
-            justify-content: center;
-            transition: bottom 0.3s ease;
-            z-index: 20;
-        }
-        
-        .profile-avatar:hover .avatar-edit-options {
-            bottom: 10px;
-        }
-        
-        .avatar-edit-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary);
+            opacity: 0;
+            transition: 0.3s;
+            backdrop-filter: blur(2px);
             color: white;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: all var(--transition-fast);
-        }
-        
-        .avatar-edit-btn:hover {
-            transform: scale(1.1);
-            background: var(--secondary);
-        }
-        
-        .avatar-edit-btn.remove {
-            background: var(--accent);
-        }
-        
-        .profile-name {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: var(--space-xs);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .profile-email {
-            opacity: 0.9;
-            font-size: 0.9rem;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .profile-badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.2);
-            padding: 4px 12px;
-            border-radius: var(--radius-full);
             font-size: 0.8rem;
-            margin-top: var(--space-sm);
-            position: relative;
-            z-index: 1;
         }
-        
+        .profile-name { font-size: 1.5rem; font-weight: 600; margin-bottom: 4px; position: relative; z-index: 1; }
+        .profile-email { opacity: 0.9; font-size: 0.85rem; position: relative; z-index: 1; }
+        .profile-badge { display: inline-block; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: var(--radius-full); font-size: 0.75rem; margin-top: 10px; }
+
+        /* Settings Sections */
         .settings-section {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             padding: var(--space-lg);
             margin-bottom: var(--space-lg);
-            transition: all var(--transition-fast);
+            backdrop-filter: blur(10px);
         }
-        
-        .settings-section:hover {
-            border-color: var(--primary);
-            box-shadow: var(--shadow-md);
-        }
-        
+
         .settings-section-title {
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
-            color: var(--text);
-            font-size: 1.1rem;
+            gap: 8px;
+            font-size: 1rem;
             font-weight: 600;
             margin-bottom: var(--space-lg);
             padding-bottom: var(--space-sm);
             border-bottom: 1px solid var(--border);
         }
-        
-        .settings-section-title i {
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
-        
+        .settings-section-title i { color: var(--primary); font-size: 1.1rem; }
+
         .settings-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: var(--space-md) 0;
             border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        
-        .settings-row:last-child {
-            border-bottom: none;
-        }
-        
-        .settings-info {
-            flex: 1;
-        }
-        
-        .settings-label {
-            font-weight: 500;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-        
-        .settings-description {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-        
-        .settings-value {
-            color: var(--primary);
-            font-weight: 500;
-        }
-        
-        /* Toggle Switch */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 52px;
-            height: 28px;
-        }
-        
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--border);
-            transition: var(--transition-normal);
-            border-radius: var(--radius-full);
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 22px;
-            width: 22px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: var(--transition-normal);
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: var(--primary);
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(24px);
-        }
-        
-        /* Range Slider */
-        .range-slider {
-            width: 100%;
-            margin: var(--space-md) 0;
-        }
-        
-        .range-slider input {
-            width: 100%;
-            height: 6px;
-            border-radius: var(--radius-full);
-            background: var(--border);
-            outline: none;
-            -webkit-appearance: none;
-        }
-        
-        .range-slider input::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 22px;
-            height: 22px;
-            background: var(--primary);
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid white;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .range-values {
-            display: flex;
-            justify-content: space-between;
-            margin-top: var(--space-sm);
-            color: var(--text-muted);
+        .settings-row:last-child { border-bottom: none; }
+        .settings-info { flex: 1; min-width: 140px; }
+        .settings-label { font-weight: 500; display: flex; align-items: center; gap: 6px; margin-bottom: 2px; font-size: 0.9rem; }
+        .settings-description { font-size: 0.7rem; color: var(--text-muted); }
+
+        .setting-input, .setting-select {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            color: var(--text);
+            font-family: inherit;
             font-size: 0.85rem;
+            width: 180px;
         }
-        
-        /* Color Picker */
-        .color-options {
-            display: flex;
-            gap: var(--space-sm);
-            margin-top: var(--space-sm);
-        }
-        
-        .color-option {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-full);
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all var(--transition-fast);
-        }
-        
-        .color-option:hover {
-            transform: scale(1.1);
-        }
-        
-        .color-option.active {
-            border-color: white;
-            box-shadow: 0 0 0 2px var(--primary);
-        }
-        
+        .setting-input:focus, .setting-select:focus { outline: none; border-color: var(--primary); }
+
+        /* Toggle Switch */
+        .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background: var(--border); transition: 0.3s; border-radius: var(--radius-full); }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background: white; transition: 0.3s; border-radius: 50%; }
+        input:checked + .slider { background: var(--primary); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        /* Range Slider */
+        .range-slider input { width: 160px; height: 4px; background: var(--border); border-radius: var(--radius-full); -webkit-appearance: none; }
+        .range-slider input::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--primary); border-radius: 50%; cursor: pointer; }
+
+        /* Color Options */
+        .color-options { display: flex; gap: 8px; flex-wrap: wrap; }
+        .color-option { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+        .color-option.active { border-color: white; box-shadow: 0 0 0 2px var(--primary); }
         .color-option.primary { background: #6366f1; }
         .color-option.secondary { background: #8b5cf6; }
         .color-option.success { background: #10b981; }
         .color-option.warning { background: #f59e0b; }
         .color-option.danger { background: #f43f5e; }
-        
-        /* Language Selector */
-        .language-selector {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: var(--space-sm);
-            margin-top: var(--space-sm);
-        }
-        
-        .language-option {
-            padding: var(--space-md);
-            background: var(--bg);
-            border: 2px solid var(--border);
-            border-radius: var(--radius-md);
-            text-align: center;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-        
-        .language-option:hover {
-            border-color: var(--primary);
-        }
-        
-        .language-option.active {
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.1);
-        }
-        
-        .language-option i {
-            font-size: 1.5rem;
-            margin-bottom: var(--space-xs);
-            color: var(--primary);
-        }
-        
-        /* Danger Zone */
-        .danger-zone {
-            border-color: rgba(244, 63, 94, 0.3);
-            background: rgba(244, 63, 94, 0.05);
-        }
-        
-        .danger-zone .settings-section-title i {
-            color: var(--accent);
-        }
-        
-        .danger-zone .btn-danger {
+
+        /* Buttons */
+        .btn {
             width: 100%;
-            margin-top: var(--space-sm);
-        }
-        
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: var(--space-sm);
-            margin-top: var(--space-md);
-        }
-        
-        .stat-item {
-            background: var(--bg);
-            padding: var(--space-md);
+            padding: 12px;
+            border: none;
             border-radius: var(--radius-md);
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-        
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-        
-        /* Backup Options */
-        .backup-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            padding: var(--space-md);
-            background: var(--bg);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--space-sm);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-        
-        .backup-item:hover {
-            background: var(--bg-card-hover);
-        }
-        
-        .backup-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--primary);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-        }
-        
-        .backup-info {
-            flex: 1;
-        }
-        
-        .backup-title {
-            font-weight: 500;
-            margin-bottom: 2px;
-        }
-        
-        .backup-date {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-        
-        /* Keyboard Shortcuts */
-        .shortcut-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: var(--space-sm) 0;
-        }
-        
-        .shortcut-keys {
-            display: flex;
-            gap: 4px;
-        }
-        
-        .shortcut-key {
-            background: var(--bg);
-            padding: 4px 8px;
-            border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-            font-family: monospace;
-            border: 1px solid var(--border);
-        }
-
-        /* Loading Spinner */
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-        
-        .loading-overlay.active {
-            display: flex;
-        }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-        
-        .modal.active {
-            display: flex;
-        }
-        
-        .modal-content {
-            background: var(--bg-card);
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl);
-            max-width: 320px;
-            text-align: center;
-            border: 1px solid var(--border);
-            animation: modalPop 0.3s ease;
-        }
-        
-        @keyframes modalPop {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        .modal-icon {
-            font-size: 3rem;
-            color: var(--accent);
-            margin-bottom: var(--space-md);
-        }
-        
-        .modal-title {
-            font-size: 1.3rem;
+            font-family: inherit;
+            font-size: 0.9rem;
             font-weight: 600;
-            margin-bottom: var(--space-sm);
-        }
-        
-        .modal-message {
-            color: var(--text-muted);
-            margin-bottom: var(--space-lg);
-        }
-        
-        .modal-actions {
-            display: flex;
-            gap: var(--space-sm);
-        }
-        
-        .modal-actions button {
-            flex: 1;
-        }
-
-        /* Back button */
-        #backBtn {
             cursor: pointer;
-            transition: all var(--transition-fast);
+            transition: all 0.2s;
+            margin-top: 8px;
         }
-        
-        #backBtn:hover {
-            transform: translateX(-4px);
-        }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+        .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .btn-danger { background: var(--error); color: white; }
+        .btn:active { transform: scale(0.98); }
 
-        /* Image Editor Modal */
-        .image-editor-modal {
-            max-width: 400px;
-            width: 90%;
-        }
-        
-        .image-preview-container {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto var(--space-lg);
-            border-radius: 50%;
-            overflow: hidden;
-            border: 4px solid var(--primary);
-        }
-        
-        .image-preview {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .zoom-control {
-            margin: var(--space-lg) 0;
-        }
-        
-        .zoom-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: var(--space-sm);
-            color: var(--text-muted);
-        }
-        
-        /* Sync Status */
-        .sync-status {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm);
-            background: var(--bg);
-            border-radius: var(--radius-md);
-            margin-top: var(--space-sm);
-            color: var(--success);
-        }
-        
-        .sync-status i {
-            font-size: 1.2rem;
-        }
-        
+        /* Danger Zone */
+        .danger-zone { border-color: rgba(244,63,94,0.3); background: rgba(244,63,94,0.05); }
+        .danger-zone .settings-section-title i { color: var(--error); }
+
         /* Profile Menu */
         .profile-menu {
             position: fixed;
             top: 70px;
             right: 20px;
             background: var(--bg-card);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: var(--space-md);
-            min-width: 200px;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 8px;
+            min-width: 180px;
+            z-index: 9999;
             display: none;
+            box-shadow: var(--shadow-lg);
         }
-        
-        .profile-menu.active {
-            display: block;
-            animation: slideDown 0.3s ease;
-        }
-        
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
+        .profile-menu.active { display: block; }
         .profile-menu-item {
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm) var(--space-md);
-            color: var(--text);
-            text-decoration: none;
-            border-radius: var(--radius-md);
-            transition: all var(--transition-fast);
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
             cursor: pointer;
+            transition: all 0.2s;
         }
-        
-        .profile-menu-item:hover {
-            background: var(--bg-card-hover);
-            color: var(--primary);
+        .profile-menu-item:hover { background: var(--bg-card-hover); color: var(--primary); }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+            z-index: 10000;
+            opacity: 0;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        
-        .profile-menu-item i {
-            width: 20px;
-            color: var(--primary);
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            z-index: 20000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
-        
-        .profile-menu-divider {
-            height: 1px;
-            background: var(--border);
-            margin: var(--space-sm) 0;
+        .modal.active { display: flex; }
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            max-width: 300px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .modal-btn { flex: 1; padding: 10px; border-radius: var(--radius-md); border: none; cursor: pointer; font-weight: 500; }
+        .modal-btn.cancel { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .modal-btn.confirm { background: var(--error); color: white; }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 30000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .loading-overlay.active { display: flex; }
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Cropper Modal */
+        .cropper-modal {
+            max-width: 90%;
+            width: 500px;
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+        }
+        .cropper-container { max-height: 400px; }
+        .cropper-buttons { display: flex; gap: 10px; padding: 15px; justify-content: flex-end; border-top: 1px solid var(--border); }
+        .cropper-buttons button { padding: 8px 20px; border-radius: var(--radius-md); border: none; cursor: pointer; font-weight: 500; }
+        .cropper-cancel { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .cropper-save { background: var(--primary); color: white; }
+
+        /* Magic Navigation */
+        .nav-wrapper {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 350px;
+            height: 70px;
+            z-index: 1000;
+        }
+        .magic-mover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 10;
+        }
+        .circle {
+            position: absolute;
+            top: -12px;
+            left: 5px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            border: 4px solid var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(99,102,241,0.5);
+        }
+        .circle ion-icon { font-size: 1.8rem; color: white; }
+        .nav-pill-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 35px;
+            overflow: hidden;
+            z-index: 5;
+        }
+        .nav-bg-svg {
+            position: absolute;
+            top: 0;
+            left: -465px;
+            width: 1000px;
+            height: 70px;
+            fill: var(--bg-card);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .navigation-items {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            z-index: 20;
+        }
+        .list {
+            list-style: none;
+            flex: 1;
+            height: 70px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .list a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            font-size: 1.4rem;
+            color: var(--text-muted);
+        }
+        .list.active a { opacity: 0; transform: translateY(-20px); }
+
+        @media (max-width: 400px) {
+            .nav-wrapper { width: 320px; }
+            .circle { width: 55px; height: 55px; top: -10px; left: 2px; }
+            .circle ion-icon { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="spinner"></div>
-    </div>
+    <div id="loadingOverlay" class="loading-overlay"><div class="spinner"></div></div>
 
-    <div class="container settings-container">
-        <!-- Header -->
+    <div class="container">
         <header class="app-header">
-            <div class="brand">
-                <h1>NAV <span>Education</span></h1>
-            </div>
-            <div class="profile-icon" id="profileBtn">
-                <img id="headerAvatar" src="" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: none;">
-                <span id="headerEmoji">👤</span>
+            <div class="brand"><h1>NAV <span>Education</span></h1></div>
+            <div class="flex" style="gap: 8px; display: flex;">
+                <div class="icon-btn" id="notificationBtn"><i class="far fa-bell"></i></div>
+                <div class="icon-btn" id="profileBtn"><img id="headerAvatar" src="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:none;"><span id="headerEmoji">👤</span></div>
             </div>
         </header>
 
-        <!-- Profile Menu -->
         <div id="profileMenu" class="profile-menu">
-            <div class="profile-menu-item" onclick="window.location.href='profile.html'">
-                <i class="fas fa-user"></i>
-                <span>View Profile</span>
-            </div>
-            <div class="profile-menu-item" onclick="window.location.href='settings.html'">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
-            </div>
-            <div class="profile-menu-divider"></div>
-            <div class="profile-menu-item" onclick="showStats()">
-                <i class="fas fa-chart-line"></i>
-                <span>Learning Stats</span>
-            </div>
-            <div class="profile-menu-item" onclick="showAchievements()">
-                <i class="fas fa-trophy"></i>
-                <span>Achievements</span>
-            </div>
-            <div class="profile-menu-divider"></div>
-            <div class="profile-menu-item" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </div>
+            <div class="profile-menu-item" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i> View Profile</div>
+            <div class="profile-menu-item" onclick="window.location.href='settings.html'"><i class="fas fa-cog"></i> Settings</div>
+            <div style="height:1px;background:var(--border);margin:5px 0;"></div>
+            <div class="profile-menu-item" onclick="showStats()"><i class="fas fa-chart-line"></i> Learning Stats</div>
+            <div class="profile-menu-item" onclick="showAchievements()"><i class="fas fa-trophy"></i> Achievements</div>
+            <div style="height:1px;background:var(--border);margin:5px 0;"></div>
+            <div class="profile-menu-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
         </div>
 
-        <!-- Profile Header Section -->
         <div class="profile-header">
             <div class="profile-avatar" id="avatarContainer">
-                <!-- Avatar Image -->
-                <img id="avatarImage" class="avatar-image" src="" alt="Profile Photo">
-                
-                <!-- Avatar Emoji (Default) -->
-                <div id="avatarEmoji" class="avatar-emoji">
-                    👨‍🎓
-                </div>
-                
-                <!-- Upload Overlay -->
-                <div class="avatar-overlay" id="avatarOverlay">
-                    <i class="fas fa-camera"></i>
-                    <span>Change Photo</span>
-                </div>
-                
-                <!-- Edit Options -->
-                <div class="avatar-edit-options">
-                    <button class="avatar-edit-btn" onclick="event.stopPropagation(); document.getElementById('avatarUpload').click();" title="Upload Photo">
-                        <i class="fas fa-upload"></i>
-                    </button>
-                    <button class="avatar-edit-btn" onclick="event.stopPropagation(); openImageEditor();" title="Edit Photo">
-                        <i class="fas fa-crop-alt"></i>
-                    </button>
-                    <button class="avatar-edit-btn remove" onclick="event.stopPropagation(); removeAvatar();" title="Remove Photo" id="removeAvatarBtn">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
+                <img id="avatarImage" class="avatar-image" src="">
+                <div id="avatarEmoji" class="avatar-emoji">👨‍🎓</div>
+                <div class="avatar-overlay"><i class="fas fa-camera"></i> Edit</div>
             </div>
-            
             <h2 class="profile-name" id="displayName">Amit Kumar</h2>
             <div class="profile-email" id="displayEmail">amit.kumar@example.com</div>
-            <div class="profile-badge">
-                <i class="fas fa-crown"></i> Premium Member
-            </div>
-            
-            <!-- Hidden file input for avatar upload -->
-            <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+            <div class="profile-badge"><i class="fas fa-crown"></i> Premium Member</div>
+            <input type="file" id="avatarUpload" accept="image/*" style="display:none;">
         </div>
 
-<!-- Banner Section -->
-<div class="banner-container" onclick="window.location.href='https://naveducation.com'">
-    <img src="https://raw.githubusercontent.com/Amit21686/NAV_Education/refs/heads/main/images/NAV%20Education%20banner.png" 
-         alt="NAV Education Banner" 
-         class="banner-image">
-</div>
-
-        <!-- Sync Status -->
-        <div class="sync-status" id="syncStatus">
-            <i class="fas fa-check-circle"></i>
-            <span>All settings synced across devices</span>
+        <div class="banner-card" style="margin-bottom:20px;border-radius:20px;overflow:hidden;cursor:pointer;" onclick="window.open('https://naveducation.com','_blank')">
+            <img src="https://raw.githubusercontent.com/Amit21686/NAV_Education/refs/heads/main/images/NAV%20Education%20banner.png" style="width:100%;display:block;">
         </div>
 
-        <!-- Account Settings Section -->
         <div class="settings-section">
-            <div class="settings-section-title">
-                <i class="fas fa-user-circle"></i>
-                <span>Account Settings</span>
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-user"></i>
-                        Full Name
-                    </div>
-                    <div class="settings-description">Your display name on profile</div>
-                </div>
-                <input type="text" id="userName" class="setting-input" style="width: 200px;" placeholder="Enter name" value="Amit Kumar">
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-envelope"></i>
-                        Email Address
-                    </div>
-                    <div class="settings-description">Used for notifications and login</div>
-                </div>
-                <input type="email" id="userEmail" class="setting-input" style="width: 200px;" placeholder="Enter email" value="amit.kumar@example.com">
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-phone"></i>
-                        Phone Number
-                    </div>
-                    <div class="settings-description">For important updates</div>
-                </div>
-                <input type="tel" id="userPhone" class="setting-input" style="width: 200px;" placeholder="Enter phone" value="+91 98765 43210">
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-calendar"></i>
-                        Date of Birth
-                    </div>
-                    <div class="settings-description">dd/mm/yyyy</div>
-                </div>
-                <input type="date" id="userDob" class="setting-input" style="width: 200px;" value="1995-06-15">
-            </div>
-            
-            <button class="btn btn-primary" id="saveProfileBtn" style="margin-top: var(--space-md);">
-                <i class="fas fa-save"></i> Update Profile
-            </button>
+            <div class="settings-section-title"><i class="fas fa-user-circle"></i> Account Settings</div>
+            <div class="settings-row"><div class="settings-info"><div class="settings-label"><i class="fas fa-user"></i> Full Name</div></div><input type="text" id="userName" class="setting-input" placeholder="Your name"></div>
+            <div class="settings-row"><div class="settings-info"><div class="settings-label"><i class="fas fa-envelope"></i> Email</div></div><input type="email" id="userEmail" class="setting-input" placeholder="Email"></div>
+            <div class="settings-row"><div class="settings-info"><div class="settings-label"><i class="fas fa-phone"></i> Phone</div></div><input type="tel" id="userPhone" class="setting-input" placeholder="Phone number"></div>
+            <button class="btn btn-primary" id="saveProfileBtn"><i class="fas fa-save"></i> Update Profile</button>
         </div>
 
-        <!-- Learning Preferences -->
         <div class="settings-section">
-            <div class="settings-section-title">
-                <i class="fas fa-graduation-cap"></i>
-                <span>Learning Preferences</span>
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-bullseye"></i>
-                        Study Goal
-                    </div>
-                    <div class="settings-description">Select your target exam</div>
-                </div>
-                <select id="userGoal" class="setting-select" style="width: 200px;">
-                    <option value="NEET" selected>NEET (Medical)</option>
-                    <option value="JEE">JEE (Engineering)</option>
-                    <option value="Boards">Class 12 Boards</option>
-                    <option value="Programming">Programming</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-clock"></i>
-                        Daily Study Goal
-                    </div>
-                    <div class="settings-description">Hours per day</div>
-                </div>
-                <div style="width: 200px;">
-                    <div class="range-slider">
-                        <input type="range" id="studyHours" min="1" max="8" value="4" step="0.5">
-                        <div class="range-values">
-                            <span>1h</span>
-                            <span id="hoursDisplay">4h</span>
-                            <span>8h</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-bell"></i>
-                        Study Reminders
-                    </div>
-                    <div class="settings-description">Get daily reminders</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="studyReminders" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-clock"></i>
-                        Reminder Time
-                    </div>
-                    <div class="settings-description">When to remind you</div>
-                </div>
-                <input type="time" id="reminderTime" class="setting-input" style="width: 200px;" value="19:00">
-            </div>
+            <div class="settings-section-title"><i class="fas fa-palette"></i> Appearance</div>
+            <div class="settings-row"><div class="settings-info"><div class="settings-label"><i class="fas fa-moon"></i> Dark Mode</div></div><label class="switch"><input type="checkbox" id="themeToggle"><span class="slider"></span></label></div>
+            <div class="settings-row"><div class="settings-info"><div class="settings-label"><i class="fas fa-paint-brush"></i> Accent Color</div></div><div class="color-options"><div class="color-option primary active" data-color="#6366f1" onclick="setAccentColor('#6366f1',this)"></div><div class="color-option secondary" data-color="#8b5cf6" onclick="setAccentColor('#8b5cf6',this)"></div><div class="color-option success" data-color="#10b981" onclick="setAccentColor('#10b981',this)"></div><div class="color-option warning" data-color="#f59e0b" onclick="setAccentColor('#f59e0b',this)"></div><div class="color-option danger" data-color="#f43f5e" onclick="setAccentColor('#f43f5e',this)"></div></div></div>
         </div>
 
-        <!-- Appearance Settings -->
         <div class="settings-section">
-            <div class="settings-section-title">
-                <i class="fas fa-palette"></i>
-                <span>Appearance</span>
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-moon"></i>
-                        Dark Mode
-                    </div>
-                    <div class="settings-description">Toggle dark/light theme</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="themeToggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-paint-brush"></i>
-                        Accent Color
-                    </div>
-                    <div class="settings-description">Choose your theme color</div>
-                </div>
-                <div class="color-options">
-                    <div class="color-option primary active" data-color="#6366f1" onclick="setAccentColor('#6366f1', this)"></div>
-                    <div class="color-option secondary" data-color="#8b5cf6" onclick="setAccentColor('#8b5cf6', this)"></div>
-                    <div class="color-option success" data-color="#10b981" onclick="setAccentColor('#10b981', this)"></div>
-                    <div class="color-option warning" data-color="#f59e0b" onclick="setAccentColor('#f59e0b', this)"></div>
-                    <div class="color-option danger" data-color="#f43f5e" onclick="setAccentColor('#f43f5e', this)"></div>
-                </div>
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-text-height"></i>
-                        Font Size
-                    </div>
-                    <div class="settings-description">Adjust text size</div>
-                </div>
-                <select id="fontSize" class="setting-select" style="width: 150px;">
-                    <option value="small">Small</option>
-                    <option value="medium" selected>Medium</option>
-                    <option value="large">Large</option>
-                </select>
-            </div>
+            <div class="settings-section-title"><i class="fas fa-graduation-cap"></i> Learning</div>
+            <div class="settings-row"><div class="settings-info"><div class="settings-label"><i class="fas fa-bullseye"></i> Study Goal</div></div><select id="userGoal" class="setting-select"><option value="NEET">NEET (Medical)</option><option value="JEE">JEE (Engineering)</option><option value="Boards">Class 12 Boards</option><option value="Programming">Programming</option></select></div>
+            <div class="settings-row"><div class="settings-info"><div class="settings-label"><i class="fas fa-clock"></i> Daily Goal</div></div><div class="range-slider"><input type="range" id="studyHours" min="1" max="8" value="4" step="0.5"><span id="hoursDisplay" style="margin-left:10px;">4h</span></div></div>
+            <div class="settings-row"><div class="settings-info"><div class="settings-label"><i class="fas fa-bell"></i> Study Reminders</div></div><label class="switch"><input type="checkbox" id="studyReminders" checked><span class="slider"></span></label></div>
         </div>
 
-        <!-- Language Settings -->
-        <div class="settings-section">
-            <div class="settings-section-title">
-                <i class="fas fa-language"></i>
-                <span>Language & Region</span>
-            </div>
-            
-            <div class="language-selector">
-                <div class="language-option active" onclick="selectLanguage('english', this)">
-                    <i class="fas fa-language"></i>
-                    <div>English</div>
-                </div>
-                <div class="language-option" onclick="selectLanguage('hindi', this)">
-                    <i class="fas fa-language"></i>
-                    <div>हिन्दी</div>
-                </div>
-                <div class="language-option" onclick="selectLanguage('spanish', this)">
-                    <i class="fas fa-language"></i>
-                    <div>Español</div>
-                </div>
-                <div class="language-option" onclick="selectLanguage('french', this)">
-                    <i class="fas fa-language"></i>
-                    <div>Français</div>
-                </div>
-            </div>
-            
-            <div class="settings-row" style="margin-top: var(--space-md);">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-globe"></i>
-                        Timezone
-                    </div>
-                    <div class="settings-description">Your local timezone</div>
-                </div>
-                <select id="timezone" class="setting-select" style="width: 200px;">
-                    <option value="IST" selected>IST (UTC+5:30)</option>
-                    <option value="GMT">GMT (UTC+0:00)</option>
-                    <option value="EST">EST (UTC-5:00)</option>
-                    <option value="PST">PST (UTC-8:00)</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Notification Settings -->
-        <div class="settings-section">
-            <div class="settings-section-title">
-                <i class="fas fa-bell"></i>
-                <span>Notifications</span>
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-bell"></i>
-                        Push Notifications
-                    </div>
-                    <div class="settings-description">Receive push notifications</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="pushNotifications" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-envelope"></i>
-                        Email Notifications
-                    </div>
-                    <div class="settings-description">Receive email updates</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="emailNotifications" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-trophy"></i>
-                        Achievement Alerts
-                    </div>
-                    <div class="settings-description">Get notified about achievements</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="achievementAlerts" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-calendar"></i>
-                        Course Updates
-                    </div>
-                    <div class="settings-description">New content notifications</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="courseUpdates" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <!-- Privacy Settings -->
-        <div class="settings-section">
-            <div class="settings-section-title">
-                <i class="fas fa-shield-alt"></i>
-                <span>Privacy & Security</span>
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-globe"></i>
-                        Public Profile
-                    </div>
-                    <div class="settings-description">Make your profile public</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="publicProfile">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-chart-line"></i>
-                        Share Activity
-                    </div>
-                    <div class="settings-description">Share learning activity</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="shareActivity">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <div class="settings-row">
-                <div class="settings-info">
-                    <div class="settings-label">
-                        <i class="fas fa-database"></i>
-                        Data Collection
-                    </div>
-                    <div class="settings-description">Help improve NAV Education</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="dataCollection" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <button class="btn btn-secondary" style="margin-top: var(--space-md);" onclick="changePassword()">
-                <i class="fas fa-key"></i> Change Password
-            </button>
-        </div>
-
-        <!-- Data & Storage -->
-        <div class="settings-section">
-            <div class="settings-section-title">
-                <i class="fas fa-database"></i>
-                <span>Data & Storage</span>
-            </div>
-            
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-value" id="storageUsed">156</div>
-                    <div class="stat-label">MB Used</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="downloadsCount">23</div>
-                    <div class="stat-label">Downloads</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="cachedCourses">8</div>
-                    <div class="stat-label">Cached Courses</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="lastBackup">2d</div>
-                    <div class="stat-label">Last Backup</div>
-                </div>
-            </div>
-            
-            <div class="backup-item" onclick="backupData()">
-                <div class="backup-icon">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                </div>
-                <div class="backup-info">
-                    <div class="backup-title">Backup Data</div>
-                    <div class="backup-date">Last backup: 2 days ago</div>
-                </div>
-                <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
-            </div>
-            
-            <div class="backup-item" onclick="restoreData()">
-                <div class="backup-icon" style="background: #10b981;">
-                    <i class="fas fa-cloud-download-alt"></i>
-                </div>
-                <div class="backup-info">
-                    <div class="backup-title">Restore Data</div>
-                    <div class="backup-date">From cloud backup</div>
-                </div>
-                <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
-            </div>
-            
-            <button class="btn btn-secondary" style="margin-top: var(--space-sm);" onclick="clearCache()">
-                <i class="fas fa-trash-alt"></i> Clear Cache
-            </button>
-        </div>
-
-        <!-- Keyboard Shortcuts -->
-        <div class="settings-section">
-            <div class="settings-section-title">
-                <i class="fas fa-keyboard"></i>
-                <span>Keyboard Shortcuts</span>
-            </div>
-            
-            <div class="shortcut-item">
-                <span>Go to Home</span>
-                <div class="shortcut-keys">
-                    <span class="shortcut-key">⌘</span>
-                    <span class="shortcut-key">H</span>
-                </div>
-            </div>
-            
-            <div class="shortcut-item">
-                <span>Open Search</span>
-                <div class="shortcut-keys">
-                    <span class="shortcut-key">⌘</span>
-                    <span class="shortcut-key">K</span>
-                </div>
-            </div>
-            
-            <div class="shortcut-item">
-                <span>Open Library</span>
-                <div class="shortcut-keys">
-                    <span class="shortcut-key">⌘</span>
-                    <span class="shortcut-key">L</span>
-                </div>
-            </div>
-            
-            <div class="shortcut-item">
-                <span>Open Settings</span>
-                <div class="shortcut-keys">
-                    <span class="shortcut-key">⌘</span>
-                    <span class="shortcut-key">,</span>
-                </div>
-            </div>
-            
-            <div class="shortcut-item">
-                <span>Toggle Theme</span>
-                <div class="shortcut-keys">
-                    <span class="shortcut-key">⌘</span>
-                    <span class="shortcut-key">T</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Danger Zone -->
         <div class="settings-section danger-zone">
-            <div class="settings-section-title">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span>Danger Zone</span>
-            </div>
-            
-            <button class="btn btn-danger" onclick="confirmReset()">
-                <i class="fas fa-exclamation-circle"></i> Reset All Data
-            </button>
-            
-            <button class="btn btn-danger" style="margin-top: var(--space-sm);" onclick="deleteAccount()">
-                <i class="fas fa-user-slash"></i> Delete Account
-            </button>
-            
-            <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: var(--space-md);">
-                <i class="fas fa-info-circle"></i> These actions are irreversible
-            </p>
+            <div class="settings-section-title"><i class="fas fa-exclamation-triangle"></i> Danger Zone</div>
+            <button class="btn btn-danger" onclick="confirmReset()"><i class="fas fa-trash-alt"></i> Reset All Data</button>
+            <button class="btn btn-danger" style="margin-top:10px;" onclick="deleteAccount()"><i class="fas fa-user-slash"></i> Delete Account</button>
         </div>
 
-        <!-- Save All Button -->
-        <button class="btn btn-primary" id="saveSettings" style="margin-bottom: var(--space-lg);">
-            <i class="fas fa-check-circle"></i> Save All Settings
-        </button>
+        <button class="btn btn-primary" id="saveSettings" style="margin-bottom:20px;"><i class="fas fa-save"></i> Save All Settings</button>
+        <div style="text-align:center;color:var(--text-muted);font-size:0.7rem;margin-bottom:20px;">Version 2.1.0</div>
+    </div>
 
-        <!-- App Version -->
-        <div style="text-align: center; margin-bottom: var(--space-lg); color: var(--text-muted); font-size: 0.8rem;">
-            <i class="fas fa-code-branch"></i> Version 2.1.0 (Build 2024.1)
+    <div id="cropperModal" class="modal">
+        <div class="modal-content cropper-modal">
+            <h3 style="margin-bottom:15px;">Edit Profile Photo</h3>
+            <div class="cropper-container">
+                <img id="cropperImage" style="max-width:100%;">
+            </div>
+            <div class="cropper-buttons">
+                <button class="cropper-cancel" onclick="closeCropper()">Cancel</button>
+                <button class="cropper-save" onclick="saveCroppedImage()">Save</button>
+            </div>
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item" data-page="home">
-            <div class="nav-icon"><i class="fas fa-home"></i></div>
-            <span>Home</span>
-        </a>
-        <a href="search.html" class="nav-item" data-page="search">
-            <div class="nav-icon"><i class="fas fa-search"></i></div>
-            <span>Search</span>
-        </a>
-        <a href="library.html" class="nav-item" data-page="library">
-            <div class="nav-icon"><i class="fas fa-book"></i></div>
-            <span>Library</span>
-        </a>
-        <a href="settings.html" class="nav-item active" data-page="settings">
-            <div class="nav-icon"><i class="fas fa-cog"></i></div>
-            <span>Settings</span>
-        </a>
-    </nav>
+    <div class="nav-wrapper">
+        <div class="magic-mover" id="magicMover"><div class="circle"><ion-icon id="indicatorIcon" name="settings-outline"></ion-icon></div></div>
+        <div class="nav-pill-bg"><svg class="nav-bg-svg" id="navSvg" viewBox="0 0 1000 70"><path d="M0,0 L450,0 C470,0 475,35 500,35 C525,35 530,0 550,0 L1000,0 L1000,70 L0,70 Z" fill="currentColor"></path></svg></div>
+        <ul class="navigation-items">
+            <li class="list" data-index="0" data-icon="home-outline" data-page="index.html"><a><ion-icon name="home-outline"></ion-icon></a></li>
+            <li class="list" data-index="1" data-icon="search-outline" data-page="search.html"><a><ion-icon name="search-outline"></ion-icon></a></li>
+            <li class="list" data-index="2" data-icon="library-outline" data-page="library.html"><a><ion-icon name="library-outline"></ion-icon></a></li>
+            <li class="list active" data-index="3" data-icon="settings-outline" data-page="settings.html"><a><ion-icon name="settings-outline"></ion-icon></a></li>
+            <li class="list" data-index="4" data-icon="person-outline" data-page="profile.html"><a><ion-icon name="person-outline"></ion-icon></a></li>
+        </ul>
+    </div>
 
-    <!-- Toast Container -->
     <div id="toastContainer" class="toast"></div>
-
-    <!-- Confirmation Modal -->
-    <div id="confirmModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-icon">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <h3 class="modal-title" id="modalTitle">Confirm Action</h3>
-            <p class="modal-message" id="modalMessage">Are you sure you want to proceed?</p>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="hideModal()">Cancel</button>
-                <button class="btn btn-danger" id="modalConfirmBtn">Confirm</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Image Editor Modal -->
-    <div id="imageEditorModal" class="modal">
-        <div class="modal-content image-editor-modal">
-            <h3 style="margin-bottom: var(--space-lg);">Edit Profile Photo</h3>
-            
-            <div class="image-preview-container">
-                <img id="editorPreview" class="image-preview" src="" alt="Preview">
-            </div>
-            
-            <div class="zoom-control">
-                <div class="zoom-label">
-                    <span><i class="fas fa-search-minus"></i></span>
-                    <span id="zoomValue">100%</span>
-                    <span><i class="fas fa-search-plus"></i></span>
-                </div>
-                <input type="range" id="zoomSlider" min="50" max="150" value="100" step="1">
-            </div>
-            
-            <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closeImageEditor()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveEditedImage()">Save</button>
-            </div>
-        </div>
-    </div>
+    <div id="confirmModal" class="modal"><div class="modal-content"><i class="fas fa-exclamation-triangle" style="font-size:2rem;color:var(--error);margin-bottom:15px;"></i><h3 id="modalTitle">Confirm</h3><p id="modalMessage" style="margin-bottom:20px;">Are you sure?</p><div class="modal-actions"><button class="modal-btn cancel" onclick="hideModal()">Cancel</button><button class="modal-btn confirm" id="modalConfirmBtn">Confirm</button></div></div></div>
 
     <script>
-        // ==================== GLOBAL STATE ====================
-        // Store settings to sync across tabs
-        const APP_SETTINGS = {
-            userName: 'Amit Kumar',
-            userEmail: 'amit.kumar@example.com',
-            userPhone: '+91 98765 43210',
-            userDob: '1995-06-15',
-            userGoal: 'NEET',
-            studyHours: 4,
-            studyReminders: true,
-            reminderTime: '19:00',
-            darkMode: true,
-            accentColor: '#6366f1',
-            fontSize: 'medium',
-            language: 'english',
-            timezone: 'IST',
-            pushNotifications: true,
-            emailNotifications: true,
-            achievementAlerts: true,
-            courseUpdates: true,
-            publicProfile: false,
-            shareActivity: false,
-            dataCollection: true,
-            profileAvatar: null,
-            avatarZoom: 100
-        };
+        // ==================== APPWRITE ====================
+        const client = new Appwrite.Client();
+        client.setEndpoint("https://sgp.cloud.appwrite.io/v1").setProject("nav-education");
+        const account = new Appwrite.Account(client);
 
-        // ==================== SYNC ACROSS TABS ====================
-        // Listen for storage events (changes in other tabs)
-        window.addEventListener('storage', function(e) {
-            if (e.key && e.key.startsWith('nav_')) {
-                loadAllSettings();
-                updateAllPages();
-                showToast('Settings synced from another tab');
-            }
-        });
+        let loadingOverlay = document.getElementById('loadingOverlay');
+        let toastTimeout;
+        let cropper = null;
+        let currentImageData = null;
 
-        // Update all pages with current settings
-        function updateAllPages() {
-            // Update header avatar across all pages
-            updateHeaderAvatar();
-            
-            // Dispatch custom event for other scripts
-            window.dispatchEvent(new CustomEvent('settingsUpdated', {
-                detail: getCurrentSettings()
-            }));
-            
-            // Update sync status
-            const syncStatus = document.getElementById('syncStatus');
-            if (syncStatus) {
-                syncStatus.innerHTML = '<i class="fas fa-check-circle"></i> All settings synced across devices';
-                setTimeout(() => {
-                    syncStatus.style.opacity = '0.7';
-                }, 2000);
-            }
+        // ==================== TOAST ====================
+        function showToast(msg, type = 'info', duration = 2500) {
+            const toast = document.getElementById('toastContainer');
+            if (!toast) return;
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toast.className = 'toast';
+            toast.innerHTML = '';
+            toast.classList.add(type);
+            const icon = document.createElement('i');
+            icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-info-circle';
+            toast.appendChild(icon);
+            toast.appendChild(document.createTextNode(' ' + msg));
+            void toast.offsetWidth;
+            toast.classList.add('show');
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), duration);
         }
 
-        // Get current settings object
-        function getCurrentSettings() {
-            return {
-                userName: localStorage.getItem('nav_userName') || APP_SETTINGS.userName,
-                userEmail: localStorage.getItem('nav_userEmail') || APP_SETTINGS.userEmail,
-                profileAvatar: localStorage.getItem('nav_profileAvatar'),
-                darkMode: localStorage.getItem('nav_darkMode') === 'true',
-                accentColor: localStorage.getItem('nav_accentColor') || APP_SETTINGS.accentColor,
-                fontSize: localStorage.getItem('nav_fontSize') || APP_SETTINGS.fontSize
-            };
-        }
-
-        // ==================== PROFILE MENU ====================
-        // Profile button click
-        document.getElementById('profileBtn')?.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const menu = document.getElementById('profileMenu');
-            menu.classList.toggle('active');
-        });
-
-        // Close menu when clicking outside
-        document.addEventListener('click', function() {
-            const menu = document.getElementById('profileMenu');
-            menu.classList.remove('active');
-        });
-
-        // Profile menu functions
-        function showStats() {
-            showToast('Learning statistics coming soon!');
-        }
-
-        function showAchievements() {
-            showToast('Achievements coming soon!');
-        }
-
-        function logout() {
-            showModal('Logout', 'Are you sure you want to logout?', function() {
-                showToast('Logged out successfully');
-                setTimeout(() => window.location.href = 'index.html', 1000);
-            });
-        }
-
-        // ==================== AVATAR FUNCTIONS ====================
-        // Update header avatar
-        function updateHeaderAvatar() {
-            const headerAvatar = document.getElementById('headerAvatar');
-            const headerEmoji = document.getElementById('headerEmoji');
-            const savedAvatar = localStorage.getItem('nav_profileAvatar');
-            
-            if (headerAvatar && headerEmoji) {
-                if (savedAvatar) {
-                    headerAvatar.src = savedAvatar;
-                    headerAvatar.style.display = 'block';
-                    headerEmoji.style.display = 'none';
-                } else {
-                    headerAvatar.style.display = 'none';
-                    headerEmoji.style.display = 'block';
-                }
-            }
-        }
-
-        // Handle avatar upload
-        function handleAvatarUpload(event) {
-            const file = event.target.files[0];
-            
-            if (!file) return;
-            
-            // Check file type
-            if (!file.type.match('image.*')) {
-                showToast('Please select an image file (JPEG, PNG, etc.)');
-                return;
-            }
-            
-            // Check file size (max 5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('Image size should be less than 5MB');
-                return;
-            }
-            
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                // Store temporarily for editing
-                window.tempAvatarData = e.target.result;
-                openImageEditor();
-            };
-            
-            reader.onerror = function() {
-                showToast('Error reading file');
-            };
-            
-            reader.readAsDataURL(file);
-        }
-        
-        // Open image editor
-        function openImageEditor() {
-            const modal = document.getElementById('imageEditorModal');
-            const preview = document.getElementById('editorPreview');
-            const zoomSlider = document.getElementById('zoomSlider');
-            const zoomValue = document.getElementById('zoomValue');
-            
-            if (!window.tempAvatarData && !localStorage.getItem('nav_profileAvatar')) {
-                showToast('Please upload an image first');
-                return;
-            }
-            
-            // Use temp data or existing avatar
-            const imageData = window.tempAvatarData || localStorage.getItem('nav_profileAvatar');
-            preview.src = imageData;
-            
-            // Load saved zoom level
-            const savedZoom = localStorage.getItem('nav_avatarZoom') || 100;
-            zoomSlider.value = savedZoom;
-            zoomValue.textContent = savedZoom + '%';
-            preview.style.transform = `scale(${savedZoom / 100})`;
-            
+        // ==================== MODAL ====================
+        function showModal(title, msg, callback) {
+            const modal = document.getElementById('confirmModal');
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = msg;
+            document.getElementById('modalConfirmBtn').onclick = () => { hideModal(); if (callback) callback(); };
             modal.classList.add('active');
         }
-        
-        // Close image editor
-        function closeImageEditor() {
-            document.getElementById('imageEditorModal').classList.remove('active');
-            window.tempAvatarData = null;
+        function hideModal() { document.getElementById('confirmModal').classList.remove('active'); }
+
+        // ==================== THEME ====================
+        function applyTheme() {
+            const darkMode = localStorage.getItem('nav_darkMode');
+            if (darkMode === null) document.body.classList.remove('light-theme');
+            else darkMode === 'true' ? document.body.classList.remove('light-theme') : document.body.classList.add('light-theme');
+            const accent = localStorage.getItem('nav_accentColor');
+            if (accent) document.documentElement.style.setProperty('--primary', accent);
         }
-        
-        // Save edited image
-        function saveEditedImage() {
-            const preview = document.getElementById('editorPreview');
-            const zoom = document.getElementById('zoomSlider').value;
-            
-            // Create a canvas to apply zoom
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            
-            canvas.width = 400;
-            canvas.height = 400;
-            
-            // Draw image with zoom
-            ctx.save();
-            ctx.translate(200, 200);
-            ctx.scale(zoom / 100, zoom / 100);
-            ctx.drawImage(preview, -200, -200, 400, 400);
-            ctx.restore();
-            
-            // Save to localStorage
-            const finalImage = canvas.toDataURL('image/jpeg', 0.9);
-            localStorage.setItem('nav_profileAvatar', finalImage);
-            localStorage.setItem('nav_avatarZoom', zoom);
-            
-            // Display the image
-            displayAvatar(finalImage);
-            
-            // Close editor
-            closeImageEditor();
-            showToast('Profile photo saved!');
-            
-            // Update all pages
-            updateAllPages();
+        window.addEventListener('storage', (e) => { if (e.key === 'nav_darkMode' || e.key === 'nav_accentColor') applyTheme(); });
+
+        // ==================== PROFILE MENU ====================
+        document.getElementById('profileBtn')?.addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('profileMenu').classList.toggle('active'); });
+        document.addEventListener('click', () => { document.getElementById('profileMenu')?.classList.remove('active'); });
+        document.getElementById('notificationBtn')?.addEventListener('click', () => showToast('No new notifications'));
+
+        // ==================== AVATAR WITH CROPPER ====================
+        function openCropper(imageUrl) {
+            const modal = document.getElementById('cropperModal');
+            const img = document.getElementById('cropperImage');
+            img.src = imageUrl;
+            modal.classList.add('active');
+            setTimeout(() => {
+                if (cropper) cropper.destroy();
+                cropper = new Cropper(img, {
+                    aspectRatio: 1,
+                    viewMode: 2,
+                    dragMode: 'move',
+                    cropBoxMovable: true,
+                    cropBoxResizable: true,
+                    background: false,
+                    rotatable: true,
+                    scalable: true,
+                    zoomable: true,
+                    zoomOnWheel: true,
+                    ready: function() { console.log('Cropper ready'); }
+                });
+            }, 100);
         }
-        
-        // Display avatar
+
+        function closeCropper() {
+            if (cropper) cropper.destroy();
+            cropper = null;
+            document.getElementById('cropperModal').classList.remove('active');
+        }
+
+        function saveCroppedImage() {
+            if (!cropper) return;
+            const canvas = cropper.getCroppedCanvas({
+                width: 400,
+                height: 400,
+                imageSmoothingQuality: 'high'
+            });
+            const croppedImage = canvas.toDataURL('image/jpeg', 0.9);
+            localStorage.setItem('nav_profileAvatar', croppedImage);
+            displayAvatar(croppedImage);
+            updateHeaderAvatar();
+            closeCropper();
+            showToast('Profile photo updated!', 'success');
+        }
+
         function displayAvatar(imageData) {
             const avatarImage = document.getElementById('avatarImage');
             const avatarEmoji = document.getElementById('avatarEmoji');
-            const removeBtn = document.getElementById('removeAvatarBtn');
-            
             if (avatarImage && avatarEmoji) {
                 avatarImage.src = imageData;
                 avatarImage.classList.add('show');
                 avatarEmoji.classList.add('hide');
-                
-                if (removeBtn) {
-                    removeBtn.style.display = 'flex';
-                }
             }
-            
-            // Update header
-            updateHeaderAvatar();
         }
-        
-        // Remove avatar
-        function removeAvatar() {
-            const avatarImage = document.getElementById('avatarImage');
-            const avatarEmoji = document.getElementById('avatarEmoji');
-            const removeBtn = document.getElementById('removeAvatarBtn');
-            const avatarUpload = document.getElementById('avatarUpload');
-            
-            // Clear the image
-            if (avatarImage) {
-                avatarImage.src = '';
-                avatarImage.classList.remove('show');
-            }
-            
-            if (avatarEmoji) {
-                avatarEmoji.classList.remove('hide');
-            }
-            
-            if (removeBtn) {
-                removeBtn.style.display = 'none';
-            }
-            
-            // Clear file input
-            if (avatarUpload) {
-                avatarUpload.value = '';
-            }
-            
-            // Remove from localStorage
-            localStorage.removeItem('nav_profileAvatar');
-            localStorage.removeItem('nav_avatarZoom');
-            
-            showToast('Profile photo removed');
-            
-            // Update all pages
-            updateAllPages();
+
+        function updateHeaderAvatar() {
+            const avatar = localStorage.getItem('nav_profileAvatar');
+            const img = document.getElementById('headerAvatar'), emoji = document.getElementById('headerEmoji');
+            if (avatar && img && emoji) { img.src = avatar; img.style.display = 'block'; emoji.style.display = 'none'; }
         }
-        
-        // Zoom slider handler
-        document.getElementById('zoomSlider')?.addEventListener('input', function(e) {
-            const preview = document.getElementById('editorPreview');
-            const zoomValue = document.getElementById('zoomValue');
-            const value = e.target.value;
-            
-            zoomValue.textContent = value + '%';
-            preview.style.transform = `scale(${value / 100})`;
+
+        document.getElementById('avatarContainer')?.addEventListener('click', () => document.getElementById('avatarUpload').click());
+        document.getElementById('avatarUpload')?.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file || !file.type.match('image.*')) return showToast('Select an image file', 'error');
+            if (file.size > 5 * 1024 * 1024) return showToast('Max 5MB', 'error');
+            const reader = new FileReader();
+            reader.onload = (ev) => { openCropper(ev.target.result); };
+            reader.readAsDataURL(file);
+            e.target.value = '';
         });
-        
-        // ==================== LOADING FUNCTIONS ====================
-        function hideLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) {
-                overlay.classList.remove('active');
-            }
+
+        // ==================== SETTINGS MANAGEMENT (PERSISTENT) ====================
+        function loadFromStorage() {
+            return {
+                userName: localStorage.getItem('nav_userName') || 'Amit Kumar',
+                userEmail: localStorage.getItem('nav_userEmail') || 'amit.kumar@example.com',
+                userPhone: localStorage.getItem('nav_userPhone') || '+91 98765 43210',
+                userGoal: localStorage.getItem('nav_userGoal') || 'NEET',
+                studyHours: localStorage.getItem('nav_studyHours') || 4,
+                studyReminders: localStorage.getItem('nav_studyReminders') !== 'false',
+                darkMode: localStorage.getItem('nav_darkMode') === 'true',
+                accentColor: localStorage.getItem('nav_accentColor') || '#6366f1',
+                profileAvatar: localStorage.getItem('nav_profileAvatar') || null
+            };
         }
 
-        function showLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) {
-                overlay.classList.add('active');
-            }
-        }
-
-        function goBack() {
-            window.history.back();
-        }
-        
-        // ==================== SETTINGS LOAD/SAVE ====================
         function loadAllSettings() {
-            try {
-                // Account settings
-                const userName = localStorage.getItem('nav_userName');
-                if (userName) {
-                    const userNameInput = document.getElementById('userName');
-                    const displayName = document.getElementById('displayName');
-                    if (userNameInput) userNameInput.value = userName;
-                    if (displayName) displayName.textContent = userName;
-                }
-                
-                const userEmail = localStorage.getItem('nav_userEmail');
-                if (userEmail) {
-                    const emailInput = document.getElementById('userEmail');
-                    const displayEmail = document.getElementById('displayEmail');
-                    if (emailInput) emailInput.value = userEmail;
-                    if (displayEmail) displayEmail.textContent = userEmail;
-                }
-                
-                const userPhone = localStorage.getItem('nav_userPhone');
-                if (userPhone) {
-                    const phoneInput = document.getElementById('userPhone');
-                    if (phoneInput) phoneInput.value = userPhone;
-                }
-                
-                const userDob = localStorage.getItem('nav_userDob');
-                if (userDob) {
-                    const dobInput = document.getElementById('userDob');
-                    if (dobInput) dobInput.value = userDob;
-                }
-                
-                // Learning preferences
-                const userGoal = localStorage.getItem('nav_userGoal');
-                if (userGoal) {
-                    const goalSelect = document.getElementById('userGoal');
-                    if (goalSelect) goalSelect.value = userGoal;
-                }
-                
-                const studyHours = localStorage.getItem('nav_studyHours');
-                if (studyHours) {
-                    const hoursInput = document.getElementById('studyHours');
-                    const hoursDisplay = document.getElementById('hoursDisplay');
-                    if (hoursInput) hoursInput.value = studyHours;
-                    if (hoursDisplay) hoursDisplay.textContent = studyHours + 'h';
-                }
-                
-                const studyReminders = localStorage.getItem('nav_studyReminders');
-                if (studyReminders !== null) {
-                    const remindersCheck = document.getElementById('studyReminders');
-                    if (remindersCheck) remindersCheck.checked = studyReminders === 'true';
-                }
-                
-                const reminderTime = localStorage.getItem('nav_reminderTime');
-                if (reminderTime) {
-                    const timeInput = document.getElementById('reminderTime');
-                    if (timeInput) timeInput.value = reminderTime;
-                }
-                
-                // Theme
-                const darkMode = localStorage.getItem('nav_darkMode');
-                if (darkMode !== null) {
-                    const themeToggle = document.getElementById('themeToggle');
-                    if (themeToggle) themeToggle.checked = darkMode === 'true';
-                    document.body.classList.toggle('light-theme', darkMode === 'false');
-                }
-                
-                const accentColor = localStorage.getItem('nav_accentColor');
-                if (accentColor) {
-                    document.documentElement.style.setProperty('--primary', accentColor);
-                    document.querySelectorAll('.color-option').forEach(opt => {
-                        opt.classList.remove('active');
-                        if (opt.dataset.color === accentColor) {
-                            opt.classList.add('active');
-                        }
-                    });
-                }
-                
-                const fontSize = localStorage.getItem('nav_fontSize');
-                if (fontSize) {
-                    const fontSizeSelect = document.getElementById('fontSize');
-                    if (fontSizeSelect) fontSizeSelect.value = fontSize;
-                }
-                
-                // Language
-                const language = localStorage.getItem('nav_language');
-                if (language) {
-                    document.querySelectorAll('.language-option').forEach(opt => {
-                        opt.classList.remove('active');
-                        if (opt.textContent.toLowerCase().includes(language)) {
-                            opt.classList.add('active');
-                        }
-                    });
-                }
-                
-                const timezone = localStorage.getItem('nav_timezone');
-                if (timezone) {
-                    const timezoneSelect = document.getElementById('timezone');
-                    if (timezoneSelect) timezoneSelect.value = timezone;
-                }
-                
-                // Notifications
-                const pushNotifications = localStorage.getItem('nav_pushNotifications');
-                if (pushNotifications !== null) {
-                    const pushCheck = document.getElementById('pushNotifications');
-                    if (pushCheck) pushCheck.checked = pushNotifications === 'true';
-                }
-                
-                const emailNotifications = localStorage.getItem('nav_emailNotifications');
-                if (emailNotifications !== null) {
-                    const emailCheck = document.getElementById('emailNotifications');
-                    if (emailCheck) emailCheck.checked = emailNotifications === 'true';
-                }
-                
-                const achievementAlerts = localStorage.getItem('nav_achievementAlerts');
-                if (achievementAlerts !== null) {
-                    const achievementCheck = document.getElementById('achievementAlerts');
-                    if (achievementCheck) achievementCheck.checked = achievementAlerts === 'true';
-                }
-                
-                const courseUpdates = localStorage.getItem('nav_courseUpdates');
-                if (courseUpdates !== null) {
-                    const updatesCheck = document.getElementById('courseUpdates');
-                    if (updatesCheck) updatesCheck.checked = courseUpdates === 'true';
-                }
-                
-                // Privacy
-                const publicProfile = localStorage.getItem('nav_publicProfile');
-                if (publicProfile !== null) {
-                    const publicCheck = document.getElementById('publicProfile');
-                    if (publicCheck) publicCheck.checked = publicProfile === 'true';
-                }
-                
-                const shareActivity = localStorage.getItem('nav_shareActivity');
-                if (shareActivity !== null) {
-                    const shareCheck = document.getElementById('shareActivity');
-                    if (shareCheck) shareCheck.checked = shareActivity === 'true';
-                }
-                
-                const dataCollection = localStorage.getItem('nav_dataCollection');
-                if (dataCollection !== null) {
-                    const dataCheck = document.getElementById('dataCollection');
-                    if (dataCheck) dataCheck.checked = dataCollection === 'true';
-                }
-                
-                // Avatar
-                const savedAvatar = localStorage.getItem('nav_profileAvatar');
-                if (savedAvatar) {
-                    displayAvatar(savedAvatar);
-                }
-            } catch (e) {
-                console.log('Error loading settings:', e);
-            }
-        }
-        
-        function saveAllSettings() {
-            // Account
-            localStorage.setItem('nav_userName', document.getElementById('userName')?.value || '');
-            localStorage.setItem('nav_userEmail', document.getElementById('userEmail')?.value || '');
-            localStorage.setItem('nav_userPhone', document.getElementById('userPhone')?.value || '');
-            localStorage.setItem('nav_userDob', document.getElementById('userDob')?.value || '');
+            const data = loadFromStorage();
+            document.getElementById('userName').value = data.userName;
+            document.getElementById('userEmail').value = data.userEmail;
+            document.getElementById('userPhone').value = data.userPhone;
+            document.getElementById('userGoal').value = data.userGoal;
+            document.getElementById('studyHours').value = data.studyHours;
+            document.getElementById('hoursDisplay').textContent = data.studyHours + 'h';
+            document.getElementById('studyReminders').checked = data.studyReminders;
+            document.getElementById('themeToggle').checked = data.darkMode;
+            document.getElementById('displayName').textContent = data.userName;
+            document.getElementById('displayEmail').textContent = data.userEmail;
             
-            // Learning
-            localStorage.setItem('nav_userGoal', document.getElementById('userGoal')?.value || 'NEET');
-            localStorage.setItem('nav_studyHours', document.getElementById('studyHours')?.value || '4');
-            localStorage.setItem('nav_studyReminders', document.getElementById('studyReminders')?.checked || false);
-            localStorage.setItem('nav_reminderTime', document.getElementById('reminderTime')?.value || '19:00');
-            
-            // Notifications
-            localStorage.setItem('nav_pushNotifications', document.getElementById('pushNotifications')?.checked || false);
-            localStorage.setItem('nav_emailNotifications', document.getElementById('emailNotifications')?.checked || false);
-            localStorage.setItem('nav_achievementAlerts', document.getElementById('achievementAlerts')?.checked || false);
-            localStorage.setItem('nav_courseUpdates', document.getElementById('courseUpdates')?.checked || false);
-            
-            // Privacy
-            localStorage.setItem('nav_publicProfile', document.getElementById('publicProfile')?.checked || false);
-            localStorage.setItem('nav_shareActivity', document.getElementById('shareActivity')?.checked || false);
-            localStorage.setItem('nav_dataCollection', document.getElementById('dataCollection')?.checked || false);
-            
-            // Appearance
-            localStorage.setItem('nav_fontSize', document.getElementById('fontSize')?.value || 'medium');
-            localStorage.setItem('nav_timezone', document.getElementById('timezone')?.value || 'IST');
-            
-            showToast('All settings saved successfully! ✅');
-            
-            // Update all pages
-            updateAllPages();
-        }
-        
-        // ==================== INITIALIZATION ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            hideLoading();
-            
-            // Load all saved settings
-            loadAllSettings();
-            
-            // Initialize event listeners
-            initSettingsListeners();
-            
-            // Update hours display
-            const hoursSlider = document.getElementById('studyHours');
-            const hoursDisplay = document.getElementById('hoursDisplay');
-            
-            if (hoursSlider) {
-                hoursSlider.addEventListener('input', function() {
-                    hoursDisplay.textContent = this.value + 'h';
-                });
+            if (data.profileAvatar) {
+                displayAvatar(data.profileAvatar);
+                updateHeaderAvatar();
             }
             
-            // Avatar upload
-            const avatarContainer = document.getElementById('avatarContainer');
-            const avatarUpload = document.getElementById('avatarUpload');
-            
-            if (avatarContainer) {
-                avatarContainer.addEventListener('click', function(e) {
-                    // Don't trigger if clicking buttons
-                    if (e.target.closest('button')) return;
-                    avatarUpload.click();
-                });
-            }
-            
-            if (avatarUpload) {
-                avatarUpload.addEventListener('change', handleAvatarUpload);
-            }
-            
-            // Save profile button
-            const saveProfileBtn = document.getElementById('saveProfileBtn');
-            if (saveProfileBtn) {
-                saveProfileBtn.addEventListener('click', saveProfile);
-            }
-            
-            // Save all settings button
-            const saveAllBtn = document.getElementById('saveSettings');
-            if (saveAllBtn) {
-                saveAllBtn.addEventListener('click', saveAllSettings);
-            }
-        });
-        
-        function initSettingsListeners() {
-            // Theme toggle
-            const themeToggle = document.getElementById('themeToggle');
-            if (themeToggle) {
-                themeToggle.addEventListener('change', function() {
-                    document.body.classList.toggle('light-theme', !this.checked);
-                    localStorage.setItem('nav_darkMode', this.checked);
-                    showToast(this.checked ? 'Dark mode enabled' : 'Light mode enabled');
-                    updateAllPages();
-                });
-            }
-            
-            // Real-time updates
-            const userNameInput = document.getElementById('userName');
-            if (userNameInput) {
-                userNameInput.addEventListener('input', function(e) {
-                    const displayName = document.getElementById('displayName');
-                    if (displayName) {
-                        displayName.textContent = e.target.value || 'Amit Kumar';
-                    }
-                    // Update localStorage immediately
-                    localStorage.setItem('nav_userName', e.target.value);
-                    updateAllPages();
-                });
-            }
-            
-            const userEmailInput = document.getElementById('userEmail');
-            if (userEmailInput) {
-                userEmailInput.addEventListener('input', function(e) {
-                    const displayEmail = document.getElementById('displayEmail');
-                    if (displayEmail) {
-                        displayEmail.textContent = e.target.value || 'amit.kumar@example.com';
-                    }
-                    localStorage.setItem('nav_userEmail', e.target.value);
-                    updateAllPages();
-                });
-            }
-        }
-        
-        function saveProfile() {
-            const name = document.getElementById('userName')?.value || '';
-            const email = document.getElementById('userEmail')?.value || '';
-            const phone = document.getElementById('userPhone')?.value || '';
-            const dob = document.getElementById('userDob')?.value || '';
-            
-            localStorage.setItem('nav_userName', name);
-            localStorage.setItem('nav_userEmail', email);
-            localStorage.setItem('nav_userPhone', phone);
-            localStorage.setItem('nav_userDob', dob);
-            
-            showToast('Profile updated successfully!');
-            updateAllPages();
-        }
-        
-        // ==================== UTILITY FUNCTIONS ====================
-        function setAccentColor(color, element) {
-            document.documentElement.style.setProperty('--primary', color);
-            localStorage.setItem('nav_accentColor', color);
-            
+            applyTheme();
+            document.documentElement.style.setProperty('--primary', data.accentColor);
             document.querySelectorAll('.color-option').forEach(opt => {
                 opt.classList.remove('active');
+                if (opt.getAttribute('data-color') === data.accentColor) opt.classList.add('active');
             });
-            element.classList.add('active');
+        }
+
+        function saveAllSettings() {
+            const userName = document.getElementById('userName').value;
+            const userEmail = document.getElementById('userEmail').value;
+            const userPhone = document.getElementById('userPhone').value;
+            const userGoal = document.getElementById('userGoal').value;
+            const studyHours = document.getElementById('studyHours').value;
+            const studyReminders = document.getElementById('studyReminders').checked;
+            const darkMode = document.getElementById('themeToggle').checked;
             
-            showToast('Accent color updated!');
-            updateAllPages();
-        }
-        
-        function selectLanguage(lang, element) {
-            document.querySelectorAll('.language-option').forEach(opt => {
-                opt.classList.remove('active');
-            });
-            element.classList.add('active');
-            localStorage.setItem('nav_language', lang);
-            showToast(`Language set to ${lang}`);
-            updateAllPages();
-        }
-        
-        function changePassword() {
-            showModal('Change Password', 'Password reset link will be sent to your email.', function() {
-                showToast('Password reset email sent!');
-            });
-        }
-        
-        function backupData() {
-            showLoading();
-            showToast('Backing up your data...');
-            setTimeout(() => {
-                document.getElementById('lastBackup').textContent = 'Now';
-                hideLoading();
-                showToast('Backup completed!');
-            }, 1500);
-        }
-        
-        function restoreData() {
-            showModal('Restore Data', 'This will overwrite current data with backup. Continue?', function() {
-                showToast('Data restored successfully!');
-                loadAllSettings();
-            });
-        }
-        
-        function clearCache() {
-            showModal('Clear Cache', 'Clear downloaded courses and temporary data?', function() {
-                document.getElementById('storageUsed').textContent = '0';
-                document.getElementById('cachedCourses').textContent = '0';
-                showToast('Cache cleared!');
-            });
-        }
-        
-        function confirmReset() {
-            showModal('Reset All Data', 'This will erase all your progress and settings. This action cannot be undone!', function() {
-                localStorage.clear();
-                showToast('App reset completed');
-                setTimeout(() => location.reload(), 1000);
-            });
-        }
-        
-        function deleteAccount() {
-            showModal('Delete Account', 'Are you absolutely sure? All your data will be permanently removed.', function() {
-                showToast('Account deletion requested');
-                setTimeout(() => window.location.href = 'index.html', 1500);
-            });
-        }
-        
-        // Modal functions
-        function showModal(title, message, confirmCallback) {
-            const modal = document.getElementById('confirmModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalMessage = document.getElementById('modalMessage');
-            const confirmBtn = document.getElementById('modalConfirmBtn');
+            localStorage.setItem('nav_userName', userName);
+            localStorage.setItem('nav_userEmail', userEmail);
+            localStorage.setItem('nav_userPhone', userPhone);
+            localStorage.setItem('nav_userGoal', userGoal);
+            localStorage.setItem('nav_studyHours', studyHours);
+            localStorage.setItem('nav_studyReminders', studyReminders);
+            localStorage.setItem('nav_darkMode', darkMode);
             
-            if (modalTitle) modalTitle.textContent = title;
-            if (modalMessage) modalMessage.textContent = message;
+            document.getElementById('displayName').textContent = userName;
+            document.getElementById('displayEmail').textContent = userEmail;
             
-            if (confirmBtn) {
-                confirmBtn.onclick = function() {
-                    hideModal();
-                    if (confirmCallback) confirmCallback();
-                };
+            applyTheme();
+            showToast('All settings saved!', 'success');
+            
+            // Dispatch event for other pages
+            window.dispatchEvent(new CustomEvent('settingsUpdated', { detail: { userName, userEmail, darkMode } }));
+        }
+
+        function setAccentColor(color, el) {
+            document.documentElement.style.setProperty('--primary', color);
+            localStorage.setItem('nav_accentColor', color);
+            document.querySelectorAll('.color-option').forEach(o => o.classList.remove('active'));
+            el.classList.add('active');
+            showToast('Accent color updated', 'success');
+            window.dispatchEvent(new CustomEvent('settingsUpdated'));
+        }
+
+        // ==================== ACTIONS ====================
+        function confirmReset() { showModal('Reset Data', 'All progress will be lost!', () => { localStorage.clear(); showToast('Reset completed'); setTimeout(() => location.reload(), 1000); }); }
+        function deleteAccount() { showModal('Delete Account', 'This cannot be undone!', () => { localStorage.clear(); showToast('Account deleted'); setTimeout(() => window.location.href = 'auth.html', 1500); }); }
+        function showStats() { showToast('Stats coming soon', 'info'); }
+        function showAchievements() { showToast('Achievements coming soon', 'info'); }
+        
+        async function logout() {
+            showModal('Logout', 'Are you sure?', async () => {
+                try {
+                    await account.deleteSession('current');
+                    showToast('Logged out', 'success');
+                    setTimeout(() => window.location.href = 'auth.html', 1000);
+                } catch(e) { 
+                    localStorage.clear();
+                    showToast('Logged out', 'success');
+                    setTimeout(() => window.location.href = 'auth.html', 1000);
+                }
+            });
+        }
+
+        // ==================== MAGIC NAVIGATION ====================
+        const lists = document.querySelectorAll('.list');
+        const magicMover = document.getElementById('magicMover');
+        const navSvg = document.getElementById('navSvg');
+        const indicatorIcon = document.getElementById('indicatorIcon');
+        const slotWidth = 70;
+        const currentPage = window.location.pathname.split('/').pop() || 'settings.html';
+        
+        lists.forEach(item => {
+            const page = item.getAttribute('data-page');
+            if (page === currentPage) {
+                const idx = parseInt(item.getAttribute('data-index'));
+                item.classList.add('active');
+                magicMover.style.transform = `translateX(${idx * slotWidth}px)`;
+                navSvg.style.transform = `translateX(${idx * slotWidth}px)`;
+                indicatorIcon.setAttribute('name', item.getAttribute('data-icon'));
             }
-            
-            modal.classList.add('active');
-        }
+        });
         
-        function hideModal() {
-            const modal = document.getElementById('confirmModal');
-            modal.classList.remove('active');
-        }
-        
-        function showToast(message, duration = 2200) {
-            const toast = document.getElementById('toastContainer');
-            if (!toast) return;
-            
-            toast.textContent = message;
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, duration);
-        }
-        
-        // Page transitions
-        document.querySelectorAll('.nav-item').forEach(link => {
-            link.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                if (href && href !== window.location.pathname.split('/').pop()) {
-                    e.preventDefault();
-                    document.body.classList.add('page-fade');
-                    setTimeout(() => {
-                        window.location.href = href;
-                    }, 250);
+        lists.forEach(item => {
+            item.addEventListener('click', function() {
+                const idx = parseInt(this.getAttribute('data-index'));
+                const icon = this.getAttribute('data-icon');
+                const page = this.getAttribute('data-page');
+                lists.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                magicMover.style.transform = `translateX(${idx * slotWidth}px)`;
+                navSvg.style.transform = `translateX(${idx * slotWidth}px)`;
+                indicatorIcon.setAttribute('name', icon);
+                if (page && page !== currentPage) {
+                    document.body.style.opacity = '0';
+                    document.body.style.transition = 'opacity 0.3s';
+                    setTimeout(() => window.location.href = page, 300);
                 }
             });
         });
-        
-        // Close modal on outside click
-        document.getElementById('confirmModal')?.addEventListener('click', function(e) {
-            if (e.target === this) hideModal();
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllSettings();
+            document.getElementById('saveSettings').addEventListener('click', saveAllSettings);
+            document.getElementById('saveProfileBtn').addEventListener('click', saveAllSettings);
+            document.getElementById('studyHours').addEventListener('input', (e) => document.getElementById('hoursDisplay').textContent = e.target.value + 'h');
+            document.getElementById('themeToggle').addEventListener('change', () => { 
+                localStorage.setItem('nav_darkMode', document.getElementById('themeToggle').checked); 
+                applyTheme();
+                window.dispatchEvent(new CustomEvent('settingsUpdated'));
+            });
+            setTimeout(() => loadingOverlay?.classList.remove('active'), 500);
         });
         
-        document.getElementById('imageEditorModal')?.addEventListener('click', function(e) {
-            if (e.target === this) closeImageEditor();
-        });
-        
-        // Final loading hide
-        window.addEventListener('load', hideLoading);
-        setTimeout(hideLoading, 2000);
+        // Make functions global
+        window.setAccentColor = setAccentColor;
+        window.confirmReset = confirmReset;
+        window.deleteAccount = deleteAccount;
+        window.showStats = showStats;
+        window.showAchievements = showAchievements;
+        window.logout = logout;
+        window.showToast = showToast;
+        window.hideModal = hideModal;
+        window.showModal = showModal;
+        window.closeCropper = closeCropper;
+        window.saveCroppedImage = saveCroppedImage;
     </script>
 </body>
 </html>
