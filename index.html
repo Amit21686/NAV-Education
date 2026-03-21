@@ -2,198 +2,325 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>NAV Education - Home</title>
     
-    <!-- Primary Meta Tags -->
-    <meta name="title" content="NAV Education - Smart Learning Platform">
-    <meta name="description" content="Master UI/UX Design, Web Development, and Data Science with personalized learning paths">
-    <meta name="keywords" content="education, learning, courses, ui/ux, web development, data science">
-    <meta name="author" content="NAV Education">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#6366f1" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://naveducation.com">
-    <meta property="og:title" content="NAV Education - Smart Learning Platform">
-    <meta property="og:description" content="Master UI/UX Design, Web Development, and Data Science with personalized learning paths">
-    <meta property="og:image" content="https://naveducation.com/og-image.jpg">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://naveducation.com">
-    <meta property="twitter:title" content="NAV Education - Smart Learning Platform">
-    <meta property="twitter:description" content="Master UI/UX Design, Web Development, and Data Science with personalized learning paths">
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Appwrite SDK -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
     
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- PWA Support -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-192x192.png">
-    
     <style>
-        /* Additional page-specific styles */
-        .quick-stats {
+        /* ===== RESET & VARIABLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            /* Dark Theme (Default) */
+            --primary: #6366f1;
+            --primary-dark: #4f52e0;
+            --secondary: #8b5cf6;
+            --accent: #f43f5e;
+            --bg: #020617;
+            --bg-card: rgba(30, 41, 59, 0.8);
+            --bg-card-hover: rgba(51, 65, 85, 0.8);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --error: #f43f5e;
+            --warning: #f59e0b;
+            
+            /* Spacing */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 14px;
+            --space-lg: 20px;
+            --space-xl: 24px;
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-full: 9999px;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        /* Light Theme */
+        body.light-theme {
+            --bg: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f1f5f9;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #475569;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            width: 100%;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            position: relative;
+        }
+
+        /* Premium Background Effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 70% 30%, 
+                rgba(99, 102, 241, 0.12) 0%,
+                rgba(139, 92, 246, 0.08) 30%,
+                transparent 70%);
+            animation: rotateBg 40s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes rotateBg {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Container */
+        .container {
+            max-width: 100%;
+            width: 100%;
+            margin: 0 auto;
+            padding: var(--space-md);
+            padding-bottom: 110px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Typography */
+        h1 { font-size: 1.6rem; font-weight: 600; }
+        h2 { font-size: 1.4rem; font-weight: 600; }
+        h3 { font-size: 1.1rem; font-weight: 500; }
+
+        /* Flex Utilities */
+        .flex { display: flex; align-items: center; }
+        .flex-between { display: flex; align-items: center; justify-content: space-between; }
+
+        /* Header */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-lg);
+        }
+
+        .brand h1 span {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Profile Icons */
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            color: var(--text);
+        }
+
+        .icon-btn:active {
+            transform: scale(0.95);
+            border-color: var(--primary);
+        }
+
+        /* Profile Menu */
+        .profile-menu {
+            position: fixed;
+            top: 70px;
+            right: var(--space-md);
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-sm);
+            min-width: 200px;
+            z-index: 9999;
+            display: none;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .profile-menu.active { display: block; }
+
+        .profile-menu-header {
+            padding: var(--space-sm) var(--space-md);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .profile-menu-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .profile-menu-email {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: 10px 12px;
+            color: var(--text);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .profile-menu-item:hover {
+            background: var(--bg-card-hover);
+            color: var(--primary);
+        }
+
+        .profile-menu-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 5px 0;
+        }
+
+        /* Welcome Card */
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl) var(--space-lg);
+            color: white;
+            margin-bottom: var(--space-lg);
+            width: 100%;
+        }
+
+        .streak-badge {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Banner */
+        .banner-card {
+            width: 100%;
+            margin: var(--space-md) 0;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: all 0.2s;
+        }
+
+        .banner-card:active { transform: scale(0.98); }
+
+        .banner-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Progress */
+        .progress-wrapper { margin-top: var(--space-md); }
+        .progress-header { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem; opacity: 0.9; }
+        .progress-bar-bg { background: rgba(255,255,255,0.2); height: 8px; border-radius: var(--radius-full); overflow: hidden; }
+        .progress-fill { height: 100%; background: white; width: 0%; transition: width 0.3s ease; }
+
+        /* Stats Grid */
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: var(--space-sm);
             margin: var(--space-lg) 0;
         }
-        
+
         .stat-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             padding: var(--space-md);
             text-align: center;
-            transition: all var(--transition-fast);
+            backdrop-filter: blur(10px);
+            transition: all 0.2s;
             cursor: pointer;
         }
-        
-        .stat-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--primary);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            line-height: 1.2;
-        }
-        
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
+
+        .stat-card:active { transform: scale(0.97); }
+        .stat-value { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+
+        /* Section Header */
         .section-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin: var(--space-lg) 0 var(--space-sm);
         }
-        
-        .section-header h3 {
-            margin: 0;
-            color: var(--text);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .view-all {
-            color: var(--primary);
-            font-size: 0.85rem;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: gap var(--transition-fast);
-        }
-        
-        .view-all:hover {
-            gap: 8px;
-        }
-        
-        .streak-badge {
-            background: linear-gradient(135deg, #f59e0b, #f97316);
-            color: white;
-            padding: 4px 12px;
-            border-radius: var(--radius-full);
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .streak-badge i {
-            font-size: 0.9rem;
-        }
-        
-        .recommendation-chip {
-            display: inline-block;
-            padding: 8px 16px;
+        .section-header h3 { display: flex; align-items: center; gap: 6px; font-size: 1rem; }
+        .view-all { color: var(--primary); font-size: 0.8rem; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+
+        /* Course Cards */
+        .course-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: var(--radius-full);
-            color: var(--text);
-            font-size: 0.85rem;
-            margin-right: var(--space-sm);
-            margin-bottom: var(--space-sm);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-        
-        .recommendation-chip:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-        
-        .recommendation-chip i {
-            margin-right: 4px;
-        }
-        
-        .motivation-quote {
-            background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1));
-            border-left: 4px solid var(--primary);
+            border-radius: var(--radius-lg);
             padding: var(--space-md);
-            border-radius: var(--radius-md);
-            margin: var(--space-lg) 0;
-            font-style: italic;
-            color: var(--text-muted);
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s;
             position: relative;
         }
-        
-        .motivation-quote::before {
-            content: '"';
-            position: absolute;
-            top: -10px;
-            left: 10px;
-            font-size: 4rem;
-            color: var(--primary);
-            opacity: 0.2;
-            font-family: serif;
-        }
-        
-        .motivation-quote p {
-            position: relative;
-            z-index: 1;
-            margin-bottom: var(--space-xs);
-            font-size: 1rem;
-        }
-        
-        .motivation-quote .author {
-            font-size: 0.8rem;
-            color: var(--primary);
-            font-style: normal;
-            font-weight: 500;
-            text-align: right;
-        }
-        
-        .continue-learning-card {
+        .course-card:active { transform: scale(0.99); }
+        .course-left { display: flex; align-items: center; gap: var(--space-sm); flex: 1; }
+        .course-icon { font-size: 1.8rem; min-width: 40px; text-align: center; }
+        .course-title { font-weight: 500; font-size: 0.95rem; margin-bottom: 2px; }
+        .course-meta { font-size: 0.7rem; color: var(--text-muted); }
+        .course-right { display: flex; align-items: center; gap: 6px; font-weight: 500; font-size: 0.9rem; }
+        .popular-badge { position: absolute; top: 8px; right: 80px; background: var(--warning); color: white; font-size: 0.6rem; padding: 2px 8px; border-radius: var(--radius-full); }
+
+        /* Continue Card */
+        .continue-card {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: var(--radius-lg);
             padding: var(--space-lg);
@@ -203,575 +330,292 @@
             justify-content: space-between;
             margin-bottom: var(--space-lg);
             cursor: pointer;
-            transition: all var(--transition-fast);
         }
-        
-        .continue-learning-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .continue-learning-left {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-        }
-        
-        .continue-learning-icon {
-            width: 50px;
-            height: 50px;
-            background: rgba(255,255,255,0.2);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-        
-        .continue-learning-info h4 {
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-        
-        .continue-learning-info p {
-            font-size: 0.8rem;
-            opacity: 0.9;
-        }
-        
-        .continue-learning-play {
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.2);
-            border-radius: var(--radius-full);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-        }
-        
-        .deadline-card {
-            border-left: 4px solid #f59e0b;
-            margin-bottom: var(--space-sm);
-        }
-        
-        .achievement-grid {
-            display: flex;
-            gap: var(--space-sm);
-            overflow-x: auto;
-            padding: var(--space-sm) 0 var(--space-md);
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary) var(--border);
-        }
-        
-        .achievement-grid::-webkit-scrollbar {
-            height: 4px;
-        }
-        
-        .achievement-grid::-webkit-scrollbar-track {
-            background: var(--border);
-            border-radius: var(--radius-full);
-        }
-        
-        .achievement-grid::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: var(--radius-full);
-        }
-        
-        .achievement-item {
-            min-width: 100px;
-            text-align: center;
-            padding: var(--space-sm);
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            transition: all var(--transition-fast);
-        }
-        
-        .achievement-item:hover {
-            transform: translateY(-2px);
-            border-color: var(--primary);
-        }
-        
-        .achievement-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: var(--radius-full);
-            margin: 0 auto var(--space-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-        }
-        
+        .continue-left { display: flex; align-items: center; gap: var(--space-md); }
+        .continue-icon { width: 44px; height: 44px; background: rgba(255,255,255,0.2); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+        .continue-play { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+        /* Chips */
+        .chips-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: var(--space-md); }
+        .chip { padding: 8px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-full); font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s; }
+        .chip:active { background: var(--primary); color: white; transform: scale(0.95); }
+
+        /* Achievements */
+        .achievements-scroll { display: flex; gap: var(--space-sm); overflow-x: auto; padding: var(--space-xs) 0 var(--space-md); scrollbar-width: none; }
+        .achievements-scroll::-webkit-scrollbar { display: none; }
+        .achievement-item { min-width: 90px; text-align: center; padding: var(--space-sm); background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+        .achievement-icon { width: 50px; height: 50px; border-radius: 50%; margin: 0 auto var(--space-xs); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; background: linear-gradient(135deg, #fbbf24, #f59e0b); }
         .achievement-icon.books { background: linear-gradient(135deg, #34d399, #10b981); }
         .achievement-icon.learner { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
-        
-        .achievement-title {
-            font-size: 0.7rem;
-            font-weight: 500;
-        }
-        
+        .achievement-title { font-size: 0.65rem; font-weight: 500; }
+
+        /* Activity Feed */
         .activity-feed {
             background: var(--bg-card);
+            border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             padding: var(--space-md);
             margin-bottom: var(--space-lg);
         }
-        
-        .activity-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: var(--space-sm) 0;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-        
-        .activity-left {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-        
-        .activity-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--bg);
-            border-radius: var(--radius-full);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-        }
-        
-        .activity-details h5 {
-            font-weight: 500;
-            margin-bottom: 2px;
-        }
-        
-        .activity-time {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-        
-        .activity-points {
-            color: var(--success);
-            font-weight: 600;
-            font-size: 0.8rem;
-        }
-        
-        .daily-challenge {
+        .activity-item { display: flex; align-items: center; justify-content: space-between; padding: var(--space-sm) 0; border-bottom: 1px solid var(--border); }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-left { display: flex; align-items: center; gap: var(--space-sm); }
+        .activity-icon { width: 32px; height: 32px; background: var(--bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .activity-points { color: var(--success); font-weight: 600; font-size: 0.8rem; }
+
+        /* Daily Challenge */
+        .challenge-card {
             background: linear-gradient(135deg, #f59e0b, #f97316);
             border-radius: var(--radius-lg);
             padding: var(--space-lg);
             color: white;
             margin-bottom: var(--space-lg);
         }
-        
-        .challenge-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-md);
-        }
-        
-        .challenge-badge {
-            background: rgba(255,255,255,0.2);
-            padding: 4px 12px;
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        
-        .challenge-reward {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            margin: var(--space-md) 0;
-            padding: var(--space-sm);
-            background: rgba(255,255,255,0.1);
-            border-radius: var(--radius-md);
-        }
-        
-        .challenge-progress {
-            margin-top: var(--space-md);
-        }
-        
-        .challenge-progress-bar {
-            height: 8px;
-            background: rgba(255,255,255,0.3);
-            border-radius: var(--radius-full);
-            overflow: hidden;
-            margin-bottom: var(--space-xs);
-        }
-        
-        .challenge-progress-fill {
-            height: 100%;
-            width: 33%;
-            background: white;
-            border-radius: var(--radius-full);
-        }
-        
-        /* Profile Menu */
-        .profile-menu {
+        .challenge-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-sm); }
+        .challenge-badge { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: var(--radius-full); font-size: 0.7rem; }
+        .challenge-reward { display: flex; align-items: center; gap: var(--space-sm); margin: var(--space-sm) 0; padding: var(--space-sm); background: rgba(255,255,255,0.1); border-radius: var(--radius-md); }
+
+        /* ===== PREMIUM MAGIC NAVIGATION ===== */
+        .nav-wrapper {
             position: fixed;
-            top: 70px;
-            right: 20px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: var(--space-md);
-            min-width: 200px;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 350px;
+            height: 70px;
             z-index: 1000;
-            backdrop-filter: blur(10px);
-            display: none;
-            box-shadow: var(--shadow-lg);
         }
-        
-        .profile-menu.active {
-            display: block;
-            animation: slideDown 0.3s ease;
+
+        /* The Magic Mover */
+        .magic-mover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 10;
         }
-        
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .profile-menu-header {
-            padding: var(--space-sm) var(--space-md);
-            border-bottom: 1px solid var(--border);
-            margin-bottom: var(--space-sm);
-        }
-        
-        .profile-menu-name {
-            font-weight: 600;
-            color: var(--text);
-        }
-        
-        .profile-menu-email {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-        
-        .profile-menu-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm) var(--space-md);
-            color: var(--text);
-            text-decoration: none;
-            border-radius: var(--radius-md);
-            transition: all var(--transition-fast);
-            cursor: pointer;
-        }
-        
-        .profile-menu-item:hover {
-            background: var(--bg-card-hover);
-            color: var(--primary);
-        }
-        
-        .profile-menu-item i {
-            width: 20px;
-            color: var(--primary);
-        }
-        
-        .profile-menu-divider {
-            height: 1px;
-            background: var(--border);
-            margin: var(--space-sm) 0;
-        }
-        
-        /* Sync Status */
-        .sync-status {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm);
-            background: var(--bg-card);
-            border-radius: var(--radius-md);
-            margin: var(--space-sm) 0;
-            color: var(--success);
-            font-size: 0.8rem;
-            border: 1px solid var(--border);
-        }
-        
-        .sync-status i {
-            font-size: 1rem;
-        }
-        
-        /* Welcome Card Enhancement */
-        .welcome-card {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .welcome-stats {
-            display: flex;
-            gap: var(--space-md);
-            margin-top: var(--space-md);
-            padding-top: var(--space-md);
-            border-top: 1px solid rgba(255,255,255,0.2);
-        }
-        
-        .welcome-stat {
-            flex: 1;
-        }
-        
-        .welcome-stat-value {
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-        
-        .welcome-stat-label {
-            font-size: 0.7rem;
-            opacity: 0.8;
-        }
-        
-        /* Loading Spinner */
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-        
-        .loading-overlay.active {
-            display: flex;
-        }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid var(--border);
-            border-top-color: var(--primary);
+
+        /* Floating Circle */
+        .circle {
+            position: absolute;
+            top: -12px;
+            left: 5px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            border: 4px solid var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.5);
+            transition: all 0.3s ease;
         }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+
+        .circle ion-icon {
+            font-size: 1.8rem;
+            color: white;
         }
-        
+
+        /* Background Pill */
+        .nav-pill-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 35px;
+            overflow: hidden;
+            z-index: 5;
+        }
+
+        .nav-bg-svg {
+            position: absolute;
+            top: 0;
+            left: -465px;
+            width: 1000px;
+            height: 70px;
+            fill: var(--bg-card);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Navigation Items */
+        .navigation-items {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            z-index: 20;
+        }
+
+        .list {
+            list-style: none;
+            flex: 1;
+            height: 70px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .list a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .list.active a {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        /* Responsive */
+        @media (max-width: 380px) {
+            .nav-wrapper { width: 320px; }
+            .circle { width: 55px; height: 55px; top: -10px; left: 2px; }
+            .circle ion-icon { font-size: 1.5rem; }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            color: var(--text);
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+            z-index: 10000;
+            opacity: 0;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.success { border-color: var(--success); }
+        .toast.error { border-color: var(--error); }
+
         /* Modal */
         .modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 2000;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            z-index: 20000;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(5px);
+            padding: var(--space-md);
         }
-        
-        .modal.active {
-            display: flex;
-        }
-        
+        .modal.active { display: flex; }
         .modal-content {
             background: var(--bg-card);
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-xl);
             padding: var(--space-xl);
             max-width: 320px;
+            width: 100%;
             text-align: center;
             border: 1px solid var(--border);
-            animation: modalPop 0.3s ease;
         }
-        
-        @keyframes modalPop {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+        .modal-actions { display: flex; gap: var(--space-sm); margin-top: var(--space-lg); }
+        .modal-btn { flex: 1; padding: 12px; border-radius: var(--radius-md); border: none; font-family: inherit; font-size: 0.9rem; font-weight: 500; cursor: pointer; }
+        .modal-btn.cancel { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .modal-btn.confirm { background: var(--error); color: white; }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 30000;
+            display: none;
+            align-items: center;
+            justify-content: center;
         }
-        
-        /* Banner Styles */
-        .banner-container {
-            width: 100%;
-            margin: var(--space-lg) 0;
-            border-radius: var(--radius-xl);
-            overflow: hidden;
-            cursor: pointer;
-            box-shadow: var(--shadow-md);
-            transition: all var(--transition-fast);
-            animation: fadeInBanner 0.8s ease;
-        }
-        
-        .banner-container:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .banner-container:active {
-            transform: translateY(0);
-        }
-        
-        .banner-image {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: var(--radius-xl);
-            transition: transform var(--transition-fast);
-        }
-        
-        .banner-container:hover .banner-image {
-            transform: scale(1.02);
-        }
-        
-        @keyframes fadeInBanner {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        .loading-overlay.active { display: flex; }
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="spinner"></div>
     </div>
 
     <div class="container">
-        <!-- Header Section -->
         <header class="app-header">
             <div class="brand">
                 <h1>NAV <span>Education</span></h1>
             </div>
-            
-            <div class="flex" style="gap: var(--space-sm);">
-                <!-- Notification Bell -->
-                <div class="profile-icon" id="notificationBtn">
+            <div class="flex" style="gap: 8px;">
+                <div class="icon-btn" id="notificationBtn">
                     <i class="far fa-bell"></i>
-                    <span class="badge" id="notificationBadge" style="position: absolute; top: -2px; right: -2px; display: none;">3</span>
+                    <span class="badge" id="notificationBadge" style="display: none;">3</span>
                 </div>
-                
-                <!-- Profile Icon with Avatar -->
-                <div class="profile-icon" id="profileBtn">
-                    <img id="headerAvatar" src="" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: none;">
+                <div class="icon-btn" id="profileBtn">
+                    <img id="headerAvatar" src="" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:none;">
                     <span id="headerEmoji">👤</span>
                 </div>
             </div>
         </header>
 
-        <!-- Profile Menu -->
         <div id="profileMenu" class="profile-menu">
             <div class="profile-menu-header">
                 <div class="profile-menu-name" id="menuUserName">Amit Kumar</div>
-                <div class="profile-menu-email" id="menuUserEmail">amit.kumar@example.com</div>
+                <div class="profile-menu-email" id="menuUserEmail">amit@example.com</div>
             </div>
-            <div class="profile-menu-item" onclick="window.location.href='profile.html'">
-                <i class="fas fa-user"></i>
-                <span>View Profile</span>
-            </div>
-            <div class="profile-menu-item" onclick="window.location.href='settings.html'">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
-            </div>
+            <div class="profile-menu-item" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i> View Profile</div>
+            <div class="profile-menu-item" onclick="window.location.href='settings.html'"><i class="fas fa-cog"></i> Settings</div>
             <div class="profile-menu-divider"></div>
-            <div class="profile-menu-item" onclick="showStats()">
-                <i class="fas fa-chart-line"></i>
-                <span>Learning Stats</span>
-            </div>
-            <div class="profile-menu-item" onclick="showAchievements()">
-                <i class="fas fa-trophy"></i>
-                <span>Achievements</span>
-            </div>
+            <div class="profile-menu-item" onclick="showStats()"><i class="fas fa-chart-line"></i> Learning Stats</div>
+            <div class="profile-menu-item" onclick="showAchievements()"><i class="fas fa-trophy"></i> Achievements</div>
             <div class="profile-menu-divider"></div>
-            <div class="profile-menu-item" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </div>
+            <div class="profile-menu-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
         </div>
 
-        <!-- Sync Status -->
-        <div class="sync-status" id="syncStatus" style="display: none;">
-            <i class="fas fa-check-circle"></i>
-            <span>Settings synced</span>
-        </div>
-
-        <!-- Welcome Section -->
         <section class="welcome-card">
-            <div class="flex-between" style="margin-bottom: var(--space-md);">
-                <h2 id="welcomeText">Welcome Back, Amit 👋</h2>
-                <div class="streak-badge" id="streakBadge">
-                    <i class="fas fa-fire"></i>
-                    <span id="streakCount">7</span> day streak
-                </div>
+            <div class="flex-between">
+                <h2 id="welcomeText">Welcome Back 👋</h2>
+                <div class="streak-badge"><i class="fas fa-fire"></i> <span id="streakCount">7</span> day</div>
             </div>
-            
-            <p id="welcomeMessage">Keep learning consistently. You're doing great!</p>
+            <p style="color:rgba(255,255,255,0.8);" id="welcomeMessage">Keep learning consistently!</p>
 
-            <!-- Progress Section -->
+            <div class="banner-card" onclick="trackBannerClick()">
+                <img src="https://raw.githubusercontent.com/Amit21686/NAV_Education/refs/heads/main/images/NAV%20Education%20banner.png" alt="Banner" class="banner-image">
+            </div>
+
             <div class="progress-wrapper">
                 <div class="progress-header">
                     <span>Today's Progress</span>
-                    <span id="progressLabel">20% Completed</span>
+                    <span id="progressLabel">20%</span>
                 </div>
-                <div class="progress-container">
-                    <div class="progress-bar" id="mainProgress" style="width: 20%;"></div>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill" id="mainProgress" style="width:20%"></div>
                 </div>
-                
-                <!-- Mini Stats -->
-                <div class="flex-between" style="margin-top: var(--space-sm);">
-                    <span style="font-size: 0.75rem; opacity: 0.8;">
-                        <i class="far fa-clock"></i> <span id="todayHours">2.5</span> hrs today
-                    </span>
-                    <span style="font-size: 0.75rem; opacity: 0.8;">
-                        <i class="far fa-calendar"></i> Goal: <span id="dailyGoal">4</span> hrs
-                    </span>
-                </div>
-            </div>
-
-            <!-- Welcome Stats -->
-            <div class="welcome-stats">
-                <div class="welcome-stat">
-                    <div class="welcome-stat-value" id="totalCourses">3</div>
-                    <div class="welcome-stat-label">Courses</div>
-                </div>
-                <div class="welcome-stat">
-                    <div class="welcome-stat-value" id="totalHours">28</div>
-                    <div class="welcome-stat-label">Hours</div>
-                </div>
-                <div class="welcome-stat">
-                    <div class="welcome-stat-value" id="totalBadges">5</div>
-                    <div class="welcome-stat-label">Badges</div>
+                <div class="flex-between" style="margin-top: 8px;">
+                    <span style="font-size:0.7rem;"><i class="far fa-clock"></i> <span id="todayHours">2.5</span> hrs</span>
+                    <span style="font-size:0.7rem;"><i class="far fa-calendar"></i> Goal: <span id="dailyGoal">4</span> hrs</span>
                 </div>
             </div>
         </section>
 
-        <!-- Banner Section -->
-        <div class="banner-container" onclick="window.location.href='https://naveducation.com'">
-            <img src="https://raw.githubusercontent.com/Amit21686/NAV_Education/refs/heads/main/images/NAV%20Education%20banner.png" 
-                 alt="NAV Education Banner" 
-                 class="banner-image">
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="quick-stats">
+        <div class="stats-grid">
             <div class="stat-card" onclick="showCourseStats()">
                 <div class="stat-value" id="coursesEnrolled">3</div>
                 <div class="stat-label">Enrolled</div>
@@ -786,680 +630,347 @@
             </div>
         </div>
 
-        <!-- Motivation Quote -->
-        <div class="motivation-quote">
-            <p id="motivationText">The expert in anything was once a beginner.</p>
-            <div class="author">- NAV Education</div>
+        <div class="motivation-quote" style="background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1)); border-left: 4px solid var(--primary); padding: 15px; border-radius: 12px; margin: 20px 0;">
+            <p id="motivationText" style="font-style:italic;">The expert in anything was once a beginner.</p>
+            <div style="text-align:right; color:var(--primary);">- NAV</div>
         </div>
 
-        <!-- Your Courses Section -->
         <div class="section-header">
-            <h3>
-                <i class="fas fa-book-open" style="color: var(--primary);"></i>
-                Your Courses
-            </h3>
-            <a href="library.html" class="view-all">
-                View All <i class="fas fa-arrow-right"></i>
-            </a>
+            <h3><i class="fas fa-book-open" style="color:var(--primary);"></i> Your Courses</h3>
+            <a href="library.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
         </div>
 
-        <!-- Course Cards -->
-        <div class="card" data-course-id="ui-ux-101" data-progress="70" data-category="design" onclick="openCourse('ui-ux-101')">
-            <div class="card-left">
-                <span class="card-icon">🎨</span>
+        <div class="course-card" onclick="openCourse('ui-ux')">
+            <div class="course-left">
+                <span class="course-icon">🎨</span>
+                <div class="course-info">
+                    <div class="course-title">UI/UX Design Masterclass</div>
+                    <div class="course-meta">12 lessons left</div>
+                </div>
+            </div>
+            <div class="course-right">70% <i class="fas fa-chevron-right"></i></div>
+        </div>
+
+        <div class="course-card" onclick="openCourse('web-dev')">
+            <div class="course-left">
+                <span class="course-icon">💻</span>
+                <div class="course-info">
+                    <div class="course-title">Full Stack Web Development</div>
+                    <div class="course-meta">8 lessons left</div>
+                </div>
+            </div>
+            <div class="course-right">45% <i class="fas fa-chevron-right"></i></div>
+            <span class="popular-badge">Popular</span>
+        </div>
+
+        <div class="course-card" onclick="openCourse('data-science')">
+            <div class="course-left">
+                <span class="course-icon">📊</span>
+                <div class="course-info">
+                    <div class="course-title">Data Science Fundamentals</div>
+                    <div class="course-meta">15 lessons left</div>
+                </div>
+            </div>
+            <div class="course-right">20% <i class="fas fa-chevron-right"></i></div>
+        </div>
+
+        <div class="section-header">
+            <h3><i class="fas fa-play-circle" style="color:var(--primary);"></i> Continue Learning</h3>
+        </div>
+
+        <div class="continue-card" onclick="continueLearning()">
+            <div class="continue-left">
+                <div class="continue-icon"><i class="fas fa-paint-brush"></i></div>
                 <div>
-                    <span class="card-title">UI/UX Design Masterclass</span>
-                    <div style="font-size: 0.7rem; color: var(--text-muted);">12 lessons remaining</div>
+                    <h4>Figma Advanced</h4>
+                    <div style="font-size:0.7rem;"><i class="far fa-clock"></i> 15 min left</div>
                 </div>
             </div>
-            <div class="card-right">
-                <span>70%</span>
-                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-            </div>
+            <div class="continue-play"><i class="fas fa-play"></i></div>
         </div>
 
-        <div class="card" data-course-id="web-dev-101" data-progress="45" data-category="development" onclick="openCourse('web-dev-101')">
-            <div class="card-left">
-                <span class="card-icon">💻</span>
-                <div>
-                    <span class="card-title">Full Stack Web Development</span>
-                    <div style="font-size: 0.7rem; color: var(--text-muted);">8 lessons remaining</div>
-                </div>
-            </div>
-            <div class="card-right">
-                <span>45%</span>
-                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-            </div>
-            <span class="badge badge-success" style="position: absolute; top: 8px; right: 60px;">Popular</span>
-        </div>
-
-        <div class="card" data-course-id="data-science-101" data-progress="20" data-category="data" onclick="openCourse('data-science-101')">
-            <div class="card-left">
-                <span class="card-icon">📊</span>
-                <div>
-                    <span class="card-title">Data Science Fundamentals</span>
-                    <div style="font-size: 0.7rem; color: var(--text-muted);">15 lessons remaining</div>
-                </div>
-            </div>
-            <div class="card-right">
-                <span>20%</span>
-                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-            </div>
-        </div>
-
-        <!-- Continue Learning Section -->
         <div class="section-header">
-            <h3>
-                <i class="fas fa-play-circle" style="color: var(--primary);"></i>
-                Continue Learning
-            </h3>
+            <h3><i class="fas fa-star" style="color:var(--primary);"></i> Recommended</h3>
         </div>
 
-        <div class="continue-learning-card" onclick="continueLearning()">
-            <div class="continue-learning-left">
-                <div class="continue-learning-icon">
-                    <i class="fas fa-paint-brush"></i>
-                </div>
-                <div class="continue-learning-info">
-                    <h4>Figma Advanced Components</h4>
-                    <p><i class="far fa-clock"></i> 15 min left • UI/UX Design</p>
-                </div>
-            </div>
-            <div class="continue-learning-play">
-                <i class="fas fa-play"></i>
-            </div>
+        <div class="chips-container">
+            <span class="chip" onclick="searchTopic('react')"><i class="fab fa-react"></i> React</span>
+            <span class="chip" onclick="searchTopic('python')"><i class="fab fa-python"></i> Python</span>
+            <span class="chip" onclick="searchTopic('figma')"><i class="fab fa-figma"></i> Figma</span>
+            <span class="chip" onclick="searchTopic('sql')"><i class="fas fa-database"></i> SQL</span>
+            <span class="chip" onclick="searchTopic('ml')"><i class="fas fa-robot"></i> ML</span>
         </div>
 
-        <!-- Recommended For You -->
         <div class="section-header">
-            <h3>
-                <i class="fas fa-star" style="color: var(--primary);"></i>
-                Recommended For You
-            </h3>
+            <h3><i class="fas fa-trophy" style="color:var(--primary);"></i> Achievements</h3>
+            <a href="#" class="view-all" onclick="showAllAchievements()">View All <i class="fas fa-arrow-right"></i></a>
         </div>
 
-        <div style="margin-bottom: var(--space-md);">
-            <span class="recommendation-chip" onclick="searchTopic('react')">
-                <i class="fab fa-react"></i> React.js
-            </span>
-            <span class="recommendation-chip" onclick="searchTopic('python')">
-                <i class="fab fa-python"></i> Python
-            </span>
-            <span class="recommendation-chip" onclick="searchTopic('figma')">
-                <i class="fab fa-figma"></i> Figma
-            </span>
-            <span class="recommendation-chip" onclick="searchTopic('sql')">
-                <i class="fas fa-database"></i> SQL
-            </span>
-            <span class="recommendation-chip" onclick="searchTopic('machine-learning')">
-                <i class="fas fa-robot"></i> ML
-            </span>
+        <div class="achievements-scroll">
+            <div class="achievement-item"><div class="achievement-icon">⚡</div><div class="achievement-title">7 Day Streak</div></div>
+            <div class="achievement-item"><div class="achievement-icon books">📚</div><div class="achievement-title">5 Courses</div></div>
+            <div class="achievement-item"><div class="achievement-icon learner">💡</div><div class="achievement-title">Quick Learner</div></div>
+            <div class="achievement-item"><div class="achievement-icon" style="background:linear-gradient(135deg,#f43f5e,#e11d48);">🏆</div><div class="achievement-title">Top Performer</div></div>
         </div>
 
-        <!-- Upcoming Deadlines -->
         <div class="section-header">
-            <h3>
-                <i class="fas fa-clock" style="color: var(--primary);"></i>
-                Upcoming Deadlines
-            </h3>
-        </div>
-
-        <div class="card deadline-card" onclick="viewDeadline()">
-            <div>
-                <div style="font-weight: 500; margin-bottom: 4px;">UI/UX Design Project</div>
-                <div style="font-size: 0.8rem; color: var(--text-muted);">Due in 2 days</div>
-            </div>
-            <span class="badge badge-warning">Pending</span>
-        </div>
-
-        <div class="card deadline-card" onclick="viewDeadline()">
-            <div>
-                <div style="font-weight: 500; margin-bottom: 4px;">JavaScript Assignment</div>
-                <div style="font-size: 0.8rem; color: var(--text-muted);">Due in 5 days</div>
-            </div>
-            <span class="badge" style="background: #10b981;">On Track</span>
-        </div>
-
-        <!-- Achievements Section -->
-        <div class="section-header">
-            <h3>
-                <i class="fas fa-trophy" style="color: var(--primary);"></i>
-                Recent Achievements
-            </h3>
-            <a href="#" class="view-all" onclick="showAllAchievements()">
-                View All <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
-
-        <div class="achievement-grid">
-            <div class="achievement-item">
-                <div class="achievement-icon">
-                    ⚡
-                </div>
-                <div class="achievement-title">7 Day Streak</div>
-            </div>
-            <div class="achievement-item">
-                <div class="achievement-icon books">
-                    📚
-                </div>
-                <div class="achievement-title">5 Courses</div>
-            </div>
-            <div class="achievement-item">
-                <div class="achievement-icon learner">
-                    💡
-                </div>
-                <div class="achievement-title">Quick Learner</div>
-            </div>
-            <div class="achievement-item">
-                <div class="achievement-icon" style="background: linear-gradient(135deg, #f43f5e, #e11d48);">
-                    🏆
-                </div>
-                <div class="achievement-title">Top Performer</div>
-            </div>
-        </div>
-
-        <!-- Activity Feed -->
-        <div class="section-header">
-            <h3>
-                <i class="fas fa-rss" style="color: var(--primary);"></i>
-                Recent Activity
-            </h3>
+            <h3><i class="fas fa-rss" style="color:var(--primary);"></i> Activity</h3>
         </div>
 
         <div class="activity-feed">
             <div class="activity-item">
-                <div class="activity-left">
-                    <div class="activity-icon">📝</div>
-                    <div class="activity-details">
-                        <h5>Completed JavaScript Module</h5>
-                        <div class="activity-time">2 hours ago</div>
-                    </div>
-                </div>
-                <span class="activity-points">+50 pts</span>
+                <div class="activity-left"><div class="activity-icon">📝</div><div><span style="font-weight:500;">Completed JS Module</span><br><span class="course-meta">2h ago</span></div></div>
+                <span class="activity-points">+50</span>
             </div>
             <div class="activity-item">
-                <div class="activity-left">
-                    <div class="activity-icon">📚</div>
-                    <div class="activity-details">
-                        <h5>Started Data Science Course</h5>
-                        <div class="activity-time">Yesterday</div>
-                    </div>
-                </div>
-                <span class="activity-points">+20 pts</span>
-            </div>
-            <div class="activity-item">
-                <div class="activity-left">
-                    <div class="activity-icon">🏆</div>
-                    <div class="activity-details">
-                        <h5>Earned 'Quick Learner' Badge</h5>
-                        <div class="activity-time">2 days ago</div>
-                    </div>
-                </div>
-                <span class="activity-points">+100 pts</span>
+                <div class="activity-left"><div class="activity-icon">📚</div><div><span style="font-weight:500;">Started Data Science</span><br><span class="course-meta">Yesterday</span></div></div>
+                <span class="activity-points">+20</span>
             </div>
         </div>
 
-        <!-- Daily Challenge -->
-        <div class="daily-challenge">
+        <div class="challenge-card" onclick="showToast('Challenge started!', 'success')">
             <div class="challenge-header">
-                <span class="challenge-badge">DAILY CHALLENGE</span>
+                <span class="challenge-badge">DAILY</span>
                 <i class="fas fa-gem"></i>
             </div>
-            <h4 style="margin-bottom: var(--space-sm);">Complete 3 lessons today</h4>
-            <div class="challenge-reward">
-                <i class="fas fa-star"></i>
-                <span>Reward: 100 XP + Streak Freeze</span>
-            </div>
-            <div class="challenge-progress">
-                <div class="challenge-progress-bar">
-                    <div class="challenge-progress-fill" style="width: 33%;"></div>
-                </div>
-                <div style="font-size: 0.75rem; text-align: right; opacity: 0.9;">1/3 completed</div>
+            <h4>Complete 3 lessons</h4>
+            <div class="challenge-reward"><i class="fas fa-star"></i> 100 XP + Streak Freeze</div>
+            <div class="progress-bar-bg" style="background:rgba(255,255,255,0.2);"><div class="progress-fill" style="width:33%; background:white;"></div></div>
+            <div style="font-size:0.7rem; text-align:right;">1/3 done</div>
+        </div>
+
+        <div style="height:20px;"></div>
+    </div>
+
+    <div class="nav-wrapper">
+        <div class="magic-mover" id="magicMover">
+            <div class="circle">
+                <ion-icon id="indicatorIcon" name="home-outline"></ion-icon>
             </div>
         </div>
 
-        <!-- Space for bottom nav -->
-        <div style="height: 40px;"></div>
+        <div class="nav-pill-bg">
+            <svg class="nav-bg-svg" id="navSvg" viewBox="0 0 1000 70">
+                <path d="M0,0 L450,0 C470,0 475,35 500,35 C525,35 530,0 550,0 L1000,0 L1000,70 L0,70 Z" fill="currentColor"></path>
+            </svg>
+        </div>
+
+        <ul class="navigation-items">
+            <li class="list active" data-index="0" data-icon="home-outline" data-page="index.html"><a><ion-icon name="home-outline"></ion-icon></a></li>
+            <li class="list" data-index="1" data-icon="search-outline" data-page="search.html"><a><ion-icon name="search-outline"></ion-icon></a></li>
+            <li class="list" data-index="2" data-icon="library-outline" data-page="library.html"><a><ion-icon name="library-outline"></ion-icon></a></li>
+            <li class="list" data-index="3" data-icon="settings-outline" data-page="settings.html"><a><ion-icon name="settings-outline"></ion-icon></a></li>
+            <li class="list" data-index="4" data-icon="person-outline" data-page="profile.html"><a><ion-icon name="person-outline"></ion-icon></a></li>
+        </ul>
     </div>
 
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item active" data-page="home">
-            <div class="nav-icon"><i class="fas fa-home"></i></div>
-            <span>Home</span>
-        </a>
-        <a href="search.html" class="nav-item" data-page="search">
-            <div class="nav-icon"><i class="fas fa-search"></i></div>
-            <span>Search</span>
-        </a>
-        <a href="library.html" class="nav-item" data-page="library">
-            <div class="nav-icon"><i class="fas fa-book"></i></div>
-            <span>Library</span>
-        </a>
-        <a href="settings.html" class="nav-item" data-page="settings">
-            <div class="nav-icon"><i class="fas fa-cog"></i></div>
-            <span>Settings</span>
-        </a>
-    </nav>
-
-    <!-- Toast Container -->
     <div id="toastContainer" class="toast"></div>
 
-    <!-- Confirmation Modal -->
     <div id="confirmModal" class="modal">
         <div class="modal-content">
-            <div class="modal-icon">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <h3 class="modal-title" id="modalTitle">Confirm Action</h3>
-            <p class="modal-message" id="modalMessage">Are you sure you want to proceed?</p>
+            <i class="fas fa-exclamation-triangle" style="font-size:2.5rem; color:var(--error); margin-bottom:15px;"></i>
+            <h3 id="modalTitle">Confirm</h3>
+            <p id="modalMessage" style="color:var(--text-muted); margin-bottom:20px;">Are you sure?</p>
             <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="hideModal()">Cancel</button>
-                <button class="btn btn-danger" id="modalConfirmBtn">Confirm</button>
+                <button class="modal-btn cancel" onclick="hideModal()">Cancel</button>
+                <button class="modal-btn confirm" id="modalConfirmBtn">Confirm</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ==================== APPWRITE CONFIGURATION ====================
+        // ==================== APPWRITE ====================
         const client = new Appwrite.Client();
-        
-        client
-            .setEndpoint("https://sgp.cloud.appwrite.io/v1")
-            .setProject("nav-education");
-
+        client.setEndpoint("https://sgp.cloud.appwrite.io/v1").setProject("nav-education");
         const account = new Appwrite.Account(client);
 
-        // ==================== GLOBAL STATE ====================
-        let currentUser = null;
-        let activeToast = null;
-        let activeModal = null;
+        // ==================== GLOBALS ====================
+        let loadingOverlay = document.getElementById('loadingOverlay');
+        let toastTimeout;
 
-        // ==================== CHECK AUTHENTICATION ====================
-        async function checkAuth() {
-            try {
-                const user = await account.get();
-                currentUser = user;
-                
-                // Load user data from localStorage or Appwrite
-                loadUserData(user);
-                
-            } catch (error) {
-                console.log('No active session:', error);
-                // Redirect to login if not authenticated
-                window.location.href = 'auth.html';
-            }
-        }
-
-        // ==================== LOAD USER DATA ====================
-        function loadUserData(user) {
-            // Load from localStorage first, then from Appwrite if needed
-            const savedName = localStorage.getItem('nav_userName');
-            const savedEmail = localStorage.getItem('nav_userEmail');
-            
-            // Update UI with user data
-            if (savedName) {
-                document.getElementById('welcomeText').innerHTML = `Welcome Back, ${savedName} 👋`;
-                document.getElementById('menuUserName').textContent = savedName;
-            } else if (user.name) {
-                document.getElementById('welcomeText').innerHTML = `Welcome Back, ${user.name} 👋`;
-                document.getElementById('menuUserName').textContent = user.name;
-                localStorage.setItem('nav_userName', user.name);
-            }
-            
-            if (savedEmail) {
-                document.getElementById('menuUserEmail').textContent = savedEmail;
-            } else if (user.email) {
-                document.getElementById('menuUserEmail').textContent = user.email;
-                localStorage.setItem('nav_userEmail', user.email);
-            }
-            
-            // Load avatar
-            const savedAvatar = localStorage.getItem('nav_profileAvatar');
-            if (savedAvatar) {
-                updateHeaderAvatar(savedAvatar);
-            }
-            
-            // Load theme
-            loadTheme();
-            
-            // Load progress
-            loadProgress();
-            
-            // Load stats
-            loadStats();
-        }
-
-        // ==================== HEADER AVATAR ====================
-        function updateHeaderAvatar(imageData) {
-            const headerAvatar = document.getElementById('headerAvatar');
-            const headerEmoji = document.getElementById('headerEmoji');
-            
-            if (imageData && headerAvatar && headerEmoji) {
-                headerAvatar.src = imageData;
-                headerAvatar.style.display = 'block';
-                headerEmoji.style.display = 'none';
-            }
-        }
-
-        // ==================== LOAD THEME ====================
-        function loadTheme() {
+        // ==================== THEME SYNC ====================
+        function applyTheme() {
             const darkMode = localStorage.getItem('nav_darkMode');
-            if (darkMode !== null) {
-                document.body.classList.toggle('light-theme', darkMode === 'false');
-            }
-            
-            const accentColor = localStorage.getItem('nav_accentColor');
-            if (accentColor) {
-                document.documentElement.style.setProperty('--primary', accentColor);
-            }
+            if (darkMode === null) document.body.classList.remove('light-theme');
+            else darkMode === 'true' ? document.body.classList.remove('light-theme') : document.body.classList.add('light-theme');
+            const accent = localStorage.getItem('nav_accentColor');
+            if (accent) document.documentElement.style.setProperty('--primary', accent);
         }
 
-        // ==================== LOAD PROGRESS ====================
-        function loadProgress() {
-            const progress = localStorage.getItem('nav_progress') || 20;
-            const bar = document.getElementById('mainProgress');
-            const label = document.getElementById('progressLabel');
-            
-            if (bar) {
-                bar.style.width = progress + '%';
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'nav_darkMode' || e.key === 'nav_accentColor') {
+                applyTheme();
+                showToast('Theme updated!', 'success');
             }
-            if (label) {
-                label.textContent = progress + '% Completed';
-            }
-            
-            // Load streak
-            const streak = localStorage.getItem('nav_streak') || 7;
-            document.getElementById('streakCount').textContent = streak;
-            
-            // Load daily goal
-            const studyHours = localStorage.getItem('nav_studyHours') || 4;
-            document.getElementById('dailyGoal').textContent = studyHours;
-        }
+        });
+        
+        // Listen for same-tab custom sync event
+        window.addEventListener('settingsUpdated', () => applyTheme());
 
-        // ==================== LOAD STATS ====================
-        function loadStats() {
-            const stats = JSON.parse(localStorage.getItem('nav_stats')) || {
-                courses: 3,
-                hours: 28,
-                badges: 5,
-                totalCourses: 3,
-                totalHours: 28,
-                totalBadges: 5
-            };
-            
-            document.getElementById('coursesEnrolled').textContent = stats.courses;
-            document.getElementById('hoursLearned').textContent = stats.hours;
-            document.getElementById('achievements').textContent = stats.badges;
-            document.getElementById('totalCourses').textContent = stats.totalCourses;
-            document.getElementById('totalHours').textContent = stats.totalHours;
-            document.getElementById('totalBadges').textContent = stats.totalBadges;
-            
-            // Load today's hours
-            const todayHours = localStorage.getItem('nav_todayHours') || 2.5;
-            document.getElementById('todayHours').textContent = todayHours;
+        // ==================== TOAST ====================
+        function showToast(message, type = 'info', duration = 2500) {
+            const toast = document.getElementById('toastContainer');
+            if (!toast) return;
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toast.className = 'toast';
+            toast.innerHTML = '';
+            toast.classList.add(type);
+            const icon = document.createElement('i');
+            icon.className = type === 'success' ? 'fas fa-check-circle' : type === 'error' ? 'fas fa-exclamation-circle' : 'fas fa-info-circle';
+            toast.appendChild(icon);
+            toast.appendChild(document.createTextNode(' ' + message));
+            void toast.offsetWidth;
+            toast.classList.add('show');
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), duration);
         }
 
         // ==================== PROFILE MENU ====================
         document.getElementById('profileBtn')?.addEventListener('click', function(e) {
             e.stopPropagation();
+            document.getElementById('profileMenu').classList.toggle('active');
+        });
+        document.addEventListener('click', function(e) {
             const menu = document.getElementById('profileMenu');
-            menu.classList.toggle('active');
+            const btn = document.getElementById('profileBtn');
+            if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.classList.remove('active');
+            }
         });
 
-        document.addEventListener('click', function() {
-            const menu = document.getElementById('profileMenu');
-            menu.classList.remove('active');
+        // ==================== CHECK AUTH ====================
+        async function checkAuth() {
+            try {
+                const user = await account.get();
+                loadUserData(user);
+            } catch (error) {
+                console.log('No session via Appwrite, loading generic/local data');
+                // Even without Appwrite session, load local data if testing UI
+                loadUserData(null);
+            } finally {
+                setTimeout(() => loadingOverlay?.classList.remove('active'), 500);
+            }
+        }
+
+        function loadUserData(user) {
+            const savedName = localStorage.getItem('nav_userName');
+            if (savedName) {
+                const firstName = savedName.split(' ')[0];
+                document.getElementById('welcomeText').innerHTML = `Welcome Back, ${firstName} 👋`;
+                document.getElementById('menuUserName').textContent = savedName;
+            }
+            const savedEmail = localStorage.getItem('nav_userEmail');
+            if (savedEmail) {
+                document.getElementById('menuUserEmail').textContent = savedEmail;
+            }
+            const savedAvatar = localStorage.getItem('nav_profileAvatar');
+            if (savedAvatar) {
+                const img = document.getElementById('headerAvatar');
+                const emoji = document.getElementById('headerEmoji');
+                img.src = savedAvatar;
+                img.style.display = 'block';
+                emoji.style.display = 'none';
+            }
+            const progress = localStorage.getItem('nav_progress') || 20;
+            document.getElementById('mainProgress').style.width = progress + '%';
+            document.getElementById('progressLabel').textContent = progress + '%';
+            document.getElementById('streakCount').textContent = localStorage.getItem('nav_streak') || 7;
+            document.getElementById('dailyGoal').textContent = localStorage.getItem('nav_studyHours') || 4;
+            document.getElementById('todayHours').textContent = localStorage.getItem('nav_todayHours') || 2.5;
+            const stats = JSON.parse(localStorage.getItem('nav_stats')) || {courses:3, hours:28, badges:5};
+            document.getElementById('coursesEnrolled').textContent = stats.courses;
+            document.getElementById('hoursLearned').textContent = stats.hours;
+            document.getElementById('achievements').textContent = stats.badges;
+        }
+
+        // ==================== MAGIC NAVIGATION ====================
+        const list = document.querySelectorAll('.list');
+        const magicMover = document.getElementById('magicMover');
+        const navSvg = document.getElementById('navSvg');
+        const indicatorIcon = document.getElementById('indicatorIcon');
+        const slotWidth = 70;
+
+        // Set active based on current page
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        list.forEach((item) => {
+            const page = item.getAttribute('data-page');
+            if (page === currentPage) {
+                const index = parseInt(item.getAttribute('data-index'));
+                const iconName = item.getAttribute('data-icon');
+                item.classList.add('active');
+                magicMover.style.transform = `translateX(${index * slotWidth}px)`;
+                navSvg.style.transform = `translateX(${index * slotWidth}px)`;
+                indicatorIcon.setAttribute('name', iconName);
+            }
         });
 
-        // ==================== PROFILE MENU ACTIONS ====================
-        function showStats() {
-            showToast('Learning statistics coming soon!', 'info');
-        }
+        list.forEach((item) => {
+            item.addEventListener('click', function() {
+                const index = parseInt(this.getAttribute('data-index'));
+                const iconName = this.getAttribute('data-icon');
+                const page = this.getAttribute('data-page');
+                
+                list.forEach(el => el.classList.remove('active'));
+                this.classList.add('active');
+                
+                magicMover.style.transform = `translateX(${index * slotWidth}px)`;
+                navSvg.style.transform = `translateX(${index * slotWidth}px)`;
+                indicatorIcon.setAttribute('name', iconName);
+                
+                if (page && page !== currentPage) {
+                    document.body.style.opacity = '0';
+                    document.body.style.transition = 'opacity 0.3s';
+                    setTimeout(() => window.location.href = page, 300);
+                }
+            });
+        });
 
-        function showAchievements() {
-            showToast('Achievements gallery coming soon!', 'info');
+        // ==================== ACTIONS ====================
+        function showStats() { showToast('Learning stats coming soon!', 'info'); }
+        function showAchievements() { showToast('Achievements coming soon!', 'info'); }
+        function openCourse(id) { showToast('Opening course...', 'info'); }
+        function continueLearning() { showToast('Continuing lesson...', 'info'); }
+        function searchTopic(topic) { 
+            showToast(`Searching ${topic}...`, 'info');
+            setTimeout(() => window.location.href = `search.html?q=${topic}`, 500);
         }
-
+        function showAllAchievements() { showToast('All achievements soon!', 'info'); }
+        function showCourseStats() { showToast('Course statistics', 'info'); }
+        function showTimeStats() { showToast('Time statistics', 'info'); }
+        function showAchievementStats() { showToast('Achievement stats', 'info'); }
+        function trackBannerClick() { showToast('Welcome to NAV Education! 🎓', 'success'); }
+        function hideModal() { document.getElementById('confirmModal').classList.remove('active'); }
+        function showModal(title, message, callback) {
+            const modal = document.getElementById('confirmModal');
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('modalConfirmBtn').onclick = () => { hideModal(); if (callback) callback(); };
+            modal.classList.add('active');
+        }
         async function logout() {
-            showModal('Logout', 'Are you sure you want to logout?', async () => {
+            showModal('Logout', 'Are you sure?', async () => {
                 try {
                     await account.deleteSession('current');
                     localStorage.clear();
-                    showToast('Logged out successfully', 'success');
+                    showToast('Logged out', 'success');
                     setTimeout(() => window.location.href = 'auth.html', 1000);
                 } catch (error) {
-                    showToast('Error logging out', 'error');
+                    // Even if error, clear local auth
+                    localStorage.clear();
+                    showToast('Logged out', 'success');
+                    setTimeout(() => window.location.href = 'auth.html', 1000);
                 }
             });
         }
 
-        // ==================== NOTIFICATION ====================
-        document.getElementById('notificationBtn')?.addEventListener('click', function() {
-            showToast('No new notifications');
-        });
-
-        // ==================== COURSE ACTIONS ====================
-        function openCourse(courseId) {
-            showToast(`Opening course...`);
-        }
-
-        function continueLearning() {
-            showToast('Continuing your last lesson...');
-        }
-
-        function searchTopic(topic) {
-            showToast(`Searching for ${topic} courses...`);
-            setTimeout(() => {
-                window.location.href = `search.html?q=${topic}`;
-            }, 500);
-        }
-
-        function viewDeadline() {
-            showToast('Viewing deadline details...');
-        }
-
-        function showAllAchievements() {
-            showToast('All achievements coming soon!');
-        }
-
-        function showCourseStats() {
-            showToast('Your course statistics');
-        }
-
-        function showTimeStats() {
-            showToast('Your learning time statistics');
-        }
-
-        function showAchievementStats() {
-            showToast('Your achievement statistics');
-        }
-
-        // ==================== UPDATE MOTIVATION QUOTE ====================
-        function updateMotivationQuote() {
-            const hour = new Date().getHours();
-            const quoteElement = document.getElementById('motivationText');
-            
-            const quotes = [
-                'The expert in anything was once a beginner.',
-                'Every day is a learning opportunity.',
-                'Progress, not perfection.',
-                'Small steps lead to big results.',
-                'Your future is created by what you do today.'
-            ];
-            
-            if (hour < 12) {
-                quoteElement.textContent = 'Morning is when the magic happens. Start learning!';
-            } else if (hour < 17) {
-                quoteElement.textContent = 'Keep pushing forward. Every hour counts!';
-            } else if (hour < 20) {
-                quoteElement.textContent = 'Great job today! Finish strong!';
-            } else {
-                quoteElement.textContent = quotes[Math.floor(Math.random() * quotes.length)];
-            }
-        }
-
-        // ==================== LOADING FUNCTIONS ====================
-        function hideLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) {
-                overlay.classList.remove('active');
-            }
-        }
-
-        function showLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) {
-                overlay.classList.add('active');
-            }
-        }
-
-        // ==================== MODAL FUNCTIONS ====================
-        function showModal(title, message, confirmCallback) {
-            const modal = document.getElementById('confirmModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalMessage = document.getElementById('modalMessage');
-            const confirmBtn = document.getElementById('modalConfirmBtn');
-            
-            if (modalTitle) modalTitle.textContent = title;
-            if (modalMessage) modalMessage.textContent = message;
-            
-            if (confirmBtn) {
-                confirmBtn.onclick = function() {
-                    hideModal();
-                    if (confirmCallback) confirmCallback();
-                };
-            }
-            
-            modal.classList.add('active');
-        }
-        
-        function hideModal() {
-            const modal = document.getElementById('confirmModal');
-            modal.classList.remove('active');
-        }
-
-        // ==================== TOAST NOTIFICATIONS ====================
-        function showToast(message, type = 'info', duration = 2200) {
-            if (activeToast) {
-                activeToast.classList.remove('show');
-                setTimeout(() => {
-                    if (activeToast.parentNode) {
-                        activeToast.parentNode.removeChild(activeToast);
-                    }
-                    activeToast = null;
-                }, 300);
-            }
-
-            const toast = document.getElementById('toastContainer');
-            toast.className = `toast ${type}`;
-            
-            const icon = document.createElement('i');
-            switch(type) {
-                case 'success':
-                    icon.className = 'fas fa-check-circle';
-                    break;
-                case 'error':
-                    icon.className = 'fas fa-exclamation-circle';
-                    break;
-                case 'warning':
-                    icon.className = 'fas fa-exclamation-triangle';
-                    break;
-                default:
-                    icon.className = 'fas fa-info-circle';
-            }
-            
-            toast.innerHTML = '';
-            toast.appendChild(icon);
-            toast.appendChild(document.createTextNode(' ' + message));
-            
-            toast.classList.add('show');
-            activeToast = toast;
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, duration);
-        }
-
-        // ==================== BANNER CLICK TRACKING ====================
-        function initBannerTracking() {
-            const banner = document.querySelector('.banner-container');
-            if (banner) {
-                banner.addEventListener('click', function() {
-                    const clicks = parseInt(localStorage.getItem('nav_bannerClicks') || '0');
-                    localStorage.setItem('nav_bannerClicks', (clicks + 1).toString());
-                    localStorage.setItem('nav_lastBannerClick', new Date().toISOString());
-                });
-            }
-        }
-
-        // ==================== PAGE TRANSITIONS ====================
-        document.querySelectorAll('.nav-item').forEach(link => {
-            link.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                const currentPage = window.location.pathname.split('/').pop();
-                
-                if (href && href !== currentPage) {
-                    e.preventDefault();
-                    document.body.classList.add('page-fade');
-                    
-                    setTimeout(() => {
-                        window.location.href = href;
-                    }, 250);
-                }
-            });
-        });
-
-        // Close modal on outside click
-        document.getElementById('confirmModal')?.addEventListener('click', function(e) {
-            if (e.target === this) hideModal();
-        });
-
-        // ==================== OFFLINE DETECTION ====================
-        window.addEventListener('online', () => showToast('You are back online 📶', 'success'));
-        window.addEventListener('offline', () => showToast('You are offline ✈️', 'warning'));
-
-        // ==================== DOUBLE TAP PROTECTION ====================
-        let lastTap = 0;
-        document.addEventListener('touchend', function(e) {
-            const currentTime = new Date().getTime();
-            const tapLength = currentTime - lastTap;
-            if (tapLength < 300 && tapLength > 0) {
-                e.preventDefault();
-            }
-            lastTap = currentTime;
-        });
-
-        // ==================== INITIALIZATION ====================
-        document.addEventListener('DOMContentLoaded', async function() {
-            showLoading();
-            
-            // Check authentication
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', async () => {
+            loadingOverlay?.classList.add('active');
+            applyTheme();
             await checkAuth();
-            
-            // Update motivation quote
-            updateMotivationQuote();
-            
-            // Initialize banner tracking
-            initBannerTracking();
-            
-            // Hide loading
-            setTimeout(hideLoading, 500);
         });
 
-        window.addEventListener('load', hideLoading);
-        setTimeout(hideLoading, 2000);
-
-        // ==================== SERVICE WORKER ====================
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').catch(err => {
-                    console.log('ServiceWorker registration failed');
-                });
-            });
-        }
-
-        // Export functions to global scope
+        document.getElementById('notificationBtn')?.addEventListener('click', () => showToast('No new notifications', 'info'));
+        
         window.showToast = showToast;
         window.showModal = showModal;
         window.hideModal = hideModal;
@@ -1469,11 +980,11 @@
         window.openCourse = openCourse;
         window.continueLearning = continueLearning;
         window.searchTopic = searchTopic;
-        window.viewDeadline = viewDeadline;
         window.showAllAchievements = showAllAchievements;
         window.showCourseStats = showCourseStats;
         window.showTimeStats = showTimeStats;
         window.showAchievementStats = showAchievementStats;
+        window.trackBannerClick = trackBannerClick;
     </script>
 </body>
 </html>
