@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Profile | NAV Education</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
+    
+    <style>
+        /* ===== RESET & VARIABLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --accent: #f43f5e;
+            --bg: #020617;
+            --bg-card: rgba(30, 41, 59, 0.8);
+            --bg-card-hover: rgba(51, 65, 85, 0.8);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --error: #f43f5e;
+            --warning: #f59e0b;
+            
+            --space-xs: 4px; --space-sm: 8px; --space-md: 14px; --space-lg: 20px; --space-xl: 24px;
+            --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px; --radius-full: 9999px;
+            
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        body.light-theme {
+            --bg: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f1f5f9;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #475569;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            width: 100%;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body::before {
+            content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle at 70% 30%, rgba(99, 102, 241, 0.12) 0%, rgba(139, 92, 246, 0.08) 30%, transparent 70%);
+            animation: rotateBg 40s linear infinite; pointer-events: none; z-index: 0;
+        }
+        @keyframes rotateBg { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .container { max-width: 100%; width: 100%; margin: 0 auto; padding: var(--space-md); padding-bottom: 110px; position: relative; z-index: 1; }
+
+        /* Header */
+        .app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-lg); }
+        .brand h1 { font-size: 1.6rem; font-weight: 600; }
+        .brand h1 span { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .flex { display: flex; align-items: center; }
+
+        .icon-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--bg-card); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; cursor: pointer; transition: all 0.2s ease; color: var(--text); }
+        .icon-btn:active { transform: scale(0.95); border-color: var(--primary); }
+
+        /* Profile Menu Dropdown */
+        .profile-menu { position: fixed; top: 70px; right: var(--space-md); background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-sm); min-width: 200px; z-index: 9999; display: none; box-shadow: var(--shadow-lg); }
+        .profile-menu.active { display: block; }
+        .profile-menu-header { padding: var(--space-sm) var(--space-md); border-bottom: 1px solid var(--border); }
+        .profile-menu-name { font-weight: 600; font-size: 0.95rem; }
+        .profile-menu-email { font-size: 0.7rem; color: var(--text-muted); }
+        .profile-menu-item { display: flex; align-items: center; gap: var(--space-sm); padding: 10px 12px; color: var(--text); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s; font-size: 0.9rem; }
+        .profile-menu-item:hover { background: var(--bg-card-hover); color: var(--primary); }
+        .profile-menu-divider { height: 1px; background: var(--border); margin: 5px 0; }
+
+        /* Profile Hero Section */
+        .profile-hero { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--radius-xl); padding: var(--space-xl); text-align: center; color: white; margin-bottom: var(--space-lg); position: relative; overflow: hidden; box-shadow: var(--shadow-md); }
+        .profile-hero::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: url('data:image/svg+xml;utf8,<svg opacity="0.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="80" cy="20" r="40" fill="white"/></svg>') no-repeat right top; background-size: cover; pointer-events: none; }
+        .profile-hero-avatar { width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.2); border: 4px solid rgba(255,255,255,0.4); margin: 0 auto var(--space-md); display: flex; align-items: center; justify-content: center; font-size: 3rem; position: relative; z-index: 2; overflow: hidden; box-shadow: var(--shadow-sm); }
+        .profile-hero-avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .profile-hero-name { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; position: relative; z-index: 2; }
+        .profile-hero-email { font-size: 0.85rem; opacity: 0.9; margin-bottom: var(--space-md); position: relative; z-index: 2; }
+        .badge-premium { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.25); backdrop-filter: blur(10px); padding: 6px 14px; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 600; position: relative; z-index: 2; border: 1px solid rgba(255,255,255,0.3); }
+        .edit-btn { background: white; color: var(--primary); border: none; padding: 8px 20px; border-radius: var(--radius-full); font-weight: 600; font-size: 0.85rem; margin-top: var(--space-md); cursor: pointer; transition: transform 0.2s; position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 6px; box-shadow: var(--shadow-sm); }
+        .edit-btn:active { transform: scale(0.95); }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); margin: var(--space-lg) 0; }
+        .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-md); text-align: center; backdrop-filter: blur(10px); transition: all 0.2s; cursor: pointer; }
+        .stat-card:active { transform: scale(0.97); }
+        .stat-value { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+
+        /* Section Header */
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin: var(--space-lg) 0 var(--space-sm); }
+        .section-header h3 { display: flex; align-items: center; gap: 6px; font-size: 1.1rem; }
+        .view-all { color: var(--primary); font-size: 0.8rem; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+
+        /* Achievements / Badges */
+        .badges-container { display: flex; gap: var(--space-md); overflow-x: auto; scrollbar-width: none; padding-bottom: var(--space-sm); }
+        .badges-container::-webkit-scrollbar { display: none; }
+        .badge-card { min-width: 100px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-md); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; backdrop-filter: blur(10px); transition: transform 0.2s; cursor: pointer; }
+        .badge-card:active { transform: scale(0.95); }
+        .badge-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+        .badge-icon.gold { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+        .badge-icon.green { background: linear-gradient(135deg, #34d399, #10b981); }
+        .badge-icon.red { background: linear-gradient(135deg, #f43f5e, #e11d48); }
+        .badge-title { font-size: 0.75rem; font-weight: 600; line-height: 1.2; }
+
+        /* Activity Timeline */
+        .timeline-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-lg); margin-bottom: var(--space-lg); backdrop-filter: blur(10px); }
+        .timeline { position: relative; padding-left: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 5px; top: 5px; bottom: 0; width: 2px; background: var(--border); border-radius: var(--radius-full); }
+        .timeline-item { position: relative; margin-bottom: var(--space-lg); }
+        .timeline-item:last-child { margin-bottom: 0; }
+        .timeline-dot { position: absolute; left: -24px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--primary); border: 2px solid var(--bg-card); box-shadow: 0 0 0 3px rgba(99,102,241,0.2); }
+        .timeline-dot.success { background: var(--success); box-shadow: 0 0 0 3px rgba(16,185,129,0.2); }
+        .timeline-dot.warning { background: var(--warning); box-shadow: 0 0 0 3px rgba(245,158,11,0.2); }
+        .timeline-content { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 12px var(--space-md); border-radius: var(--radius-md); }
+        body.light-theme .timeline-content { background: rgba(0,0,0,0.02); }
+        .timeline-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+        .timeline-title { font-weight: 600; font-size: 0.9rem; }
+        .timeline-time { font-size: 0.65rem; color: var(--text-muted); }
+        .timeline-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
+
+        /* Logout Button Bottom */
+        .logout-btn-full { width: 100%; padding: 14px; border-radius: var(--radius-md); background: rgba(244,63,94,0.1); color: var(--error); border: 1px solid rgba(244,63,94,0.2); font-family: inherit; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: var(--space-xl); cursor: pointer; transition: all 0.2s; }
+        .logout-btn-full:active { transform: scale(0.98); background: rgba(244,63,94,0.2); }
+
+        /* ===== FULLY RESPONSIVE MAGIC NAVIGATION ===== */
+        .nav-wrapper {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%; /* Uses percentage to adapt to screen size */
+            max-width: 380px; 
+            height: 70px;
+            z-index: 1000;
+        }
+
+        .magic-mover {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 10;
+        }
+
+        .circle {
+            position: absolute;
+            top: -15px;
+            /* 'left' is now entirely calculated dynamically by JavaScript! */
+            width: 58px;
+            height: 58px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            border: 5px solid var(--bg);
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+            transition: all 0.4s ease;
+        }
+        .circle ion-icon { font-size: 1.6rem; color: white; }
+
+        .nav-pill-bg {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            border-radius: 35px;
+            overflow: hidden;
+            z-index: 5;
+        }
+
+        .nav-bg-svg {
+            position: absolute;
+            top: 0;
+            left: 0; /* JS handles this positioning precisely now */
+            width: 1000px;
+            height: 70px;
+            fill: var(--bg-card);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .navigation-items {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex; z-index: 20;
+        }
+
+        .list { list-style: none; flex: 1; height: 70px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        .list a { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; font-size: 1.4rem; color: var(--text-muted); transition: all 0.3s ease; }
+        .list.active a { opacity: 0; transform: translateY(-20px); }
+
+        /* Toast & Modals */
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-card); backdrop-filter: blur(20px); color: var(--text); padding: 10px 20px; border-radius: 40px; font-size: 0.85rem; border: 1px solid var(--border); box-shadow: var(--shadow-lg); z-index: 10000; opacity: 0; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.success { border-color: var(--success); }
+        .toast.error { border-color: var(--error); }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); z-index: 20000; align-items: center; justify-content: center; padding: var(--space-md); }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--bg-card); border-radius: var(--radius-xl); padding: var(--space-xl); max-width: 320px; width: 100%; text-align: center; border: 1px solid var(--border); }
+        .modal-actions { display: flex; gap: var(--space-sm); margin-top: var(--space-lg); }
+        .modal-btn { flex: 1; padding: 12px; border-radius: var(--radius-md); border: none; font-family: inherit; font-size: 0.9rem; font-weight: 500; cursor: pointer; }
+        .modal-btn.cancel { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .modal-btn.confirm { background: var(--error); color: white; }
+        .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 30000; display: none; align-items: center; justify-content: center; }
+        .loading-overlay.active { display: flex; }
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    </style>
+</head>
+<body>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="container">
+        <header class="app-header">
+            <div class="brand"><h1>NAV <span>Education</span></h1></div>
+            <div class="flex" style="gap: 8px;">
+                <div class="icon-btn" id="notificationBtn">
+                    <i class="far fa-bell"></i>
+                    <span class="badge" id="notificationBadge" style="display: none;">3</span>
+                </div>
+                <div class="icon-btn" id="profileBtn">
+                    <img id="headerAvatar" src="" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:none;">
+                    <span id="headerEmoji">👤</span>
+                </div>
+            </div>
+        </header>
+
+        <div id="profileMenu" class="profile-menu">
+            <div class="profile-menu-header">
+                <div class="profile-menu-name" id="menuUserName">Amit Kumar</div>
+                <div class="profile-menu-email" id="menuUserEmail">amit@example.com</div>
+            </div>
+            <div class="profile-menu-item" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i> View Profile</div>
+            <div class="profile-menu-item" onclick="window.location.href='settings.html'"><i class="fas fa-cog"></i> Settings</div>
+            <div class="profile-menu-divider"></div>
+            <div class="profile-menu-item" onclick="showStats()"><i class="fas fa-chart-line"></i> Learning Stats</div>
+            <div class="profile-menu-item" onclick="showAchievements()"><i class="fas fa-trophy"></i> Achievements</div>
+            <div class="profile-menu-divider"></div>
+            <div class="profile-menu-item" style="color: var(--error);" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
+        </div>
+
+        <section class="profile-hero">
+            <div class="profile-hero-avatar">
+                <img id="mainAvatar" src="" alt="Profile">
+                <span id="mainEmoji">👨‍🎓</span>
+            </div>
+            <h2 class="profile-hero-name" id="displayName">Amit Kumar</h2>
+            <p class="profile-hero-email" id="displayEmail">amit.kumar@example.com</p>
+            
+            <div class="badge-premium">
+                <i class="fas fa-crown" style="color: #fbbf24;"></i> Premium Member
+            </div>
+            <br>
+            <button class="edit-btn" onclick="window.location.href='settings.html'">
+                <i class="fas fa-pen"></i> Edit Profile
+            </button>
+        </section>
+
+        <div class="stats-grid">
+            <div class="stat-card" onclick="showCourseStats()">
+                <div class="stat-value" id="statCourses">12</div>
+                <div class="stat-label">Enrolled</div>
+            </div>
+            <div class="stat-card" onclick="showCourseStats()">
+                <div class="stat-value" id="statCompleted">4</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card" onclick="showTimeStats()">
+                <div class="stat-value" id="statHours">48</div>
+                <div class="stat-label">Hours</div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h3><i class="fas fa-medal" style="color:var(--primary);"></i> Earned Badges</h3>
+            <a href="#" class="view-all" onclick="showAchievements()">View All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        
+        <div class="badges-container">
+            <div class="badge-card" onclick="showToast('7 Day Streak Unlocked!', 'success')">
+                <div class="badge-icon gold"><i class="fas fa-fire"></i></div>
+                <div class="badge-title">7-Day<br>Streak</div>
+            </div>
+            <div class="badge-card" onclick="showToast('Course Finisher Unlocked!', 'success')">
+                <div class="badge-icon green"><i class="fas fa-check-double"></i></div>
+                <div class="badge-title">Course<br>Finisher</div>
+            </div>
+            <div class="badge-card" onclick="showToast('Quick Learner Unlocked!', 'success')">
+                <div class="badge-icon"><i class="fas fa-brain"></i></div>
+                <div class="badge-title">Quick<br>Learner</div>
+            </div>
+            <div class="badge-card" onclick="showToast('Code Ninja Unlocked!', 'success')">
+                <div class="badge-icon red"><i class="fas fa-code"></i></div>
+                <div class="badge-title">Code<br>Ninja</div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h3><i class="fas fa-history" style="color:var(--primary);"></i> Learning Journey</h3>
+        </div>
+
+        <div class="timeline-container">
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot success"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <span class="timeline-title">Earned Certificate</span>
+                            <span class="timeline-time">Today, 10:30 AM</span>
+                        </div>
+                        <div class="timeline-desc">Completed "UI/UX Design Masterclass" with 95% score.</div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <span class="timeline-title">Passed Quiz</span>
+                            <span class="timeline-time">Yesterday</span>
+                        </div>
+                        <div class="timeline-desc">Scored 10/10 in JavaScript Fundamentals module.</div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot warning"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <span class="timeline-title">Started Course</span>
+                            <span class="timeline-time">3 Days Ago</span>
+                        </div>
+                        <div class="timeline-desc">Enrolled in "Data Science Fundamentals".</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="logout-btn-full" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Log Out of Account
+        </button>
+
+        <div style="height:30px;"></div>
+    </div>
+
+    <div class="nav-wrapper">
+        <div class="magic-mover" id="magicMover">
+            <div class="circle">
+                <ion-icon id="indicatorIcon" name="person-outline"></ion-icon>
+            </div>
+        </div>
+
+        <div class="nav-pill-bg">
+            <svg class="nav-bg-svg" id="navSvg" viewBox="0 0 1000 70">
+                <path d="M0,0 L455,0 C465,0 470,42 500,42 C530,42 535,0 545,0 L1000,0 L1000,70 L0,70 Z" fill="currentColor"></path>
+            </svg>
+        </div>
+
+        <ul class="navigation-items">
+            <li class="list" data-index="0" data-icon="home-outline" data-page="index.html"><a><ion-icon name="home-outline"></ion-icon></a></li>
+            <li class="list" data-index="1" data-icon="search-outline" data-page="search.html"><a><ion-icon name="search-outline"></ion-icon></a></li>
+            <li class="list" data-index="2" data-icon="library-outline" data-page="library.html"><a><ion-icon name="library-outline"></ion-icon></a></li>
+            <li class="list" data-index="3" data-icon="settings-outline" data-page="settings.html"><a><ion-icon name="settings-outline"></ion-icon></a></li>
+            <li class="list active" data-index="4" data-icon="person-outline" data-page="profile.html"><a><ion-icon name="person-outline"></ion-icon></a></li>
+        </ul>
+    </div>
+
+    <div id="toastContainer" class="toast"></div>
+
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <i class="fas fa-sign-out-alt" style="font-size:2.5rem; color:var(--error); margin-bottom:15px;"></i>
+            <h3 id="modalTitle">Confirm Logout</h3>
+            <p id="modalMessage" style="color:var(--text-muted); margin-bottom:20px;">Are you sure you want to log out?</p>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="hideModal()">Cancel</button>
+                <button class="modal-btn confirm" id="modalConfirmBtn">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const client = new Appwrite.Client();
+        client.setEndpoint("https://sgp.cloud.appwrite.io/v1").setProject("nav-education");
+        const account = new Appwrite.Account(client);
+
+        let loadingOverlay = document.getElementById('loadingOverlay');
+        let toastTimeout;
+
+        function applyTheme() {
+            const darkMode = localStorage.getItem('nav_darkMode');
+            if (darkMode === null) document.body.classList.remove('light-theme');
+            else darkMode === 'true' ? document.body.classList.remove('light-theme') : document.body.classList.add('light-theme');
+            const accent = localStorage.getItem('nav_accentColor');
+            if (accent) document.documentElement.style.setProperty('--primary', accent);
+        }
+
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'nav_darkMode' || e.key === 'nav_accentColor') applyTheme();
+            if (e.key === 'nav_userName' || e.key === 'nav_userEmail' || e.key === 'nav_profileAvatar') loadUserProfile();
+        });
+        window.addEventListener('settingsUpdated', () => { applyTheme(); loadUserProfile(); });
+
+        function showToast(message, type = 'info', duration = 2500) {
+            const toast = document.getElementById('toastContainer');
+            if (!toast) return;
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toast.className = 'toast';
+            toast.innerHTML = '';
+            toast.classList.add(type);
+            const icon = document.createElement('i');
+            icon.className = type === 'success' ? 'fas fa-check-circle' : type === 'error' ? 'fas fa-exclamation-circle' : 'fas fa-info-circle';
+            toast.appendChild(icon);
+            toast.appendChild(document.createTextNode(' ' + message));
+            void toast.offsetWidth;
+            toast.classList.add('show');
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), duration);
+        }
+
+        function hideModal() { document.getElementById('confirmModal').classList.remove('active'); }
+        function showModal(title, message, callback) {
+            const modal = document.getElementById('confirmModal');
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('modalConfirmBtn').onclick = () => { hideModal(); if (callback) callback(); };
+            modal.classList.add('active');
+        }
+
+        async function checkAuth() {
+            try { await account.get(); loadUserProfile(); } catch (error) { loadUserProfile(); } 
+            finally { setTimeout(() => loadingOverlay?.classList.remove('active'), 500); }
+        }
+
+        function loadUserProfile() {
+            const savedName = localStorage.getItem('nav_userName') || 'Amit Kumar';
+            document.getElementById('displayName').textContent = savedName;
+            document.getElementById('menuUserName').textContent = savedName;
+            const savedEmail = localStorage.getItem('nav_userEmail') || 'amit@example.com';
+            document.getElementById('displayEmail').textContent = savedEmail;
+            document.getElementById('menuUserEmail').textContent = savedEmail;
+            const savedAvatar = localStorage.getItem('nav_profileAvatar');
+            if (savedAvatar) {
+                document.getElementById('headerAvatar').src = savedAvatar;
+                document.getElementById('headerAvatar').style.display = 'block';
+                document.getElementById('headerEmoji').style.display = 'none';
+                document.getElementById('mainAvatar').src = savedAvatar;
+                document.getElementById('mainAvatar').style.display = 'block';
+                document.getElementById('mainEmoji').style.display = 'none';
+            }
+            const stats = JSON.parse(localStorage.getItem('nav_stats')) || {courses: 12, completed: 4, hours: 48};
+            document.getElementById('statCourses').textContent = stats.courses;
+            document.getElementById('statCompleted').textContent = stats.completed;
+            document.getElementById('statHours').textContent = stats.hours;
+        }
+
+        document.getElementById('profileBtn')?.addEventListener('click', function(e) { e.stopPropagation(); document.getElementById('profileMenu').classList.toggle('active'); });
+        document.addEventListener('click', function(e) { const menu = document.getElementById('profileMenu'); const btn = document.getElementById('profileBtn'); if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) { menu.classList.remove('active'); } });
+        document.getElementById('notificationBtn')?.addEventListener('click', () => showToast('No new notifications', 'info'));
+
+        function showStats() { showToast('Learning stats coming soon!', 'info'); }
+        function showAchievements() { showToast('Achievements coming soon!', 'info'); }
+        function showCourseStats() { showToast('Course statistics', 'info'); }
+        function showTimeStats() { showToast('Time statistics', 'info'); }
+
+        async function logout() {
+            showModal('Confirm Logout', 'Are you sure you want to log out?', async () => {
+                loadingOverlay.classList.add('active');
+                try { await account.deleteSession('current'); } catch (error) {} 
+                finally { localStorage.clear(); showToast('Logged out successfully', 'success'); setTimeout(() => window.location.href = 'auth.html', 1000); }
+            });
+        }
+
+        /* ==================== BULLETPROOF DYNAMIC NAVIGATION ==================== */
+        function updateNavigationPosition() {
+            const listItems = document.querySelectorAll('.list');
+            const navWrapper = document.querySelector('.nav-wrapper');
+            const magicMover = document.getElementById('magicMover');
+            const navSvg = document.getElementById('navSvg');
+            const circle = document.querySelector('.circle');
+            const indicatorIcon = document.getElementById('indicatorIcon');
+
+            // Find current active index (fallback to 4 for profile.html)
+            let activeIndex = 4; 
+            let activeIcon = 'person-outline';
+            listItems.forEach((item, index) => {
+                if (item.classList.contains('active')) {
+                    activeIndex = index;
+                    activeIcon = item.getAttribute('data-icon');
+                }
+            });
+
+            // 1. Calculate Exact Slot Math
+            const slotWidth = navWrapper.offsetWidth / listItems.length;
+            const centerOfSlot = (activeIndex * slotWidth) + (slotWidth / 2);
+
+            // 2. Move container to start of slot
+            magicMover.style.transform = `translateX(${activeIndex * slotWidth}px)`;
+
+            // 3. Perfect center the circle inside its slot
+            circle.style.left = `${(slotWidth - circle.offsetWidth) / 2}px`;
+
+            // 4. Flawlessly center the '500' point of the SVG directly underneath the circle
+            navSvg.style.transform = `translateX(${centerOfSlot - 500}px)`;
+            
+            indicatorIcon.setAttribute('name', activeIcon);
+        }
+
+        // On Load and Resize Setup
+        window.addEventListener('load', () => {
+            const currentPage = window.location.pathname.split('/').pop() || 'profile.html';
+            const listItems = document.querySelectorAll('.list');
+            
+            listItems.forEach(item => {
+                const page = item.getAttribute('data-page');
+                if (page === currentPage) {
+                    listItems.forEach(el => el.classList.remove('active'));
+                    item.classList.add('active');
+                }
+            });
+            updateNavigationPosition();
+        });
+        
+        window.addEventListener('resize', updateNavigationPosition);
+
+        // Click Interaction
+        document.querySelectorAll('.list').forEach((item) => {
+            item.addEventListener('click', function() {
+                const page = this.getAttribute('data-page');
+                const currentPage = window.location.pathname.split('/').pop() || 'profile.html';
+                
+                document.querySelectorAll('.list').forEach(el => el.classList.remove('active'));
+                this.classList.add('active');
+                
+                updateNavigationPosition();
+                
+                if (page && page !== currentPage) {
+                    document.body.style.opacity = '0';
+                    setTimeout(() => window.location.href = page, 300);
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => { loadingOverlay?.classList.add('active'); applyTheme(); await checkAuth(); });
+        
+        window.logout = logout; window.showToast = showToast; window.hideModal = hideModal; window.showStats = showStats; window.showAchievements = showAchievements; window.showCourseStats = showCourseStats; window.showTimeStats = showTimeStats;
+    </script>
+</body>
+</html>
