@@ -2,437 +2,226 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Library | NAV Education</title>
     
-    <!-- Primary Meta Tags -->
-    <meta name="title" content="NAV Education - Your Learning Library">
-    <meta name="description" content="Access your saved courses, materials, and learning resources">
-    <meta name="keywords" content="library, courses, saved materials, learning resources">
-    <meta name="author" content="NAV Education">
-    
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#6366f1" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)">
-    
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
     
     <style>
-        /* Library page specific styles */
-        .library-container {
-            padding-bottom: 100px;
-        }
-        
-        /* Search Bar */
-        .library-search {
-            margin: var(--space-lg) 0;
-        }
-        
-        .search-wrapper {
-            position: relative;
-            width: 100%;
-        }
-        
-        .search-wrapper i {
-            position: absolute;
-            left: var(--space-md);
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-        
-        .library-search-input {
-            width: 100%;
-            padding: var(--space-md) var(--space-md) var(--space-md) 40px;
-            background: var(--bg-card);
-            border: 2px solid var(--border);
-            border-radius: var(--radius-full);
-            color: var(--text);
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.95rem;
-            transition: all var(--transition-fast);
-        }
-        
-        .library-search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: var(--bg-card-hover);
-            box-shadow: var(--shadow-primary);
-        }
-        
-        .library-search-input::placeholder {
-            color: var(--text-muted);
-        }
-        
-        /* Category Tabs */
-        .category-tabs {
-            display: flex;
-            gap: var(--space-sm);
-            overflow-x: auto;
-            padding: var(--space-sm) 0 var(--space-md);
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-        
-        .category-tabs::-webkit-scrollbar {
-            display: none;
-        }
-        
-        .category-tab {
-            padding: var(--space-sm) var(--space-lg);
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-full);
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all var(--transition-fast);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .category-tab i {
-            font-size: 0.9rem;
-        }
-        
-        .category-tab:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        
-        .category-tab.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-        
-        /* Section Headers */
-        .library-section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: var(--space-xl) 0 var(--space-md);
-        }
-        
-        .library-section-header h3 {
-            color: var(--text);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
-        
-        .section-count {
-            color: var(--primary);
-            font-size: 0.85rem;
-            background: rgba(99, 102, 241, 0.1);
-            padding: 2px 8px;
-            border-radius: var(--radius-full);
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f52e0;
+            --secondary: #8b5cf6;
+            --accent: #f43f5e;
+            --bg: #020617;
+            --bg-card: rgba(30, 41, 59, 0.8);
+            --bg-card-hover: rgba(51, 65, 85, 0.8);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --error: #f43f5e;
+            --warning: #f59e0b;
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 14px;
+            --space-lg: 20px;
+            --space-xl: 24px;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-full: 9999px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
         }
-        
-        /* Course Cards Enhanced */
-        .course-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            margin-bottom: var(--space-md);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            position: relative;
-            overflow: hidden;
+
+        body.light-theme {
+            --bg: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f1f5f9;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #475569;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
         }
-        
-        .course-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--primary);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .course-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            opacity: 0;
-            transition: opacity var(--transition-fast);
-        }
-        
-        .course-card:hover::before {
-            opacity: 1;
-        }
-        
-        .course-card-header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-        
-        .course-icon {
-            width: 50px;
-            height: 50px;
-            background: rgba(99, 102, 241, 0.1);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-        }
-        
-        .course-info {
-            flex: 1;
-        }
-        
-        .course-title {
-            font-weight: 600;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .course-badge {
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: var(--radius-full);
-            background: var(--primary);
-            color: white;
-        }
-        
-        .course-badge.free {
-            background: #10b981;
-        }
-        
-        .course-badge.popular {
-            background: #f59e0b;
-        }
-        
-        .course-meta {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-        
-        .course-meta i {
-            margin-right: 4px;
-            font-size: 0.7rem;
-        }
-        
-        .course-progress {
-            margin-top: var(--space-sm);
-        }
-        
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-        
-        .progress-bar-container {
-            height: 6px;
-            background: var(--border);
-            border-radius: var(--radius-full);
-            overflow: hidden;
-        }
-        
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border-radius: var(--radius-full);
-            transition: width var(--transition-normal);
-        }
-        
-        .course-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: var(--space-md);
-            padding-top: var(--space-md);
-            border-top: 1px solid var(--border);
-        }
-        
-        .course-tags {
-            display: flex;
-            gap: var(--space-sm);
-        }
-        
-        .course-tag {
-            font-size: 0.7rem;
-            padding: 2px 8px;
+
+        body {
+            font-family: 'Poppins', sans-serif;
             background: var(--bg);
-            border-radius: var(--radius-full);
-            color: var(--text-muted);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+            position: relative;
         }
-        
-        .course-action {
-            color: var(--primary);
-            font-weight: 500;
-            font-size: 0.85rem;
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 70% 30%, rgba(99,102,241,0.12) 0%, transparent 70%);
+            animation: rotateBg 40s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes rotateBg { to { transform: rotate(360deg); } }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            padding: var(--space-md);
+            padding-bottom: 110px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-header {
             display: flex;
             align-items: center;
-            gap: 4px;
-        }
-        
-        /* Saved Materials Grid */
-        .saved-materials-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: var(--space-sm);
+            justify-content: space-between;
             margin-bottom: var(--space-lg);
         }
-        
-        .material-card {
+
+        .brand h1 { font-size: 1.6rem; font-weight: 600; }
+        .brand h1 span { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
             background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: var(--space-md);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-        
-        .material-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--primary);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .material-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(99, 102, 241, 0.1);
-            border-radius: var(--radius-md);
+            border: 1.5px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.3rem;
-            margin-bottom: var(--space-sm);
-        }
-        
-        .material-title {
-            font-weight: 500;
-            font-size: 0.9rem;
-            margin-bottom: 2px;
-        }
-        
-        .material-subtitle {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-        
-        /* Empty State */
-        .empty-library {
-            text-align: center;
-            padding: var(--space-xl);
-            background: var(--bg-card);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
-            margin: var(--space-lg) 0;
-        }
-        
-        .empty-library-icon {
-            font-size: 4rem;
-            margin-bottom: var(--space-md);
-            opacity: 0.5;
-        }
-        
-        .empty-library h4 {
+            cursor: pointer;
+            transition: all 0.2s;
             color: var(--text);
-            margin-bottom: var(--space-sm);
         }
-        
-        .empty-library p {
-            color: var(--text-muted);
+        .icon-btn:active { transform: scale(0.95); border-color: var(--primary); }
+
+        /* Welcome Card */
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            color: white;
             margin-bottom: var(--space-lg);
         }
-        
-        .empty-library .btn {
-            display: inline-block;
-            width: auto;
-            padding: var(--space-sm) var(--space-xl);
-        }
-        
-        /* Recent Activity */
-        .recent-activity {
-            background: var(--bg-card);
+
+        .welcome-card h2 { font-size: 1.4rem; margin-bottom: 4px; }
+        .welcome-card p { opacity: 0.9; font-size: 0.85rem; }
+
+        /* Banner */
+        .banner-card {
+            width: 100%;
+            margin: var(--space-md) 0;
             border-radius: var(--radius-lg);
-            padding: var(--space-lg);
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: all 0.2s;
+        }
+        .banner-card:active { transform: scale(0.98); }
+        .banner-image { width: 100%; height: auto; display: block; }
+
+        /* Search Bar */
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+            margin-top: var(--space-md);
+        }
+        .search-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.7);
+        }
+        .library-search-input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 40px;
+            color: white;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+        .library-search-input::placeholder { color: rgba(255,255,255,0.7); }
+        .library-search-input:focus { outline: none; border-color: white; }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-sm);
             margin: var(--space-lg) 0;
+        }
+        .quick-action {
+            background: var(--bg-card);
             border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
         }
-        
-        .recent-activity-header {
+        .quick-action:active { transform: scale(0.95); }
+        .quick-action i { font-size: 1.5rem; color: var(--primary); margin-bottom: 4px; display: block; }
+        .quick-action span { font-size: 0.7rem; font-weight: 500; }
+
+        /* Category Tabs */
+        .category-tabs {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-md);
-        }
-        
-        .recent-activity-header h4 {
-            display: flex;
-            align-items: center;
             gap: 8px;
-            color: var(--text);
+            overflow-x: auto;
+            padding: var(--space-sm) 0 var(--space-md);
+            scrollbar-width: none;
         }
-        
-        .activity-item {
+        .category-tabs::-webkit-scrollbar { display: none; }
+        .category-tab {
+            padding: 8px 18px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
-            gap: var(--space-md);
-            padding: var(--space-sm) 0;
-            border-bottom: 1px solid var(--border);
+            gap: 6px;
         }
-        
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-        
-        .activity-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--primary);
-        }
-        
-        .activity-dot.completed {
-            background: #10b981;
-        }
-        
-        .activity-content {
-            flex: 1;
-        }
-        
-        .activity-title {
-            font-weight: 500;
-            margin-bottom: 2px;
-        }
-        
-        .activity-time {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-        
+        .category-tab.active { background: var(--primary); border-color: var(--primary); color: white; }
+
         /* Filter Bar */
         .filter-bar {
             display: flex;
@@ -440,1089 +229,742 @@
             justify-content: space-between;
             margin: var(--space-md) 0;
         }
-        
-        .filter-dropdown {
-            position: relative;
+        .section-count {
+            color: var(--primary);
+            font-size: 0.8rem;
+            background: rgba(99,102,241,0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
         }
-        
         .filter-btn {
-            padding: var(--space-sm) var(--space-md);
+            padding: 6px 14px;
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            color: var(--text);
-            font-size: 0.85rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
-        
-        .filter-btn:hover {
-            border-color: var(--primary);
-        }
-        
         .filter-menu {
             position: absolute;
-            top: 100%;
             right: 0;
-            margin-top: var(--space-sm);
+            margin-top: 5px;
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: var(--space-sm);
-            min-width: 150px;
+            border-radius: 12px;
+            padding: 8px;
+            min-width: 140px;
             display: none;
-            z-index: 10;
-            backdrop-filter: blur(10px);
+            z-index: 100;
+            backdrop-filter: blur(20px);
         }
-        
-        .filter-menu.active {
-            display: block;
-            animation: slideDown 0.2s ease;
-        }
-        
+        .filter-menu.active { display: block; }
         .filter-option {
-            padding: var(--space-sm) var(--space-md);
+            padding: 8px 12px;
             cursor: pointer;
-            border-radius: var(--radius-sm);
-            color: var(--text);
-            font-size: 0.85rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
         }
-        
-        .filter-option:hover {
-            background: var(--bg-card-hover);
-            color: var(--primary);
-        }
-        
-        .filter-option.active {
-            background: var(--primary);
-            color: white;
-        }
-        
-        /* Quick Actions */
-        .quick-actions {
-            display: flex;
-            gap: var(--space-sm);
-            margin: var(--space-lg) 0;
-        }
-        
-        .quick-action {
-            flex: 1;
-            padding: var(--space-md);
+        .filter-option:hover { background: var(--bg-card-hover); color: var(--primary); }
+        .filter-option.active { background: var(--primary); color: white; }
+
+        /* Course Cards */
+        .course-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            text-align: center;
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
             cursor: pointer;
-            transition: all var(--transition-fast);
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
         }
-        
-        .quick-action:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
+        .course-card:active { transform: scale(0.99); }
+        .course-card-header { display: flex; gap: 12px; margin-bottom: 12px; }
+        .course-icon { width: 50px; height: 50px; background: rgba(99,102,241,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; }
+        .course-title { font-weight: 600; font-size: 1rem; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .course-badge { font-size: 0.6rem; padding: 2px 8px; border-radius: 20px; background: var(--primary); color: white; }
+        .course-badge.free { background: #10b981; }
+        .course-meta { display: flex; gap: 12px; font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+        .progress-header { display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 4px; }
+        .progress-bar { height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; border-radius: 4px; }
+        .course-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+        .course-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+        .course-tag { font-size: 0.6rem; padding: 2px 8px; background: var(--bg); border-radius: 20px; border: 1px solid var(--border); }
+        .course-action { color: var(--primary); font-size: 0.8rem; display: flex; align-items: center; gap: 4px; font-weight: 500; }
+
+        /* Saved Materials Grid */
+        .saved-materials-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: var(--space-lg);
         }
-        
-        .quick-action i {
-            font-size: 1.5rem;
-            color: var(--primary);
-            margin-bottom: var(--space-xs);
+        .material-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
         }
-        
-        .quick-action span {
-            font-size: 0.8rem;
-            font-weight: 500;
+        .material-card:active { transform: scale(0.97); }
+        .material-icon { width: 40px; height: 40px; background: rgba(99,102,241,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 8px; }
+        .material-title { font-weight: 500; font-size: 0.85rem; margin-bottom: 2px; }
+        .material-subtitle { font-size: 0.65rem; color: var(--text-muted); }
+
+        /* Recent Activity */
+        .recent-activity {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin: var(--space-lg) 0;
+            backdrop-filter: blur(10px);
         }
-        
+        .recent-activity-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .activity-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
+        .activity-dot.completed { background: #10b981; }
+        .activity-title { font-weight: 500; font-size: 0.85rem; }
+        .activity-time { font-size: 0.65rem; color: var(--text-muted); }
+
         /* Profile Menu */
         .profile-menu {
             position: fixed;
             top: 70px;
             right: 20px;
             background: var(--bg-card);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: var(--space-md);
-            min-width: 200px;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 8px;
+            min-width: 180px;
+            z-index: 9999;
             display: none;
             box-shadow: var(--shadow-lg);
         }
-        
-        .profile-menu.active {
-            display: block;
-            animation: slideDown 0.3s ease;
-        }
-        
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .profile-menu-header {
-            padding: var(--space-sm) var(--space-md);
-            border-bottom: 1px solid var(--border);
-            margin-bottom: var(--space-sm);
-        }
-        
-        .profile-menu-name {
-            font-weight: 600;
-            color: var(--text);
-        }
-        
-        .profile-menu-email {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-        
+        .profile-menu.active { display: block; }
         .profile-menu-item {
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm) var(--space-md);
-            color: var(--text);
-            text-decoration: none;
-            border-radius: var(--radius-md);
-            transition: all var(--transition-fast);
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
             cursor: pointer;
+            transition: all 0.2s;
         }
-        
-        .profile-menu-item:hover {
-            background: var(--bg-card-hover);
-            color: var(--primary);
-        }
-        
-        .profile-menu-item i {
-            width: 20px;
-            color: var(--primary);
-        }
-        
-        .profile-menu-divider {
-            height: 1px;
-            background: var(--border);
-            margin: var(--space-sm) 0;
-        }
-        
-        /* Sync Status */
-        .sync-status {
+        .profile-menu-item:hover { background: var(--bg-card-hover); color: var(--primary); }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+            z-index: 10000;
+            opacity: 0;
+            transition: 0.3s;
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm);
-            background: var(--bg-card);
-            border-radius: var(--radius-md);
-            margin: var(--space-sm) 0;
-            color: var(--success);
-            font-size: 0.8rem;
-            border: 1px solid var(--border);
+            gap: 8px;
         }
-        
-        .sync-status i {
-            font-size: 1rem;
-        }
-        
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
         /* Modal */
         .modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 2000;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            z-index: 20000;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(5px);
+            padding: 20px;
         }
-        
-        .modal.active {
-            display: flex;
-        }
-        
+        .modal.active { display: flex; }
         .modal-content {
             background: var(--bg-card);
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-xl);
             padding: var(--space-xl);
-            max-width: 320px;
+            max-width: 300px;
+            width: 100%;
             text-align: center;
             border: 1px solid var(--border);
-            animation: modalPop 0.3s ease;
         }
-        
-        @keyframes modalPop {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        .modal-icon {
-            font-size: 3rem;
-            color: var(--accent);
-            margin-bottom: var(--space-md);
-        }
-        
-        /* Loading Spinner */
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .modal-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: 500; }
+        .modal-btn.cancel { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .modal-btn.confirm { background: var(--error); color: white; }
+
+        /* Loading */
         .loading-overlay {
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,0.8);
-            z-index: 9999;
+            backdrop-filter: blur(5px);
+            z-index: 30000;
             display: none;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(5px);
         }
-        
-        .loading-overlay.active {
-            display: flex;
+        .loading-overlay.active { display: flex; }
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Magic Navigation */
+        .nav-wrapper {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 350px;
+            height: 70px;
+            z-index: 1000;
         }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid var(--border);
-            border-top-color: var(--primary);
+        .magic-mover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 10;
+        }
+        .circle {
+            position: absolute;
+            top: -12px;
+            left: 5px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            border: 4px solid var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(99,102,241,0.5);
         }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .circle ion-icon { font-size: 1.8rem; color: white; }
+        .nav-pill-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 35px;
+            overflow: hidden;
+            z-index: 5;
+        }
+        .nav-bg-svg {
+            position: absolute;
+            top: 0;
+            left: -465px;
+            width: 1000px;
+            height: 70px;
+            fill: var(--bg-card);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .navigation-items {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            z-index: 20;
+        }
+        .list {
+            list-style: none;
+            flex: 1;
+            height: 70px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .list a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            font-size: 1.4rem;
+            color: var(--text-muted);
+        }
+        .list.active a { opacity: 0; transform: translateY(-20px); }
+
+        @media (max-width: 400px) {
+            .nav-wrapper { width: 320px; }
+            .circle { width: 55px; height: 55px; top: -10px; left: 2px; }
+            .circle ion-icon { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="spinner"></div>
-    </div>
+    <div id="loadingOverlay" class="loading-overlay"><div class="spinner"></div></div>
 
-    <div class="container library-container">
-        <!-- Header -->
+    <div class="container">
         <header class="app-header">
-            <div class="brand">
-                <h1>NAV <span>Education</span></h1>
-            </div>
-            
-            <div class="flex" style="gap: var(--space-sm);">
-                <!-- Notification Bell -->
-                <div class="profile-icon" id="notificationBtn">
-                    <i class="far fa-bell"></i>
-                    <span class="badge" id="notificationBadge" style="position: absolute; top: -2px; right: -2px; display: none;">3</span>
-                </div>
-                
-                <!-- Profile Icon with Avatar -->
-                <div class="profile-icon" id="profileBtn">
-                    <img id="headerAvatar" src="" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: none;">
+            <div class="brand"><h1>NAV <span>Education</span></h1></div>
+            <div class="flex" style="gap: 8px; display: flex;">
+                <div class="icon-btn" id="notificationBtn"><i class="far fa-bell"></i></div>
+                <div class="icon-btn" id="profileBtn">
+                    <img id="headerAvatar" src="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:none;">
                     <span id="headerEmoji">👤</span>
                 </div>
             </div>
         </header>
 
-        <!-- Profile Menu -->
         <div id="profileMenu" class="profile-menu">
-            <div class="profile-menu-header">
-                <div class="profile-menu-name" id="menuUserName">Amit Kumar</div>
-                <div class="profile-menu-email" id="menuUserEmail">amit.kumar@example.com</div>
-            </div>
-            <div class="profile-menu-item" onclick="window.location.href='profile.html'">
-                <i class="fas fa-user"></i>
-                <span>View Profile</span>
-            </div>
-            <div class="profile-menu-item" onclick="window.location.href='settings.html'">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
-            </div>
-            <div class="profile-menu-divider"></div>
-            <div class="profile-menu-item" onclick="showStats()">
-                <i class="fas fa-chart-line"></i>
-                <span>Learning Stats</span>
-            </div>
-            <div class="profile-menu-item" onclick="showAchievements()">
-                <i class="fas fa-trophy"></i>
-                <span>Achievements</span>
-            </div>
-            <div class="profile-menu-divider"></div>
-            <div class="profile-menu-item" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </div>
+            <div class="profile-menu-item" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i> View Profile</div>
+            <div class="profile-menu-item" onclick="window.location.href='settings.html'"><i class="fas fa-cog"></i> Settings</div>
+            <div style="height:1px;background:var(--border);margin:5px 0;"></div>
+            <div class="profile-menu-item" onclick="showStats()"><i class="fas fa-chart-line"></i> Learning Stats</div>
+            <div class="profile-menu-item" onclick="showAchievements()"><i class="fas fa-trophy"></i> Achievements</div>
+            <div style="height:1px;background:var(--border);margin:5px 0;"></div>
+            <div class="profile-menu-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
         </div>
 
-        <!-- Sync Status -->
-        <div class="sync-status" id="syncStatus" style="display: none;">
-            <i class="fas fa-check-circle"></i>
-            <span>Settings synced</span>
-        </div>
-
-        <!-- Welcome Section -->
         <section class="welcome-card">
             <h2>Your Library 📚</h2>
             <p id="welcomeMessage">Access your saved courses and materials</p>
             
-            <!-- Banner Section -->
-<div class="banner-container" onclick="window.location.href='https://naveducation.com'">
-    <img src="https://raw.githubusercontent.com/Amit21686/NAV_Education/refs/heads/main/images/NAV%20Education%20banner.png" 
-         alt="NAV Education Banner" 
-         class="banner-image">
-</div>
+            <div class="banner-card" onclick="window.open('https://naveducation.com','_blank')">
+                <img src="https://raw.githubusercontent.com/Amit21686/NAV_Education/refs/heads/main/images/NAV%20Education%20banner.png" class="banner-image">
+            </div>
 
-            <!-- Search Bar -->
-            <div class="library-search">
-                <div class="search-wrapper">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="librarySearch" class="library-search-input" placeholder="Search your library...">
-                </div>
+            <div class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="librarySearch" class="library-search-input" placeholder="Search your library...">
             </div>
         </section>
 
-        <!-- Quick Actions -->
         <div class="quick-actions">
-            <div class="quick-action" onclick="showAllCourses()">
-                <i class="fas fa-book-open"></i>
-                <span>All Courses</span>
-            </div>
-            <div class="quick-action" onclick="showSavedMaterials()">
-                <i class="fas fa-bookmark"></i>
-                <span>Saved</span>
-            </div>
-            <div class="quick-action" onclick="showDownloads()">
-                <i class="fas fa-download"></i>
-                <span>Downloads</span>
-            </div>
-            <div class="quick-action" onclick="showRecent()">
-                <i class="fas fa-history"></i>
-                <span>Recent</span>
-            </div>
+            <div class="quick-action" onclick="showAllCourses()"><i class="fas fa-book-open"></i><span>All Courses</span></div>
+            <div class="quick-action" onclick="showSavedMaterials()"><i class="fas fa-bookmark"></i><span>Saved</span></div>
+            <div class="quick-action" onclick="showDownloads()"><i class="fas fa-download"></i><span>Downloads</span></div>
+            <div class="quick-action" onclick="showRecent()"><i class="fas fa-history"></i><span>Recent</span></div>
         </div>
 
-        <!-- Category Tabs -->
         <div class="category-tabs">
-            <div class="category-tab active" data-category="all" onclick="filterCategory('all', this)">
-                <i class="fas fa-th-large"></i>
-                All
-            </div>
-            <div class="category-tab" data-category="design" onclick="filterCategory('design', this)">
-                <i class="fas fa-paint-brush"></i>
-                Design
-            </div>
-            <div class="category-tab" data-category="development" onclick="filterCategory('development', this)">
-                <i class="fas fa-code"></i>
-                Development
-            </div>
-            <div class="category-tab" data-category="data" onclick="filterCategory('data', this)">
-                <i class="fas fa-chart-bar"></i>
-                Data Science
-            </div>
-            <div class="category-tab" data-category="business" onclick="filterCategory('business', this)">
-                <i class="fas fa-briefcase"></i>
-                Business
-            </div>
+            <div class="category-tab active" data-category="all" onclick="filterCategory('all', this)"><i class="fas fa-th-large"></i> All</div>
+            <div class="category-tab" data-category="design" onclick="filterCategory('design', this)"><i class="fas fa-paint-brush"></i> Design</div>
+            <div class="category-tab" data-category="development" onclick="filterCategory('development', this)"><i class="fas fa-code"></i> Development</div>
+            <div class="category-tab" data-category="data" onclick="filterCategory('data', this)"><i class="fas fa-chart-bar"></i> Data Science</div>
+            <div class="category-tab" data-category="business" onclick="filterCategory('business', this)"><i class="fas fa-briefcase"></i> Business</div>
         </div>
 
-        <!-- Filter Bar -->
         <div class="filter-bar">
-            <div class="section-count" id="courseCount">8 courses</div>
-            <div class="filter-dropdown">
-                <button class="filter-btn" onclick="toggleFilterMenu()">
-                    <i class="fas fa-filter"></i>
-                    Filter
-                    <i class="fas fa-chevron-down"></i>
-                </button>
+            <span class="section-count" id="courseCount">4 courses</span>
+            <div class="filter-dropdown" style="position:relative;">
+                <button class="filter-btn" onclick="toggleFilterMenu()"><i class="fas fa-filter"></i> Filter <i class="fas fa-chevron-down"></i></button>
                 <div class="filter-menu" id="filterMenu">
-                    <div class="filter-option active" data-filter="all" onclick="applyFilter('all')">All</div>
-                    <div class="filter-option" data-filter="in-progress" onclick="applyFilter('in-progress')">In Progress</div>
-                    <div class="filter-option" data-filter="completed" onclick="applyFilter('completed')">Completed</div>
-                    <div class="filter-option" data-filter="saved" onclick="applyFilter('saved')">Saved</div>
-                    <div class="filter-option" data-filter="downloaded" onclick="applyFilter('downloaded')">Downloaded</div>
+                    <div class="filter-option active" data-filter="all" onclick="applyFilter('all', this)">All</div>
+                    <div class="filter-option" data-filter="in-progress" onclick="applyFilter('in-progress', this)">In Progress</div>
+                    <div class="filter-option" data-filter="completed" onclick="applyFilter('completed', this)">Completed</div>
                 </div>
             </div>
         </div>
 
-        <!-- Your Courses Section -->
-        <div class="library-section-header">
-            <h3>
-                <i class="fas fa-book-open" style="color: var(--primary);"></i>
-                Your Courses
-            </h3>
+        <div class="library-section-header" style="display:flex;justify-content:space-between;margin:15px 0 10px;">
+            <h3 style="display:flex;align-items:center;gap:6px;"><i class="fas fa-book-open" style="color:var(--primary);"></i> Your Courses</h3>
             <span class="section-count" id="courseCount2">4 courses</span>
         </div>
 
-        <!-- Course Cards -->
         <div id="coursesContainer">
-            <div class="course-card" data-category="design" data-status="in-progress" onclick="openCourse('ui-ux-101')">
+            <div class="course-card" data-category="design" data-status="in-progress" onclick="openCourse('ui-ux')">
                 <div class="course-card-header">
                     <div class="course-icon">🎨</div>
                     <div class="course-info">
-                        <div class="course-title">
-                            UI/UX Design Masterclass
-                            <span class="course-badge">Popular</span>
-                        </div>
-                        <div class="course-meta">
-                            <span><i class="far fa-clock"></i> 24 lessons</span>
-                            <span><i class="far fa-user"></i> 12.5k enrolled</span>
-                        </div>
+                        <div class="course-title">UI/UX Design Masterclass <span class="course-badge">Popular</span></div>
+                        <div class="course-meta"><span><i class="far fa-clock"></i> 24 lessons</span><span><i class="far fa-user"></i> 12.5k</span></div>
                     </div>
                 </div>
-                <div class="course-progress">
-                    <div class="progress-header">
-                        <span>Progress</span>
-                        <span>70%</span>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar-fill" style="width: 70%;"></div>
-                    </div>
-                </div>
+                <div class="progress-header"><span>Progress</span><span>70%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:70%"></div></div>
                 <div class="course-footer">
-                    <div class="course-tags">
-                        <span class="course-tag">Figma</span>
-                        <span class="course-tag">Adobe XD</span>
-                    </div>
-                    <div class="course-action">
-                        Continue <i class="fas fa-arrow-right"></i>
-                    </div>
+                    <div class="course-tags"><span class="course-tag">Figma</span><span class="course-tag">Adobe XD</span></div>
+                    <div class="course-action">Continue <i class="fas fa-arrow-right"></i></div>
                 </div>
             </div>
 
-            <div class="course-card" data-category="development" data-status="in-progress" onclick="openCourse('web-dev-101')">
+            <div class="course-card" data-category="development" data-status="in-progress" onclick="openCourse('web-dev')">
                 <div class="course-card-header">
                     <div class="course-icon">💻</div>
                     <div class="course-info">
-                        <div class="course-title">
-                            Full Stack Web Development
-                            <span class="course-badge free">Free</span>
-                        </div>
-                        <div class="course-meta">
-                            <span><i class="far fa-clock"></i> 48 lessons</span>
-                            <span><i class="far fa-user"></i> 25k enrolled</span>
-                        </div>
+                        <div class="course-title">Full Stack Web Development <span class="course-badge free">Free</span></div>
+                        <div class="course-meta"><span><i class="far fa-clock"></i> 48 lessons</span><span><i class="far fa-user"></i> 25k</span></div>
                     </div>
                 </div>
-                <div class="course-progress">
-                    <div class="progress-header">
-                        <span>Progress</span>
-                        <span>45%</span>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar-fill" style="width: 45%;"></div>
-                    </div>
-                </div>
+                <div class="progress-header"><span>Progress</span><span>45%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:45%"></div></div>
                 <div class="course-footer">
-                    <div class="course-tags">
-                        <span class="course-tag">React</span>
-                        <span class="course-tag">Node.js</span>
-                        <span class="course-tag">MongoDB</span>
-                    </div>
-                    <div class="course-action">
-                        Continue <i class="fas fa-arrow-right"></i>
-                    </div>
+                    <div class="course-tags"><span class="course-tag">React</span><span class="course-tag">Node.js</span></div>
+                    <div class="course-action">Continue <i class="fas fa-arrow-right"></i></div>
                 </div>
             </div>
 
-            <div class="course-card" data-category="data" data-status="in-progress" onclick="openCourse('data-science-101')">
+            <div class="course-card" data-category="data" data-status="in-progress" onclick="openCourse('data-science')">
                 <div class="course-card-header">
                     <div class="course-icon">📊</div>
                     <div class="course-info">
-                        <div class="course-title">
-                            Data Science Fundamentals
-                        </div>
-                        <div class="course-meta">
-                            <span><i class="far fa-clock"></i> 36 lessons</span>
-                            <span><i class="far fa-user"></i> 18k enrolled</span>
-                        </div>
+                        <div class="course-title">Data Science Fundamentals</div>
+                        <div class="course-meta"><span><i class="far fa-clock"></i> 36 lessons</span><span><i class="far fa-user"></i> 18k</span></div>
                     </div>
                 </div>
-                <div class="course-progress">
-                    <div class="progress-header">
-                        <span>Progress</span>
-                        <span>20%</span>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar-fill" style="width: 20%;"></div>
-                    </div>
-                </div>
+                <div class="progress-header"><span>Progress</span><span>20%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
                 <div class="course-footer">
-                    <div class="course-tags">
-                        <span class="course-tag">Python</span>
-                        <span class="course-tag">Pandas</span>
-                        <span class="course-tag">SQL</span>
-                    </div>
-                    <div class="course-action">
-                        Continue <i class="fas fa-arrow-right"></i>
-                    </div>
+                    <div class="course-tags"><span class="course-tag">Python</span><span class="course-tag">Pandas</span></div>
+                    <div class="course-action">Continue <i class="fas fa-arrow-right"></i></div>
                 </div>
             </div>
 
-            <div class="course-card" data-category="business" data-status="completed" onclick="openCourse('business-101')">
+            <div class="course-card" data-category="business" data-status="completed" onclick="openCourse('business')">
                 <div class="course-card-header">
                     <div class="course-icon">📈</div>
                     <div class="course-info">
-                        <div class="course-title">
-                            Business Analytics Basics
-                            <span class="course-badge">Completed</span>
-                        </div>
-                        <div class="course-meta">
-                            <span><i class="far fa-clock"></i> 20 lessons</span>
-                            <span><i class="far fa-user"></i> 8k enrolled</span>
-                        </div>
+                        <div class="course-title">Business Analytics Basics <span class="course-badge" style="background:#10b981;">Completed</span></div>
+                        <div class="course-meta"><span><i class="far fa-clock"></i> 20 lessons</span><span><i class="far fa-user"></i> 8k</span></div>
                     </div>
                 </div>
-                <div class="course-progress">
-                    <div class="progress-header">
-                        <span>Progress</span>
-                        <span>100%</span>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar-fill" style="width: 100%;"></div>
-                    </div>
-                </div>
+                <div class="progress-header"><span>Progress</span><span>100%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
                 <div class="course-footer">
-                    <div class="course-tags">
-                        <span class="course-tag">Excel</span>
-                        <span class="course-tag">Tableau</span>
-                    </div>
-                    <div class="course-action">
-                        Review <i class="fas fa-redo-alt"></i>
-                    </div>
+                    <div class="course-tags"><span class="course-tag">Excel</span><span class="course-tag">Tableau</span></div>
+                    <div class="course-action">Review <i class="fas fa-redo-alt"></i></div>
                 </div>
             </div>
         </div>
 
-        <!-- Saved Materials Section -->
-        <div class="library-section-header">
-            <h3>
-                <i class="fas fa-bookmark" style="color: var(--primary);"></i>
-                Saved Materials
-            </h3>
+        <div class="library-section-header" style="display:flex;justify-content:space-between;margin:20px 0 10px;">
+            <h3 style="display:flex;align-items:center;gap:6px;"><i class="fas fa-bookmark" style="color:var(--primary);"></i> Saved Materials</h3>
             <span class="section-count" id="savedCount">6 items</span>
         </div>
 
-        <!-- Saved Materials Grid -->
         <div class="saved-materials-grid" id="savedMaterialsContainer">
-            <div class="material-card" onclick="openMaterial('physics-notes')">
-                <div class="material-icon">📘</div>
-                <div class="material-title">Physics Notes</div>
-                <div class="material-subtitle">Chapter 1-5</div>
-            </div>
-            <div class="material-card" onclick="openMaterial('chemistry-guide')">
-                <div class="material-icon">📗</div>
-                <div class="material-title">Chemistry Guide</div>
-                <div class="material-subtitle">Organic Chemistry</div>
-            </div>
-            <div class="material-card" onclick="openMaterial('biology-notes')">
-                <div class="material-icon">📙</div>
-                <div class="material-title">Biology Notes</div>
-                <div class="material-subtitle">Genetics</div>
-            </div>
-            <div class="material-card" onclick="openMaterial('math-formulas')">
-                <div class="material-icon">📐</div>
-                <div class="material-title">Math Formulas</div>
-                <div class="material-subtitle">Calculus</div>
-            </div>
-            <div class="material-card" onclick="openMaterial('python-cheatsheet')">
-                <div class="material-icon">🐍</div>
-                <div class="material-title">Python Cheatsheet</div>
-                <div class="material-subtitle">Beginners</div>
-            </div>
-            <div class="material-card" onclick="openMaterial('interview-questions')">
-                <div class="material-icon">💼</div>
-                <div class="material-title">Interview Questions</div>
-                <div class="material-subtitle">Tech</div>
-            </div>
+            <div class="material-card" onclick="openMaterial('physics-notes')"><div class="material-icon">📘</div><div class="material-title">Physics Notes</div><div class="material-subtitle">Chapter 1-5</div></div>
+            <div class="material-card" onclick="openMaterial('chemistry-guide')"><div class="material-icon">📗</div><div class="material-title">Chemistry Guide</div><div class="material-subtitle">Organic Chemistry</div></div>
+            <div class="material-card" onclick="openMaterial('biology-notes')"><div class="material-icon">📙</div><div class="material-title">Biology Notes</div><div class="material-subtitle">Genetics</div></div>
+            <div class="material-card" onclick="openMaterial('math-formulas')"><div class="material-icon">📐</div><div class="material-title">Math Formulas</div><div class="material-subtitle">Calculus</div></div>
+            <div class="material-card" onclick="openMaterial('python-cheatsheet')"><div class="material-icon">🐍</div><div class="material-title">Python Cheatsheet</div><div class="material-subtitle">Beginners</div></div>
+            <div class="material-card" onclick="openMaterial('interview-questions')"><div class="material-icon">💼</div><div class="material-title">Interview Questions</div><div class="material-subtitle">Tech</div></div>
         </div>
 
-        <!-- Recent Activity -->
         <div class="recent-activity">
             <div class="recent-activity-header">
-                <h4>
-                    <i class="fas fa-history" style="color: var(--primary);"></i>
-                    Recent Activity
-                </h4>
-                <a href="#" class="view-all" onclick="viewAllActivity()">
-                    View All <i class="fas fa-arrow-right"></i>
-                </a>
+                <h4><i class="fas fa-history" style="color:var(--primary);"></i> Recent Activity</h4>
+                <a href="#" class="view-all" style="color:var(--primary);font-size:0.75rem;" onclick="viewAllActivity()">View All <i class="fas fa-arrow-right"></i></a>
             </div>
-            <div class="activity-item">
-                <div class="activity-dot completed"></div>
-                <div class="activity-content">
-                    <div class="activity-title">Completed: JavaScript Module</div>
-                    <div class="activity-time">2 hours ago</div>
-                </div>
-            </div>
-            <div class="activity-item">
-                <div class="activity-dot"></div>
-                <div class="activity-content">
-                    <div class="activity-title">Saved: Python Cheatsheet</div>
-                    <div class="activity-time">Yesterday</div>
-                </div>
-            </div>
-            <div class="activity-item">
-                <div class="activity-dot"></div>
-                <div class="activity-content">
-                    <div class="activity-title">Started: Data Science Course</div>
-                    <div class="activity-time">2 days ago</div>
-                </div>
-            </div>
+            <div class="activity-item"><div class="activity-dot completed"></div><div class="activity-content"><div class="activity-title">Completed: JavaScript Module</div><div class="activity-time">2 hours ago</div></div></div>
+            <div class="activity-item"><div class="activity-dot"></div><div class="activity-content"><div class="activity-title">Saved: Python Cheatsheet</div><div class="activity-time">Yesterday</div></div></div>
+            <div class="activity-item"><div class="activity-dot"></div><div class="activity-content"><div class="activity-title">Started: Data Science Course</div><div class="activity-time">2 days ago</div></div></div>
         </div>
 
-        <!-- Recommended For You -->
-        <div class="library-section-header">
-            <h3>
-                <i class="fas fa-star" style="color: var(--primary);"></i>
-                Recommended For You
-            </h3>
+        <div class="library-section-header" style="margin-top:20px;">
+            <h3 style="display:flex;align-items:center;gap:6px;"><i class="fas fa-star" style="color:var(--primary);"></i> Recommended For You</h3>
         </div>
 
-        <div class="course-card" data-category="development" onclick="openCourse('react-course')">
+        <div class="course-card" onclick="openCourse('react')">
             <div class="course-card-header">
                 <div class="course-icon">⚛️</div>
                 <div class="course-info">
-                    <div class="course-title">
-                        Advanced React Patterns
-                        <span class="course-badge popular">New</span>
-                    </div>
-                    <div class="course-meta">
-                        <span><i class="far fa-clock"></i> 18 lessons</span>
-                        <span><i class="far fa-user"></i> 5.2k enrolled</span>
-                    </div>
+                    <div class="course-title">Advanced React Patterns <span class="course-badge" style="background:#f59e0b;">New</span></div>
+                    <div class="course-meta"><span><i class="far fa-clock"></i> 18 lessons</span><span><i class="far fa-user"></i> 5.2k</span></div>
                 </div>
             </div>
             <div class="course-footer">
-                <div class="course-tags">
-                    <span class="course-tag">React</span>
-                    <span class="course-tag">Hooks</span>
-                    <span class="course-tag">Redux</span>
-                </div>
-                <div class="course-action">
-                    Start <i class="fas fa-play"></i>
-                </div>
+                <div class="course-tags"><span class="course-tag">React</span><span class="course-tag">Hooks</span><span class="course-tag">Redux</span></div>
+                <div class="course-action">Start <i class="fas fa-play"></i></div>
             </div>
         </div>
 
-        <!-- Space for bottom nav -->
-        <div style="height: 40px;"></div>
+        <div style="height:20px;"></div>
     </div>
 
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item" data-page="home">
-            <div class="nav-icon"><i class="fas fa-home"></i></div>
-            <span>Home</span>
-        </a>
-        <a href="search.html" class="nav-item" data-page="search">
-            <div class="nav-icon"><i class="fas fa-search"></i></div>
-            <span>Search</span>
-        </a>
-        <a href="library.html" class="nav-item active" data-page="library">
-            <div class="nav-icon"><i class="fas fa-book"></i></div>
-            <span>Library</span>
-        </a>
-        <a href="settings.html" class="nav-item" data-page="settings">
-            <div class="nav-icon"><i class="fas fa-cog"></i></div>
-            <span>Settings</span>
-        </a>
-    </nav>
+    <div class="nav-wrapper">
+        <div class="magic-mover" id="magicMover"><div class="circle"><ion-icon id="indicatorIcon" name="library-outline"></ion-icon></div></div>
+        <div class="nav-pill-bg"><svg class="nav-bg-svg" id="navSvg" viewBox="0 0 1000 70"><path d="M0,0 L450,0 C470,0 475,35 500,35 C525,35 530,0 550,0 L1000,0 L1000,70 L0,70 Z" fill="currentColor"></path></svg></div>
+        <ul class="navigation-items">
+            <li class="list" data-index="0" data-icon="home-outline" data-page="index.html"><a><ion-icon name="home-outline"></ion-icon></a></li>
+            <li class="list" data-index="1" data-icon="search-outline" data-page="search.html"><a><ion-icon name="search-outline"></ion-icon></a></li>
+            <li class="list active" data-index="2" data-icon="library-outline" data-page="library.html"><a><ion-icon name="library-outline"></ion-icon></a></li>
+            <li class="list" data-index="3" data-icon="settings-outline" data-page="settings.html"><a><ion-icon name="settings-outline"></ion-icon></a></li>
+            <li class="list" data-index="4" data-icon="person-outline" data-page="profile.html"><a><ion-icon name="person-outline"></ion-icon></a></li>
+        </ul>
+    </div>
 
-    <!-- Toast Container -->
     <div id="toastContainer" class="toast"></div>
-
-    <!-- Confirmation Modal -->
-    <div id="confirmModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-icon">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <h3 class="modal-title" id="modalTitle">Confirm Action</h3>
-            <p class="modal-message" id="modalMessage">Are you sure you want to proceed?</p>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="hideModal()">Cancel</button>
-                <button class="btn btn-danger" id="modalConfirmBtn">Confirm</button>
-            </div>
-        </div>
-    </div>
+    <div id="confirmModal" class="modal"><div class="modal-content"><i class="fas fa-exclamation-triangle" style="font-size:2rem;color:var(--error);margin-bottom:15px;"></i><h3 id="modalTitle">Confirm</h3><p id="modalMessage" style="margin-bottom:20px;">Are you sure?</p><div class="modal-actions"><button class="modal-btn cancel" onclick="hideModal()">Cancel</button><button class="modal-btn confirm" id="modalConfirmBtn">Confirm</button></div></div></div>
 
     <script>
-        // ==================== GLOBAL STATE ====================
-        // Listen for storage events (changes in other tabs)
-        window.addEventListener('storage', function(e) {
-            if (e.key && e.key.startsWith('nav_')) {
-                loadUserSettings();
-                showSyncStatus();
-            }
-        });
+        // ==================== APPWRITE ====================
+        const client = new Appwrite.Client();
+        client.setEndpoint("https://sgp.cloud.appwrite.io/v1").setProject("nav-education");
+        const account = new Appwrite.Account(client);
 
-        // Listen for custom settings updated event
-        window.addEventListener('settingsUpdated', function(e) {
-            loadUserSettings();
-            showSyncStatus();
-        });
+        let toastTimeout;
+        let loadingOverlay = document.getElementById('loadingOverlay');
 
-        // ==================== PROFILE MENU ====================
-        document.getElementById('profileBtn')?.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const menu = document.getElementById('profileMenu');
-            menu.classList.toggle('active');
-        });
-
-        document.addEventListener('click', function() {
-            const menu = document.getElementById('profileMenu');
-            menu.classList.remove('active');
-        });
-
-        // Close filter menu when clicking outside
-        document.addEventListener('click', function(e) {
-            const filterMenu = document.getElementById('filterMenu');
-            const filterBtn = document.querySelector('.filter-btn');
-            if (!filterBtn?.contains(e.target) && !filterMenu?.contains(e.target)) {
-                filterMenu?.classList.remove('active');
-            }
-        });
-
-        // ==================== PROFILE FUNCTIONS ====================
-        function showStats() {
-            showToast('Learning statistics coming soon!');
+        // ==================== TOAST ====================
+        function showToast(msg, type = 'info', duration = 2500) {
+            const toast = document.getElementById('toastContainer');
+            if (!toast) return;
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toast.className = 'toast';
+            toast.innerHTML = '';
+            toast.classList.add(type);
+            const icon = document.createElement('i');
+            icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-info-circle';
+            toast.appendChild(icon);
+            toast.appendChild(document.createTextNode(' ' + msg));
+            void toast.offsetWidth;
+            toast.classList.add('show');
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), duration);
         }
 
-        function showAchievements() {
-            showToast('Achievements gallery coming soon!');
+        // ==================== MODAL ====================
+        function showModal(title, msg, callback) {
+            const modal = document.getElementById('confirmModal');
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = msg;
+            document.getElementById('modalConfirmBtn').onclick = () => { hideModal(); if (callback) callback(); };
+            modal.classList.add('active');
+        }
+        function hideModal() { document.getElementById('confirmModal').classList.remove('active'); }
+
+        // ==================== THEME SYNCING ====================
+        function applyTheme() {
+            const darkMode = localStorage.getItem('nav_darkMode');
+            if (darkMode === null) document.body.classList.remove('light-theme');
+            else darkMode === 'true' ? document.body.classList.remove('light-theme') : document.body.classList.add('light-theme');
+            const accent = localStorage.getItem('nav_accentColor');
+            if (accent) document.documentElement.style.setProperty('--primary', accent);
         }
 
-        function logout() {
-            showModal('Logout', 'Are you sure you want to logout?', function() {
-                showToast('Logged out successfully');
-                setTimeout(() => window.location.href = 'index.html', 1000);
+        window.addEventListener('storage', (e) => { 
+            if (e.key === 'nav_darkMode' || e.key === 'nav_accentColor') {
+                applyTheme();
+                showToast('Theme updated from settings!', 'success');
+            } 
+        });
+        
+        // Listen for same-tab custom sync event
+        window.addEventListener('settingsUpdated', () => applyTheme());
+
+        // ==================== PROFILE MENU & USER UI ====================
+        document.getElementById('profileBtn')?.addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('profileMenu').classList.toggle('active'); });
+        document.addEventListener('click', () => document.getElementById('profileMenu')?.classList.remove('active'));
+        document.getElementById('notificationBtn')?.addEventListener('click', () => showToast('No new notifications'));
+
+        function showStats() { showToast('Stats coming soon', 'info'); }
+        function showAchievements() { showToast('Achievements coming soon', 'info'); }
+        
+        async function logout() {
+            showModal('Logout', 'Are you sure?', async () => {
+                try {
+                    await account.deleteSession('current');
+                    showToast('Logged out', 'success');
+                    setTimeout(() => window.location.href = 'auth.html', 1000);
+                } catch(e) { 
+                    localStorage.clear();
+                    showToast('Logged out', 'success');
+                    setTimeout(() => window.location.href = 'auth.html', 1000);
+                }
             });
         }
 
-        // ==================== NOTIFICATION ====================
-        document.getElementById('notificationBtn')?.addEventListener('click', function() {
-            showToast('No new notifications');
-        });
-
-        // ==================== LOAD USER SETTINGS ====================
-        function loadUserSettings() {
-            try {
-                // Load user name
-                const userName = localStorage.getItem('nav_userName');
-                if (userName) {
-                    document.getElementById('menuUserName').textContent = userName;
-                }
-
-                // Load user email
-                const userEmail = localStorage.getItem('nav_userEmail');
-                if (userEmail) {
-                    document.getElementById('menuUserEmail').textContent = userEmail;
-                }
-
-                // Load profile avatar
-                const profileAvatar = localStorage.getItem('nav_profileAvatar');
-                const headerAvatar = document.getElementById('headerAvatar');
-                const headerEmoji = document.getElementById('headerEmoji');
-                
-                if (profileAvatar && headerAvatar && headerEmoji) {
-                    headerAvatar.src = profileAvatar;
-                    headerAvatar.style.display = 'block';
-                    headerEmoji.style.display = 'none';
-                }
-
-                // Load theme
-                const darkMode = localStorage.getItem('nav_darkMode');
-                if (darkMode !== null) {
-                    document.body.classList.toggle('light-theme', darkMode === 'false');
-                }
-
-                // Load accent color
-                const accentColor = localStorage.getItem('nav_accentColor');
-                if (accentColor) {
-                    document.documentElement.style.setProperty('--primary', accentColor);
-                }
-
-            } catch (e) {
-                console.log('Error loading settings:', e);
+        function updateHeaderAvatar() {
+            const avatar = localStorage.getItem('nav_profileAvatar');
+            const img = document.getElementById('headerAvatar'), emoji = document.getElementById('headerEmoji');
+            if (avatar && img && emoji) { img.src = avatar; img.style.display = 'block'; emoji.style.display = 'none'; }
+            
+            // Personalize welcome message if name is available
+            const userName = localStorage.getItem('nav_userName');
+            if (userName) {
+                const firstName = userName.split(' ')[0];
+                document.getElementById('welcomeMessage').textContent = `Welcome back, ${firstName}!`;
             }
-        }
-
-        // Show sync status
-        function showSyncStatus() {
-            const syncStatus = document.getElementById('syncStatus');
-            syncStatus.style.display = 'flex';
-            setTimeout(() => {
-                syncStatus.style.display = 'none';
-            }, 3000);
         }
 
         // ==================== LIBRARY FUNCTIONS ====================
-        
-        // Filter by category
         function filterCategory(category, element) {
-            // Update active tab
-            document.querySelectorAll('.category-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
+            document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
             element.classList.add('active');
-            
-            // Filter courses
             const courses = document.querySelectorAll('.course-card');
-            let visibleCount = 0;
-            
-            courses.forEach(course => {
-                if (category === 'all' || course.dataset.category === category) {
-                    course.style.display = 'block';
-                    visibleCount++;
+            let count = 0;
+            courses.forEach(c => {
+                if (c.closest('.library-section-header')) return; // Ignore recommended
+                if (category === 'all' || c.dataset.category === category) {
+                    c.style.display = 'block'; count++;
                 } else {
-                    course.style.display = 'none';
+                    if(c.dataset.category) c.style.display = 'none'; // Only hide items that have categories to not mess up recommended section
                 }
             });
-            
-            // Update course count
-            document.getElementById('courseCount').textContent = visibleCount + ' courses';
-            document.getElementById('courseCount2').textContent = visibleCount + ' courses';
-            
-            showToast(`Showing ${visibleCount} courses`);
+            document.getElementById('courseCount').textContent = count + ' courses';
+            document.getElementById('courseCount2').textContent = count + ' courses';
         }
 
-        // Toggle filter menu
-        function toggleFilterMenu() {
-            document.getElementById('filterMenu').classList.toggle('active');
-        }
-
-        // Apply filter
-        function applyFilter(filter) {
-            // Update active filter
-            document.querySelectorAll('.filter-option').forEach(opt => {
-                opt.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Close menu
+        function toggleFilterMenu() { document.getElementById('filterMenu').classList.toggle('active'); }
+        
+        function applyFilter(filter, element) {
+            document.querySelectorAll('.filter-option').forEach(o => o.classList.remove('active'));
+            element.classList.add('active');
             document.getElementById('filterMenu').classList.remove('active');
-            
-            // Filter courses
             const courses = document.querySelectorAll('.course-card');
-            let visibleCount = 0;
-            
-            courses.forEach(course => {
-                if (filter === 'all' || course.dataset.status === filter) {
-                    course.style.display = 'block';
-                    visibleCount++;
+            let count = 0;
+            courses.forEach(c => {
+                if (c.closest('.library-section-header')) return; 
+                if (filter === 'all' || c.dataset.status === filter) {
+                    c.style.display = 'block'; count++;
                 } else {
-                    course.style.display = 'none';
+                    if(c.dataset.status) c.style.display = 'none';
                 }
             });
-            
-            // Update course count
-            document.getElementById('courseCount').textContent = visibleCount + ' courses';
-            document.getElementById('courseCount2').textContent = visibleCount + ' courses';
-            
-            showToast(`Filtered: ${filter.replace('-', ' ')}`);
+            document.getElementById('courseCount').textContent = count + ' courses';
+            document.getElementById('courseCount2').textContent = count + ' courses';
+            showToast(`Filtered: ${filter.replace('-', ' ')}`, 'success');
         }
 
-        // Library search
+        // Search Implementation
         document.getElementById('librarySearch')?.addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const courses = document.querySelectorAll('.course-card');
+            const term = e.target.value.toLowerCase();
+            const courses = document.querySelectorAll('#coursesContainer .course-card');
             const materials = document.querySelectorAll('.material-card');
-            let visibleCount = 0;
+            let count = 0;
             
-            // Search courses
-            courses.forEach(course => {
-                const title = course.querySelector('.course-title').textContent.toLowerCase();
-                if (title.includes(searchTerm) || searchTerm === '') {
-                    course.style.display = 'block';
-                    visibleCount++;
-                } else {
-                    course.style.display = 'none';
-                }
+            courses.forEach(c => {
+                const title = c.querySelector('.course-title')?.textContent.toLowerCase() || '';
+                const tags = Array.from(c.querySelectorAll('.course-tag')).map(t => t.textContent.toLowerCase()).join(' ');
+                
+                if (title.includes(term) || tags.includes(term) || term === '') { 
+                    c.style.display = 'block'; 
+                    count++; 
+                } else c.style.display = 'none';
             });
             
-            // Search materials
-            materials.forEach(material => {
-                const title = material.querySelector('.material-title').textContent.toLowerCase();
-                if (title.includes(searchTerm) || searchTerm === '') {
-                    material.style.display = 'block';
-                } else {
-                    material.style.display = 'none';
-                }
+            materials.forEach(m => {
+                const title = m.querySelector('.material-title')?.textContent.toLowerCase() || '';
+                const subtitle = m.querySelector('.material-subtitle')?.textContent.toLowerCase() || '';
+                m.style.display = (title.includes(term) || subtitle.includes(term) || term === '') ? 'block' : 'none';
             });
             
-            // Update course count
-            document.getElementById('courseCount').textContent = visibleCount + ' courses';
-            document.getElementById('courseCount2').textContent = visibleCount + ' courses';
-            
-            if (searchTerm && visibleCount === 0) {
+            document.getElementById('courseCount').textContent = count + ' courses';
+            document.getElementById('courseCount2').textContent = count + ' courses';
+            if (term && count === 0 && Array.from(materials).filter(m => m.style.display === 'block').length === 0) {
                 showToast('No results found');
             }
         });
 
-        // Quick actions
-        function showAllCourses() {
-            document.querySelector('.category-tab[data-category="all"]').click();
-            showToast('Showing all courses');
-        }
-
-        function showSavedMaterials() {
-            document.getElementById('savedMaterialsContainer').scrollIntoView({ behavior: 'smooth' });
-            showToast('Your saved materials');
-        }
-
-        function showDownloads() {
-            showToast('Downloaded content coming soon');
-        }
-
-        function showRecent() {
-            document.querySelector('.recent-activity').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // Course actions
-        function openCourse(courseId) {
-            showToast(`Opening course...`);
-            // In real app: window.location.href = `course.html?id=${courseId}`;
-        }
-
-        function openMaterial(materialId) {
-            showToast(`Opening material...`);
-            
-            // Save to recently opened
+        // Quick Actions & Navigation
+        function showAllCourses() { document.querySelector('.category-tab[data-category="all"]').click(); }
+        function showSavedMaterials() { document.getElementById('savedMaterialsContainer').scrollIntoView({ behavior: 'smooth' }); showToast('Your saved materials'); }
+        function showDownloads() { showToast('Downloads coming soon'); }
+        function showRecent() { document.querySelector('.recent-activity').scrollIntoView({ behavior: 'smooth' }); }
+        
+        function openCourse(id) { showToast('Opening course...'); }
+        
+        function openMaterial(id) {
+            showToast('Opening material...');
             let saved = JSON.parse(localStorage.getItem('nav_savedMaterials')) || [];
-            let materialName = getMaterialName(materialId);
-            
-            if (!saved.includes(materialName)) {
-                saved.push(materialName);
-                localStorage.setItem('nav_savedMaterials', JSON.stringify(saved));
-                updateSavedCount();
+            const names = { 'physics-notes': 'Physics Notes', 'chemistry-guide': 'Chemistry Guide', 'biology-notes': 'Biology Notes', 'math-formulas': 'Math Formulas', 'python-cheatsheet': 'Python Cheatsheet', 'interview-questions': 'Interview Questions' };
+            const name = names[id] || id;
+            if (!saved.includes(name)) { 
+                saved.push(name); 
+                localStorage.setItem('nav_savedMaterials', JSON.stringify(saved)); 
+                updateSavedCount(); 
             }
-            
-            localStorage.setItem('nav_lastOpened', materialName);
-        }
-
-        function getMaterialName(id) {
-            const names = {
-                'physics-notes': 'Physics Notes',
-                'chemistry-guide': 'Chemistry Guide',
-                'biology-notes': 'Biology Notes',
-                'math-formulas': 'Math Formulas',
-                'python-cheatsheet': 'Python Cheatsheet',
-                'interview-questions': 'Interview Questions'
-            };
-            return names[id] || id;
-        }
-
-        function updateSavedCount() {
-            const saved = JSON.parse(localStorage.getItem('nav_savedMaterials')) || [];
-            document.getElementById('savedCount').textContent = saved.length + ' items';
-        }
-
-        function viewAllActivity() {
-            showToast('All activity coming soon');
-        }
-
-        // ==================== LOADING FUNCTIONS ====================
-        function hideLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) {
-                overlay.classList.remove('active');
-            }
-        }
-
-        function showLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) {
-                overlay.classList.add('active');
-            }
-        }
-
-        // ==================== MODAL FUNCTIONS ====================
-        function showModal(title, message, confirmCallback) {
-            const modal = document.getElementById('confirmModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalMessage = document.getElementById('modalMessage');
-            const confirmBtn = document.getElementById('modalConfirmBtn');
-            
-            if (modalTitle) modalTitle.textContent = title;
-            if (modalMessage) modalMessage.textContent = message;
-            
-            if (confirmBtn) {
-                confirmBtn.onclick = function() {
-                    hideModal();
-                    if (confirmCallback) confirmCallback();
-                };
-            }
-            
-            modal.classList.add('active');
+            localStorage.setItem('nav_lastOpened', name);
         }
         
-        function hideModal() {
-            const modal = document.getElementById('confirmModal');
-            modal.classList.remove('active');
+        function updateSavedCount() { 
+            const saved = JSON.parse(localStorage.getItem('nav_savedMaterials')) || []; 
+            document.getElementById('savedCount').textContent = Math.max(6, saved.length) + ' items'; // Static min of 6 based on HTML, adjust if loading dynamic
         }
+        
+        function viewAllActivity() { showToast('All activity coming soon'); }
 
-        // ==================== TOAST ====================
-        function showToast(message, duration = 2200) {
-            const toast = document.getElementById('toastContainer');
-            if (!toast) return;
-            
-            toast.textContent = message;
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, duration);
-        }
-
-        // ==================== PAGE TRANSITIONS ====================
-        document.querySelectorAll('.nav-item').forEach(link => {
-            link.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                if (href && href !== window.location.pathname.split('/').pop()) {
-                    e.preventDefault();
-                    document.body.classList.add('page-fade');
-                    setTimeout(() => {
-                        window.location.href = href;
-                    }, 250);
+        // ==================== MAGIC NAVIGATION ====================
+        const lists = document.querySelectorAll('.list');
+        const magicMover = document.getElementById('magicMover');
+        const navSvg = document.getElementById('navSvg');
+        const indicatorIcon = document.getElementById('indicatorIcon');
+        const slotWidth = 70;
+        const currentPage = window.location.pathname.split('/').pop() || 'library.html';
+        
+        lists.forEach(item => {
+            const page = item.getAttribute('data-page');
+            if (page === currentPage) {
+                const idx = parseInt(item.getAttribute('data-index'));
+                item.classList.add('active');
+                magicMover.style.transform = `translateX(${idx * slotWidth}px)`;
+                navSvg.style.transform = `translateX(${idx * slotWidth}px)`;
+                indicatorIcon.setAttribute('name', item.getAttribute('data-icon'));
+            }
+        });
+        
+        lists.forEach(item => {
+            item.addEventListener('click', function() {
+                const idx = parseInt(this.getAttribute('data-index'));
+                const icon = this.getAttribute('data-icon');
+                const page = this.getAttribute('data-page');
+                lists.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                magicMover.style.transform = `translateX(${idx * slotWidth}px)`;
+                navSvg.style.transform = `translateX(${idx * slotWidth}px)`;
+                indicatorIcon.setAttribute('name', icon);
+                if (page && page !== currentPage) {
+                    document.body.style.opacity = '0';
+                    document.body.style.transition = 'opacity 0.3s';
+                    setTimeout(() => window.location.href = page, 300);
                 }
             });
         });
 
-        // Close modal on outside click
-        document.getElementById('confirmModal')?.addEventListener('click', function(e) {
-            if (e.target === this) hideModal();
-        });
-
         // ==================== INITIALIZATION ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            hideLoading();
-            loadUserSettings();
+        document.addEventListener('DOMContentLoaded', () => {
+            loadingOverlay?.classList.add('active');
+            
+            applyTheme();
+            updateHeaderAvatar();
             updateSavedCount();
             
-            // Simulate loading
-            setTimeout(hideLoading, 500);
+            setTimeout(() => loadingOverlay?.classList.remove('active'), 500);
         });
-
-        window.addEventListener('load', hideLoading);
-        setTimeout(hideLoading, 2000);
-
-        // Handle offline/online status
-        window.addEventListener('online', () => showToast('You are back online 📶'));
-        window.addEventListener('offline', () => showToast('You are offline ✈️'));
-
-        // Service Worker Registration for PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').catch(err => {
-                    console.log('ServiceWorker registration failed');
-                });
-            });
-        }
+        
+        window.addEventListener('load', () => setTimeout(() => loadingOverlay?.classList.remove('active'), 500));
+        
+        // Make functions global
+        window.showToast = showToast;
+        window.showModal = showModal;
+        window.hideModal = hideModal;
+        window.logout = logout;
+        window.showStats = showStats;
+        window.showAchievements = showAchievements;
+        window.filterCategory = filterCategory;
+        window.toggleFilterMenu = toggleFilterMenu;
+        window.applyFilter = applyFilter;
+        window.showAllCourses = showAllCourses;
+        window.showSavedMaterials = showSavedMaterials;
+        window.showDownloads = showDownloads;
+        window.showRecent = showRecent;
+        window.openCourse = openCourse;
+        window.openMaterial = openMaterial;
+        window.viewAllActivity = viewAllActivity;
     </script>
 </body>
 </html>
