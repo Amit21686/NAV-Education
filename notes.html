@@ -44,8 +44,10 @@
         body::before { content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 70% 30%, rgba(99,102,241,0.12) 0%, transparent 70%); animation: rotateBg 40s linear infinite; pointer-events: none; z-index: 0; }
         @keyframes rotateBg { to { transform: rotate(360deg); } }
 
+        /* Reading Progress Bar */
         #readingProgress { position: fixed; top: 0; left: 0; height: 4px; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; z-index: 9999; transition: width 0.1s; }
 
+        /* Header */
         .app-header { position: sticky; top: 0; background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(20px); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; z-index: 1000; border-bottom: 1px solid var(--border-dark); }
         body.light-theme .app-header { background: rgba(248, 250, 252, 0.85); border-color: var(--border-light); }
         
@@ -61,15 +63,19 @@
         body.light-theme .font-btn { color: var(--text-light); }
         .font-btn:active { transform: scale(0.9); color: var(--primary); }
 
+        /* Container */
         .container { max-width: 800px; margin: 0 auto; padding: 30px 20px 80px; position: relative; z-index: 1; }
 
+        /* Document Title */
         .doc-title { font-size: 2.2rem; font-weight: 700; margin-bottom: 5px; line-height: 1.2; background: linear-gradient(135deg, #fff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         body.light-theme .doc-title { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .doc-topic { color: var(--primary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 30px; display: inline-block; padding: 4px 12px; background: rgba(99,102,241,0.1); border-radius: 20px;}
 
+        /* ===== NOTES RENDERER STYLES ===== */
         .notes-content { font-size: var(--base-font-size); line-height: 1.7; color: rgba(255,255,255,0.9); }
         body.light-theme .notes-content { color: rgba(0,0,0,0.8); }
 
+        /* Typography */
         .notes-content h1 { font-size: 1.8em; margin: 1.5em 0 0.5em; font-weight: 700; color: var(--text-dark); border-bottom: 1px solid var(--border-dark); padding-bottom: 8px;}
         .notes-content h2 { font-size: 1.5em; margin: 1.2em 0 0.5em; font-weight: 600; color: var(--text-dark); }
         .notes-content h3 { font-size: 1.2em; margin: 1em 0 0.5em; font-weight: 600; color: var(--text-dark); }
@@ -81,16 +87,19 @@
         .notes-content .highlight { background: rgba(99,102,241,0.2); padding: 2px 6px; border-radius: 4px; font-weight: 500; color: #a5b4fc; }
         body.light-theme .notes-content .highlight { background: rgba(99,102,241,0.15); color: var(--primary-dark); }
 
+        /* Lists */
         .notes-content ul, .notes-content ol { margin-bottom: 1.5em; padding-left: 1.5em; }
         .notes-content li { margin-bottom: 0.5em; }
         .notes-content li::marker { color: var(--primary); font-weight: 600; }
 
+        /* Images */
         .notes-image-wrapper { margin: 2em 0; text-align: center; }
         .notes-content img { max-width: 100%; height: auto; border-radius: var(--radius-md); border: 1px solid var(--border-dark); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
         body.light-theme .notes-content img { border-color: var(--border-light); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .image-caption { font-size: 0.85em; color: var(--muted-dark); margin-top: 8px; font-style: italic; }
         body.light-theme .image-caption { color: var(--muted-light); }
 
+        /* Callout Boxes */
         .callout { padding: 18px 20px; border-radius: var(--radius-md); margin: 1.5em 0; display: flex; gap: 15px; background: var(--card-dark); border: 1px solid var(--border-dark); backdrop-filter: blur(10px); }
         body.light-theme .callout { background: var(--card-light); border-color: var(--border-light); }
         .callout-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px;}
@@ -101,9 +110,12 @@
         .callout.info .callout-icon, .callout.info .callout-title { color: var(--info); }
         .callout.warning { border-left: 4px solid var(--warning); }
         .callout.warning .callout-icon, .callout.warning .callout-title { color: var(--warning); }
+        .callout.error { border-left: 4px solid var(--error); }
+        .callout.error .callout-icon, .callout.error .callout-title { color: var(--error); }
         .callout.success { border-left: 4px solid var(--success); }
         .callout.success .callout-icon, .callout.success .callout-title { color: var(--success); }
 
+        /* Responsive Tables */
         .table-wrapper { width: 100%; overflow-x: auto; margin: 2em 0; border-radius: var(--radius-md); border: 1px solid var(--border-dark); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         body.light-theme .table-wrapper { border-color: var(--border-light); }
         .notes-content table { width: 100%; border-collapse: collapse; min-width: 500px; text-align: left; }
@@ -115,15 +127,19 @@
         .notes-content tbody tr:hover { background: rgba(255,255,255,0.03); }
         body.light-theme .notes-content tbody tr:hover { background: rgba(0,0,0,0.02); }
 
+        /* MathJax Responsive Overrides */
         .notes-content mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; padding: 10px 0; margin: 1em 0; }
 
+        /* Loading & Error States */
         .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 30000; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 15px; color: white;}
         .loading-overlay.active { display: flex; }
         .spinner { width: 40px; height: 40px; border: 3px solid var(--border-dark); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        .error-card { background: var(--card-dark); border: 1px solid var(--error); border-radius: var(--radius-md); padding: 30px 20px; text-align: center; margin-top: 20px; }
-        body.light-theme .error-card { background: var(--card-light); }
+        .error-card { background: rgba(244, 63, 94, 0.1); border: 1px solid var(--error); border-radius: var(--radius-md); padding: 30px 20px; text-align: center; margin-top: 20px; }
+        body.light-theme .error-card { background: rgba(244, 63, 94, 0.05); }
+        .raw-data-box { text-align: left; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; font-size: 0.75rem; overflow-x: auto; margin-top: 15px; color: #a5b4fc; font-family: monospace; border: 1px solid var(--border-dark);}
+        body.light-theme .raw-data-box { background: rgba(0,0,0,0.05); color: var(--error); }
     </style>
 </head>
 <body>
@@ -160,6 +176,7 @@
     </div>
 
     <script>
+        // ==================== THEME SYNC ====================
         function applyTheme() {
             if (localStorage.getItem('nav_darkMode') === 'false') document.body.classList.add('light-theme');
             const accent = localStorage.getItem('nav_accentColor');
@@ -175,6 +192,7 @@
             window.history.length > 1 ? window.history.back() : window.location.href = 'library.html';
         }
 
+        // ==================== FONT SIZE CONTROL ====================
         let currentFontMultiplier = 1;
         function changeFontSize(direction) {
             if (direction > 0 && currentFontMultiplier < 1.5) currentFontMultiplier += 0.1;
@@ -187,6 +205,7 @@
             document.documentElement.style.setProperty('--base-font-size', `${16 * currentFontMultiplier}px`);
         }
 
+        // ==================== SCROLL PROGRESS ====================
         window.onscroll = function() {
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -194,6 +213,7 @@
             document.getElementById("readingProgress").style.width = scrolled + "%";
         };
 
+        // ==================== PDF EXPORT ====================
         async function exportToPDF() {
             const overlay = document.getElementById('loadingOverlay');
             const loadText = document.getElementById('loadingText');
@@ -202,8 +222,9 @@
 
             const element = document.getElementById('pdfContentWrapper');
             const container = document.getElementById('mainContainer');
-            const docTitle = document.getElementById('docTitle').textContent || 'NAV_Education_Notes';
+            const docTitle = document.getElementById('docTitle').textContent || 'NAV_Notes';
 
+            // Temporarily remove bottom padding for cleaner PDF generation
             const originalPadding = container.style.paddingBottom;
             container.style.paddingBottom = "20px";
 
@@ -221,47 +242,69 @@
                 console.error("PDF Export Error: ", err);
                 alert("There was an error generating the PDF. Please try again.");
             } finally {
+                // Restore padding and hide overlay
                 container.style.paddingBottom = originalPadding;
                 loadText.textContent = "Loading Notes...";
                 overlay.classList.remove('active');
             }
         }
 
-        // ==================== BULLETPROOF RENDERER ENGINE ====================
+        // ==================== SMART FETCH LOGIC ====================
         async function loadNotes() {
             const overlay = document.getElementById('loadingOverlay');
             overlay.classList.add('active');
 
             try {
-                const file = new URLSearchParams(window.location.search).get('file');
-                if (!file) throw new Error("No file specified in the URL (?file=...)");
+                // 1. Get the file from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const file = urlParams.get('file');
 
-                const res = await fetch(file);
-                if (!res.ok) throw new Error(`Could not find the file: ${file} (Status: ${res.status})`);
-                
-                const data = await res.json();
-                
-                // Strict Validation: Ensure it's a Notes JSON, not a Quiz JSON
-                if (!data || !data.blocks || !Array.isArray(data.blocks)) {
-                    throw new Error("Invalid format. The JSON file must contain a 'blocks' array. Make sure you aren't trying to open an MCQ Quiz in the Notes Engine.");
+                if (!file) {
+                    throw new Error("No file provided in the URL.");
                 }
 
+                // 2. Fetch the JSON file
+                const response = await fetch(file);
+                if (!response.ok) {
+                    throw new Error(`HTTP Error ${response.status}: Could not find the file <b>${file}</b>. Make sure the file exists and is spelled exactly right!`);
+                }
+                
+                const data = await response.json();
+                
+                // 3. THE DIAGNOSTIC CHECK: Did it fetch a Quiz by mistake?
+                if (!data || !data.blocks || Array.isArray(data)) {
+                    // Extract the first 500 characters of whatever file it grabbed
+                    const rawData = JSON.stringify(data, null, 2).substring(0, 500) + '\n...';
+                    
+                    throw new Error(`
+                        <b>Format Mismatch!</b><br>
+                        The file <i>${file}</i> loaded successfully, but it does NOT contain the required "blocks" array.<br><br>
+                        <b>Here is exactly what the app fetched:</b>
+                        <div class="raw-data-box">${rawData}</div><br>
+                        <i>If the code above looks like your Quiz questions or Library code, it means your files are incorrectly linked!</i>
+                    `);
+                }
+
+                // 4. Render Document
                 renderDocument(data);
 
-            } catch(e) {
-                console.error(e);
+            } catch(error) {
+                // RENDER THE ERROR TO THE SCREEN
+                console.error(error);
                 document.getElementById('notesHeader').style.display = 'none';
                 document.getElementById('notesContent').innerHTML = `
                     <div class="error-card">
                         <i class="fas fa-exclamation-triangle" style="font-size:3rem; color:var(--error); margin-bottom:15px;"></i>
-                        <h2 style="margin-bottom:10px;">Failed to load notes</h2>
-                        <p style="color:var(--muted-dark); font-size:0.9rem;">${e.message}</p>
-                    </div>`;
+                        <h3 style="color:var(--error); margin-bottom:10px;">Diagnostic Error</h3>
+                        <p style="color:var(--text-dark); font-size: 0.95rem; line-height: 1.5; text-align: left;">${error.message}</p>
+                    </div>
+                `;
             } finally {
-                setTimeout(() => overlay.classList.remove('active'), 400);
+                setTimeout(() => overlay.classList.remove('active'), 300);
             }
         }
 
+        // ==================== RENDER ENGINE ====================
         function renderDocument(data) {
             if (data.title) {
                 document.getElementById('headerTitle').textContent = data.title;
@@ -282,7 +325,6 @@
                     case 'h2': element = `<h2>${block.content}</h2>`; break;
                     case 'h3': element = `<h3>${block.content}</h3>`; break;
                     case 'paragraph': element = `<p>${block.content}</p>`; break;
-                    
                     case 'image': 
                         element = `
                             <div class="notes-image-wrapper">
@@ -290,13 +332,11 @@
                                 ${block.caption ? `<div class="image-caption">${block.caption}</div>` : ''}
                             </div>`;
                         break;
-                        
                     case 'list':
                         const listTag = block.ordered ? 'ol' : 'ul';
                         const listItems = block.items.map(item => `<li>${item}</li>`).join('');
                         element = `<${listTag}>${listItems}</${listTag}>`;
                         break;
-                        
                     case 'callout':
                         const styleClass = block.style || 'info';
                         const icon = block.icon || 'fas fa-info-circle';
@@ -309,7 +349,6 @@
                                 </div>
                             </div>`;
                         break;
-
                     case 'table':
                         const ths = block.headers.map(h => `<th>${h}</th>`).join('');
                         const trs = block.rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
@@ -325,12 +364,14 @@
                 content.insertAdjacentHTML('beforeend', element);
             });
 
-            // Re-render MathJax
-            if (window.MathJax && MathJax.typesetPromise) {
-                MathJax.typesetPromise([document.getElementById('notesContent')]).catch(function (err) {
-                    console.error('MathJax rendering failed: ' + err.message);
-                });
-            }
+            // Trigger MathJax after content is built
+            setTimeout(() => {
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                    MathJax.typesetPromise([document.getElementById('notesContent')]).catch(function (err) {
+                        console.error('MathJax rendering failed: ' + err.message);
+                    });
+                }
+            }, 150);
         }
 
         document.addEventListener('DOMContentLoaded', loadNotes);
