@@ -77,6 +77,7 @@
         }
         applyTheme();
 
+        // Standard JSON format for a Course updated for new naming convention
         const fallbackCourseData = {
             title: "Physics Masterclass",
             icon: "⚛️",
@@ -85,8 +86,16 @@
                 {
                     title: "Chapter 1: Kinematics",
                     contents: [
-                        { title: "Kinematics Interactive Notes", file: "ch1n.json", type: "notes" },
-                        { title: "Kinematics Practice Test", file: "ch1.json", type: "quiz" }
+                        { title: "Kinematics Handwritten Notes", file: "physics-notes1.pdf", type: "pdf" },
+                        { title: "Kinematics Interactive Notes", file: "physicsn1.json", type: "notes" },
+                        { title: "Kinematics Practice Test", file: "physicsq1.json", type: "quiz" }
+                    ]
+                },
+                {
+                    title: "Chapter 2: Laws of Motion",
+                    contents: [
+                        { title: "Newton's Laws Notes", file: "physicsn2.json", type: "notes" },
+                        { title: "Newton's Laws Quiz", file: "physicsq2.json", type: "quiz" }
                     ]
                 }
             ]
@@ -97,6 +106,7 @@
             const courseId = urlParams.get('id');
 
             try {
+                // Expects a file named courseId.json (e.g. physics.json) to exist in your folder
                 const res = await fetch(`${courseId}.json`);
                 if (!res.ok) throw new Error();
                 const courseData = await res.json();
@@ -123,16 +133,18 @@
                     let iconName = "fas fa-file-alt";
                     let displayType = item.type || item.file.split('.').pop();
                     
-                    // Case insensitive type matching
                     const typeStr = item.type ? item.type.toLowerCase() : "";
 
+                    // Match logic: ends with .pdf
                     if (item.file.endsWith('.pdf') || typeStr === 'pdf') { 
                         iconClass = "icon-pdf"; iconName = "fas fa-file-pdf"; displayType = 'PDF';
                     }
-                    else if (item.file.endsWith('n.json') || typeStr === 'notes') { 
+                    // Match logic: contains 'n' followed by a number and ends with .json (e.g., physicsn1.json)
+                    else if (item.file.match(/n\d*\.json$/) || typeStr === 'notes') { 
                         iconClass = "icon-notes"; iconName = "fas fa-book-open"; displayType = 'Interactive Notes';
                     }
-                    else if (item.file.endsWith('.json') || typeStr === 'quiz') { 
+                    // Match logic: contains 'q' followed by a number and ends with .json (e.g., physicsq1.json)
+                    else if (item.file.match(/q\d*\.json$/) || typeStr === 'quiz') { 
                         iconClass = "icon-json"; iconName = "fas fa-brain"; displayType = 'Quiz';
                     }
 
@@ -169,22 +181,26 @@
             card.querySelector('.toggle-icon').style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
         }
 
-        // --- NEW STRICT ROUTING LOGIC ---
+        // --- NEW STRICT ROUTING LOGIC FOR IDnCHAP.json & IDqCHAP.json ---
         function routeContent(filename) {
-            if (filename.endsWith('n.json')) {
+            // Check if file is Notes: Matches patterns like 'physicsn1.json', 'mathn12.json', or 'n.json'
+            if (filename.match(/n\d*\.json$/)) {
                 window.location.href = `notes.html?file=${filename}`;
             } 
-            else if (filename.endsWith('.json')) {
+            // Check if file is Quiz: Matches patterns like 'physicsq1.json', 'mathq12.json', or 'q.json'
+            else if (filename.match(/q\d*\.json$/)) {
                 window.location.href = `mcqs.html?file=${filename}`;
             } 
+            // PDF Document
             else if (filename.endsWith('.pdf')) {
                 window.open(filename, '_blank'); 
             } 
+            // Standard HTML page
             else if (filename.endsWith('.html')) {
                 window.location.href = filename;
             }
             else {
-                alert("Unsupported file format.");
+                alert("Unsupported file format or naming convention.");
             }
         }
 
