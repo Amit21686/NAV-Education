@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Notes | NAV Education</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                packages: {'[+]': ['mhchem']}
+            },
+            loader: {load: ['[tex]/mhchem']}
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        /* ===== RESET & VARIABLES ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        :root {
+            --primary: #6366f1; --secondary: #8b5cf6;
+            --bg-dark: #020617; --bg-light: #f8fafc;
+            --card-dark: rgba(30, 41, 59, 0.8); --card-light: rgba(255, 255, 255, 0.9);
+            --text-dark: #f1f5f9; --text-light: #0f172a;
+            --muted-dark: #94a3b8; --muted-light: #64748b;
+            --border-dark: rgba(255, 255, 255, 0.08); --border-light: rgba(0, 0, 0, 0.08);
+            --success: #10b981; --error: #f43f5e; --warning: #f59e0b; --info: #3b82f6;
+            --radius-md: 12px; --radius-lg: 20px;
+            --base-font-size: 16px; 
+        }
+
+        body { font-family: 'Poppins', sans-serif; background: var(--bg-dark); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
+        body.light-theme { background: var(--bg-light); color: var(--text-light); }
+
+        body::before { content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 70% 30%, rgba(99,102,241,0.12) 0%, transparent 70%); animation: rotateBg 40s linear infinite; pointer-events: none; z-index: 0; }
+        @keyframes rotateBg { to { transform: rotate(360deg); } }
+
+        #readingProgress { position: fixed; top: 0; left: 0; height: 4px; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; z-index: 9999; transition: width 0.1s; }
+
+        .app-header { position: sticky; top: 0; background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(20px); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; z-index: 1000; border-bottom: 1px solid var(--border-dark); }
+        body.light-theme .app-header { background: rgba(248, 250, 252, 0.85); border-color: var(--border-light); }
+        
+        .icon-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--card-dark); border: 1px solid var(--border-dark); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-dark); transition: 0.2s; }
+        body.light-theme .icon-btn { background: var(--card-light); border-color: var(--border-light); color: var(--text-light); }
+        .icon-btn:active { transform: scale(0.95); }
+
+        .header-title { font-weight: 600; font-size: 1.1rem; text-align: center; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 15px; }
+
+        .font-controls { display: flex; gap: 8px; align-items: center; background: var(--card-dark); border: 1px solid var(--border-dark); border-radius: 30px; padding: 4px 8px; }
+        body.light-theme .font-controls { background: var(--card-light); border-color: var(--border-light); }
+        .font-btn { background: transparent; border: none; color: var(--text-dark); cursor: pointer; font-size: 1rem; font-family: 'Poppins'; font-weight: 600; padding: 2px 6px; transition: 0.2s;}
+        body.light-theme .font-btn { color: var(--text-light); }
+        .font-btn:active { transform: scale(0.9); color: var(--primary); }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 30px 20px 80px; position: relative; z-index: 1; }
+
+        .doc-title { font-size: 2.2rem; font-weight: 700; margin-bottom: 5px; line-height: 1.2; background: linear-gradient(135deg, #fff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        body.light-theme .doc-title { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .doc-topic { color: var(--primary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 30px; display: inline-block; padding: 4px 12px; background: rgba(99,102,241,0.1); border-radius: 20px;}
+
+        .notes-content { font-size: var(--base-font-size); line-height: 1.7; color: rgba(255,255,255,0.9); }
+        body.light-theme .notes-content { color: rgba(0,0,0,0.8); }
+
+        .notes-content h1 { font-size: 1.8em; margin: 1.5em 0 0.5em; font-weight: 700; color: var(--text-dark); border-bottom: 1px solid var(--border-dark); padding-bottom: 8px;}
+        .notes-content h2 { font-size: 1.5em; margin: 1.2em 0 0.5em; font-weight: 600; color: var(--text-dark); }
+        .notes-content h3 { font-size: 1.2em; margin: 1em 0 0.5em; font-weight: 600; color: var(--text-dark); }
+        body.light-theme .notes-content h1, body.light-theme .notes-content h2, body.light-theme .notes-content h3 { color: var(--text-light); border-color: var(--border-light); }
+        
+        .notes-content p { margin-bottom: 1.2em; }
+        .notes-content b, .notes-content strong { font-weight: 600; color: var(--primary); }
+        .notes-content i, .notes-content em { font-style: italic; }
+        .notes-content .highlight { background: rgba(99,102,241,0.2); padding: 2px 6px; border-radius: 4px; font-weight: 500; color: #a5b4fc; }
+        body.light-theme .notes-content .highlight { background: rgba(99,102,241,0.15); color: var(--primary-dark); }
+
+        .notes-content ul, .notes-content ol { margin-bottom: 1.5em; padding-left: 1.5em; }
+        .notes-content li { margin-bottom: 0.5em; }
+        .notes-content li::marker { color: var(--primary); font-weight: 600; }
+
+        .notes-image-wrapper { margin: 2em 0; text-align: center; }
+        .notes-content img { max-width: 100%; height: auto; border-radius: var(--radius-md); border: 1px solid var(--border-dark); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        body.light-theme .notes-content img { border-color: var(--border-light); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .image-caption { font-size: 0.85em; color: var(--muted-dark); margin-top: 8px; font-style: italic; }
+        body.light-theme .image-caption { color: var(--muted-light); }
+
+        .callout { padding: 18px 20px; border-radius: var(--radius-md); margin: 1.5em 0; display: flex; gap: 15px; background: var(--card-dark); border: 1px solid var(--border-dark); backdrop-filter: blur(10px); }
+        body.light-theme .callout { background: var(--card-light); border-color: var(--border-light); }
+        .callout-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px;}
+        .callout-content { flex: 1; }
+        .callout-title { font-weight: 600; font-size: 1.05em; margin-bottom: 4px; display: block;}
+        
+        .callout.info { border-left: 4px solid var(--info); }
+        .callout.info .callout-icon, .callout.info .callout-title { color: var(--info); }
+        .callout.warning { border-left: 4px solid var(--warning); }
+        .callout.warning .callout-icon, .callout.warning .callout-title { color: var(--warning); }
+        .callout.success { border-left: 4px solid var(--success); }
+        .callout.success .callout-icon, .callout.success .callout-title { color: var(--success); }
+
+        .table-wrapper { width: 100%; overflow-x: auto; margin: 2em 0; border-radius: var(--radius-md); border: 1px solid var(--border-dark); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        body.light-theme .table-wrapper { border-color: var(--border-light); }
+        .notes-content table { width: 100%; border-collapse: collapse; min-width: 500px; text-align: left; }
+        .notes-content th { background: rgba(99,102,241,0.15); padding: 14px 16px; font-weight: 600; color: var(--primary); font-size: 0.95em; }
+        .notes-content td { padding: 12px 16px; border-top: 1px solid var(--border-dark); font-size: 0.9em; }
+        body.light-theme .notes-content th { background: rgba(99,102,241,0.1); }
+        body.light-theme .notes-content td { border-color: var(--border-light); }
+        .notes-content tbody tr { transition: background 0.2s; }
+        .notes-content tbody tr:hover { background: rgba(255,255,255,0.03); }
+        body.light-theme .notes-content tbody tr:hover { background: rgba(0,0,0,0.02); }
+
+        .notes-content mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; padding: 10px 0; margin: 1em 0; }
+
+        .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 30000; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 15px; color: white;}
+        .loading-overlay.active { display: flex; }
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--border-dark); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .error-card { background: var(--card-dark); border: 1px solid var(--error); border-radius: var(--radius-md); padding: 30px 20px; text-align: center; margin-top: 20px; }
+        body.light-theme .error-card { background: var(--card-light); }
+    </style>
+</head>
+<body>
+    <div id="readingProgress"></div>
+
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <div id="loadingText" style="font-weight: 500;">Loading Notes...</div>
+    </div>
+
+    <header class="app-header">
+        <div class="icon-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
+        <div class="header-title" id="headerTitle">Study Notes</div>
+        <div class="font-controls">
+            <button class="font-btn" onclick="changeFontSize(-1)" title="Decrease Font">A-</button>
+            <div style="width:1px; background:var(--border-dark); margin:4px 0; height:18px;"></div>
+            <button class="font-btn" onclick="changeFontSize(1)" title="Increase Font">A+</button>
+            <div style="width:1px; background:var(--border-dark); margin:4px 0; height:18px;"></div>
+            <button class="font-btn" onclick="exportToPDF()" title="Download PDF"><i class="fas fa-download"></i></button>
+        </div>
+    </header>
+
+    <div id="pdfContentWrapper">
+        <div class="container" id="mainContainer">
+            <div id="notesHeader" style="display: none;">
+                <div class="doc-topic" id="docTopic">Topic</div>
+                <h1 class="doc-title" id="docTitle">Title</h1>
+                <div style="height: 1px; background: var(--border-dark); margin: 20px 0 30px;"></div>
+            </div>
+
+            <article class="notes-content" id="notesContent">
+                </article>
+        </div>
+    </div>
+
+    <script>
+        function applyTheme() {
+            if (localStorage.getItem('nav_darkMode') === 'false') document.body.classList.add('light-theme');
+            const accent = localStorage.getItem('nav_accentColor');
+            if (accent) document.documentElement.style.setProperty('--primary', accent);
+            
+            const savedSize = localStorage.getItem('nav_fontSizeMultiplier') || 1;
+            currentFontMultiplier = parseFloat(savedSize);
+            updateFontSize();
+        }
+        applyTheme();
+
+        function goBack() {
+            window.history.length > 1 ? window.history.back() : window.location.href = 'library.html';
+        }
+
+        let currentFontMultiplier = 1;
+        function changeFontSize(direction) {
+            if (direction > 0 && currentFontMultiplier < 1.5) currentFontMultiplier += 0.1;
+            if (direction < 0 && currentFontMultiplier > 0.8) currentFontMultiplier -= 0.1;
+            localStorage.setItem('nav_fontSizeMultiplier', currentFontMultiplier);
+            updateFontSize();
+        }
+
+        function updateFontSize() {
+            document.documentElement.style.setProperty('--base-font-size', `${16 * currentFontMultiplier}px`);
+        }
+
+        window.onscroll = function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("readingProgress").style.width = scrolled + "%";
+        };
+
+        async function exportToPDF() {
+            const overlay = document.getElementById('loadingOverlay');
+            const loadText = document.getElementById('loadingText');
+            loadText.textContent = "Generating PDF...";
+            overlay.classList.add('active');
+
+            const element = document.getElementById('pdfContentWrapper');
+            const container = document.getElementById('mainContainer');
+            const docTitle = document.getElementById('docTitle').textContent || 'NAV_Education_Notes';
+
+            const originalPadding = container.style.paddingBottom;
+            container.style.paddingBottom = "20px";
+
+            const opt = {
+                margin:       [10, 10, 10, 10],
+                filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            try {
+                await html2pdf().set(opt).from(element).save();
+            } catch (err) {
+                console.error("PDF Export Error: ", err);
+                alert("There was an error generating the PDF. Please try again.");
+            } finally {
+                container.style.paddingBottom = originalPadding;
+                loadText.textContent = "Loading Notes...";
+                overlay.classList.remove('active');
+            }
+        }
+
+        // ==================== BULLETPROOF RENDERER ENGINE ====================
+        async function loadNotes() {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.add('active');
+
+            try {
+                const file = new URLSearchParams(window.location.search).get('file');
+                if (!file) throw new Error("No file specified in the URL (?file=...)");
+
+                const res = await fetch(file);
+                if (!res.ok) throw new Error(`Could not find the file: ${file} (Status: ${res.status})`);
+                
+                const data = await res.json();
+                
+                // Strict Validation: Ensure it's a Notes JSON, not a Quiz JSON
+                if (!data || !data.blocks || !Array.isArray(data.blocks)) {
+                    throw new Error("Invalid format. The JSON file must contain a 'blocks' array. Make sure you aren't trying to open an MCQ Quiz in the Notes Engine.");
+                }
+
+                renderDocument(data);
+
+            } catch(e) {
+                console.error(e);
+                document.getElementById('notesHeader').style.display = 'none';
+                document.getElementById('notesContent').innerHTML = `
+                    <div class="error-card">
+                        <i class="fas fa-exclamation-triangle" style="font-size:3rem; color:var(--error); margin-bottom:15px;"></i>
+                        <h2 style="margin-bottom:10px;">Failed to load notes</h2>
+                        <p style="color:var(--muted-dark); font-size:0.9rem;">${e.message}</p>
+                    </div>`;
+            } finally {
+                setTimeout(() => overlay.classList.remove('active'), 400);
+            }
+        }
+
+        function renderDocument(data) {
+            if (data.title) {
+                document.getElementById('headerTitle').textContent = data.title;
+                document.getElementById('docTitle').textContent = data.title;
+                document.getElementById('notesHeader').style.display = 'block';
+            }
+            if (data.topic) {
+                document.getElementById('docTopic').textContent = data.topic;
+            }
+
+            const content = document.getElementById('notesContent');
+            content.innerHTML = '';
+
+            data.blocks.forEach(block => {
+                let element = '';
+                switch (block.type) {
+                    case 'h1': element = `<h1>${block.content}</h1>`; break;
+                    case 'h2': element = `<h2>${block.content}</h2>`; break;
+                    case 'h3': element = `<h3>${block.content}</h3>`; break;
+                    case 'paragraph': element = `<p>${block.content}</p>`; break;
+                    
+                    case 'image': 
+                        element = `
+                            <div class="notes-image-wrapper">
+                                <img src="${block.url}" alt="${block.caption || 'Note Image'}">
+                                ${block.caption ? `<div class="image-caption">${block.caption}</div>` : ''}
+                            </div>`;
+                        break;
+                        
+                    case 'list':
+                        const listTag = block.ordered ? 'ol' : 'ul';
+                        const listItems = block.items.map(item => `<li>${item}</li>`).join('');
+                        element = `<${listTag}>${listItems}</${listTag}>`;
+                        break;
+                        
+                    case 'callout':
+                        const styleClass = block.style || 'info';
+                        const icon = block.icon || 'fas fa-info-circle';
+                        element = `
+                            <div class="callout ${styleClass}">
+                                <div class="callout-icon"><i class="${icon}"></i></div>
+                                <div class="callout-content">
+                                    ${block.title ? `<span class="callout-title">${block.title}</span>` : ''}
+                                    ${block.content}
+                                </div>
+                            </div>`;
+                        break;
+
+                    case 'table':
+                        const ths = block.headers.map(h => `<th>${h}</th>`).join('');
+                        const trs = block.rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
+                        element = `
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead><tr>${ths}</tr></thead>
+                                    <tbody>${trs}</tbody>
+                                </table>
+                            </div>`;
+                        break;
+                }
+                content.insertAdjacentHTML('beforeend', element);
+            });
+
+            // Re-render MathJax
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([document.getElementById('notesContent')]).catch(function (err) {
+                    console.error('MathJax rendering failed: ' + err.message);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadNotes);
+    </script>
+</body>
+</html>
