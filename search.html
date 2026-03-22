@@ -17,361 +17,104 @@
     <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f52e0;
-            --secondary: #8b5cf6;
-            --accent: #f43f5e;
-            --bg: #020617;
-            --bg-card: rgba(30, 41, 59, 0.8);
-            --bg-card-hover: rgba(51, 65, 85, 0.8);
-            --border: rgba(255, 255, 255, 0.08);
-            --text: #f1f5f9;
-            --text-muted: #94a3b8;
-            --success: #10b981;
-            --error: #f43f5e;
-            --warning: #f59e0b;
-            --space-xs: 4px;
-            --space-sm: 8px;
-            --space-md: 14px;
-            --space-lg: 20px;
-            --space-xl: 24px;
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 20px;
-            --radius-full: 9999px;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
-            --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+            --primary: #6366f1; --primary-dark: #4f52e0; --secondary: #8b5cf6; --accent: #f43f5e;
+            --bg: #020617; --bg-card: rgba(30, 41, 59, 0.8); --bg-card-hover: rgba(51, 65, 85, 0.8);
+            --border: rgba(255, 255, 255, 0.08); --text: #f1f5f9; --text-muted: #94a3b8;
+            --success: #10b981; --error: #f43f5e; --warning: #f59e0b;
+            --space-xs: 4px; --space-sm: 8px; --space-md: 14px; --space-lg: 20px; --space-xl: 24px;
+            --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3); --shadow-md: 0 4px 12px rgba(0,0,0,0.4); --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
         }
 
         body.light-theme {
-            --bg: #f8fafc;
-            --bg-card: #ffffff;
-            --bg-card-hover: #f1f5f9;
-            --border: #e2e8f0;
-            --text: #0f172a;
-            --text-muted: #475569;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --bg: #f8fafc; --bg-card: #ffffff; --bg-card-hover: #f1f5f9;
+            --border: #e2e8f0; --text: #0f172a; --text-muted: #475569;
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 70% 30%, rgba(99,102,241,0.12) 0%, transparent 70%);
-            animation: rotateBg 40s linear infinite;
-            pointer-events: none;
-            z-index: 0;
-        }
-
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; transition: all 0.3s ease; position: relative; }
+        body::before { content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 70% 30%, rgba(99,102,241,0.12) 0%, transparent 70%); animation: rotateBg 40s linear infinite; pointer-events: none; z-index: 0; }
         @keyframes rotateBg { to { transform: rotate(360deg); } }
 
-        .container {
-            max-width: 100%;
-            width: 100%;
-            padding: var(--space-md);
-            padding-bottom: 110px;
-            position: relative;
-            z-index: 1;
-        }
+        .container { max-width: 100%; width: 100%; padding: var(--space-md); padding-bottom: 110px; position: relative; z-index: 1; }
 
-        .app-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-lg);
-        }
-
+        .app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-lg); }
         .brand h1 { font-size: 1.6rem; font-weight: 600; }
         .brand h1 span { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .icon-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: var(--bg-card);
-            border: 1.5px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: var(--text);
-        }
+        .icon-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; cursor: pointer; color: var(--text); backdrop-filter: blur(10px);}
         .icon-btn:active { transform: scale(0.95); border-color: var(--primary); }
 
         /* Search Header */
-        .search-header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            color: white;
-            margin-bottom: var(--space-lg);
-            position: relative;
-            overflow: hidden;
-        }
+        .search-header { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--radius-xl); padding: var(--space-xl); color: white; margin-bottom: var(--space-lg); }
         .search-header h2 { font-size: 1.6rem; margin-bottom: 4px; }
         .search-header p { opacity: 0.9; font-size: 0.85rem; margin-bottom: var(--space-lg); }
 
-        /* Banner */
-        .banner-card {
-            width: 100%;
-            margin: var(--space-md) 0;
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.1);
-        }
-        .banner-card:active { transform: scale(0.98); }
-        .banner-image { width: 100%; height: auto; display: block; }
-
-        /* Search Box */
-        .search-input-wrapper {
-            position: relative;
-            width: 100%;
-        }
-        .search-input-wrapper i {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(255,255,255,0.7);
-        }
-        .search-main-input {
-            width: 100%;
-            padding: 14px 16px 14px 44px;
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 50px;
-            color: white;
-            font-size: 0.95rem;
-            backdrop-filter: blur(10px);
-        }
-        .search-main-input:focus { outline: none; border-color: white; }
+        /* ======== SEARCH BOX (Updated to include Mic & Clear) ======== */
+        .search-input-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
+        .search-icon { position: absolute; left: 16px; color: rgba(255,255,255,0.7); z-index: 2; pointer-events: none; }
+        
+        .search-main-input { width: 100%; padding: 14px 80px 14px 44px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; color: white; font-size: 0.95rem; backdrop-filter: blur(10px); transition: all 0.3s; }
+        .search-main-input:focus { outline: none; border-color: white; background: rgba(255,255,255,0.25); }
         .search-main-input::placeholder { color: rgba(255,255,255,0.7); }
-        .voice-search-btn {
-            position: absolute;
-            right: 45px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            opacity: 0.7;
-        }
-        .clear-search {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            opacity: 0;
-        }
-        .clear-search.visible { opacity: 0.7; }
+        
+        .voice-search-btn { position: absolute; right: 40px; padding: 10px; cursor: pointer; color: rgba(255,255,255,0.7); z-index: 2; transition: 0.2s; }
+        .voice-search-btn:active { transform: scale(0.9); }
+        
+        .clear-search { position: absolute; right: 10px; padding: 10px; cursor: pointer; opacity: 0; color: rgba(255,255,255,0.7); z-index: 2; pointer-events: none; transition: opacity 0.2s; }
+        .clear-search.visible { opacity: 1; pointer-events: auto; }
 
-        /* Recent Searches */
-        .recent-searches {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: var(--space-md);
-            margin: var(--space-lg) 0;
-            backdrop-filter: blur(10px);
-        }
-        .recent-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
-        .recent-list { display: flex; flex-wrap: wrap; gap: 8px; }
-        .recent-item {
-            padding: 6px 14px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        body.light-theme .search-main-input { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); color: var(--text-light); }
+        body.light-theme .search-main-input:focus { border-color: var(--primary); }
+        body.light-theme .search-main-input::placeholder { color: rgba(0,0,0,0.5); }
+        body.light-theme .search-icon, body.light-theme .voice-search-btn, body.light-theme .clear-search { color: rgba(0,0,0,0.5); }
+        /* ============================================================= */
 
         /* Category Pills & Filters */
-        .category-pills, .filter-chips {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
+        .category-pills, .filter-chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
         .category-pills { padding: var(--space-sm) 0 var(--space-md); }
-        .filter-chips { flex-wrap: wrap; margin: var(--space-md) 0; }
+        .filter-chips { flex-wrap: wrap; margin: var(--space-sm) 0 var(--space-md); }
         .category-pills::-webkit-scrollbar { display: none; }
         
-        .category-pill, .filter-chip {
-            padding: 8px 18px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            font-size: 0.85rem;
-            white-space: nowrap;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .category-pill, .filter-chip { padding: 8px 18px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 40px; font-size: 0.85rem; white-space: nowrap; cursor: pointer; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; }
         .filter-chip { padding: 6px 14px; font-size: 0.8rem; border-radius: 30px; }
         .category-pill.active, .filter-chip.active { background: var(--primary); border-color: var(--primary); color: white; }
 
-        /* Search Stats & Sort */
-        .search-stats {
-            display: flex;
-            justify-content: space-between;
-            margin: var(--space-md) 0;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
+        /* Search Stats */
+        .search-stats { display: flex; justify-content: space-between; margin: var(--space-sm) 0; font-size: 0.8rem; color: var(--text-muted); }
         .result-count { background: var(--bg-card); padding: 4px 12px; border-radius: 30px; border: 1px solid var(--border); }
-        .sort-bar { display: flex; justify-content: space-between; align-items: center; margin: var(--space-lg) 0 var(--space-md); }
-        .view-toggle { display: flex; gap: 4px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 30px; padding: 2px; }
-        .view-btn { padding: 6px 10px; border: none; background: transparent; border-radius: 30px; cursor: pointer; color: var(--text-muted); }
-        .view-btn.active { background: var(--primary); color: white; }
-        
-        .sort-dropdown { position: relative; }
-        .sort-btn { padding: 6px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 30px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.8rem; }
-        .sort-menu { position: absolute; top: 100%; right: 0; margin-top: 5px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 8px; min-width: 160px; display: none; z-index: 100; backdrop-filter: blur(20px); }
-        .sort-menu.active { display: block; }
-        .sort-option { padding: 8px 12px; cursor: pointer; border-radius: 8px; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; }
-        .sort-option:hover { background: var(--bg-card-hover); }
-        .sort-option.active { background: var(--primary); color: white; }
 
         /* Results Grid */
-        .results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: var(--space-lg) 0; }
-        .results-grid.list-view { grid-template-columns: 1fr; }
+        .results-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin: var(--space-md) 0; }
 
         /* Result Cards */
-        .result-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(10px); }
+        .result-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(10px); display: flex; gap: 15px; align-items: center; animation: fadeIn 0.4s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .result-card:active { transform: scale(0.98); }
-        .result-card.list-view { display: flex; gap: 12px; align-items: center; }
-        .result-icon { width: 45px; height: 45px; background: rgba(99,102,241,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 8px; }
-        .result-card.list-view .result-icon { margin-bottom: 0; }
-        .result-category { font-size: 0.6rem; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
-        .result-title { font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-        .result-badge { font-size: 0.55rem; padding: 2px 6px; border-radius: 20px; background: var(--primary); color: white; }
-        .result-badge.free { background: #10b981; }
-        .result-meta { display: flex; gap: 8px; font-size: 0.65rem; color: var(--text-muted); margin: 4px 0; }
-        .result-description { font-size: 0.7rem; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .result-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
-        .result-rating { display: flex; align-items: center; gap: 2px; font-size: 0.7rem; color: #fbbf24; }
-        .result-price { font-weight: 600; font-size: 0.8rem; color: var(--primary); }
-        .result-price.free { color: #10b981; }
+        
+        .result-icon { width: 50px; height: 50px; background: rgba(99,102,241,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+        .result-content { flex: 1; }
+        .result-category { font-size: 0.65rem; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600;}
+        .result-title { font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; line-height: 1.3; margin-bottom: 4px;}
+        .result-badge { font-size: 0.6rem; padding: 2px 8px; border-radius: 20px; background: var(--border); color: var(--text-muted); border: 1px solid var(--border); }
+        .result-description { font-size: 0.75rem; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 8px;}
+        
+        .result-action { color: var(--primary); font-size: 0.8rem; font-weight: 500; display: flex; align-items: center; gap: 4px; }
 
-        /* Trending */
-        .trending-section { margin: var(--space-xl) 0; }
-        .trending-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
-        .trending-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .trending-item { text-align: center; padding: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); cursor: pointer; backdrop-filter: blur(10px); }
-        .trending-item:active { transform: scale(0.96); }
-        .trending-icon { font-size: 1.5rem; margin-bottom: 4px; }
-        .trending-name { font-size: 0.75rem; font-weight: 500; }
-        .trending-count { font-size: 0.6rem; color: var(--text-muted); }
+        /* Specific Type Colors */
+        .type-course .result-icon { background: rgba(99,102,241,0.15); color: var(--primary); }
+        .type-quiz .result-icon { background: rgba(16,185,129,0.15); color: var(--success); }
+        .type-pdf .result-icon { background: rgba(244,63,94,0.15); color: var(--error); }
+        .type-notes .result-icon { background: rgba(245,158,11,0.15); color: var(--warning); }
 
-        /* States & Skeletons */
+        /* States */
         .no-results { text-align: center; padding: 40px 20px; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border); margin: var(--space-xl) 0; }
         .suggestions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
         .suggestion-chip { padding: 6px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 30px; font-size: 0.8rem; cursor: pointer; }
 
-        .skeleton-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px; }
-        .skeleton-icon { width: 45px; height: 45px; background: var(--border); border-radius: 12px; margin-bottom: 8px; }
-        .skeleton-line { height: 12px; background: var(--border); border-radius: 6px; margin-bottom: 8px; }
-        .skeleton-line.short { width: 60%; }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            border: 1px solid var(--border);
-            z-index: 10000;
-            opacity: 0;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(10px);
-            z-index: 20000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: var(--bg-card);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            max-width: 300px;
-            width: 100%;
-            text-align: center;
-            border: 1px solid var(--border);
-        }
-        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-        .modal-btn { flex: 1; padding: 10px; border-radius: var(--radius-md); border: none; cursor: pointer; font-weight: 500; }
-        .modal-btn.cancel { background: transparent; border: 1px solid var(--border); color: var(--text); }
-        .modal-btn.confirm { background: var(--error); color: white; }
-
-        /* Loading */
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
-            z-index: 30000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-        .loading-overlay.active { display: flex; }
-        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Profile Menu overrides - matching settings inline structure with hover states added */
-        .profile-menu-item:hover { background: var(--bg-card-hover); color: var(--primary); }
-
-        /* Magic Navigation */
+        /* EXACT MAGIC NAVIGATION CODE (Untouched) */
         .nav-wrapper {
             position: fixed;
             bottom: 20px;
@@ -457,130 +200,73 @@
             .nav-wrapper { width: 320px; }
             .circle { width: 55px; height: 55px; top: -10px; left: 2px; }
             .circle ion-icon { font-size: 1.5rem; }
-            .trending-grid { grid-template-columns: repeat(2, 1fr); }
-            .results-grid { grid-template-columns: 1fr; }
         }
+        /* ======================================= */
+
+        /* Loading */
+        .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 30000; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 10px; color: white;}
+        .loading-overlay.active { display: flex; }
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-card); backdrop-filter: blur(20px); padding: 10px 20px; border-radius: 40px; font-size: 0.85rem; border: 1px solid var(--border); z-index: 10000; opacity: 0; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
-    <div id="loadingOverlay" class="loading-overlay"><div class="spinner"></div></div>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <div style="font-weight: 500; font-size: 0.9rem;" id="loadingText">Building Search Index...</div>
+    </div>
 
     <div class="container">
         <header class="app-header">
             <div class="brand"><h1>NAV <span>Education</span></h1></div>
-            <div class="flex" style="gap: 8px; display: flex;">
-                <div class="icon-btn" id="notificationBtn"><i class="far fa-bell"></i></div>
-                <div class="icon-btn" id="profileBtn">
-                    <img id="headerAvatar" src="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:none;">
-                    <span id="headerEmoji">👤</span>
-                </div>
-            </div>
+            <div class="icon-btn" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i></div>
         </header>
 
-        <div id="profileMenu" class="profile-menu" style="position:fixed;top:70px;right:20px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:8px;min-width:180px;z-index:9999;display:none;backdrop-filter:blur(10px);box-shadow:var(--shadow-lg);">
-            <div class="profile-menu-item" onclick="window.location.href='profile.html'" style="display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;border-radius:8px;"><i class="fas fa-user"></i> View Profile</div>
-            <div class="profile-menu-item" onclick="window.location.href='settings.html'" style="display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;border-radius:8px;"><i class="fas fa-cog"></i> Settings</div>
-            <div style="height:1px;background:var(--border);margin:5px 0;"></div>
-            <div class="profile-menu-item" onclick="showStats()" style="display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;border-radius:8px;"><i class="fas fa-chart-line"></i> Learning Stats</div>
-            <div class="profile-menu-item" onclick="showAchievements()" style="display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;border-radius:8px;"><i class="fas fa-trophy"></i> Achievements</div>
-            <div style="height:1px;background:var(--border);margin:5px 0;"></div>
-            <div class="profile-menu-item" onclick="logout()" style="display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;border-radius:8px;"><i class="fas fa-sign-out-alt"></i> Logout</div>
-        </div>
-
         <div class="search-header">
-            <h2>Search Courses</h2>
-            <p>Find the perfect course for your learning journey</p>
-            
-            <div class="banner-card" onclick="window.open('https://naveducation.com','_blank')">
-                <img src="https://raw.githubusercontent.com/Amit21686/NAV_Education/refs/heads/main/images/NAV%20Education%20banner.png" class="banner-image">
-            </div>
+            <h2>Deep Search</h2>
+            <p>Find courses, quizzes, and notes instantly</p>
 
-            <div class="search-input-wrapper" id="searchWrapper">
-                <i class="fas fa-search"></i>
-                <input type="text" id="mainSearchInput" class="search-main-input" placeholder="Search courses, topics..." autofocus>
+            <div class="search-input-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="mainSearchInput" class="search-main-input" placeholder="Search physics, mcqs, notes..." autofocus>
                 <span class="voice-search-btn" id="voiceSearchBtn" onclick="toggleVoiceSearch()"><i class="fas fa-microphone"></i></span>
                 <span class="clear-search" id="clearSearch" onclick="clearSearch()"><i class="fas fa-times-circle"></i></span>
             </div>
         </div>
 
-        <div class="recent-searches" id="recentSearches" style="display: none;">
-            <div class="recent-header">
-                <h4><i class="fas fa-history"></i> Recent Searches</h4>
-                <span class="clear-history" onclick="clearSearchHistory()" style="color:var(--primary);font-size:0.75rem;cursor:pointer;">Clear all</span>
-            </div>
-            <div class="recent-list" id="recentList"></div>
-        </div>
-
         <div class="category-pills">
-            <div class="category-pill active" data-category="all" onclick="filterByCategory('all', this)">All</div>
+            <div class="category-pill active" data-category="all" onclick="filterByCategory('all', this)"><i class="fas fa-globe"></i> All</div>
+            <div class="category-pill" data-category="science" onclick="filterByCategory('science', this)"><i class="fas fa-flask"></i> Science</div>
+            <div class="category-pill" data-category="math" onclick="filterByCategory('math', this)"><i class="fas fa-square-root-alt"></i> Math</div>
             <div class="category-pill" data-category="design" onclick="filterByCategory('design', this)"><i class="fas fa-paint-brush"></i> Design</div>
-            <div class="category-pill" data-category="development" onclick="filterByCategory('development', this)"><i class="fas fa-code"></i> Development</div>
-            <div class="category-pill" data-category="data" onclick="filterByCategory('data', this)"><i class="fas fa-chart-bar"></i> Data Science</div>
-            <div class="category-pill" data-category="business" onclick="filterByCategory('business', this)"><i class="fas fa-briefcase"></i> Business</div>
         </div>
 
         <div class="filter-chips">
-            <div class="filter-chip active" data-filter="all" onclick="applyContentFilter('all', this)">All</div>
-            <div class="filter-chip" data-filter="course" onclick="applyContentFilter('course', this)"><i class="fas fa-book"></i> Courses</div>
-            <div class="filter-chip" data-filter="tutorial" onclick="applyContentFilter('tutorial', this)"><i class="fas fa-video"></i> Tutorials</div>
-            <div class="filter-chip" data-filter="article" onclick="applyContentFilter('article', this)"><i class="fas fa-newspaper"></i> Articles</div>
+            <div class="filter-chip active" data-filter="all" onclick="filterByType('all', this)">Everything</div>
+            <div class="filter-chip" data-filter="course" onclick="filterByType('course', this)"><i class="fas fa-book-open"></i> Courses</div>
+            <div class="filter-chip" data-filter="quiz" onclick="filterByType('quiz', this)"><i class="fas fa-brain"></i> Quizzes</div>
+            <div class="filter-chip" data-filter="document" onclick="filterByType('document', this)"><i class="fas fa-file-pdf"></i> Documents</div>
         </div>
 
         <div class="search-stats">
-            <span class="result-count" id="resultCount">10 results</span>
-            <span id="searchTime">Found in 0.3s</span>
+            <span class="result-count" id="resultCount">0 results</span>
+            <span id="searchStatus" style="color: var(--primary); font-weight: 500;">Index Ready</span>
         </div>
 
-        <div class="sort-bar">
-            <div class="view-toggle">
-                <button class="view-btn active" onclick="toggleView('grid', this)"><i class="fas fa-th-large"></i></button>
-                <button class="view-btn" onclick="toggleView('list', this)"><i class="fas fa-list"></i></button>
+        <div id="resultsGrid" class="results-grid">
             </div>
-            <div class="sort-dropdown">
-                <button class="sort-btn" onclick="toggleSortMenu()"><i class="fas fa-sort-amount-down"></i> Relevance <i class="fas fa-chevron-down"></i></button>
-                <div class="sort-menu" id="sortMenu">
-                    <div class="sort-option active" data-sort="relevance" onclick="applySort('relevance', this)"><i class="fas fa-star"></i> Relevance</div>
-                    <div class="sort-option" data-sort="popular" onclick="applySort('popular', this)"><i class="fas fa-fire"></i> Most Popular</div>
-                    <div class="sort-option" data-sort="newest" onclick="applySort('newest', this)"><i class="fas fa-clock"></i> Newest</div>
-                    <div class="sort-option" data-sort="price-low" onclick="applySort('price-low', this)"><i class="fas fa-arrow-up"></i> Price: Low to High</div>
-                    <div class="sort-option" data-sort="price-high" onclick="applySort('price-high', this)"><i class="fas fa-arrow-down"></i> Price: High to Low</div>
-                    <div class="sort-option" data-sort="rating" onclick="applySort('rating', this)"><i class="fas fa-star"></i> Top Rated</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="resultsGrid" class="results-grid"></div>
-
-        <div id="loadingSkeleton" style="display: none;">
-            <div class="results-grid">
-                <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>
-                <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>
-                <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>
-            </div>
-        </div>
 
         <div id="noResults" class="no-results" style="display: none;">
-            <div class="no-results-icon" style="font-size:3rem;">🔍</div>
+            <div style="font-size:3rem; margin-bottom: 10px;">🔍</div>
             <h4>No results found</h4>
-            <p>Try different keywords</p>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Try adjusting your filters or keywords</p>
             <div class="suggestions">
-                <span class="suggestion-chip" onclick="searchSuggestion('web development')">Web Dev</span>
-                <span class="suggestion-chip" onclick="searchSuggestion('ui/ux')">UI/UX</span>
-                <span class="suggestion-chip" onclick="searchSuggestion('python')">Python</span>
-                <span class="suggestion-chip" onclick="searchSuggestion('react')">React</span>
-            </div>
-        </div>
-
-        <div class="trending-section">
-            <div class="trending-header">
-                <h3><i class="fas fa-fire" style="color:var(--primary);"></i> Trending Now</h3>
-                <a href="#" class="view-all" style="color:var(--primary);font-size:0.75rem;" onclick="viewAllTrending()">View All <i class="fas fa-arrow-right"></i></a>
-            </div>
-            <div class="trending-grid">
-                <div class="trending-item" onclick="searchTrending('web development')"><div class="trending-icon">💻</div><div class="trending-name">Web Dev</div><div class="trending-count">2.5k+</div></div>
-                <div class="trending-item" onclick="searchTrending('ui/ux')"><div class="trending-icon">🎨</div><div class="trending-name">UI/UX</div><div class="trending-count">1.8k+</div></div>
-                <div class="trending-item" onclick="searchTrending('data science')"><div class="trending-icon">📊</div><div class="trending-name">Data Sci</div><div class="trending-count">1.2k+</div></div>
-                <div class="trending-item" onclick="searchTrending('python')"><div class="trending-icon">🐍</div><div class="trending-name">Python</div><div class="trending-count">1.1k+</div></div>
+                <span class="suggestion-chip" onclick="applySuggestion('physics')">Physics</span>
+                <span class="suggestion-chip" onclick="applySuggestion('mcq')">MCQs</span>
+                <span class="suggestion-chip" onclick="applySuggestion('notes')">Notes</span>
             </div>
         </div>
 
@@ -600,156 +286,216 @@
     </div>
 
     <div id="toastContainer" class="toast"></div>
-    <div id="confirmModal" class="modal"><div class="modal-content"><i class="fas fa-exclamation-triangle" style="font-size:2rem;color:var(--error);margin-bottom:15px;"></i><h3 id="modalTitle">Confirm</h3><p id="modalMessage" style="margin-bottom:20px;">Are you sure?</p><div class="modal-actions"><button class="modal-btn cancel" onclick="hideModal()">Cancel</button><button class="modal-btn confirm" id="modalConfirmBtn">Confirm</button></div></div></div>
 
     <script>
-        // ==================== APPWRITE ====================
-        const client = new Appwrite.Client();
-        client.setEndpoint("https://sgp.cloud.appwrite.io/v1").setProject("nav-education");
-        const account = new Appwrite.Account(client);
-
-        let loadingOverlay = document.getElementById('loadingOverlay');
         let toastTimeout;
-
-        // ==================== TOAST ====================
-        function showToast(msg, type = 'info', duration = 2500) {
+        function showToast(msg) {
             const toast = document.getElementById('toastContainer');
-            if (!toast) return;
             if (toastTimeout) clearTimeout(toastTimeout);
-            toast.className = 'toast';
-            toast.innerHTML = '';
-            toast.classList.add(type);
-            const icon = document.createElement('i');
-            icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-info-circle';
-            toast.appendChild(icon);
-            toast.appendChild(document.createTextNode(' ' + msg));
-            void toast.offsetWidth;
+            toast.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`;
             toast.classList.add('show');
-            toastTimeout = setTimeout(() => toast.classList.remove('show'), duration);
+            setTimeout(() => toast.classList.remove('show'), 2000);
         }
 
-        // ==================== MODAL ====================
-        function showModal(title, msg, callback) {
-            const modal = document.getElementById('confirmModal');
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalMessage').textContent = msg;
-            document.getElementById('modalConfirmBtn').onclick = () => { hideModal(); if (callback) callback(); };
-            modal.classList.add('active');
-        }
-        function hideModal() { document.getElementById('confirmModal').classList.remove('active'); }
-
-        // ==================== THEME SYNCING ====================
         function applyTheme() {
-            const darkMode = localStorage.getItem('nav_darkMode');
-            if (darkMode === null) document.body.classList.remove('light-theme');
-            else darkMode === 'true' ? document.body.classList.remove('light-theme') : document.body.classList.add('light-theme');
+            if (localStorage.getItem('nav_darkMode') === 'false') document.body.classList.add('light-theme');
             const accent = localStorage.getItem('nav_accentColor');
             if (accent) document.documentElement.style.setProperty('--primary', accent);
         }
-        
-        window.addEventListener('storage', (e) => { 
-            if (e.key === 'nav_darkMode' || e.key === 'nav_accentColor') {
-                applyTheme();
-                showToast('Theme updated from settings!', 'success');
-            } 
-        });
-        
-        // Listen for same-tab custom sync event 
-        window.addEventListener('settingsUpdated', () => applyTheme());
 
-        // ==================== PROFILE MENU & USER UI ====================
-        document.getElementById('profileBtn')?.addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('profileMenu').classList.toggle('active'); });
-        document.addEventListener('click', () => { document.getElementById('profileMenu')?.classList.remove('active'); });
-        document.getElementById('notificationBtn')?.addEventListener('click', () => showToast('No new notifications'));
+        // ==================== DEEP SEARCH INDEX BUILDER ====================
+        let globalSearchData = [];
+        let currentFilters = { term: '', category: 'all', type: 'all' };
 
-        function showStats() { showToast('Stats coming soon', 'info'); }
-        function showAchievements() { showToast('Achievements coming soon', 'info'); }
-
-        async function logout() {
-            showModal('Logout', 'Are you sure?', async () => {
-                try {
-                    await account.deleteSession('current');
-                    showToast('Logged out', 'success');
-                    setTimeout(() => window.location.href = 'auth.html', 1000);
-                } catch(e) { 
-                    localStorage.clear();
-                    showToast('Logged out', 'success');
-                    setTimeout(() => window.location.href = 'auth.html', 1000);
-                }
-            });
-        }
-
-        function updateHeaderAvatar() {
-            const avatar = localStorage.getItem('nav_profileAvatar');
-            const img = document.getElementById('headerAvatar'), emoji = document.getElementById('headerEmoji');
-            if (avatar && img && emoji) { img.src = avatar; img.style.display = 'block'; emoji.style.display = 'none'; }
-        }
-
-        // ==================== SEARCH DATA ====================
-        const searchData = [
-            { id: 1, title: 'Complete UI/UX Design Masterclass', category: 'design', type: 'course', icon: '🎨', description: 'Learn design thinking, Figma, Adobe XD.', lessons: 48, duration: '24h', rating: 4.8, reviews: 12500, students: 15200, price: 4999, popular: true, free: false, tags: ['Figma', 'XD'] },
-            { id: 2, title: 'Full Stack Web Development Bootcamp', category: 'development', type: 'course', icon: '💻', description: 'Master HTML, CSS, React, Node.js, MongoDB.', lessons: 120, duration: '60h', rating: 4.9, reviews: 25800, students: 32500, price: 7999, popular: true, free: false, tags: ['React', 'Node'] },
-            { id: 3, title: 'Data Science Fundamentals with Python', category: 'data', type: 'course', icon: '📊', description: 'Learn Python, Pandas, NumPy, ML basics.', lessons: 65, duration: '32h', rating: 4.7, reviews: 8900, students: 11200, price: 5999, popular: true, free: false, tags: ['Python', 'ML'] },
-            { id: 4, title: 'JavaScript: The Advanced Concepts', category: 'development', type: 'course', icon: '⚛️', description: 'Closures, prototypes, async patterns.', lessons: 42, duration: '18h', rating: 4.9, reviews: 15200, students: 18900, price: 3999, popular: false, free: false, tags: ['JS', 'ES6'] },
-            { id: 5, title: 'Python for Beginners', category: 'development', type: 'tutorial', icon: '🐍', description: 'Start coding with Python.', lessons: 30, duration: '15h', rating: 4.6, reviews: 32100, students: 45000, price: 0, popular: true, free: true, tags: ['Python'] },
-            { id: 6, title: 'Business Analytics with Excel', category: 'business', type: 'course', icon: '📈', description: 'Excel for business analysis.', lessons: 35, duration: '20h', rating: 4.5, reviews: 5600, students: 7800, price: 2999, popular: false, free: false, tags: ['Excel'] }
+        // Fallback data in case the folder JSONs are missing
+        const fallbackData = [
+            { title: "Class 12 Physics", category: "science", type: "course", icon: "⚛️", desc: "Master modern physics concepts.", url: "course.html?id=physics", tags: "physics science ncert" },
+            { title: "Kinematics Practice Test", category: "science", type: "quiz", icon: "🧠", desc: "Chapter: Kinematics (Physics)", url: "mcqs.html?file=physics-ch1-mcqs.json", tags: "physics mcq test kinematics" },
+            { title: "Kinematics Notes", category: "science", type: "pdf", icon: "📄", desc: "Chapter: Kinematics (Physics)", url: "ch1-notes.pdf", tags: "physics notes pdf kinematics document" }
         ];
 
-        let currentFilters = { searchTerm: '', category: 'all', contentType: 'all', sortBy: 'relevance', viewMode: 'grid' };
-        let recentSearches = JSON.parse(localStorage.getItem('nav_recentSearches')) || [];
+        async function buildSearchIndex() {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.add('active');
+            let indexData = [];
 
-        // ==================== SEARCH FUNCTIONS ====================
-        function performSearch() {
-            const term = document.getElementById('mainSearchInput').value.toLowerCase().trim();
-            currentFilters.searchTerm = term;
-            document.getElementById('loadingSkeleton').style.display = 'block';
-            document.getElementById('resultsGrid').innerHTML = '';
-            setTimeout(() => {
-                let results = searchData.filter(item => {
-                    if (term && !item.title.toLowerCase().includes(term) && !item.description.toLowerCase().includes(term) && !item.tags.some(t => t.toLowerCase().includes(term))) return false;
-                    if (currentFilters.category !== 'all' && item.category !== currentFilters.category) return false;
-                    if (currentFilters.contentType !== 'all' && item.type !== currentFilters.contentType) return false;
-                    return true;
-                });
-                results = sortResults(results);
-                document.getElementById('loadingSkeleton').style.display = 'none';
-                if (results.length === 0) document.getElementById('noResults').style.display = 'block';
-                else { document.getElementById('noResults').style.display = 'none'; displayResults(results); }
-                document.getElementById('resultCount').textContent = `${results.length} results`;
-                if (term) addToRecentSearches(term);
-            }, 300);
-        }
+            try {
+                // 1. Fetch main library to get list of courses
+                const libRes = await fetch('library.json');
+                const lib = await libRes.json();
 
-        function sortResults(results) {
-            switch(currentFilters.sortBy) {
-                case 'popular': return results.sort((a,b) => b.students - a.students);
-                case 'price-low': return results.sort((a,b) => a.price - b.price);
-                case 'price-high': return results.sort((a,b) => b.price - a.price);
-                case 'rating': return results.sort((a,b) => b.rating - a.rating);
-                default: return results;
+                for (const course of lib.courses) {
+                    indexData.push({
+                        title: course.title,
+                        category: course.category || "General",
+                        type: "course",
+                        icon: course.icon || "📚",
+                        desc: course.description || `Complete course on ${course.title}`,
+                        url: `course.html?id=${course.id}`,
+                        tags: (course.tags ? course.tags.join(" ") : "") + ` ${course.title} course`
+                    });
+
+                    // 2. Fetch the specific course JSON to index its internal chapters & materials
+                    try {
+                        const courseRes = await fetch(`${course.id}.json`);
+                        if (courseRes.ok) {
+                            const courseDetails = await courseRes.json();
+                            
+                            courseDetails.chapters.forEach(chap => {
+                                chap.contents.forEach(mat => {
+                                    let matType = 'document';
+                                    let icon = '📝';
+                                    let url = mat.file;
+
+                                    if (mat.file.endsWith('.json')) { matType = 'quiz'; icon = '🧠'; url = `mcqs.html?file=${mat.file}`; }
+                                    else if (mat.file.endsWith('.pdf')) { matType = 'pdf'; icon = '📄'; }
+                                    else if (mat.file.endsWith('.html')) { matType = 'notes'; icon = '🌐'; }
+
+                                    indexData.push({
+                                        title: mat.title,
+                                        category: course.category || "General",
+                                        type: matType,
+                                        icon: icon,
+                                        desc: `Chapter: ${chap.title} (${course.title})`,
+                                        url: url,
+                                        tags: `${course.title} ${chap.title} ${mat.title} ${matType} ${mat.type || ''}`
+                                    });
+                                });
+                            });
+                        }
+                    } catch (e) {
+                        console.warn(`Could not deep-index course: ${course.id}`);
+                    }
+                }
+
+                if(lib.materials) {
+                    for (const mat of lib.materials) {
+                        indexData.push({
+                            title: mat.title, category: "material", type: "document", icon: mat.icon || "📘",
+                            desc: mat.subtitle || "Study Material", url: mat.file || `${mat.id}.pdf`, tags: `${mat.title} document`
+                        });
+                    }
+                }
+
+                if(indexData.length > 0) {
+                    globalSearchData = indexData;
+                } else {
+                    globalSearchData = fallbackData;
+                }
+
+            } catch(e) {
+                console.log("No library.json found. Using fallback search data.");
+                globalSearchData = fallbackData;
+            } finally {
+                setTimeout(() => {
+                    overlay.classList.remove('active');
+                    performSearch();
+                }, 400);
             }
         }
 
-        function displayResults(results) {
+        // ==================== SEARCH EXECUTION ====================
+        function performSearch() {
             const grid = document.getElementById('resultsGrid');
+            const noResults = document.getElementById('noResults');
             grid.innerHTML = '';
-            results.forEach(item => {
-                const card = document.createElement('div');
-                card.className = `result-card ${currentFilters.viewMode === 'list' ? 'list-view' : ''}`;
-                const priceDisplay = item.free ? 'Free' : `₹${item.price}`;
-                card.innerHTML = `
-                    <div class="result-icon">${item.icon}</div>
-                    <div class="result-content">
-                        <div class="result-category">${item.category}</div>
-                        <div class="result-title">${item.title}${item.popular ? '<span class="result-badge">Popular</span>' : ''}${item.free ? '<span class="result-badge free">Free</span>' : ''}</div>
-                        <div class="result-meta"><span><i class="far fa-clock"></i> ${item.duration}</span><span><i class="far fa-file-alt"></i> ${item.lessons} lessons</span></div>
-                        <div class="result-description">${item.description.substring(0, 80)}...</div>
-                        <div class="result-footer"><div class="result-rating"><i class="fas fa-star"></i> ${item.rating} (${(item.reviews/1000).toFixed(1)}k)</div><div class="result-price ${item.free ? 'free' : ''}">${priceDisplay}</div></div>
-                    </div>
-                `;
-                card.onclick = () => showToast(`Opening: ${item.title}`);
-                grid.appendChild(card);
+
+            let results = globalSearchData.filter(item => {
+                const searchMatch = item.title.toLowerCase().includes(currentFilters.term) || 
+                                    item.desc.toLowerCase().includes(currentFilters.term) || 
+                                    item.tags.toLowerCase().includes(currentFilters.term);
+                
+                const categoryMatch = currentFilters.category === 'all' || item.category.toLowerCase() === currentFilters.category.toLowerCase();
+                
+                let typeMatch = true;
+                if (currentFilters.type === 'course') typeMatch = item.type === 'course';
+                if (currentFilters.type === 'quiz') typeMatch = item.type === 'quiz';
+                if (currentFilters.type === 'document') typeMatch = ['pdf', 'notes', 'document'].includes(item.type);
+
+                return searchMatch && categoryMatch && typeMatch;
             });
+
+            document.getElementById('resultCount').textContent = `${results.length} results`;
+
+            if (results.length === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+                
+                const typeLabels = { course: 'Course', quiz: 'Assessment', pdf: 'PDF Document', notes: 'Notes', document: 'Document' };
+                const actionLabels = { course: 'Open Course', quiz: 'Start Quiz', pdf: 'Read PDF', notes: 'Read Notes', document: 'Open' };
+
+                results.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = `result-card type-${item.type}`;
+                    
+                    card.innerHTML = `
+                        <div class="result-icon">${item.icon}</div>
+                        <div class="result-content">
+                            <div class="result-category">${item.category}</div>
+                            <div class="result-title">${item.title} <span class="result-badge">${typeLabels[item.type] || 'Item'}</span></div>
+                            <div class="result-description">${item.desc}</div>
+                            <div class="result-action" style="margin-top: 6px;">${actionLabels[item.type] || 'Open'} <i class="fas fa-arrow-right"></i></div>
+                        </div>
+                    `;
+                    
+                    card.onclick = () => {
+                        showToast(`Opening ${item.title}...`);
+                        setTimeout(() => { window.location.href = item.url; }, 300);
+                    };
+                    
+                    grid.appendChild(card);
+                });
+            }
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        const searchInput = document.getElementById('mainSearchInput');
+        const clearBtn = document.getElementById('clearSearch');
+
+        searchInput.addEventListener('input', (e) => {
+            currentFilters.term = e.target.value.toLowerCase().trim();
+            clearBtn.classList.toggle('visible', currentFilters.term.length > 0);
+            performSearch();
+        });
+
+        function clearSearch() {
+            searchInput.value = '';
+            currentFilters.term = '';
+            clearBtn.classList.remove('visible');
+            performSearch();
+        }
+
+        // Voice Search Logic
+        function toggleVoiceSearch() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recog = new SpeechRecognition();
+                recog.continuous = false; recog.interimResults = false; recog.lang = 'en-US';
+                
+                const voiceBtn = document.getElementById('voiceSearchBtn');
+                voiceBtn.style.color = '#f43f5e'; // Turn mic red to indicate listening
+                
+                recog.start();
+                
+                recog.onresult = (e) => { 
+                    const transcript = e.results[0][0].transcript;
+                    searchInput.value = transcript; 
+                    currentFilters.term = transcript.toLowerCase();
+                    clearBtn.classList.add('visible');
+                    performSearch(); 
+                    voiceBtn.style.color = ''; 
+                };
+                
+                recog.onerror = () => { 
+                    voiceBtn.style.color = ''; 
+                    showToast('Voice search failed'); 
+                };
+                
+                recog.onend = () => { voiceBtn.style.color = ''; };
+            } else {
+                showToast('Voice search is not supported on this browser');
+            }
         }
 
         function filterByCategory(cat, el) {
@@ -759,84 +505,21 @@
             performSearch();
         }
 
-        function applyContentFilter(filter, el) {
+        function filterByType(type, el) {
             document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
             el.classList.add('active');
-            currentFilters.contentType = filter;
+            currentFilters.type = type;
             performSearch();
         }
 
-        function toggleView(mode, el) {
-            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            currentFilters.viewMode = mode;
-            document.getElementById('resultsGrid').classList.toggle('list-view', mode === 'list');
+        function applySuggestion(term) {
+            searchInput.value = term;
+            currentFilters.term = term.toLowerCase();
+            clearBtn.classList.add('visible');
             performSearch();
         }
 
-        function toggleSortMenu() { document.getElementById('sortMenu').classList.toggle('active'); }
-        function applySort(sort, el) {
-            document.querySelectorAll('.sort-option').forEach(o => o.classList.remove('active'));
-            el.classList.add('active');
-            document.querySelector('.sort-btn').innerHTML = `<i class="fas fa-sort-amount-down"></i> ${el.textContent.trim()} <i class="fas fa-chevron-down"></i>`;
-            currentFilters.sortBy = sort;
-            document.getElementById('sortMenu').classList.remove('active');
-            performSearch();
-        }
-
-        function updateClearButton() {
-            const clear = document.getElementById('clearSearch');
-            if (document.getElementById('mainSearchInput').value.length > 0) clear.classList.add('visible');
-            else clear.classList.remove('visible');
-        }
-
-        function clearSearch() { document.getElementById('mainSearchInput').value = ''; updateClearButton(); performSearch(); }
-
-        function addToRecentSearches(term) {
-            recentSearches = recentSearches.filter(t => t !== term);
-            recentSearches.unshift(term);
-            if (recentSearches.length > 5) recentSearches.pop();
-            localStorage.setItem('nav_recentSearches', JSON.stringify(recentSearches));
-            displayRecentSearches();
-        }
-
-        function displayRecentSearches() {
-            const container = document.getElementById('recentSearches');
-            const list = document.getElementById('recentList');
-            if (recentSearches.length === 0) { container.style.display = 'none'; return; }
-            container.style.display = 'block';
-            list.innerHTML = '';
-            recentSearches.forEach(term => {
-                const item = document.createElement('span');
-                item.className = 'recent-item';
-                item.innerHTML = `<i class="fas fa-search"></i> ${term}<span class="remove" style="margin-left:6px;opacity:0.5;" onclick="removeRecentSearch('${term}', event)"><i class="fas fa-times"></i></span>`;
-                item.onclick = (e) => { if (!e.target.closest('.remove')) { document.getElementById('mainSearchInput').value = term; performSearch(); } };
-                list.appendChild(item);
-            });
-        }
-
-        function removeRecentSearch(term, e) { e.stopPropagation(); recentSearches = recentSearches.filter(t => t !== term); localStorage.setItem('nav_recentSearches', JSON.stringify(recentSearches)); displayRecentSearches(); }
-        function clearSearchHistory() { showModal('Clear History', 'Clear all recent searches?', () => { recentSearches = []; localStorage.setItem('nav_recentSearches', JSON.stringify(recentSearches)); displayRecentSearches(); showToast('History cleared'); }); }
-
-        function toggleVoiceSearch() {
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                const recog = new SpeechRecognition();
-                recog.continuous = false; recog.interimResults = false; recog.lang = 'en-US';
-                const voiceBtn = document.getElementById('voiceSearchBtn');
-                voiceBtn.style.color = '#f43f5e';
-                recog.start();
-                recog.onresult = (e) => { document.getElementById('mainSearchInput').value = e.results[0][0].transcript; performSearch(); addToRecentSearches(e.results[0][0].transcript); voiceBtn.style.color = ''; };
-                recog.onerror = () => { voiceBtn.style.color = ''; showToast('Voice search failed', 'error'); };
-                recog.onend = () => { voiceBtn.style.color = ''; };
-            } else showToast('Voice search not supported', 'error');
-        }
-
-        function searchTrending(term) { document.getElementById('mainSearchInput').value = term; performSearch(); addToRecentSearches(term); }
-        function searchSuggestion(term) { document.getElementById('mainSearchInput').value = term; performSearch(); addToRecentSearches(term); }
-        function viewAllTrending() { showToast('All trending topics coming soon'); }
-
-        // ==================== MAGIC NAVIGATION ====================
+        // Magic Navigation JS
         const lists = document.querySelectorAll('.list');
         const magicMover = document.getElementById('magicMover');
         const navSvg = document.getElementById('navSvg');
@@ -873,37 +556,11 @@
             });
         });
 
-        // ==================== INITIALIZATION ====================
+        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            loadingOverlay?.classList.add('active');
-            
             applyTheme();
-            updateHeaderAvatar();
-            
-            const searchInput = document.getElementById('mainSearchInput');
-            searchInput.addEventListener('input', () => { performSearch(); updateClearButton(); });
-            displayRecentSearches();
-            performSearch();
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('q')) { 
-                searchInput.value = urlParams.get('q'); 
-                performSearch(); 
-                addToRecentSearches(urlParams.get('q')); 
-            }
-            
-            setTimeout(() => loadingOverlay?.classList.remove('active'), 500);
+            buildSearchIndex();
         });
-        
-        window.addEventListener('load', () => setTimeout(() => loadingOverlay?.classList.remove('active'), 500));
-        
-        // Make functions global
-        window.showToast = showToast;
-        window.showModal = showModal;
-        window.hideModal = hideModal;
-        window.logout = logout;
-        window.showStats = showStats;
-        window.showAchievements = showAchievements;
     </script>
 </body>
 </html>
