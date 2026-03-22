@@ -1,0 +1,8 @@
+[
+  {
+    "question": "What is the SI unit of Force?",
+    "options": ["Joule", "Newton", "Pascal", "Watt"],
+    "correctIndex": 1,
+    "explanation": "The Newton (N) is the International System of Units (SI) derived unit of force."
+  }
+]
