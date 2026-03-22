@@ -5,513 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Library | NAV Education</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        /* ===== RESET & VARIABLES ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f52e0;
-            --secondary: #8b5cf6;
-            --accent: #f43f5e;
-            --bg: #020617;
-            --bg-card: rgba(30, 41, 59, 0.8);
-            --bg-card-hover: rgba(51, 65, 85, 0.8);
-            --border: rgba(255, 255, 255, 0.08);
-            --text: #f1f5f9;
-            --text-muted: #94a3b8;
-            --success: #10b981;
-            --error: #f43f5e;
-            --warning: #f59e0b;
-            --space-xs: 4px;
-            --space-sm: 8px;
-            --space-md: 14px;
-            --space-lg: 20px;
-            --space-xl: 24px;
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 20px;
-            --radius-full: 9999px;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
-            --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+            --primary: #6366f1; --primary-dark: #4f52e0; --secondary: #8b5cf6; --accent: #f43f5e;
+            --bg: #020617; --bg-card: rgba(30, 41, 59, 0.8); --bg-card-hover: rgba(51, 65, 85, 0.8);
+            --border: rgba(255, 255, 255, 0.08); --text: #f1f5f9; --text-muted: #94a3b8;
+            --success: #10b981; --error: #f43f5e; --warning: #f59e0b;
+            --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px;
         }
-
         body.light-theme {
-            --bg: #f8fafc;
-            --bg-card: #ffffff;
-            --bg-card-hover: #f1f5f9;
-            --border: #e2e8f0;
-            --text: #0f172a;
-            --text-muted: #475569;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --bg: #f8fafc; --bg-card: #ffffff; --bg-card-hover: #f1f5f9;
+            --border: #e2e8f0; --text: #0f172a; --text-muted: #475569;
         }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 70% 30%, rgba(99,102,241,0.12) 0%, transparent 70%);
-            animation: rotateBg 40s linear infinite;
-            pointer-events: none;
-            z-index: 0;
-        }
-
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; position: relative; }
+        body::before { content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 70% 30%, rgba(99,102,241,0.12) 0%, transparent 70%); animation: rotateBg 40s linear infinite; pointer-events: none; z-index: 0; }
         @keyframes rotateBg { to { transform: rotate(360deg); } }
+        .container { max-width: 100%; width: 100%; padding: 14px; padding-bottom: 110px; position: relative; z-index: 1; }
 
-        .container {
-            max-width: 100%;
-            width: 100%;
-            padding: var(--space-md);
-            padding-bottom: 110px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .app-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-lg);
-        }
-
+        /* Shared Premium Styles */
+        .app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .brand h1 { font-size: 1.6rem; font-weight: 600; }
         .brand h1 span { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        .icon-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: var(--bg-card);
-            border: 1.5px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: var(--text);
-        }
-        .icon-btn:active { transform: scale(0.95); border-color: var(--primary); }
-
-        /* Welcome Card */
-        .welcome-card {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            color: white;
-            margin-bottom: var(--space-lg);
-        }
-
-        .welcome-card h2 { font-size: 1.4rem; margin-bottom: 4px; }
-        .welcome-card p { opacity: 0.9; font-size: 0.85rem; }
-
-        /* Banner */
-        .banner-card {
-            width: 100%;
-            margin: var(--space-md) 0;
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.1);
-            transition: all 0.2s;
-        }
-        .banner-card:active { transform: scale(0.98); }
+        .icon-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; cursor: pointer; color: var(--text); }
+        .welcome-card { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--radius-xl); padding: 24px; color: white; margin-bottom: 20px; }
+        .banner-card { width: 100%; margin: 14px 0; border-radius: var(--radius-lg); overflow: hidden; cursor: pointer; border: 2px solid rgba(255,255,255,0.1); }
         .banner-image { width: 100%; height: auto; display: block; }
-
-        /* Search Bar */
-        .search-wrapper {
-            position: relative;
-            width: 100%;
-            margin-top: var(--space-md);
-        }
-        .search-wrapper i {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(255,255,255,0.7);
-        }
-        .library-search-input {
-            width: 100%;
-            padding: 12px 16px 12px 44px;
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 40px;
-            color: white;
-            font-size: 0.9rem;
-            backdrop-filter: blur(10px);
-        }
+        .search-wrapper { position: relative; width: 100%; margin-top: 14px; }
+        .search-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.7); }
+        .library-search-input { width: 100%; padding: 12px 16px 12px 44px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 40px; color: white; font-size: 0.9rem; backdrop-filter: blur(10px); }
         .library-search-input::placeholder { color: rgba(255,255,255,0.7); }
-        .library-search-input:focus { outline: none; border-color: white; }
-
-        /* Quick Actions */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: var(--space-sm);
-            margin: var(--space-lg) 0;
-        }
-        .quick-action {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: var(--space-md);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            backdrop-filter: blur(10px);
-        }
-        .quick-action:active { transform: scale(0.95); }
-        .quick-action i { font-size: 1.5rem; color: var(--primary); margin-bottom: 4px; display: block; }
-        .quick-action span { font-size: 0.7rem; font-weight: 500; }
-
-        /* Category Tabs */
-        .category-tabs {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding: var(--space-sm) 0 var(--space-md);
-            scrollbar-width: none;
-        }
+        .category-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 14px; scrollbar-width: none; }
         .category-tabs::-webkit-scrollbar { display: none; }
-        .category-tab {
-            padding: 8px 18px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            font-size: 0.85rem;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.2s;
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .category-tab { padding: 8px 18px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 40px; font-size: 0.85rem; white-space: nowrap; cursor: pointer; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; }
         .category-tab.active { background: var(--primary); border-color: var(--primary); color: white; }
-
-        /* Filter Bar */
-        .filter-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: var(--space-md) 0;
-        }
-        .section-count {
-            color: var(--primary);
-            font-size: 0.8rem;
-            background: rgba(99,102,241,0.1);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-weight: 500;
-        }
-        .filter-btn {
-            padding: 6px 14px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .filter-menu {
-            position: absolute;
-            right: 0;
-            margin-top: 5px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 8px;
-            min-width: 140px;
-            display: none;
-            z-index: 100;
-            backdrop-filter: blur(20px);
-        }
-        .filter-menu.active { display: block; }
-        .filter-option {
-            padding: 8px 12px;
-            cursor: pointer;
-            border-radius: 8px;
-            font-size: 0.8rem;
-        }
-        .filter-option:hover { background: var(--bg-card-hover); color: var(--primary); }
-        .filter-option.active { background: var(--primary); color: white; }
-
+        
+        .filter-bar { display: flex; align-items: center; justify-content: space-between; margin: 14px 0; }
+        .section-count { color: var(--primary); font-size: 0.8rem; background: rgba(99,102,241,0.1); padding: 4px 10px; border-radius: 20px; font-weight: 500; }
+        
         /* Course Cards */
-        .course-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            margin-bottom: var(--space-md);
-            cursor: pointer;
-            transition: all 0.2s;
-            backdrop-filter: blur(10px);
-        }
-        .course-card:active { transform: scale(0.99); }
+        .course-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 14px; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(10px); animation: fadeIn 0.4s ease forwards; }
+        @keyframes fadeIn { from { opacity:0; transform: translateY(10px);} to {opacity:1; transform: translateY(0);} }
+        .course-card:active { transform: scale(0.98); }
         .course-card-header { display: flex; gap: 12px; margin-bottom: 12px; }
         .course-icon { width: 50px; height: 50px; background: rgba(99,102,241,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; }
         .course-title { font-weight: 600; font-size: 1rem; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
         .course-badge { font-size: 0.6rem; padding: 2px 8px; border-radius: 20px; background: var(--primary); color: white; }
-        .course-badge.free { background: #10b981; }
+        .course-badge.success { background: var(--success); }
         .course-meta { display: flex; gap: 12px; font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
-        .progress-header { display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 4px; }
+        .progress-header { display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 4px; color: var(--text-muted); }
         .progress-bar { height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; border-radius: 4px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; border-radius: 4px; transition: width 0.5s ease; }
         .course-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
         .course-tags { display: flex; gap: 6px; flex-wrap: wrap; }
         .course-tag { font-size: 0.6rem; padding: 2px 8px; background: var(--bg); border-radius: 20px; border: 1px solid var(--border); }
         .course-action { color: var(--primary); font-size: 0.8rem; display: flex; align-items: center; gap: 4px; font-weight: 500; }
 
-        /* Saved Materials Grid */
-        .saved-materials-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: var(--space-lg);
-        }
-        .material-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            backdrop-filter: blur(10px);
-        }
-        .material-card:active { transform: scale(0.97); }
-        .material-icon { width: 40px; height: 40px; background: rgba(99,102,241,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 8px; }
-        .material-title { font-weight: 500; font-size: 0.85rem; margin-bottom: 2px; }
-        .material-subtitle { font-size: 0.65rem; color: var(--text-muted); }
+        /* Magic Navigation */
+        .nav-wrapper { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 350px; height: 70px; z-index: 1000; }
+        .magic-mover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 10; }
+        .circle { position: absolute; top: -12px; left: 5px; width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; border: 4px solid var(--bg); display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(99,102,241,0.5); }
+        .circle ion-icon { font-size: 1.8rem; color: white; }
+        .nav-pill-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 35px; overflow: hidden; z-index: 5; }
+        .nav-bg-svg { position: absolute; top: 0; left: -465px; width: 1000px; height: 70px; fill: var(--bg-card); transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .navigation-items { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; z-index: 20; }
+        .list { list-style: none; flex: 1; height: 70px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .list a { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 1.4rem; color: var(--text-muted); }
+        .list.active a { opacity: 0; transform: translateY(-20px); }
+        @media (max-width: 400px) { .nav-wrapper { width: 320px; } .circle { width: 55px; height: 55px; top: -10px; left: 2px; } .circle ion-icon { font-size: 1.5rem; } }
 
-        /* Recent Activity */
-        .recent-activity {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            margin: var(--space-lg) 0;
-            backdrop-filter: blur(10px);
-        }
-        .recent-activity-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .activity-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); }
-        .activity-item:last-child { border-bottom: none; }
-        .activity-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
-        .activity-dot.completed { background: #10b981; }
-        .activity-title { font-weight: 500; font-size: 0.85rem; }
-        .activity-time { font-size: 0.65rem; color: var(--text-muted); }
-
-        /* Profile Menu */
-        .profile-menu {
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 8px;
-            min-width: 180px;
-            z-index: 9999;
-            display: none;
-            box-shadow: var(--shadow-lg);
-        }
-        .profile-menu.active { display: block; }
-        .profile-menu-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .profile-menu-item:hover { background: var(--bg-card-hover); color: var(--primary); }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            border: 1px solid var(--border);
-            z-index: 10000;
-            opacity: 0;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        /* Overlays */
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-card); backdrop-filter: blur(20px); color: var(--text); padding: 10px 20px; border-radius: 40px; font-size: 0.85rem; border: 1px solid var(--border); box-shadow: var(--shadow-lg); z-index: 10000; opacity: 0; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(10px);
-            z-index: 20000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: var(--bg-card);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            max-width: 300px;
-            width: 100%;
-            text-align: center;
-            border: 1px solid var(--border);
-        }
-        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-        .modal-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: 500; }
-        .modal-btn.cancel { background: transparent; border: 1px solid var(--border); color: var(--text); }
-        .modal-btn.confirm { background: var(--error); color: white; }
-
-        /* Loading */
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
-            z-index: 30000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
+        .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 30000; display: none; align-items: center; justify-content: center; }
         .loading-overlay.active { display: flex; }
         .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Magic Navigation */
-        .nav-wrapper {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 350px;
-            height: 70px;
-            z-index: 1000;
-        }
-        .magic-mover {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 10;
-        }
-        .circle {
-            position: absolute;
-            top: -12px;
-            left: 5px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-            border: 4px solid var(--bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 25px rgba(99,102,241,0.5);
-        }
-        .circle ion-icon { font-size: 1.8rem; color: white; }
-        .nav-pill-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 35px;
-            overflow: hidden;
-            z-index: 5;
-        }
-        .nav-bg-svg {
-            position: absolute;
-            top: 0;
-            left: -465px;
-            width: 1000px;
-            height: 70px;
-            fill: var(--bg-card);
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .navigation-items {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            z-index: 20;
-        }
-        .list {
-            list-style: none;
-            flex: 1;
-            height: 70px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .list a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            font-size: 1.4rem;
-            color: var(--text-muted);
-        }
-        .list.active a { opacity: 0; transform: translateY(-20px); }
-
-        @media (max-width: 400px) {
-            .nav-wrapper { width: 320px; }
-            .circle { width: 55px; height: 55px; top: -10px; left: 2px; }
-            .circle ion-icon { font-size: 1.5rem; }
-        }
     </style>
 </head>
 <body>
@@ -520,185 +96,39 @@
     <div class="container">
         <header class="app-header">
             <div class="brand"><h1>NAV <span>Education</span></h1></div>
-            <div class="flex" style="gap: 8px; display: flex;">
-                <div class="icon-btn" id="notificationBtn"><i class="far fa-bell"></i></div>
-                <div class="icon-btn" id="profileBtn">
-                    <img id="headerAvatar" src="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:none;">
-                    <span id="headerEmoji">👤</span>
-                </div>
+            <div style="display: flex; gap: 8px;">
+                <div class="icon-btn" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i></div>
             </div>
         </header>
 
-        <div id="profileMenu" class="profile-menu">
-            <div class="profile-menu-item" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i> View Profile</div>
-            <div class="profile-menu-item" onclick="window.location.href='settings.html'"><i class="fas fa-cog"></i> Settings</div>
-            <div style="height:1px;background:var(--border);margin:5px 0;"></div>
-            <div class="profile-menu-item" onclick="showStats()"><i class="fas fa-chart-line"></i> Learning Stats</div>
-            <div class="profile-menu-item" onclick="showAchievements()"><i class="fas fa-trophy"></i> Achievements</div>
-            <div style="height:1px;background:var(--border);margin:5px 0;"></div>
-            <div class="profile-menu-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
-        </div>
-
         <section class="welcome-card">
             <h2>Your Library 📚</h2>
-            <p id="welcomeMessage">Access your saved courses and materials</p>
-            
-            <div class="banner-card" onclick="window.open('https://naveducation.com','_blank')">
-                <img src="https://raw.githubusercontent.com/Amit21686/NAV_Education/refs/heads/main/images/NAV%20Education%20banner.png" class="banner-image">
-            </div>
-
+            <p>Access your courses and chapters</p>
             <div class="search-wrapper">
                 <i class="fas fa-search"></i>
-                <input type="text" id="librarySearch" class="library-search-input" placeholder="Search your library...">
+                <input type="text" id="librarySearch" class="library-search-input" placeholder="Search courses...">
             </div>
         </section>
 
-        <div class="quick-actions">
-            <div class="quick-action" onclick="showAllCourses()"><i class="fas fa-book-open"></i><span>All Courses</span></div>
-            <div class="quick-action" onclick="showSavedMaterials()"><i class="fas fa-bookmark"></i><span>Saved</span></div>
-            <div class="quick-action" onclick="showDownloads()"><i class="fas fa-download"></i><span>Downloads</span></div>
-            <div class="quick-action" onclick="showRecent()"><i class="fas fa-history"></i><span>Recent</span></div>
-        </div>
-
         <div class="category-tabs">
             <div class="category-tab active" data-category="all" onclick="filterCategory('all', this)"><i class="fas fa-th-large"></i> All</div>
-            <div class="category-tab" data-category="design" onclick="filterCategory('design', this)"><i class="fas fa-paint-brush"></i> Design</div>
-            <div class="category-tab" data-category="development" onclick="filterCategory('development', this)"><i class="fas fa-code"></i> Development</div>
-            <div class="category-tab" data-category="data" onclick="filterCategory('data', this)"><i class="fas fa-chart-bar"></i> Data Science</div>
-            <div class="category-tab" data-category="business" onclick="filterCategory('business', this)"><i class="fas fa-briefcase"></i> Business</div>
+            <div class="category-tab" data-category="science" onclick="filterCategory('science', this)"><i class="fas fa-flask"></i> Science</div>
+            <div class="category-tab" data-category="math" onclick="filterCategory('math', this)"><i class="fas fa-square-root-alt"></i> Math</div>
         </div>
 
         <div class="filter-bar">
-            <span class="section-count" id="courseCount">4 courses</span>
-            <div class="filter-dropdown" style="position:relative;">
-                <button class="filter-btn" onclick="toggleFilterMenu()"><i class="fas fa-filter"></i> Filter <i class="fas fa-chevron-down"></i></button>
-                <div class="filter-menu" id="filterMenu">
-                    <div class="filter-option active" data-filter="all" onclick="applyFilter('all', this)">All</div>
-                    <div class="filter-option" data-filter="in-progress" onclick="applyFilter('in-progress', this)">In Progress</div>
-                    <div class="filter-option" data-filter="completed" onclick="applyFilter('completed', this)">Completed</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="library-section-header" style="display:flex;justify-content:space-between;margin:15px 0 10px;">
-            <h3 style="display:flex;align-items:center;gap:6px;"><i class="fas fa-book-open" style="color:var(--primary);"></i> Your Courses</h3>
-            <span class="section-count" id="courseCount2">4 courses</span>
+            <span class="section-count" id="courseCount">0 courses</span>
         </div>
 
         <div id="coursesContainer">
-            <div class="course-card" data-category="design" data-status="in-progress" onclick="openCourse('ui-ux')">
-                <div class="course-card-header">
-                    <div class="course-icon">🎨</div>
-                    <div class="course-info">
-                        <div class="course-title">UI/UX Design Masterclass <span class="course-badge">Popular</span></div>
-                        <div class="course-meta"><span><i class="far fa-clock"></i> 24 lessons</span><span><i class="far fa-user"></i> 12.5k</span></div>
-                    </div>
-                </div>
-                <div class="progress-header"><span>Progress</span><span>70%</span></div>
-                <div class="progress-bar"><div class="progress-fill" style="width:70%"></div></div>
-                <div class="course-footer">
-                    <div class="course-tags"><span class="course-tag">Figma</span><span class="course-tag">Adobe XD</span></div>
-                    <div class="course-action">Continue <i class="fas fa-arrow-right"></i></div>
-                </div>
             </div>
-
-            <div class="course-card" data-category="development" data-status="in-progress" onclick="openCourse('web-dev')">
-                <div class="course-card-header">
-                    <div class="course-icon">💻</div>
-                    <div class="course-info">
-                        <div class="course-title">Full Stack Web Development <span class="course-badge free">Free</span></div>
-                        <div class="course-meta"><span><i class="far fa-clock"></i> 48 lessons</span><span><i class="far fa-user"></i> 25k</span></div>
-                    </div>
-                </div>
-                <div class="progress-header"><span>Progress</span><span>45%</span></div>
-                <div class="progress-bar"><div class="progress-fill" style="width:45%"></div></div>
-                <div class="course-footer">
-                    <div class="course-tags"><span class="course-tag">React</span><span class="course-tag">Node.js</span></div>
-                    <div class="course-action">Continue <i class="fas fa-arrow-right"></i></div>
-                </div>
-            </div>
-
-            <div class="course-card" data-category="data" data-status="in-progress" onclick="openCourse('data-science')">
-                <div class="course-card-header">
-                    <div class="course-icon">📊</div>
-                    <div class="course-info">
-                        <div class="course-title">Data Science Fundamentals</div>
-                        <div class="course-meta"><span><i class="far fa-clock"></i> 36 lessons</span><span><i class="far fa-user"></i> 18k</span></div>
-                    </div>
-                </div>
-                <div class="progress-header"><span>Progress</span><span>20%</span></div>
-                <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
-                <div class="course-footer">
-                    <div class="course-tags"><span class="course-tag">Python</span><span class="course-tag">Pandas</span></div>
-                    <div class="course-action">Continue <i class="fas fa-arrow-right"></i></div>
-                </div>
-            </div>
-
-            <div class="course-card" data-category="business" data-status="completed" onclick="openCourse('business')">
-                <div class="course-card-header">
-                    <div class="course-icon">📈</div>
-                    <div class="course-info">
-                        <div class="course-title">Business Analytics Basics <span class="course-badge" style="background:#10b981;">Completed</span></div>
-                        <div class="course-meta"><span><i class="far fa-clock"></i> 20 lessons</span><span><i class="far fa-user"></i> 8k</span></div>
-                    </div>
-                </div>
-                <div class="progress-header"><span>Progress</span><span>100%</span></div>
-                <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
-                <div class="course-footer">
-                    <div class="course-tags"><span class="course-tag">Excel</span><span class="course-tag">Tableau</span></div>
-                    <div class="course-action">Review <i class="fas fa-redo-alt"></i></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="library-section-header" style="display:flex;justify-content:space-between;margin:20px 0 10px;">
-            <h3 style="display:flex;align-items:center;gap:6px;"><i class="fas fa-bookmark" style="color:var(--primary);"></i> Saved Materials</h3>
-            <span class="section-count" id="savedCount">6 items</span>
-        </div>
-
-        <div class="saved-materials-grid" id="savedMaterialsContainer">
-            <div class="material-card" onclick="openMaterial('physics-notes')"><div class="material-icon">📘</div><div class="material-title">Physics Notes</div><div class="material-subtitle">Chapter 1-5</div></div>
-            <div class="material-card" onclick="openMaterial('chemistry-guide')"><div class="material-icon">📗</div><div class="material-title">Chemistry Guide</div><div class="material-subtitle">Organic Chemistry</div></div>
-            <div class="material-card" onclick="openMaterial('biology-notes')"><div class="material-icon">📙</div><div class="material-title">Biology Notes</div><div class="material-subtitle">Genetics</div></div>
-            <div class="material-card" onclick="openMaterial('math-formulas')"><div class="material-icon">📐</div><div class="material-title">Math Formulas</div><div class="material-subtitle">Calculus</div></div>
-            <div class="material-card" onclick="openMaterial('python-cheatsheet')"><div class="material-icon">🐍</div><div class="material-title">Python Cheatsheet</div><div class="material-subtitle">Beginners</div></div>
-            <div class="material-card" onclick="openMaterial('interview-questions')"><div class="material-icon">💼</div><div class="material-title">Interview Questions</div><div class="material-subtitle">Tech</div></div>
-        </div>
-
-        <div class="recent-activity">
-            <div class="recent-activity-header">
-                <h4><i class="fas fa-history" style="color:var(--primary);"></i> Recent Activity</h4>
-                <a href="#" class="view-all" style="color:var(--primary);font-size:0.75rem;" onclick="viewAllActivity()">View All <i class="fas fa-arrow-right"></i></a>
-            </div>
-            <div class="activity-item"><div class="activity-dot completed"></div><div class="activity-content"><div class="activity-title">Completed: JavaScript Module</div><div class="activity-time">2 hours ago</div></div></div>
-            <div class="activity-item"><div class="activity-dot"></div><div class="activity-content"><div class="activity-title">Saved: Python Cheatsheet</div><div class="activity-time">Yesterday</div></div></div>
-            <div class="activity-item"><div class="activity-dot"></div><div class="activity-content"><div class="activity-title">Started: Data Science Course</div><div class="activity-time">2 days ago</div></div></div>
-        </div>
-
-        <div class="library-section-header" style="margin-top:20px;">
-            <h3 style="display:flex;align-items:center;gap:6px;"><i class="fas fa-star" style="color:var(--primary);"></i> Recommended For You</h3>
-        </div>
-
-        <div class="course-card" onclick="openCourse('react')">
-            <div class="course-card-header">
-                <div class="course-icon">⚛️</div>
-                <div class="course-info">
-                    <div class="course-title">Advanced React Patterns <span class="course-badge" style="background:#f59e0b;">New</span></div>
-                    <div class="course-meta"><span><i class="far fa-clock"></i> 18 lessons</span><span><i class="far fa-user"></i> 5.2k</span></div>
-                </div>
-            </div>
-            <div class="course-footer">
-                <div class="course-tags"><span class="course-tag">React</span><span class="course-tag">Hooks</span><span class="course-tag">Redux</span></div>
-                <div class="course-action">Start <i class="fas fa-play"></i></div>
-            </div>
-        </div>
 
         <div style="height:20px;"></div>
     </div>
 
     <div class="nav-wrapper">
-        <div class="magic-mover" id="magicMover"><div class="circle"><ion-icon id="indicatorIcon" name="library-outline"></ion-icon></div></div>
-        <div class="nav-pill-bg"><svg class="nav-bg-svg" id="navSvg" viewBox="0 0 1000 70"><path d="M0,0 L450,0 C470,0 475,35 500,35 C525,35 530,0 550,0 L1000,0 L1000,70 L0,70 Z" fill="currentColor"></path></svg></div>
+        <div class="magic-mover" id="magicMover" style="transform: translateX(140px);"><div class="circle"><ion-icon id="indicatorIcon" name="library-outline"></ion-icon></div></div>
+        <div class="nav-pill-bg"><svg class="nav-bg-svg" id="navSvg" viewBox="0 0 1000 70" style="transform: translateX(140px);"><path d="M0,0 L450,0 C470,0 475,35 500,35 C525,35 530,0 550,0 L1000,0 L1000,70 L0,70 Z" fill="currentColor"></path></svg></div>
         <ul class="navigation-items">
             <li class="list" data-index="0" data-icon="home-outline" data-page="index.html"><a><ion-icon name="home-outline"></ion-icon></a></li>
             <li class="list" data-index="1" data-icon="search-outline" data-page="search.html"><a><ion-icon name="search-outline"></ion-icon></a></li>
@@ -709,262 +139,143 @@
     </div>
 
     <div id="toastContainer" class="toast"></div>
-    <div id="confirmModal" class="modal"><div class="modal-content"><i class="fas fa-exclamation-triangle" style="font-size:2rem;color:var(--error);margin-bottom:15px;"></i><h3 id="modalTitle">Confirm</h3><p id="modalMessage" style="margin-bottom:20px;">Are you sure?</p><div class="modal-actions"><button class="modal-btn cancel" onclick="hideModal()">Cancel</button><button class="modal-btn confirm" id="modalConfirmBtn">Confirm</button></div></div></div>
 
     <script>
-        // ==================== APPWRITE ====================
-        const client = new Appwrite.Client();
-        client.setEndpoint("https://sgp.cloud.appwrite.io/v1").setProject("nav-education");
-        const account = new Appwrite.Account(client);
+        // Default Fallback Data (if library.json fails)
+        const fallbackLibrary = {
+            courses: [
+                { id: "physics", category: "science", icon: "⚛️", title: "Class 12 Physics", badge: "Popular", badgeClass: "", lessons: "12", users: "12.5k", tags: ["NCERT", "Board Exams"] },
+                { id: "chemistry", category: "science", icon: "🧪", title: "Organic Chemistry", badge: "", badgeClass: "", lessons: "15", users: "8k", tags: ["Organic", "Reactions"] },
+                { id: "math", category: "math", icon: "📐", title: "Calculus Mastery", badge: "New", badgeClass: "success", lessons: "20", users: "5k", tags: ["Integration", "Derivatives"] }
+            ]
+        };
 
-        let toastTimeout;
-        let loadingOverlay = document.getElementById('loadingOverlay');
-
-        // ==================== TOAST ====================
-        function showToast(msg, type = 'info', duration = 2500) {
+        function showToast(msg) {
             const toast = document.getElementById('toastContainer');
-            if (!toast) return;
-            if (toastTimeout) clearTimeout(toastTimeout);
-            toast.className = 'toast';
-            toast.innerHTML = '';
-            toast.classList.add(type);
-            const icon = document.createElement('i');
-            icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-info-circle';
-            toast.appendChild(icon);
-            toast.appendChild(document.createTextNode(' ' + msg));
-            void toast.offsetWidth;
+            toast.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`;
             toast.classList.add('show');
-            toastTimeout = setTimeout(() => toast.classList.remove('show'), duration);
+            setTimeout(() => toast.classList.remove('show'), 2000);
         }
 
-        // ==================== MODAL ====================
-        function showModal(title, msg, callback) {
-            const modal = document.getElementById('confirmModal');
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalMessage').textContent = msg;
-            document.getElementById('modalConfirmBtn').onclick = () => { hideModal(); if (callback) callback(); };
-            modal.classList.add('active');
-        }
-        function hideModal() { document.getElementById('confirmModal').classList.remove('active'); }
-
-        // ==================== THEME SYNCING ====================
         function applyTheme() {
-            const darkMode = localStorage.getItem('nav_darkMode');
-            if (darkMode === null) document.body.classList.remove('light-theme');
-            else darkMode === 'true' ? document.body.classList.remove('light-theme') : document.body.classList.add('light-theme');
+            if (localStorage.getItem('nav_darkMode') === 'false') document.body.classList.add('light-theme');
             const accent = localStorage.getItem('nav_accentColor');
             if (accent) document.documentElement.style.setProperty('--primary', accent);
         }
 
-        window.addEventListener('storage', (e) => { 
-            if (e.key === 'nav_darkMode' || e.key === 'nav_accentColor') {
-                applyTheme();
-                showToast('Theme updated from settings!', 'success');
-            } 
-        });
-        
-        // Listen for same-tab custom sync event
-        window.addEventListener('settingsUpdated', () => applyTheme());
-
-        // ==================== PROFILE MENU & USER UI ====================
-        document.getElementById('profileBtn')?.addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('profileMenu').classList.toggle('active'); });
-        document.addEventListener('click', () => document.getElementById('profileMenu')?.classList.remove('active'));
-        document.getElementById('notificationBtn')?.addEventListener('click', () => showToast('No new notifications'));
-
-        function showStats() { showToast('Stats coming soon', 'info'); }
-        function showAchievements() { showToast('Achievements coming soon', 'info'); }
-        
-        async function logout() {
-            showModal('Logout', 'Are you sure?', async () => {
-                try {
-                    await account.deleteSession('current');
-                    showToast('Logged out', 'success');
-                    setTimeout(() => window.location.href = 'auth.html', 1000);
-                } catch(e) { 
-                    localStorage.clear();
-                    showToast('Logged out', 'success');
-                    setTimeout(() => window.location.href = 'auth.html', 1000);
-                }
-            });
-        }
-
-        function updateHeaderAvatar() {
-            const avatar = localStorage.getItem('nav_profileAvatar');
-            const img = document.getElementById('headerAvatar'), emoji = document.getElementById('headerEmoji');
-            if (avatar && img && emoji) { img.src = avatar; img.style.display = 'block'; emoji.style.display = 'none'; }
-            
-            // Personalize welcome message if name is available
-            const userName = localStorage.getItem('nav_userName');
-            if (userName) {
-                const firstName = userName.split(' ')[0];
-                document.getElementById('welcomeMessage').textContent = `Welcome back, ${firstName}!`;
+        // ==================== LOAD & MERGE USER DATA ====================
+        async function loadLibraryData() {
+            try {
+                const response = await fetch('library.json');
+                if (!response.ok) throw new Error();
+                const data = await response.json();
+                renderLibrary(data);
+            } catch(e) {
+                console.log("Could not load library.json, using fallback.");
+                renderLibrary(fallbackLibrary);
             }
         }
 
-        // ==================== LIBRARY FUNCTIONS ====================
+        function renderLibrary(data) {
+            const container = document.getElementById('coursesContainer');
+            container.innerHTML = '';
+            
+            // Get user specific progress from LocalStorage
+            const userProgressData = JSON.parse(localStorage.getItem('nav_course_progress')) || {};
+
+            let count = 0;
+            data.courses.forEach(course => {
+                // Determine user-specific progress
+                const userProgress = userProgressData[course.id] || 0;
+                let statusClass = "in-progress";
+                let actionText = 'Start <i class="fas fa-play"></i>';
+                
+                if (userProgress > 0 && userProgress < 100) {
+                    actionText = 'Continue <i class="fas fa-arrow-right"></i>';
+                } else if (userProgress === 100) {
+                    statusClass = "completed";
+                    actionText = 'Review <i class="fas fa-check-double"></i>';
+                }
+
+                const badgeHtml = course.badge ? `<span class="course-badge ${course.badgeClass}">${course.badge}</span>` : '';
+                const tagsHtml = course.tags.map(tag => `<span class="course-tag">${tag}</span>`).join('');
+
+                const cardHtml = `
+                    <div class="course-card" data-category="${course.category}" onclick="openCourse('${course.id}')">
+                        <div class="course-card-header">
+                            <div class="course-icon">${course.icon}</div>
+                            <div class="course-info">
+                                <div class="course-title">${course.title} ${badgeHtml}</div>
+                                <div class="course-meta"><span><i class="far fa-folder-open"></i> ${course.lessons} Chapters</span><span><i class="far fa-user"></i> ${course.users}</span></div>
+                            </div>
+                        </div>
+                        <div class="progress-header"><span>Your Progress</span><span>${userProgress}%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:${userProgress}%"></div></div>
+                        <div class="course-footer">
+                            <div class="course-tags">${tagsHtml}</div>
+                            <div class="course-action">${actionText}</div>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', cardHtml);
+                count++;
+            });
+            document.getElementById('courseCount').textContent = `${count} courses`;
+        }
+
         function filterCategory(category, element) {
             document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
             element.classList.add('active');
             const courses = document.querySelectorAll('.course-card');
             let count = 0;
             courses.forEach(c => {
-                if (c.closest('.library-section-header')) return; // Ignore recommended
                 if (category === 'all' || c.dataset.category === category) {
                     c.style.display = 'block'; count++;
-                } else {
-                    if(c.dataset.category) c.style.display = 'none'; // Only hide items that have categories to not mess up recommended section
-                }
+                } else { c.style.display = 'none'; }
             });
             document.getElementById('courseCount').textContent = count + ' courses';
-            document.getElementById('courseCount2').textContent = count + ' courses';
-        }
-
-        function toggleFilterMenu() { document.getElementById('filterMenu').classList.toggle('active'); }
-        
-        function applyFilter(filter, element) {
-            document.querySelectorAll('.filter-option').forEach(o => o.classList.remove('active'));
-            element.classList.add('active');
-            document.getElementById('filterMenu').classList.remove('active');
-            const courses = document.querySelectorAll('.course-card');
-            let count = 0;
-            courses.forEach(c => {
-                if (c.closest('.library-section-header')) return; 
-                if (filter === 'all' || c.dataset.status === filter) {
-                    c.style.display = 'block'; count++;
-                } else {
-                    if(c.dataset.status) c.style.display = 'none';
-                }
-            });
-            document.getElementById('courseCount').textContent = count + ' courses';
-            document.getElementById('courseCount2').textContent = count + ' courses';
-            showToast(`Filtered: ${filter.replace('-', ' ')}`, 'success');
         }
 
         // Search Implementation
         document.getElementById('librarySearch')?.addEventListener('input', function(e) {
             const term = e.target.value.toLowerCase();
-            const courses = document.querySelectorAll('#coursesContainer .course-card');
-            const materials = document.querySelectorAll('.material-card');
+            const courses = document.querySelectorAll('.course-card');
             let count = 0;
-            
             courses.forEach(c => {
-                const title = c.querySelector('.course-title')?.textContent.toLowerCase() || '';
-                const tags = Array.from(c.querySelectorAll('.course-tag')).map(t => t.textContent.toLowerCase()).join(' ');
-                
-                if (title.includes(term) || tags.includes(term) || term === '') { 
-                    c.style.display = 'block'; 
-                    count++; 
-                } else c.style.display = 'none';
+                const text = c.textContent.toLowerCase();
+                if (text.includes(term)) { c.style.display = 'block'; count++; } 
+                else c.style.display = 'none';
             });
-            
-            materials.forEach(m => {
-                const title = m.querySelector('.material-title')?.textContent.toLowerCase() || '';
-                const subtitle = m.querySelector('.material-subtitle')?.textContent.toLowerCase() || '';
-                m.style.display = (title.includes(term) || subtitle.includes(term) || term === '') ? 'block' : 'none';
-            });
-            
             document.getElementById('courseCount').textContent = count + ' courses';
-            document.getElementById('courseCount2').textContent = count + ' courses';
-            if (term && count === 0 && Array.from(materials).filter(m => m.style.display === 'block').length === 0) {
-                showToast('No results found');
-            }
         });
 
-        // Quick Actions & Navigation
-        function showAllCourses() { document.querySelector('.category-tab[data-category="all"]').click(); }
-        function showSavedMaterials() { document.getElementById('savedMaterialsContainer').scrollIntoView({ behavior: 'smooth' }); showToast('Your saved materials'); }
-        function showDownloads() { showToast('Downloads coming soon'); }
-        function showRecent() { document.querySelector('.recent-activity').scrollIntoView({ behavior: 'smooth' }); }
-        
-        function openCourse(id) { showToast('Opening course...'); }
-        
-        function openMaterial(id) {
-            showToast('Opening material...');
-            let saved = JSON.parse(localStorage.getItem('nav_savedMaterials')) || [];
-            const names = { 'physics-notes': 'Physics Notes', 'chemistry-guide': 'Chemistry Guide', 'biology-notes': 'Biology Notes', 'math-formulas': 'Math Formulas', 'python-cheatsheet': 'Python Cheatsheet', 'interview-questions': 'Interview Questions' };
-            const name = names[id] || id;
-            if (!saved.includes(name)) { 
-                saved.push(name); 
-                localStorage.setItem('nav_savedMaterials', JSON.stringify(saved)); 
-                updateSavedCount(); 
-            }
-            localStorage.setItem('nav_lastOpened', name);
+        // --- CHAIN FLOW: Open Course Hub instead of direct Quiz ---
+        function openCourse(courseId) { 
+            showToast(`Loading course hub...`);
+            setTimeout(() => {
+                // We send the user to course.html, passing the courseId so it knows which JSON to load.
+                window.location.href = `course.html?id=${courseId}`;
+            }, 300);
         }
-        
-        function updateSavedCount() { 
-            const saved = JSON.parse(localStorage.getItem('nav_savedMaterials')) || []; 
-            document.getElementById('savedCount').textContent = Math.max(6, saved.length) + ' items'; // Static min of 6 based on HTML, adjust if loading dynamic
-        }
-        
-        function viewAllActivity() { showToast('All activity coming soon'); }
 
-        // ==================== MAGIC NAVIGATION ====================
+        // Magic Navigation Logic
         const lists = document.querySelectorAll('.list');
-        const magicMover = document.getElementById('magicMover');
-        const navSvg = document.getElementById('navSvg');
-        const indicatorIcon = document.getElementById('indicatorIcon');
-        const slotWidth = 70;
-        const currentPage = window.location.pathname.split('/').pop() || 'library.html';
-        
-        lists.forEach(item => {
-            const page = item.getAttribute('data-page');
-            if (page === currentPage) {
-                const idx = parseInt(item.getAttribute('data-index'));
-                item.classList.add('active');
-                magicMover.style.transform = `translateX(${idx * slotWidth}px)`;
-                navSvg.style.transform = `translateX(${idx * slotWidth}px)`;
-                indicatorIcon.setAttribute('name', item.getAttribute('data-icon'));
-            }
-        });
-        
         lists.forEach(item => {
             item.addEventListener('click', function() {
-                const idx = parseInt(this.getAttribute('data-index'));
-                const icon = this.getAttribute('data-icon');
                 const page = this.getAttribute('data-page');
-                lists.forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
-                magicMover.style.transform = `translateX(${idx * slotWidth}px)`;
-                navSvg.style.transform = `translateX(${idx * slotWidth}px)`;
-                indicatorIcon.setAttribute('name', icon);
-                if (page && page !== currentPage) {
+                if (page && page !== 'library.html') {
                     document.body.style.opacity = '0';
-                    document.body.style.transition = 'opacity 0.3s';
                     setTimeout(() => window.location.href = page, 300);
                 }
             });
         });
 
-        // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', () => {
-            loadingOverlay?.classList.add('active');
-            
+            document.getElementById('loadingOverlay').classList.add('active');
             applyTheme();
-            updateHeaderAvatar();
-            updateSavedCount();
-            
-            setTimeout(() => loadingOverlay?.classList.remove('active'), 500);
+            loadLibraryData();
+            setTimeout(() => document.getElementById('loadingOverlay').classList.remove('active'), 400);
         });
-        
-        window.addEventListener('load', () => setTimeout(() => loadingOverlay?.classList.remove('active'), 500));
-        
-        // Make functions global
-        window.showToast = showToast;
-        window.showModal = showModal;
-        window.hideModal = hideModal;
-        window.logout = logout;
-        window.showStats = showStats;
-        window.showAchievements = showAchievements;
-        window.filterCategory = filterCategory;
-        window.toggleFilterMenu = toggleFilterMenu;
-        window.applyFilter = applyFilter;
-        window.showAllCourses = showAllCourses;
-        window.showSavedMaterials = showSavedMaterials;
-        window.showDownloads = showDownloads;
-        window.showRecent = showRecent;
-        window.openCourse = openCourse;
-        window.openMaterial = openMaterial;
-        window.viewAllActivity = viewAllActivity;
     </script>
 </body>
 </html>
