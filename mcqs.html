@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
@@ -33,26 +32,23 @@
         body { font-family: 'Poppins', sans-serif; background: var(--bg-dark); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; align-items: center; position: relative; overflow-x: hidden; }
         body.light-theme { background: var(--bg-light); color: var(--text-light); }
 
-        /* Animated Background */
         body::before { content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 70% 30%, rgba(99, 102, 241, 0.12) 0%, rgba(139, 92, 246, 0.08) 30%, transparent 70%); animation: rotateBg 40s linear infinite; pointer-events: none; z-index: 0; }
         @keyframes rotateBg { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .container { max-width: 600px; width: 100%; padding: 20px; position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* Header */
+        /* Header & Progress */
         .app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .icon-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--card-dark); border: 1px solid var(--border-dark); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; color: var(--text-dark); backdrop-filter: blur(10px); transition: all 0.2s; }
         body.light-theme .icon-btn { background: var(--card-light); border-color: var(--border-light); color: var(--text-light); }
         .icon-btn:active { transform: scale(0.95); border-color: var(--primary); }
         .quiz-title { font-weight: 600; font-size: 1.1rem; text-align: center; flex: 1; }
 
-        /* Timer Badge */
         .timer-badge { background: rgba(255,255,255,0.1); border: 1px solid var(--border-dark); padding: 6px 14px; border-radius: 30px; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 6px; backdrop-filter: blur(10px); transition: all 0.3s; }
         body.light-theme .timer-badge { background: rgba(0,0,0,0.05); border-color: var(--border-light); }
         .timer-badge.danger { background: rgba(244,63,94,0.2); color: var(--error); border-color: rgba(244,63,94,0.4); animation: pulseTimer 1s infinite; }
         @keyframes pulseTimer { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* Progress Bar */
         .progress-container { background: var(--card-dark); border: 1px solid var(--border-dark); border-radius: var(--radius-lg); padding: 15px 20px; margin-bottom: 20px; backdrop-filter: blur(10px); }
         body.light-theme .progress-container { background: var(--card-light); border-color: var(--border-light); }
         .progress-header { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px; color: var(--muted-dark); }
@@ -61,55 +57,48 @@
         body.light-theme .progress-bar-bg { background: rgba(0,0,0,0.05); }
         .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; transition: width 0.4s ease; border-radius: 10px; }
 
-        /* Card Container */
+        /* Cards */
         .card-view { background: var(--card-dark); border: 1px solid var(--border-dark); border-radius: var(--radius-xl); padding: 25px 20px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 100%; display: none; flex-direction: column; transition: transform 0.3s ease, opacity 0.3s ease; }
         body.light-theme .card-view { background: var(--card-light); border-color: var(--border-light); box-shadow: 0 10px 30px rgba(99,102,241,0.1); }
         .card-view.active { display: flex; }
 
-        /* Question & Lifeline */
         .lifeline-btn { background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); color: var(--secondary); padding: 6px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s; margin-bottom: 15px; align-self: flex-end; }
         .lifeline-btn:active { transform: scale(0.95); }
         .lifeline-btn.used { opacity: 0.4; cursor: not-allowed; filter: grayscale(100%); }
 
         .question-text { font-size: 1.15rem; font-weight: 600; margin-bottom: 24px; line-height: 1.5; }
 
-        /* Options */
         .options-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
         .option-btn { width: 100%; padding: 16px 20px; background: rgba(0,0,0,0.2); border: 2px solid var(--border-dark); border-radius: var(--radius-md); color: var(--text-dark); font-family: inherit; font-size: 0.95rem; text-align: left; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: space-between; }
         body.light-theme .option-btn { background: rgba(0,0,0,0.02); border-color: var(--border-light); color: var(--text-light); }
         .option-btn:hover:not(.disabled) { border-color: rgba(99,102,241,0.5); background: rgba(99,102,241,0.05); }
-        
         .option-btn.correct { border-color: var(--success) !important; background: rgba(16,185,129,0.15) !important; color: var(--success) !important; box-shadow: 0 0 10px rgba(16,185,129,0.2); }
         .option-btn.incorrect { border-color: var(--error) !important; background: rgba(244,63,94,0.15) !important; color: var(--error) !important; box-shadow: 0 0 10px rgba(244,63,94,0.2); }
         .option-btn.disabled { cursor: not-allowed; opacity: 0.9; }
         .option-btn.hidden-5050 { opacity: 0.1; pointer-events: none; border-color: transparent; }
 
-        /* Explanation Box */
         .explanation-box { padding: 15px; background: rgba(99,102,241,0.1); border-left: 4px solid var(--primary); border-radius: 0 var(--radius-md) var(--radius-md) 0; font-size: 0.85rem; color: var(--text-dark); display: none; margin-bottom: 20px; animation: slideDown 0.3s ease; }
         body.light-theme .explanation-box { color: var(--text-light); }
         .explanation-box.active { display: block; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Auto Advance Loader */
         .auto-advance-wrapper { width: 100%; height: 4px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 15px; overflow: hidden; display: none; }
         body.light-theme .auto-advance-wrapper { background: rgba(0,0,0,0.05); }
         .auto-advance-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; }
 
-        /* Swipe Hint */
         .swipe-hint { text-align: center; font-size: 0.8rem; color: var(--muted-dark); margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 10px; opacity: 0.7; padding-top: 10px;}
         body.light-theme .swipe-hint { color: var(--muted-light); }
 
-        /* Action Buttons */
+        /* Buttons & Results */
         .action-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: var(--radius-md); font-family: inherit; font-size: 1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s; box-shadow: 0 8px 20px rgba(99,102,241,0.3); display: flex; align-items: center; justify-content: center; gap: 8px; }
         .action-btn:active { transform: scale(0.96); }
         .btn-outline { background: transparent; border: 1px solid var(--border-dark); color: var(--text-dark); box-shadow: none; margin-top: 10px; }
         body.light-theme .btn-outline { border-color: var(--border-light); color: var(--text-light); }
         .btn-danger { background: var(--error); box-shadow: 0 8px 20px rgba(244,63,94,0.3); border: none; color: white;}
         .btn-success { background: linear-gradient(135deg, #10b981, #059669); margin-bottom: 10px; }
+        .btn-warning { background: linear-gradient(135deg, #f59e0b, #d97706); margin-bottom: 10px; }
 
-        /* Results Screen */
         .results-card { text-align: center; position: relative;}
-        
         .result-header-info { margin-bottom: 20px; }
         .result-topic-badge { font-size: 0.8rem; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
         .results-message { font-size: 1.6rem; font-weight: 700; margin-bottom: 5px; }
@@ -135,27 +124,36 @@
         .share-watermark { display: none; font-size: 0.8rem; color: var(--muted-dark); margin-top: 20px; font-weight: 600; padding-top: 15px; border-top: 1px dashed var(--border-dark); }
         body.light-theme .share-watermark { color: var(--muted-light); border-color: var(--border-light); }
 
-        /* Review Mode */
-        .review-list { overflow-y: auto; flex: 1; padding-right: 5px; display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; max-height: 60vh;}
+        /* Review & Leaderboard Modals */
+        .review-list, .leaderboard-list { overflow-y: auto; flex: 1; padding-right: 5px; display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; max-height: 60vh;}
         .review-item { background: rgba(0,0,0,0.15); border-radius: var(--radius-md); padding: 15px; border: 1px solid var(--border-dark); text-align: left; }
         body.light-theme .review-item { background: rgba(0,0,0,0.03); border-color: var(--border-light); }
         .review-ans { display: flex; align-items: flex-start; gap: 10px; font-size: 0.85rem; margin-bottom: 6px; }
         .correct-ans { color: var(--success); }
         .wrong-ans { color: var(--error); }
 
-        /* Exit Modal */
+        /* Leaderboard Specifics */
+        .leaderboard-item { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); padding: 12px 15px; border-radius: var(--radius-md); border: 1px solid var(--border-dark); }
+        body.light-theme .leaderboard-item { background: rgba(0,0,0,0.03); border-color: var(--border-light); }
+        .lb-rank { font-weight: 700; font-size: 1.2rem; width: 30px; color: var(--muted-dark); }
+        .lb-rank.gold { color: #fbbf24; } .lb-rank.silver { color: #94a3b8; } .lb-rank.bronze { color: #b45309; }
+        .lb-info { flex: 1; text-align: left; }
+        .lb-name { font-weight: 600; font-size: 0.95rem; }
+        .lb-acc { font-size: 0.75rem; color: var(--muted-dark); }
+        .lb-score { font-weight: 700; font-size: 1.1rem; color: var(--primary); }
+        .lb-empty { text-align: center; padding: 30px; color: var(--muted-dark); font-style: italic; }
+
+        /* Overlays & Toasts */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s; }
         .modal-overlay.active { display: flex; opacity: 1; }
         .modal-content { background: var(--card-dark); border: 1px solid var(--border-dark); border-radius: var(--radius-xl); padding: 30px 20px; width: 100%; max-width: 320px; text-align: center; transform: scale(0.9); transition: transform 0.3s; }
         body.light-theme .modal-content { background: var(--card-light); border-color: var(--border-light); }
         .modal-overlay.active .modal-content { transform: scale(1); }
 
-        /* Toast */
         .toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--card-dark); color: var(--text-dark); padding: 12px 24px; border-radius: 40px; font-size: 0.85rem; border: 1px solid var(--border-dark); box-shadow: var(--shadow-lg); z-index: 10000; opacity: 0; transition: all 0.3s; display: flex; align-items: center; gap: 8px; font-weight: 500; white-space: nowrap; }
         body.light-theme .toast { background: var(--card-light); color: var(--text-light); border-color: var(--border-light); }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        /* Loader */
         .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 30000; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 15px; color: white; backdrop-filter: blur(5px); }
         .loading-overlay.active { display: flex; }
         .spinner { width: 40px; height: 40px; border: 3px solid var(--border-dark); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -175,7 +173,7 @@
             <p style="color:var(--muted-dark); margin-bottom:25px; font-size:0.9rem; line-height:1.5;">Are you sure you want to exit? Your current progress will be lost.</p>
             <div style="display:flex; gap:10px;">
                 <button class="action-btn btn-outline" style="flex:1; margin:0;" onclick="closeExitModal()">Cancel</button>
-                <button class="action-btn btn-danger" style="flex:1; margin:0;" onclick="window.location.href='library.html'">Exit</button>
+                <button class="action-btn btn-danger" style="flex:1; margin:0;" onclick="window.history.back()">Exit</button>
             </div>
         </div>
     </div>
@@ -224,7 +222,6 @@
             </div>
 
             <div class="card-view" id="resultsCard" style="text-align: center;">
-                
                 <div class="result-header-info">
                     <div class="result-topic-badge" id="resultTopicBadge">Topic Name</div>
                     <h2 class="results-message" id="resultMessage">Quiz Complete!</h2>
@@ -258,6 +255,9 @@
                 </div>
                 
                 <div id="resultButtons">
+                    <button class="action-btn btn-warning" onclick="showLeaderboard()">
+                        <i class="fas fa-trophy"></i> Top 10 Rankers
+                    </button>
                     <button class="action-btn btn-success" onclick="shareResult()">
                         <i class="fas fa-share-alt"></i> Share Result
                     </button>
@@ -268,7 +268,7 @@
                         <button class="action-btn btn-outline" style="flex:1; margin:0;" onclick="retryQuiz()">
                             <i class="fas fa-redo"></i> Retry
                         </button>
-                        <button class="action-btn btn-outline" style="flex:1; margin:0;" onclick="window.location.href='library.html'">
+                        <button class="action-btn btn-outline" style="flex:1; margin:0;" onclick="window.history.back()">
                             <i class="fas fa-home"></i> Finish
                         </button>
                     </div>
@@ -280,8 +280,17 @@
                     <h3 style="font-size: 1.1rem; font-weight: 600;"><i class="fas fa-search"></i> Answer Review</h3>
                     <div class="icon-btn" style="width:36px; height:36px; font-size:0.9rem;" onclick="closeReviewMode()"><i class="fas fa-times"></i></div>
                 </div>
-                
                 <div class="review-list" id="reviewList"></div>
+            </div>
+
+            <div class="card-view" id="leaderboardCard">
+                <div class="app-header" style="margin-bottom: 15px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 600;"><i class="fas fa-trophy" style="color:#fbbf24;"></i> Top 10 Rankers</h3>
+                    <div class="icon-btn" style="width:36px; height:36px; font-size:0.9rem;" onclick="closeLeaderboard()"><i class="fas fa-times"></i></div>
+                </div>
+                <div class="leaderboard-list" id="leaderboardList">
+                    <div class="spinner" style="margin: 20px auto;"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -289,27 +298,18 @@
     <div id="toastContainer" class="toast"></div>
 
     <script>
-        // ==================== THEME ====================
-        function applyTheme() {
-            if (localStorage.getItem('nav_darkMode') === 'false') document.body.classList.add('light-theme');
-            const accent = localStorage.getItem('nav_accentColor');
-            if (accent) document.documentElement.style.setProperty('--primary', accent);
-        }
-        applyTheme();
+        // ==================== APPWRITE CONFIG ====================
+        const { Client, Account, Databases, Query, ID } = Appwrite;
+        const client = new Client()
+            .setEndpoint("https://sgp.cloud.appwrite.io/v1")
+            .setProject("nav-education"); // Your project ID
+        
+        const account = new Account(client);
+        const databases = new Databases(client);
 
-        // ==================== UTILS ====================
-        let toastTimeout;
-        function showToast(msg) {
-            const toast = document.getElementById('toastContainer');
-            if (toastTimeout) clearTimeout(toastTimeout);
-            toast.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`;
-            toast.classList.add('show');
-            if (navigator.vibrate) navigator.vibrate(40);
-            toastTimeout = setTimeout(() => toast.classList.remove('show'), 2000);
-        }
-
-        function openExitModal() { document.getElementById('exitModal').classList.add('active'); }
-        function closeExitModal() { document.getElementById('exitModal').classList.remove('active'); }
+        // Your specific Appwrite DB and Collection IDs
+        const DATABASE_ID = "69c09d48002ea652b455"; 
+        const LEADERBOARD_COLLECTION_ID = "leaderboard";
 
         // ==================== STATE ====================
         let questions = [];
@@ -321,7 +321,15 @@
         let timerInterval = null;
         let autoAdvanceTimer = null;
         let isAnimating = false;
-        let quizTopicName = "Demo Quiz"; // Global variable to store topic name
+        
+        // Setup Quiz Identification from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const fullFileName = urlParams.get('file') || 'demo_quiz';
+        const quizFileId = fullFileName.replace('.json', ''); // Maps to 'gameId' in Appwrite
+
+        let cleanSubject = quizFileId.split('q')[0]; 
+        if (cleanSubject === 'demo_quiz') cleanSubject = 'Demo';
+        let quizTopicName = cleanSubject.charAt(0).toUpperCase() + cleanSubject.slice(1);
 
         const fallbackData = [
             { question: "What does HTML stand for?", options: ["Hyper Text Preprocessor", "Hyper Text Markup Language", "Hyper Tool Multi Language", "High Text Machine Language"], correctIndex: 1, explanation: "HTML is the standard markup language for creating Web pages." },
@@ -330,17 +338,33 @@
             { question: "What is the powerhouse of the cell?", options: ["Nucleus", "Mitochondria", "Ribosome", "Endoplasmic reticulum"], correctIndex: 1, explanation: "Mitochondria generate most of the chemical energy needed to power the cell." }
         ];
 
-        // ==================== INIT ====================
+        // ==================== CORE LOGIC ====================
+        function applyTheme() {
+            if (localStorage.getItem('nav_darkMode') === 'false') document.body.classList.add('light-theme');
+            const accent = localStorage.getItem('nav_accentColor');
+            if (accent) document.documentElement.style.setProperty('--primary', accent);
+        }
+        applyTheme();
+
+        let toastTimeout;
+        function showToast(msg) {
+            const toast = document.getElementById('toastContainer');
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toast.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`;
+            toast.classList.add('show');
+            if (navigator.vibrate) navigator.vibrate(40);
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+        function openExitModal() { document.getElementById('exitModal').classList.add('active'); }
+        function closeExitModal() { document.getElementById('exitModal').classList.remove('active'); }
+
         async function loadData() {
             const overlay = document.getElementById('loadingOverlay');
             overlay.classList.add('active');
             try {
-                const file = new URLSearchParams(window.location.search).get('file');
-                if (file) {
-                    const title = file.split('.')[0];
-                    quizTopicName = title.charAt(0).toUpperCase() + title.slice(1);
+                if (quizFileId !== 'demo_quiz') {
                     document.getElementById('headerTitle').textContent = quizTopicName + " Quiz";
-                    const res = await fetch(file);
+                    const res = await fetch(fullFileName);
                     if (!res.ok) throw new Error();
                     questions = await res.json();
                 } else {
@@ -351,13 +375,25 @@
                 showToast("Loaded demo questions.");
                 questions = fallbackData;
             } finally {
-                setTimeout(() => { overlay.classList.remove('active'); initQuiz(); }, 500);
+                setTimeout(() => { 
+                    overlay.classList.remove('active'); 
+                    
+                    // NEW: Check if they clicked "View Leaderboard" from course.html
+                    const showLb = new URLSearchParams(window.location.search).get('lb');
+                    if (showLb === 'true') {
+                        document.querySelectorAll('.card-view').forEach(c => c.classList.remove('active'));
+                        document.getElementById('progressArea').style.display = 'none';
+                        document.getElementById('timerBadge').style.display = 'none';
+                        showLeaderboard();
+                    } else {
+                        initQuiz(); 
+                    }
+                }, 500);
             }
         }
 
         function initQuiz() {
-            currentIndex = 0;
-            score = 0;
+            currentIndex = 0; score = 0;
             userAnswers = new Array(questions.length).fill(null);
             lifelinesUsed = new Array(questions.length).fill(false);
             
@@ -376,7 +412,6 @@
             renderQuestion('none');
         }
 
-        // ==================== TIMER ====================
         function startTimer() {
             clearInterval(timerInterval);
             const badge = document.getElementById('timerBadge');
@@ -393,7 +428,6 @@
             }, 1000);
         }
 
-        // ==================== RENDER & SWIPE ====================
         function renderQuestion(direction) {
             const q = questions[currentIndex];
             const card = document.getElementById('quizCard');
@@ -401,14 +435,8 @@
             if (direction !== 'none') {
                 card.style.transform = direction === 'next' ? 'translateX(50px)' : 'translateX(-50px)';
                 card.style.opacity = '0';
-                setTimeout(() => {
-                    populateDOM(q);
-                    card.style.transform = 'translateX(0)';
-                    card.style.opacity = '1';
-                }, 200);
-            } else {
-                populateDOM(q);
-            }
+                setTimeout(() => { populateDOM(q); card.style.transform = 'translateX(0)'; card.style.opacity = '1'; }, 200);
+            } else { populateDOM(q); }
         }
 
         function populateDOM(q) {
@@ -436,14 +464,10 @@
             if (userAnswers[currentIndex] !== null) applyCorrectIncorrectUI(userAnswers[currentIndex]);
             
             const btn5050 = document.getElementById('btn5050');
-            if (lifelinesUsed.includes(true)) {
-                btn5050.classList.add('used'); btn5050.disabled = true;
-            } else {
-                btn5050.classList.remove('used'); btn5050.disabled = false;
-            }
+            if (lifelinesUsed.includes(true)) { btn5050.classList.add('used'); btn5050.disabled = true; } 
+            else { btn5050.classList.remove('used'); btn5050.disabled = false; }
         }
 
-        // ==================== EVALUATION ====================
         function handleAnswer(selectedIndex, btn) {
             if (userAnswers[currentIndex] !== null) return; 
 
@@ -454,13 +478,10 @@
                 score++;
                 document.getElementById('scoreDisplay').innerHTML = `<i class="fas fa-star" style="color:var(--warning);"></i> ${score}`;
                 if (navigator.vibrate) navigator.vibrate(40);
-            } else {
-                if (navigator.vibrate) navigator.vibrate([40, 50, 40]);
-            }
+            } else { if (navigator.vibrate) navigator.vibrate([40, 50, 40]); }
 
             applyCorrectIncorrectUI(selectedIndex);
 
-            // Auto Advance
             const loaderContainer = document.getElementById('autoAdvanceContainer');
             const loaderBar = document.getElementById('autoAdvanceBar');
             loaderContainer.style.display = 'block';
@@ -480,13 +501,8 @@
             
             btns.forEach((b, i) => {
                 b.classList.add('disabled');
-                if (i === q.correctIndex) {
-                    b.classList.add('correct');
-                    b.querySelector('i').className = 'fas fa-check-circle';
-                } else if (i === selectedIndex && selectedIndex !== q.correctIndex) {
-                    b.classList.add('incorrect');
-                    b.querySelector('i').className = 'fas fa-times-circle';
-                }
+                if (i === q.correctIndex) { b.classList.add('correct'); b.querySelector('i').className = 'fas fa-check-circle'; } 
+                else if (i === selectedIndex && selectedIndex !== q.correctIndex) { b.classList.add('incorrect'); b.querySelector('i').className = 'fas fa-times-circle'; }
             });
 
             if (q.explanation) {
@@ -495,7 +511,6 @@
             }
         }
 
-        // ==================== LIFELINE ====================
         function useFiftyFifty() {
             if (lifelinesUsed.includes(true) || userAnswers[currentIndex] !== null) return;
             lifelinesUsed[currentIndex] = true;
@@ -512,16 +527,13 @@
             showToast("50:50 Used!");
         }
 
-        // ==================== NAVIGATION / SWIPE ====================
         function navigate(direction) {
             if (isAnimating) return;
             if (direction === 'next' && currentIndex < questions.length - 1) {
                 if(userAnswers[currentIndex] === null) { showToast("Answer this question first!"); return; }
-                isAnimating = true; currentIndex++; renderQuestion('next');
-                setTimeout(() => isAnimating = false, 400);
+                isAnimating = true; currentIndex++; renderQuestion('next'); setTimeout(() => isAnimating = false, 400);
             } else if (direction === 'prev' && currentIndex > 0) {
-                isAnimating = true; currentIndex--; renderQuestion('prev');
-                setTimeout(() => isAnimating = false, 400);
+                isAnimating = true; currentIndex--; renderQuestion('prev'); setTimeout(() => isAnimating = false, 400);
             }
         }
 
@@ -533,7 +545,73 @@
             else if (delta < -50) navigate('prev');
         }, {passive:true});
 
-        // ==================== RESULTS ====================
+        // ==================== RESULTS & LEADERBOARD DB ====================
+        
+        async function checkAndSaveScore(finalScore) {
+            try {
+                const user = await account.get();
+                const userName = localStorage.getItem('nav_userName') || user.name;
+                const currentTime = new Date().toISOString(); // Required for lastPlayed
+                
+                // Fetch Top 10 for THIS specific quiz
+                const topScores = await databases.listDocuments(DATABASE_ID, LEADERBOARD_COLLECTION_ID, [
+                    Query.equal('gameId', quizFileId),
+                    Query.orderDesc('score'),
+                    Query.limit(10)
+                ]);
+
+                const docs = topScores.documents;
+                const existingRank = docs.find(d => d.userId === user.$id);
+
+                if (existingRank) {
+                    // Update if they got a strictly better score
+                    if (finalScore > existingRank.score) {
+                        await databases.updateDocument(DATABASE_ID, LEADERBOARD_COLLECTION_ID, existingRank.$id, {
+                            score: finalScore, 
+                            userName: userName,
+                            lastPlayed: currentTime
+                        });
+                        showToast("You improved your Leaderboard rank!");
+                    }
+                    return; 
+                }
+
+                if (docs.length < 10) {
+                    // Less than 10 people have played, automatic entry
+                    await databases.createDocument(DATABASE_ID, LEADERBOARD_COLLECTION_ID, ID.unique(), {
+                        gameId: quizFileId, 
+                        userId: user.$id, 
+                        userName: userName, 
+                        score: finalScore, 
+                        rank: 1, // Your DB requires Min: 1
+                        lastPlayed: currentTime,
+                        achievements: "" // Fills the optional column securely
+                    });
+                    showToast("You made the Top 10!");
+                    
+                } else {
+                    // Leaderboard is full. Did they beat 10th place?
+                    const tenthPlace = docs[docs.length - 1];
+                    if (finalScore > tenthPlace.score) {
+                        await databases.createDocument(DATABASE_ID, LEADERBOARD_COLLECTION_ID, ID.unique(), {
+                            gameId: quizFileId, 
+                            userId: user.$id, 
+                            userName: userName, 
+                            score: finalScore, 
+                            rank: 1, 
+                            lastPlayed: currentTime,
+                            achievements: ""
+                        });
+                        // Delete the 10th place person
+                        await databases.deleteDocument(DATABASE_ID, LEADERBOARD_COLLECTION_ID, tenthPlace.$id);
+                        showToast("You cracked the Top 10!");
+                    }
+                }
+            } catch (error) {
+                console.log("Leaderboard evaluation error. Ensure user is logged in.", error);
+            }
+        }
+
         function showResults() {
             clearInterval(timerInterval);
             document.querySelectorAll('.card-view').forEach(c => c.classList.remove('active'));
@@ -541,7 +619,6 @@
             document.getElementById('progressArea').style.display = 'none';
             document.getElementById('timerBadge').style.display = 'none';
 
-            // Set Data specific to screenshot
             const savedName = localStorage.getItem('nav_userName') || 'Learner';
             document.getElementById('resultUserName').textContent = savedName;
             document.getElementById('resultTopicBadge').textContent = quizTopicName + " Quiz";
@@ -563,9 +640,73 @@
             if (acc >= 90) msg.textContent = "Outstanding! 🏆";
             else if (acc >= 60) msg.textContent = "Good Effort! 👍";
             else msg.textContent = "Needs Practice! 💪";
+
+            // Trigger Background Database Save
+            checkAndSaveScore(score);
         }
 
-        // ==================== SHARE RESULT ====================
+        // ==================== LEADERBOARD UI ====================
+        
+        async function showLeaderboard() {
+            document.getElementById('resultsCard').classList.remove('active');
+            document.getElementById('leaderboardCard').classList.add('active');
+            
+            const list = document.getElementById('leaderboardList');
+            list.innerHTML = '<div class="spinner" style="margin: 30px auto;"></div>';
+
+            try {
+                // Fetch using 'gameId' to match your DB schema and sort by score
+                // ** CRITICAL: Ensure you created the "ranking_index" in Appwrite for this to work! **
+                const response = await databases.listDocuments(DATABASE_ID, LEADERBOARD_COLLECTION_ID, [
+                    Query.equal('gameId', quizFileId),
+                    Query.orderDesc('score'),
+                    Query.limit(10)
+                ]);
+
+                list.innerHTML = '';
+                
+                if (response.documents.length === 0) {
+                    list.innerHTML = '<div class="lb-empty">No rankers yet. Be the first!</div>';
+                    return;
+                }
+
+                response.documents.forEach((doc, index) => {
+                    let rankClass = '';
+                    if (index === 0) rankClass = 'gold';
+                    else if (index === 1) rankClass = 'silver';
+                    else if (index === 2) rankClass = 'bronze';
+
+                    const html = `
+                        <div class="leaderboard-item">
+                            <div class="lb-rank ${rankClass}">#${index + 1}</div>
+                            <div class="lb-info">
+                                <div class="lb-name">${doc.userName}</div>
+                                <div class="lb-acc">Played: ${new Date(doc.lastPlayed).toLocaleDateString()}</div>
+                            </div>
+                            <div class="lb-score">${doc.score} pts</div>
+                        </div>
+                    `;
+                    list.innerHTML += html;
+                });
+
+            } catch (error) {
+                console.error("Leaderboard fetch error:", error);
+                list.innerHTML = '<div class="lb-empty" style="color:var(--error);">Could not load leaderboard. Check permissions & indexes in Appwrite.</div>';
+            }
+        }
+
+        function closeLeaderboard() {
+            // Check if user came here directly from the course hub
+            const showLb = new URLSearchParams(window.location.search).get('lb');
+            if (showLb === 'true') {
+                window.history.back(); // Send them back to the previous page
+            } else {
+                document.getElementById('leaderboardCard').classList.remove('active');
+                document.getElementById('resultsCard').classList.add('active');
+            }
+        }
+
+        // ==================== SHARE & REVIEW ====================
         async function shareResult() {
             const overlay = document.getElementById('loadingOverlay');
             document.getElementById('loadingText').textContent = "Generating Image...";
@@ -575,81 +716,56 @@
             const resultButtons = document.getElementById('resultButtons');
             const watermark = document.getElementById('shareWatermark');
             
-            // 1. Prepare UI for Screenshot
             resultButtons.style.display = 'none';
             watermark.style.display = 'block';
             
-            // Fix html2canvas rendering issue with backdrop-filter by setting solid color
             const originalBg = resultsCard.style.background;
             const originalBorder = resultsCard.style.border;
             const isLight = document.body.classList.contains('light-theme');
             resultsCard.style.background = isLight ? '#ffffff' : '#0f172a';
-            resultsCard.style.border = 'none'; // Removes weird borders in screenshot
+            resultsCard.style.border = 'none'; 
             
             try {
-                // 2. Take Screenshot
-                const canvas = await html2canvas(resultsCard, {
-                    backgroundColor: isLight ? '#f8fafc' : '#020617', // Match body bg
-                    scale: 3, // High quality resolution
-                    useCORS: true,
-                    logging: false
-                });
-                
+                const canvas = await html2canvas(resultsCard, { backgroundColor: isLight ? '#f8fafc' : '#020617', scale: 3, useCORS: true, logging: false });
                 const image = canvas.toDataURL("image/png");
                 
-                // 3. Try Native Share API First (Mobile)
                 try {
                     const blob = await (await fetch(image)).blob();
                     const file = new File([blob], 'NAV-Result.png', { type: 'image/png' });
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        await navigator.share({
-                            title: 'My Quiz Result',
-                            text: `I just completed the ${quizTopicName} Quiz on NAV Education! Check out my score.`,
-                            files: [file]
-                        });
-                        return; // Successfully shared
+                        await navigator.share({ title: 'My Quiz Result', text: `I just completed the ${quizTopicName} Quiz on NAV Education! Check out my score.`, files: [file] });
+                        return; 
                     }
-                } catch(err) {
-                    console.log("Web Share API rejected or unsupported, falling back to download.");
-                }
+                } catch(err) {}
 
-                // 4. Fallback to Image Download (Desktop/Unsupported browsers)
                 const link = document.createElement('a');
                 link.download = `NAV-${quizTopicName}-Result.png`;
                 link.href = image;
                 link.click();
                 showToast("Result image downloaded!");
-                
             } catch (err) {
                 showToast("Failed to generate image.");
-                console.error(err);
             } finally {
-                // 5. Restore UI
                 resultsCard.style.background = originalBg;
                 resultsCard.style.border = originalBorder;
                 resultButtons.style.display = 'block';
                 watermark.style.display = 'none';
-                
                 overlay.classList.remove('active');
                 document.getElementById('loadingText').textContent = "Loading Questions...";
             }
         }
 
-        // ==================== REVIEW ====================
         function showReviewMode() {
             document.getElementById('resultsCard').classList.remove('active');
             document.getElementById('reviewCard').classList.add('active');
-            
             const list = document.getElementById('reviewList');
             list.innerHTML = ''; 
 
             questions.forEach((q, i) => {
                 const uAns = userAnswers[i];
                 let html = `<div class="review-item"><div class="review-q-text">${i + 1}. ${q.question}</div>`;
-
                 if (uAns === null) html += `<div class="review-ans wrong-ans"><i class="fas fa-minus-circle"></i> Skipped</div>`;
                 else if (uAns !== q.correctIndex) html += `<div class="review-ans wrong-ans"><i class="fas fa-times-circle"></i> Your Answer: ${q.options[uAns]}</div>`;
-
                 html += `<div class="review-ans correct-ans"><i class="fas fa-check-circle"></i> Correct Answer: ${q.options[q.correctIndex]}</div>
                         <div class="review-exp">${q.explanation || "No explanation provided."}</div></div>`;
                 list.innerHTML += html;
@@ -662,7 +778,6 @@
         }
 
         function retryQuiz() { initQuiz(); }
-
         document.addEventListener('DOMContentLoaded', loadData);
     </script>
 </body>
