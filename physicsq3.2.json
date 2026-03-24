@@ -1,0 +1,13 @@
+[
+  {
+    "question": "Sample Q?",
+    "options": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "correctIndex": 0,
+    "explanation": "Exp."
+  }
+]
