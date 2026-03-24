@@ -45,6 +45,11 @@
           "title": "Testing",
           "file": "physicsn3.1.json",
           "type": "notes"
+        },
+        {
+          "title": "Maths",
+          "file": "physicsq3.2.json",
+          "type": "quiz"
         }
       ]
     }
