@@ -2,133 +2,143 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Portal | NAV Education</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NAV Admin Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        :root { --primary: #6366f1; --bg: #020617; --card: #1e293b; --text: #f8fafc; --border: #334155; }
-        body { background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root { --primary: #6366f1; --bg: #020617; --card: #1e293b; --text: #f8fafc; --text-muted: #94a3b8; --border: #334155; --danger: #f43f5e; --success: #10b981; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        
+        /* Utility */
+        .btn { padding: 12px 15px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:active { transform: scale(0.96); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .input-field { width: 100%; padding: 14px; margin-bottom: 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; }
         
         /* Auth Screen */
-        #authScreen { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: flex; align-items: center; justify-content: center; }
-        .auth-box { background: var(--card); padding: 40px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; border: 1px solid var(--border); }
-        .input-field { width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); color: white; border-radius: 8px; }
-        .btn { padding: 12px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; transition: 0.2s; }
-        .btn:hover { opacity: 0.9; }
-        
-        /* Sidebar */
-        .sidebar { width: 250px; background: var(--card); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-        .brand { padding: 20px; font-size: 1.2rem; font-weight: 700; border-bottom: 1px solid var(--border); color: var(--primary); }
-        .nav-item { padding: 15px 20px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; gap: 10px; align-items: center; }
-        .nav-item:hover, .nav-item.active { background: rgba(99,102,241,0.1); color: var(--primary); border-left: 4px solid var(--primary); }
-        
-        /* Main Content */
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #0f172a; }
-        .header { padding: 15px 20px; background: var(--card); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .view-area { padding: 20px; overflow-y: auto; flex: 1; display: none; }
-        .view-area.active { display: block; }
-        
-        /* File Explorer (Code View) */
-        .file-list { display: grid; gap: 10px; }
-        .file-item { display: flex; justify-content: space-between; padding: 12px 15px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; align-items: center; }
-        .file-actions button { background: none; border: none; color: var(--text); cursor: pointer; margin-left: 10px; opacity: 0.7; }
-        .file-actions button:hover { opacity: 1; color: var(--primary); }
-        .editor-container { display: none; flex-direction: column; height: 100%; }
-        textarea.code-editor { flex: 1; background: #000; color: #a5b4fc; font-family: monospace; padding: 15px; border: 1px solid var(--border); border-radius: 8px; resize: none; margin-bottom: 15px; }
+        #authScreen { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; justify-content: center; padding: 20px; }
+        .auth-box { background: var(--card); padding: 30px 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
 
-        /* Visual Builder (Normal View) */
-        .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-        .course-card { background: var(--card); padding: 20px; border-radius: 8px; border: 1px solid var(--border); text-align: center; cursor: pointer; }
-        .course-card:hover { border-color: var(--primary); }
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: #cbd5e1; }
+        /* App Layout */
+        .app-header { background: var(--card); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
+        .header-title { font-weight: 600; font-size: 1.1rem; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px; }
+        .header-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.05); cursor: pointer; font-size: 1.1rem; }
         
-        #loadingOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 999; display: none; align-items: center; justify-content: center; color: white; flex-direction: column; }
+        .view-container { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 80px; display: none; }
+        .view-container.active { display: block; }
+
+        /* List Items (Mobile App Style) */
+        .list-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .list-item-content { flex: 1; overflow: hidden; cursor: pointer; }
+        .list-title { font-weight: 600; font-size: 1rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .list-subtitle { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+        .list-actions { display: flex; gap: 10px; }
+        .icon-action { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: var(--text); border: none; cursor: pointer; }
+        .icon-action.code { color: #a5b4fc; }
+        .icon-action.delete { color: var(--danger); }
+
+        /* Floating Action Button (FAB) */
+        .fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 15px rgba(99,102,241,0.4); border: none; cursor: pointer; z-index: 100; transition: transform 0.2s; }
+        .fab:active { transform: scale(0.9); }
+
+        /* Code Editor View */
+        #codeEditorView { display: none; flex-direction: column; height: 100vh; width: 100vw; position: fixed; top: 0; left: 0; background: var(--bg); z-index: 500; }
+        #rawCodeInput { flex: 1; background: #000; color: #a5b4fc; font-family: monospace; font-size: 0.85rem; padding: 15px; border: none; resize: none; width: 100%; outline: none; }
+
+        /* Modals */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal-card { background: var(--card); width: 100%; border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+
+        /* Loading */
+        #loadingOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; backdrop-filter: blur(5px); }
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
     <div id="authScreen">
         <div class="auth-box">
-            <h2 style="margin-bottom: 20px; color: var(--primary);">NAV Admin Portal</h2>
-            <input type="text" id="ghOwner" class="input-field" placeholder="GitHub Username (e.g., AmitKumar)">
-            <input type="text" id="ghRepo" class="input-field" placeholder="Repository Name (e.g., nav-education)">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🛡️</div>
+            <h2 style="margin-bottom: 20px;">Admin Login</h2>
+            <input type="text" id="ghOwner" class="input-field" placeholder="GitHub Username">
+            <input type="text" id="ghRepo" class="input-field" placeholder="Repository Name">
             <input type="password" id="ghToken" class="input-field" placeholder="Personal Access Token (PAT)">
-            <button class="btn" onclick="loginGH()">Connect to Repository</button>
-            <p style="font-size: 0.8rem; margin-top: 15px; color: #94a3b8;">Your token is saved securely in your browser.</p>
+            <button class="btn btn-primary" style="width: 100%;" onclick="loginGH()">Connect Repository</button>
         </div>
     </div>
 
     <div id="loadingOverlay">
-        <i class="fas fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 10px;"></i>
-        <div id="loadingText">Working...</div>
+        <div class="spinner"></div>
+        <div id="loadingText" style="font-weight: 500;">Processing...</div>
     </div>
 
-    <div class="sidebar">
-        <div class="brand">NAV Workspace</div>
-        <div class="nav-item active" onclick="switchTab('normalView', this)"><i class="fas fa-layer-group"></i> Course Builder (Normal)</div>
-        <div class="nav-item" onclick="switchTab('codeView', this)"><i class="fas fa-code"></i> File Explorer (Code)</div>
-        <div style="flex:1;"></div>
-        <div class="nav-item" onclick="logoutGH()"><i class="fas fa-sign-out-alt"></i> Logout</div>
+    <header class="app-header">
+        <div class="header-icon" id="backBtn" onclick="navigateBack()" style="visibility: hidden;"><i class="fas fa-arrow-left"></i></div>
+        <div class="header-title" id="appTitle">Courses</div>
+        <div class="header-icon" onclick="logoutGH()"><i class="fas fa-sign-out-alt"></i></div>
+    </header>
+
+    <div id="viewCourses" class="view-container active">
+        <div id="courseList"></div>
+        <button class="fab" onclick="openModal('courseModal')"><i class="fas fa-plus"></i></button>
     </div>
 
-    <div class="main-content">
-        <div class="header">
-            <h3 id="currentTitle">Course Builder</h3>
-            <div>
-                <button class="btn" id="headerActionBtn" onclick="openNewCourseModal()" style="padding: 8px 15px; font-size: 0.9rem;"><i class="fas fa-plus"></i> New Course</button>
-                <input type="file" id="fileUploader" style="display:none" onchange="uploadFileToGH(event)">
-            </div>
+    <div id="viewChapters" class="view-container">
+        <div class="list-item" style="background: rgba(99,102,241,0.1); border-color: var(--primary); justify-content: center; cursor: pointer;" onclick="editCourseCode()">
+            <i class="fas fa-code" style="color: var(--primary);"></i> <span style="color: var(--primary); font-weight: 600;">Edit Course Config (JSON)</span>
         </div>
+        <div id="chapterList"></div>
+        <button class="fab" onclick="openModal('chapterModal')"><i class="fas fa-plus"></i></button>
+    </div>
 
-        <div id="normalView" class="view-area active">
-            <div id="courseList" class="course-grid">
-                </div>
-            
-            <div id="courseManager" style="display: none;">
-                <button onclick="backToCourses()" class="btn" style="background: transparent; border: 1px solid var(--border); margin-bottom: 20px; width: auto;"><i class="fas fa-arrow-left"></i> Back</button>
-                <h2 id="manageCourseTitle" style="margin-bottom: 20px;">Course Name</h2>
-                
-                <div style="background: var(--card); padding: 20px; border-radius: 8px; border: 1px solid var(--border);">
-                    <h3>Add New Chapter Content</h3>
-                    <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:15px;">Files will be automatically named and formatted.</p>
-                    
-                    <div class="form-group">
-                        <label>Chapter Name</label>
-                        <input type="text" id="chapName" class="input-field" placeholder="e.g., Chapter 1: Kinematics">
-                    </div>
-                    <div class="form-group">
-                        <label>Content Title</label>
-                        <input type="text" id="contentTitle" class="input-field" placeholder="e.g., Kinematics Introduction">
-                    </div>
-                    <div class="form-group">
-                        <label>Content Type</label>
-                        <select id="contentType" class="input-field">
-                            <option value="notes">Study Notes</option>
-                            <option value="quiz">MCQ Quiz</option>
-                        </select>
-                    </div>
-                    <button class="btn" onclick="generateVisualContent()">Create & Link Content</button>
-                </div>
-            </div>
+    <div id="viewContents" class="view-container">
+        <div id="contentList"></div>
+        <button class="fab" onclick="openModal('contentModal')"><i class="fas fa-plus"></i></button>
+    </div>
+
+    <div id="codeEditorView">
+        <header class="app-header">
+            <div class="header-icon" onclick="closeEditor()"><i class="fas fa-times"></i></div>
+            <div class="header-title" id="editorTitle" style="font-size: 0.9rem;">Editing File</div>
+            <div class="header-icon" style="color: var(--success);" onclick="saveCode()"><i class="fas fa-check"></i></div>
+        </header>
+        <input type="hidden" id="editPath">
+        <input type="hidden" id="editSha">
+        <textarea id="rawCodeInput" spellcheck="false" autocorrect="off"></textarea>
+    </div>
+
+    <div class="modal-overlay" id="courseModal" onclick="closeModal('courseModal')">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <h3 style="margin-bottom: 15px;">Create New Course</h3>
+            <input type="text" id="newCourseTitle" class="input-field" placeholder="Course Title (e.g., Physics)">
+            <input type="text" id="newCourseId" class="input-field" placeholder="Short ID (e.g., physics)">
+            <button class="btn btn-primary" style="width: 100%;" onclick="createCourse()">Create Course</button>
         </div>
+    </div>
 
-        <div id="codeView" class="view-area">
-            <div id="fileExplorer">
-                <div class="file-list" id="repoFilesList"></div>
-            </div>
-            
-            <div id="codeEditorArea" class="editor-container">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                    <button onclick="closeEditor()" class="btn" style="width:auto; background:transparent; border:1px solid var(--border);"><i class="fas fa-arrow-left"></i> Back</button>
-                    <button onclick="saveCodeEdit()" class="btn" style="width:auto; background:var(--success);"><i class="fas fa-save"></i> Save Changes</button>
-                </div>
-                <input type="hidden" id="editFilePath">
-                <input type="hidden" id="editFileSha">
-                <textarea id="rawCodeInput" class="code-editor"></textarea>
-            </div>
+    <div class="modal-overlay" id="chapterModal" onclick="closeModal('chapterModal')">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <h3 style="margin-bottom: 15px;">Add Chapter</h3>
+            <input type="text" id="newChapTitle" class="input-field" placeholder="e.g., Chapter 1: Kinematics">
+            <button class="btn btn-primary" style="width: 100%;" onclick="createChapter()">Add Chapter</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="contentModal" onclick="closeModal('contentModal')">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <h3 style="margin-bottom: 15px;">Add Material</h3>
+            <input type="text" id="newContentTitle" class="input-field" placeholder="Title (e.g., Intro Notes)">
+            <select id="newContentType" class="input-field">
+                <option value="notes">Study Notes</option>
+                <option value="quiz">MCQ Quiz</option>
+            </select>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px; text-align: center;">File will be auto-named and linked.</p>
+            <button class="btn btn-primary" style="width: 100%;" onclick="createContent()">Generate Content</button>
         </div>
     </div>
 
@@ -138,362 +148,340 @@
     </script>
 
     <script>
-        let ghConfig = { owner: '', repo: '', token: '' };
-        let allFiles = [];
-        let currentEditingCoursePath = "";
-        let currentEditingCourseData = null;
+        let gh = { owner: '', repo: '', token: '' };
+        
+        // Navigation State
+        let repoFiles = [];
+        let currentView = 'courses'; // courses, chapters, contents
+        let activeCourse = { path: '', sha: '', data: null };
+        let activeChapIndex = -1;
 
-        // --- AUTHENTICATION ---
+        // --- AUTH ---
         window.onload = () => {
-            const savedOwner = localStorage.getItem('ghOwner');
-            const savedRepo = localStorage.getItem('ghRepo');
-            const savedToken = localStorage.getItem('ghToken');
-            
-            if (savedOwner && savedRepo && savedToken) {
-                ghConfig = { owner: savedOwner, repo: savedRepo, token: savedToken };
+            if (localStorage.getItem('ghToken')) {
+                gh = { owner: localStorage.getItem('ghOwner'), repo: localStorage.getItem('ghRepo'), token: localStorage.getItem('ghToken') };
                 document.getElementById('authScreen').style.display = 'none';
-                loadRepoFiles();
+                loadCourses();
             }
         };
 
         function loginGH() {
-            ghConfig.owner = document.getElementById('ghOwner').value.trim();
-            ghConfig.repo = document.getElementById('ghRepo').value.trim();
-            ghConfig.token = document.getElementById('ghToken').value.trim();
-            
-            if(!ghConfig.token) return alert("Token required!");
-            
-            localStorage.setItem('ghOwner', ghConfig.owner);
-            localStorage.setItem('ghRepo', ghConfig.repo);
-            localStorage.setItem('ghToken', ghConfig.token);
-            
+            gh.owner = document.getElementById('ghOwner').value.trim();
+            gh.repo = document.getElementById('ghRepo').value.trim();
+            gh.token = document.getElementById('ghToken').value.trim();
+            if(!gh.token) return alert("Token required!");
+            localStorage.setItem('ghOwner', gh.owner); localStorage.setItem('ghRepo', gh.repo); localStorage.setItem('ghToken', gh.token);
             document.getElementById('authScreen').style.display = 'none';
-            loadRepoFiles();
+            loadCourses();
         }
 
-        function logoutGH() {
-            localStorage.clear();
-            window.location.reload();
-        }
+        function logoutGH() { localStorage.clear(); window.location.reload(); }
 
-        // --- GITHUB API WRAPPERS ---
-        async function apiRequest(endpoint, method = 'GET', body = null) {
-            const url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${endpoint}`;
-            const headers = {
-                'Authorization': `token ${ghConfig.token}`,
-                'Accept': 'application/vnd.github.v3+json'
-            };
-            const options = { method, headers };
-            if (body) options.body = JSON.stringify(body);
-
-            const res = await fetch(url, options);
+        // --- API HELPERS ---
+        async function api(endpoint, method = 'GET', body = null) {
+            const url = `https://api.github.com/repos/${gh.owner}/${gh.repo}/contents/${endpoint}`;
+            const opt = { method, headers: { 'Authorization': `token ${gh.token}`, 'Accept': 'application/vnd.github.v3+json' } };
+            if (body) opt.body = JSON.stringify(body);
+            const res = await fetch(url, opt);
             if (!res.ok) throw new Error(await res.text());
             return await res.json();
         }
 
-        function showLoading(text) {
-            document.getElementById('loadingText').textContent = text;
-            document.getElementById('loadingOverlay').style.display = 'flex';
-        }
+        function showLoading(msg) { document.getElementById('loadingText').textContent = msg; document.getElementById('loadingOverlay').style.display = 'flex'; }
         function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
 
-        // --- TAB SWITCHING ---
-        function switchTab(tabId, el) {
-            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-            el.classList.add('active');
-            document.querySelectorAll('.view-area').forEach(v => v.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            
-            const headerBtn = document.getElementById('headerActionBtn');
-            if(tabId === 'normalView') {
-                document.getElementById('currentTitle').textContent = "Course Builder";
-                headerBtn.innerHTML = '<i class="fas fa-plus"></i> New Course';
-                headerBtn.onclick = openNewCourseModal;
-            } else {
-                document.getElementById('currentTitle').textContent = "File Explorer";
-                headerBtn.innerHTML = '<i class="fas fa-upload"></i> Upload File';
-                headerBtn.onclick = () => document.getElementById('fileUploader').click();
+        // --- NAVIGATION ---
+        function switchView(viewId, title, showBack) {
+            document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            document.getElementById('appTitle').textContent = title;
+            document.getElementById('backBtn').style.visibility = showBack ? 'visible' : 'hidden';
+            currentView = viewId.replace('view', '').toLowerCase();
+        }
+
+        function navigateBack() {
+            if (currentView === 'contents') {
+                renderChapters(); // Go back to chapters
+            } else if (currentView === 'chapters') {
+                loadCourses(); // Go back to courses
             }
         }
 
-        // ==========================================
-        // FEATURE 1: CODE VIEW (FILE EXPLORER)
-        // ==========================================
-        async function loadRepoFiles() {
-            showLoading("Fetching Repository...");
+        // --- LEVEL 1: COURSES ---
+        async function loadCourses() {
+            showLoading("Loading Courses...");
             try {
-                const files = await apiRequest('');
-                allFiles = files;
-                renderFileExplorer(files);
-                renderCourseList(files); // For normal view
-            } catch (e) {
-                alert("Failed to fetch repository. Check your token and repo name.");
-                logoutGH();
-            }
-            hideLoading();
-        }
-
-        function renderFileExplorer(files) {
-            const list = document.getElementById('repoFilesList');
-            list.innerHTML = '';
-            files.forEach(f => {
-                let icon = f.type === 'dir' ? 'fa-folder' : 'fa-file-code';
-                if(f.name.endsWith('.jpg') || f.name.endsWith('.png')) icon = 'fa-image';
+                repoFiles = await api('');
+                const list = document.getElementById('courseList');
+                list.innerHTML = '';
                 
-                list.innerHTML += `
-                    <div class="file-item">
-                        <div><i class="fas ${icon}" style="color:var(--primary); margin-right:10px;"></i> ${f.name}</div>
-                        <div class="file-actions">
-                            ${f.type === 'file' ? `<button onclick="editRawFile('${f.path}', '${f.sha}')"><i class="fas fa-edit"></i></button>` : ''}
-                            <button onclick="renameFile('${f.path}', '${f.sha}')"><i class="fas fa-i-cursor"></i></button>
-                            <button onclick="deleteFile('${f.path}', '${f.sha}')" style="color:var(--error);"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        async function editRawFile(path, sha) {
-            showLoading("Loading file content...");
-            try {
-                const fileData = await apiRequest(path);
-                const content = b64DecodeUnicode(fileData.content);
-                
-                document.getElementById('fileExplorer').style.display = 'none';
-                document.getElementById('codeEditorArea').style.display = 'flex';
-                document.getElementById('rawCodeInput').value = content;
-                document.getElementById('editFilePath').value = path;
-                document.getElementById('editFileSha').value = fileData.sha;
-            } catch(e) { alert("Could not open file."); }
-            hideLoading();
-        }
-
-        function closeEditor() {
-            document.getElementById('codeEditorArea').style.display = 'none';
-            document.getElementById('fileExplorer').style.display = 'block';
-        }
-
-        async function saveCodeEdit() {
-            showLoading("Saving changes...");
-            const path = document.getElementById('editFilePath').value;
-            const sha = document.getElementById('editFileSha').value;
-            const content = document.getElementById('rawCodeInput').value;
-            
-            try {
-                await apiRequest(path, 'PUT', {
-                    message: `Admin update: ${path}`,
-                    content: b64EncodeUnicode(content),
-                    sha: sha
+                let found = false;
+                repoFiles.forEach(f => {
+                    // Filter logic: Course files are usually .json but don't have n1.1 or q1.1 numbering
+                    if(f.name.endsWith('.json') && !f.name.match(/[nq]\d+\.\d+\.json/)) {
+                        found = true;
+                        list.innerHTML += `
+                            <div class="list-item">
+                                <div class="list-item-content" onclick="openCourse('${f.path}', '${f.sha}')">
+                                    <div class="list-title"><i class="fas fa-book" style="color:var(--primary); margin-right:8px;"></i> ${f.name}</div>
+                                    <div class="list-subtitle">Tap to view chapters</div>
+                                </div>
+                                <div class="list-actions">
+                                    <button class="icon-action code" onclick="openEditor('${f.path}', '${f.sha}')"><i class="fas fa-code"></i></button>
+                                </div>
+                            </div>
+                        `;
+                    }
                 });
-                alert("File saved successfully!");
-                loadRepoFiles();
-                closeEditor();
-            } catch(e) { alert("Failed to save file."); }
+                if(!found) list.innerHTML = `<div style="text-align:center; padding: 40px 20px; color:var(--text-muted);">No courses found. Create one!</div>`;
+                
+                switchView('viewCourses', 'All Courses', false);
+            } catch(e) { alert("Failed to fetch repository."); logoutGH(); }
             hideLoading();
         }
 
-        async function deleteFile(path, sha) {
-            if(!confirm(`Are you sure you want to completely delete ${path}?`)) return;
-            showLoading("Deleting file...");
+        async function createCourse() {
+            const title = document.getElementById('newCourseTitle').value.trim();
+            const id = document.getElementById('newCourseId').value.trim().toLowerCase();
+            if(!title || !id) return alert("Fill all fields");
+
+            const courseJSON = { title: title, icon: "📚", description: "Learn and master concepts.", chapters: [] };
+            showLoading("Creating...");
             try {
-                await apiRequest(path, 'DELETE', { message: `Deleted ${path}`, sha: sha });
-                loadRepoFiles();
+                await api(`${id}.json`, 'PUT', { message: `Created course ${title}`, content: b64EncodeUnicode(JSON.stringify(courseJSON, null, 2)) });
+                closeModal('courseModal');
+                document.getElementById('newCourseTitle').value = ''; document.getElementById('newCourseId').value = '';
+                loadCourses();
+            } catch(e) { alert("Error creating course."); }
+            hideLoading();
+        }
+
+        // --- LEVEL 2: CHAPTERS ---
+        async function openCourse(path, sha) {
+            showLoading("Loading Chapters...");
+            try {
+                const file = await api(path);
+                activeCourse.data = JSON.parse(b64DecodeUnicode(file.content));
+                activeCourse.path = path;
+                activeCourse.sha = file.sha;
+                renderChapters();
+            } catch(e) { alert("Failed to parse course JSON."); }
+            hideLoading();
+        }
+
+        function renderChapters() {
+            const list = document.getElementById('chapterList');
+            list.innerHTML = '';
+            
+            if (!activeCourse.data.chapters || activeCourse.data.chapters.length === 0) {
+                list.innerHTML = `<div style="text-align:center; padding: 30px; color:var(--text-muted);">No chapters yet.</div>`;
+            } else {
+                activeCourse.data.chapters.forEach((chap, idx) => {
+                    list.innerHTML += `
+                        <div class="list-item">
+                            <div class="list-item-content" onclick="openChapter(${idx})">
+                                <div class="list-title"><i class="fas fa-folder-open" style="color:var(--secondary); margin-right:8px;"></i> ${chap.title}</div>
+                                <div class="list-subtitle">${chap.contents ? chap.contents.length : 0} Items Inside</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            switchView('viewChapters', activeCourse.data.title, true);
+        }
+
+        function editCourseCode() {
+            openEditor(activeCourse.path, activeCourse.sha, true);
+        }
+
+        async function createChapter() {
+            const title = document.getElementById('newChapTitle').value.trim();
+            if(!title) return;
+
+            if(!activeCourse.data.chapters) activeCourse.data.chapters = [];
+            activeCourse.data.chapters.push({ title: title, contents: [] });
+
+            showLoading("Saving Chapter...");
+            try {
+                const res = await api(activeCourse.path, 'PUT', {
+                    message: `Added chapter: ${title}`,
+                    content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)),
+                    sha: activeCourse.sha
+                });
+                activeCourse.sha = res.content.sha; // Update SHA for future edits
+                closeModal('chapterModal');
+                document.getElementById('newChapTitle').value = '';
+                renderChapters();
+            } catch(e) { alert("Failed to save chapter."); }
+            hideLoading();
+        }
+
+        // --- LEVEL 3: CONTENTS ---
+        function openChapter(index) {
+            activeChapIndex = index;
+            renderContents();
+        }
+
+        function renderContents() {
+            const list = document.getElementById('contentList');
+            list.innerHTML = '';
+            const chap = activeCourse.data.chapters[activeChapIndex];
+
+            if (!chap.contents || chap.contents.length === 0) {
+                list.innerHTML = `<div style="text-align:center; padding: 30px; color:var(--text-muted);">Empty chapter.</div>`;
+            } else {
+                chap.contents.forEach((item, itemIdx) => {
+                    let icon = item.type === 'quiz' ? 'fa-brain' : 'fa-file-alt';
+                    let color = item.type === 'quiz' ? 'var(--success)' : 'var(--primary)';
+                    
+                    list.innerHTML += `
+                        <div class="list-item">
+                            <div class="list-item-content">
+                                <div class="list-title"><i class="fas ${icon}" style="color:${color}; margin-right:8px;"></i> ${item.title}</div>
+                                <div class="list-subtitle">File: ${item.file}</div>
+                            </div>
+                            <div class="list-actions">
+                                <button class="icon-action code" onclick="openEditor('${item.file}', '')"><i class="fas fa-code"></i></button>
+                                <button class="icon-action delete" onclick="deleteContent(${itemIdx}, '${item.file}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            switchView('viewContents', chap.title, true);
+        }
+
+        async function createContent() {
+            const title = document.getElementById('newContentTitle').value.trim();
+            const type = document.getElementById('newContentType').value;
+            if(!title) return alert("Title required");
+
+            showLoading("Generating Smart Content...");
+            try {
+                // 1. Auto-Generate Filename
+                const subjectPrefix = activeCourse.path.split('.')[0];
+                const typeChar = type === 'notes' ? 'n' : 'q';
+                const chapNum = activeChapIndex + 1;
+                const contentsArr = activeCourse.data.chapters[activeChapIndex].contents || [];
+                const itemNum = contentsArr.length + 1;
+                const filename = `${subjectPrefix}${typeChar}${chapNum}.${itemNum}.json`;
+
+                // 2. Create Default Structure
+                let fileJSON = "";
+                if(type === 'notes') {
+                    fileJSON = JSON.stringify({ title: title, topic: activeCourse.data.chapters[activeChapIndex].title, blocks: [{ type: "paragraph", content: "New notes content." }] }, null, 2);
+                } else {
+                    fileJSON = JSON.stringify([{ question: "Sample Q?", options: ["A", "B", "C", "D"], correctIndex: 0, explanation: "Exp." }], null, 2);
+                }
+
+                // 3. Upload File to GH
+                await api(filename, 'PUT', { message: `Created ${type}: ${title}`, content: b64EncodeUnicode(fileJSON) });
+
+                // 4. Link to Course
+                contentsArr.push({ title: title, file: filename, type: type });
+                activeCourse.data.chapters[activeChapIndex].contents = contentsArr;
+
+                // 5. Update Course Config
+                const res = await api(activeCourse.path, 'PUT', {
+                    message: `Linked ${filename} to course`,
+                    content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)),
+                    sha: activeCourse.sha
+                });
+                activeCourse.sha = res.content.sha;
+
+                closeModal('contentModal');
+                document.getElementById('newContentTitle').value = '';
+                renderContents();
+
+            } catch(e) { alert("Failed to generate content."); }
+            hideLoading();
+        }
+
+        async function deleteContent(itemIdx, filename) {
+            if(!confirm(`Delete '${filename}' and remove from course?`)) return;
+            showLoading("Deleting...");
+            try {
+                // Remove from Course Data
+                activeCourse.data.chapters[activeChapIndex].contents.splice(itemIdx, 1);
+                
+                // Save updated Course Config
+                const res = await api(activeCourse.path, 'PUT', {
+                    message: `Unlinked ${filename}`,
+                    content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)),
+                    sha: activeCourse.sha
+                });
+                activeCourse.sha = res.content.sha;
+
+                // Attempt to delete actual file (may fail if file doesn't exist, which is fine)
+                try {
+                    const fileData = await api(filename);
+                    await api(filename, 'DELETE', { message: `Deleted file ${filename}`, sha: fileData.sha });
+                } catch(e) {}
+
+                renderContents();
             } catch(e) { alert("Delete failed."); }
             hideLoading();
         }
 
-        async function renameFile(oldPath, sha) {
-            const newName = prompt("Enter new filename (include extension):", oldPath);
-            if(!newName || newName === oldPath) return;
-            
-            showLoading("Renaming file...");
+        // --- RAW CODE EDITOR ---
+        async function openEditor(path, sha, reloadCourseOnSave = false) {
+            showLoading("Opening code...");
             try {
-                // 1. Get old content
-                const oldFile = await apiRequest(oldPath);
-                // 2. Create new file with old content
-                await apiRequest(newName, 'PUT', { message: `Renamed ${oldPath} to ${newName}`, content: oldFile.content });
-                // 3. Delete old file
-                await apiRequest(oldPath, 'DELETE', { message: `Deleted old file ${oldPath}`, sha: oldFile.sha });
-                
-                loadRepoFiles();
-            } catch(e) { alert("Rename failed. API error."); }
-            hideLoading();
-        }
-
-        // Direct File Uploader
-        function uploadFileToGH(event) {
-            const file = event.target.files[0];
-            if(!file) return;
-
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                const base64Content = e.target.result.split(',')[1]; // Strip data:mimetype...
-                let filename = prompt("Enter filename to save as:", file.name);
-                if(!filename) return;
-
-                showLoading("Uploading to GitHub...");
-                try {
-                    await apiRequest(filename, 'PUT', { message: `Uploaded ${filename}`, content: base64Content });
-                    alert("Upload successful!");
-                    loadRepoFiles();
-                } catch(err) { alert("Upload failed."); }
-                hideLoading();
-            };
-            reader.readAsDataURL(file);
-        }
-
-
-        // ==========================================
-        // FEATURE 2: NORMAL VIEW (VISUAL CMS)
-        // ==========================================
-        
-        function renderCourseList(files) {
-            const list = document.getElementById('courseList');
-            list.innerHTML = '';
-            
-            // Look for JSON files that might be courses (excluding pure notes/quizzes)
-            files.forEach(f => {
-                if(f.name.endsWith('.json') && !f.name.includes('n1') && !f.name.includes('q1')) {
-                    list.innerHTML += `
-                        <div class="course-card" onclick="openCourseManager('${f.path}')">
-                            <i class="fas fa-book" style="font-size:2rem; color:var(--primary); margin-bottom:10px;"></i>
-                            <h3>${f.name}</h3>
-                            <p style="font-size:0.8rem; color:#94a3b8; margin-top:5px;">Click to manage content</p>
-                        </div>
-                    `;
-                }
-            });
-        }
-
-        async function openNewCourseModal() {
-            const title = prompt("Course Title (e.g., Biology Masterclass):");
-            if(!title) return;
-            const subjectCode = prompt("Short ID for files (e.g., bio):");
-            if(!subjectCode) return;
-
-            const courseJSON = {
-                title: title,
-                icon: "📚",
-                description: "New Course Description",
-                chapters: []
-            };
-
-            showLoading("Creating Course...");
-            try {
-                await apiRequest(`${subjectCode}.json`, 'PUT', {
-                    message: `Created new course: ${title}`,
-                    content: b64EncodeUnicode(JSON.stringify(courseJSON, null, 2))
-                });
-                alert("Course Created! You can now add content to it.");
-                loadRepoFiles();
-            } catch(e) { alert("Failed to create course."); }
-            hideLoading();
-        }
-
-        async function openCourseManager(path) {
-            showLoading("Loading Course Layout...");
-            try {
-                const fileData = await apiRequest(path);
-                currentEditingCourseData = JSON.parse(b64DecodeUnicode(fileData.content));
-                currentEditingCoursePath = path;
-                document.getElementById('editFileSha').value = fileData.sha; // Save SHA for updating course list
-
-                document.getElementById('courseList').style.display = 'none';
-                document.getElementById('courseManager').style.display = 'block';
-                document.getElementById('manageCourseTitle').textContent = `Managing: ${currentEditingCourseData.title}`;
-            } catch(e) { alert("Could not parse course JSON."); }
-            hideLoading();
-        }
-
-        function backToCourses() {
-            document.getElementById('courseManager').style.display = 'none';
-            document.getElementById('courseList').style.display = 'grid';
-        }
-
-        // 🔥 THE AUTOMATIC CONTENT GENERATOR 🔥
-        async function generateVisualContent() {
-            const chapName = document.getElementById('chapName').value.trim();
-            const contentTitle = document.getElementById('contentTitle').value.trim();
-            const type = document.getElementById('contentType').value;
-
-            if(!chapName || !contentTitle) return alert("Please fill all fields.");
-
-            showLoading("Generating Smart Files...");
-
-            try {
-                // 1. Automatically calculate the filename
-                const subjectPrefix = currentEditingCoursePath.split('.')[0]; // e.g., 'physics'
-                
-                // Find chapter index
-                let chapIndex = currentEditingCourseData.chapters.findIndex(c => c.title === chapName);
-                if(chapIndex === -1) {
-                    // Create new chapter
-                    currentEditingCourseData.chapters.push({ title: chapName, contents: [] });
-                    chapIndex = currentEditingCourseData.chapters.length - 1;
-                }
-
-                // Determine content number based on how many items exist in chapter
-                const contentNum = currentEditingCourseData.chapters[chapIndex].contents.length + 1;
-                
-                // e.g., "physics" + "n" + "1.1" + ".json"
-                const typeLetter = type === 'notes' ? 'n' : 'q';
-                const newFilename = `${subjectPrefix}${typeLetter}${chapIndex+1}.${contentNum}.json`;
-
-                // 2. Generate Boilerplate Content JSON
-                let newFileContent = "";
-                if(type === 'notes') {
-                    newFileContent = JSON.stringify({
-                        title: contentTitle, topic: chapName,
-                        blocks: [
-                            { type: "h1", content: contentTitle },
-                            { type: "paragraph", content: "Edit this text using the Code View." }
-                        ]
-                    }, null, 2);
+                // If sha is not provided (e.g. from content list), fetch it first
+                if(!sha) {
+                    const fileData = await api(path);
+                    sha = fileData.sha;
+                    document.getElementById('rawCodeInput').value = b64DecodeUnicode(fileData.content);
                 } else {
-                    newFileContent = JSON.stringify([
-                        {
-                            question: "Sample Question?",
-                            options: ["Option A", "Option B", "Option C", "Option D"],
-                            correctIndex: 0,
-                            explanation: "Explanation here."
-                        }
-                    ], null, 2);
+                    const fileData = await api(path);
+                    document.getElementById('rawCodeInput').value = b64DecodeUnicode(fileData.content);
                 }
-
-                // 3. Create the actual Notes/Quiz file in GitHub
-                await apiRequest(newFilename, 'PUT', {
-                    message: `Auto-generated ${type} file: ${newFilename}`,
-                    content: b64EncodeUnicode(newFileContent)
-                });
-
-                // 4. Link the new file into the Course JSON
-                currentEditingCourseData.chapters[chapIndex].contents.push({
-                    title: contentTitle,
-                    file: newFilename,
-                    type: type
-                });
-
-                // 5. Update the Course JSON file in GitHub
-                await apiRequest(currentEditingCoursePath, 'PUT', {
-                    message: `Linked ${newFilename} to Course`,
-                    content: b64EncodeUnicode(JSON.stringify(currentEditingCourseData, null, 2)),
-                    sha: document.getElementById('editFileSha').value
-                });
-
-                alert(`Success! File ${newFilename} created and linked to the course.`);
                 
-                // Refresh data
-                document.getElementById('chapName').value = '';
-                document.getElementById('contentTitle').value = '';
-                loadRepoFiles();
-                backToCourses();
+                document.getElementById('editPath').value = path;
+                document.getElementById('editSha').value = sha;
+                document.getElementById('editorTitle').textContent = path;
+                
+                // Store a flag so we know if we need to refresh course data after saving
+                document.getElementById('rawCodeInput').dataset.reloadCourse = reloadCourseOnSave;
 
-            } catch(e) {
-                console.error(e);
-                alert("Failed to complete generation. Check console.");
+                document.getElementById('codeEditorView').style.display = 'flex';
+            } catch(e) { alert("Failed to load file content."); }
+            hideLoading();
+        }
+
+        function closeEditor() { document.getElementById('codeEditorView').style.display = 'none'; }
+
+        async function saveCode() {
+            showLoading("Saving...");
+            const path = document.getElementById('editPath').value;
+            const sha = document.getElementById('editSha').value;
+            const code = document.getElementById('rawCodeInput').value;
+            const reloadCourse = document.getElementById('rawCodeInput').dataset.reloadCourse === 'true';
+
+            try {
+                // Basic JSON validation before saving
+                JSON.parse(code); 
+                
+                const res = await api(path, 'PUT', { message: `Admin manual edit: ${path}`, content: b64EncodeUnicode(code), sha: sha });
+                alert("Saved!");
+                
+                // If we edited the Course JSON, we need to update our local activeCourse memory
+                if(reloadCourse) {
+                    activeCourse.data = JSON.parse(code);
+                    activeCourse.sha = res.content.sha;
+                    renderChapters();
+                }
+                
+                closeEditor();
+            } catch(e) { 
+                alert("Save failed. Make sure your JSON formatting is valid!"); 
             }
             hideLoading();
         }
+
+        // Modals
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
     </script>
 </body>
 </html>
