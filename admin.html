@@ -22,12 +22,12 @@
         #authScreen { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; justify-content: center; padding: 20px; }
         .auth-box { background: var(--card); padding: 30px 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
 
-        /* App Layout */
-        .app-header { background: var(--card); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
+        /* 🔥 FIX: Changed position to relative and added flex-shrink: 0 so it never overlaps content 🔥 */
+        .app-header { background: var(--card); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: relative; z-index: 10; flex-shrink: 0; }
         .header-title { font-weight: 600; font-size: 1.1rem; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px; }
         .header-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.05); cursor: pointer; font-size: 1.1rem; }
         
-        .view-container { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 80px; display: none; }
+        .view-container { flex: 1; overflow-y: auto; padding: 20px 15px 80px 15px; display: none; }
         .view-container.active { display: block; }
 
         /* List Items */
@@ -97,7 +97,7 @@
     </div>
 
     <div id="viewChapters" class="view-container">
-        <div class="list-item" style="background: rgba(99,102,241,0.1); border-color: var(--primary); justify-content: center; cursor: pointer;" onclick="editCourseCode()">
+        <div class="list-item" style="background: rgba(99,102,241,0.1); border-color: var(--primary); justify-content: center; cursor: pointer; margin-bottom: 20px;" onclick="editCourseCode()">
             <i class="fas fa-code" style="color: var(--primary);"></i> <span style="color: var(--primary); font-weight: 600;">Edit Course Config (JSON)</span>
         </div>
         <div id="chapterList"></div>
@@ -211,18 +211,18 @@
         function navigateBack() {
             if (currentView === 'contents') { renderChapters(); } 
             else if (currentView === 'chapters') { loadCourses(); }
-            else if (currentView === 'allfiles') { loadCourses(); } // Handle back from Developer Mode
+            else if (currentView === 'allfiles') { loadCourses(); } 
         }
 
         // ==========================================
-        // 🔥 NEW: DEVELOPER MODE (ALL FILES) 🔥
+        // DEVELOPER MODE (ALL FILES)
         // ==========================================
         function showAllFiles() {
             const list = document.getElementById('allFilesList');
             list.innerHTML = '';
             
             repoFiles.forEach(f => {
-                if (f.type === 'file') { // Ignore folders for simple editing
+                if (f.type === 'file') { 
                     let icon = 'fa-file-code';
                     let color = 'var(--text-muted)';
                     if(f.name.endsWith('.html')) { icon = 'fa-html5'; color = '#e34f26'; }
@@ -297,7 +297,7 @@
                         `;
                     }
                 });
-                if(!found) list.innerHTML = `<div style="text-align:center; padding: 40px 20px; color:var(--text-muted);">No courses found. Create one!</div>`;
+                if(!found) list.innerHTML += `<div style="text-align:center; padding: 40px 20px; color:var(--text-muted);">No courses found. Create one!</div>`;
                 
                 switchView('viewCourses', 'All Courses', false);
             } catch(e) { alert("Failed to fetch repository."); logoutGH(); }
@@ -489,6 +489,7 @@
 
                 closeModal('contentModal');
                 document.getElementById('newContentTitle').value = '';
+                
                 repoFiles = await api('');
                 renderContents();
             } catch(e) { alert("Failed to generate content."); }
