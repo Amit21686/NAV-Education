@@ -30,7 +30,7 @@
         .view-container { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 80px; display: none; }
         .view-container.active { display: block; }
 
-        /* List Items (Mobile App Style) */
+        /* List Items */
         .list-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .list-item-content { flex: 1; overflow: hidden; cursor: pointer; }
         .list-title { font-weight: 600; font-size: 1rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -84,6 +84,10 @@
     </header>
 
     <div id="viewCourses" class="view-container active">
+        <div class="list-item" style="background: rgba(16,185,129,0.1); border-color: var(--success); justify-content: center; cursor: pointer; margin-bottom: 20px;" onclick="editMasterCatalog()">
+            <i class="fas fa-database" style="color: var(--success);"></i> <span style="color: var(--success); font-weight: 600;">Edit Master Catalog (library.json)</span>
+        </div>
+        
         <div id="courseList"></div>
         <button class="fab" onclick="openModal('courseModal')"><i class="fas fa-plus"></i></button>
     </div>
@@ -117,7 +121,8 @@
             <h3 style="margin-bottom: 15px;">Create New Course</h3>
             <input type="text" id="newCourseTitle" class="input-field" placeholder="Course Title (e.g., Physics)">
             <input type="text" id="newCourseId" class="input-field" placeholder="Short ID (e.g., physics)">
-            <button class="btn btn-primary" style="width: 100%;" onclick="createCourse()">Create Course</button>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px; text-align: center;">Remember to add this to library.json later!</p>
+            <button class="btn btn-primary" style="width: 100%;" onclick="createCourse()">Create Course File</button>
         </div>
     </div>
 
@@ -150,13 +155,11 @@
     <script>
         let gh = { owner: '', repo: '', token: '' };
         
-        // Navigation State
         let repoFiles = [];
-        let currentView = 'courses'; // courses, chapters, contents
+        let currentView = 'courses'; 
         let activeCourse = { path: '', sha: '', data: null };
         let activeChapIndex = -1;
 
-        // --- AUTH ---
         window.onload = () => {
             if (localStorage.getItem('ghToken')) {
                 gh = { owner: localStorage.getItem('ghOwner'), repo: localStorage.getItem('ghRepo'), token: localStorage.getItem('ghToken') };
@@ -177,7 +180,6 @@
 
         function logoutGH() { localStorage.clear(); window.location.reload(); }
 
-        // --- API HELPERS ---
         async function api(endpoint, method = 'GET', body = null) {
             const url = `https://api.github.com/repos/${gh.owner}/${gh.repo}/contents/${endpoint}`;
             const opt = { method, headers: { 'Authorization': `token ${gh.token}`, 'Accept': 'application/vnd.github.v3+json' } };
@@ -190,7 +192,6 @@
         function showLoading(msg) { document.getElementById('loadingText').textContent = msg; document.getElementById('loadingOverlay').style.display = 'flex'; }
         function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
 
-        // --- NAVIGATION ---
         function switchView(viewId, title, showBack) {
             document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
@@ -200,14 +201,39 @@
         }
 
         function navigateBack() {
-            if (currentView === 'contents') {
-                renderChapters(); // Go back to chapters
-            } else if (currentView === 'chapters') {
-                loadCourses(); // Go back to courses
-            }
+            if (currentView === 'contents') { renderChapters(); } 
+            else if (currentView === 'chapters') { loadCourses(); }
         }
 
-        // --- LEVEL 1: COURSES ---
+        // ==========================================
+        // 🔥 MASTER CATALOG LOGIC 🔥
+        // ==========================================
+        async function editMasterCatalog() {
+            showLoading("Opening Master Catalog...");
+            try {
+                // Fetch library.json
+                const fileData = await api('library.json');
+                openEditor('library.json', fileData.sha, false);
+            } catch(e) {
+                // If it doesn't exist, prompt the admin to create it
+                if(confirm("The master catalog 'library.json' does not exist yet. Create it now?")) {
+                    const template = JSON.stringify([
+                        { id: "physics", title: "Physics Masterclass", icon: "⚛️", description: "A sample description." }
+                    ], null, 2);
+                    
+                    showLoading("Creating Master Catalog...");
+                    try {
+                        const res = await api('library.json', 'PUT', { message: "Created master library.json", content: b64EncodeUnicode(template) });
+                        openEditor('library.json', res.content.sha, false);
+                    } catch(err) { alert("Failed to create library.json"); }
+                }
+            }
+            hideLoading();
+        }
+
+        // ==========================================
+        // LEVEL 1: COURSES
+        // ==========================================
         async function loadCourses() {
             showLoading("Loading Courses...");
             try {
@@ -217,8 +243,8 @@
                 
                 let found = false;
                 repoFiles.forEach(f => {
-                    // Filter logic: Course files are usually .json but don't have n1.1 or q1.1 numbering
-                    if(f.name.endsWith('.json') && !f.name.match(/[nq]\d+\.\d+\.json/)) {
+                    // Exclude library.json and other non-course files from the regular course list
+                    if(f.name.endsWith('.json') && !f.name.match(/[nq]\d+\.\d+\.json/) && f.name !== 'library.json' && f.name !== 'package.json') {
                         found = true;
                         list.innerHTML += `
                             <div class="list-item">
@@ -228,6 +254,7 @@
                                 </div>
                                 <div class="list-actions">
                                     <button class="icon-action code" onclick="openEditor('${f.path}', '${f.sha}')"><i class="fas fa-code"></i></button>
+                                    <button class="icon-action delete" onclick="deleteCourse('${f.path}', '${f.sha}', event)"><i class="fas fa-trash"></i></button>
                                 </div>
                             </div>
                         `;
@@ -237,6 +264,19 @@
                 
                 switchView('viewCourses', 'All Courses', false);
             } catch(e) { alert("Failed to fetch repository."); logoutGH(); }
+            hideLoading();
+        }
+
+        async function deleteCourse(path, sha, event) {
+            event.stopPropagation(); 
+            if(!confirm(`Are you absolutely sure you want to permanently delete '${path}'? This cannot be undone!`)) return;
+            
+            showLoading("Deleting Course...");
+            try {
+                await api(path, 'DELETE', { message: `Deleted course config ${path}`, sha: sha });
+                alert("Course deleted successfully!");
+                loadCourses();
+            } catch(e) { alert("Failed to delete course."); }
             hideLoading();
         }
 
@@ -252,6 +292,10 @@
                 closeModal('courseModal');
                 document.getElementById('newCourseTitle').value = ''; document.getElementById('newCourseId').value = '';
                 loadCourses();
+                
+                setTimeout(() => {
+                    alert(`Course '${id}.json' created! Don't forget to add it to library.json so students can see it.`);
+                }, 500);
             } catch(e) { alert("Error creating course."); }
             hideLoading();
         }
@@ -290,9 +334,7 @@
             switchView('viewChapters', activeCourse.data.title, true);
         }
 
-        function editCourseCode() {
-            openEditor(activeCourse.path, activeCourse.sha, true);
-        }
+        function editCourseCode() { openEditor(activeCourse.path, activeCourse.sha, true); }
 
         async function createChapter() {
             const title = document.getElementById('newChapTitle').value.trim();
@@ -303,12 +345,8 @@
 
             showLoading("Saving Chapter...");
             try {
-                const res = await api(activeCourse.path, 'PUT', {
-                    message: `Added chapter: ${title}`,
-                    content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)),
-                    sha: activeCourse.sha
-                });
-                activeCourse.sha = res.content.sha; // Update SHA for future edits
+                const res = await api(activeCourse.path, 'PUT', { message: `Added chapter: ${title}`, content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)), sha: activeCourse.sha });
+                activeCourse.sha = res.content.sha; 
                 closeModal('chapterModal');
                 document.getElementById('newChapTitle').value = '';
                 renderChapters();
@@ -317,10 +355,7 @@
         }
 
         // --- LEVEL 3: CONTENTS ---
-        function openChapter(index) {
-            activeChapIndex = index;
-            renderContents();
-        }
+        function openChapter(index) { activeChapIndex = index; renderContents(); }
 
         function renderContents() {
             const list = document.getElementById('contentList');
@@ -358,7 +393,6 @@
 
             showLoading("Generating Smart Content...");
             try {
-                // 1. Auto-Generate Filename
                 const subjectPrefix = activeCourse.path.split('.')[0];
                 const typeChar = type === 'notes' ? 'n' : 'q';
                 const chapNum = activeChapIndex + 1;
@@ -366,7 +400,6 @@
                 const itemNum = contentsArr.length + 1;
                 const filename = `${subjectPrefix}${typeChar}${chapNum}.${itemNum}.json`;
 
-                // 2. Create Default Structure
                 let fileJSON = "";
                 if(type === 'notes') {
                     fileJSON = JSON.stringify({ title: title, topic: activeCourse.data.chapters[activeChapIndex].title, blocks: [{ type: "paragraph", content: "New notes content." }] }, null, 2);
@@ -374,25 +407,17 @@
                     fileJSON = JSON.stringify([{ question: "Sample Q?", options: ["A", "B", "C", "D"], correctIndex: 0, explanation: "Exp." }], null, 2);
                 }
 
-                // 3. Upload File to GH
                 await api(filename, 'PUT', { message: `Created ${type}: ${title}`, content: b64EncodeUnicode(fileJSON) });
 
-                // 4. Link to Course
                 contentsArr.push({ title: title, file: filename, type: type });
                 activeCourse.data.chapters[activeChapIndex].contents = contentsArr;
 
-                // 5. Update Course Config
-                const res = await api(activeCourse.path, 'PUT', {
-                    message: `Linked ${filename} to course`,
-                    content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)),
-                    sha: activeCourse.sha
-                });
+                const res = await api(activeCourse.path, 'PUT', { message: `Linked ${filename} to course`, content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)), sha: activeCourse.sha });
                 activeCourse.sha = res.content.sha;
 
                 closeModal('contentModal');
                 document.getElementById('newContentTitle').value = '';
                 renderContents();
-
             } catch(e) { alert("Failed to generate content."); }
             hideLoading();
         }
@@ -401,18 +426,11 @@
             if(!confirm(`Delete '${filename}' and remove from course?`)) return;
             showLoading("Deleting...");
             try {
-                // Remove from Course Data
                 activeCourse.data.chapters[activeChapIndex].contents.splice(itemIdx, 1);
                 
-                // Save updated Course Config
-                const res = await api(activeCourse.path, 'PUT', {
-                    message: `Unlinked ${filename}`,
-                    content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)),
-                    sha: activeCourse.sha
-                });
+                const res = await api(activeCourse.path, 'PUT', { message: `Unlinked ${filename}`, content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)), sha: activeCourse.sha });
                 activeCourse.sha = res.content.sha;
 
-                // Attempt to delete actual file (may fail if file doesn't exist, which is fine)
                 try {
                     const fileData = await api(filename);
                     await api(filename, 'DELETE', { message: `Deleted file ${filename}`, sha: fileData.sha });
@@ -427,7 +445,6 @@
         async function openEditor(path, sha, reloadCourseOnSave = false) {
             showLoading("Opening code...");
             try {
-                // If sha is not provided (e.g. from content list), fetch it first
                 if(!sha) {
                     const fileData = await api(path);
                     sha = fileData.sha;
@@ -440,8 +457,6 @@
                 document.getElementById('editPath').value = path;
                 document.getElementById('editSha').value = sha;
                 document.getElementById('editorTitle').textContent = path;
-                
-                // Store a flag so we know if we need to refresh course data after saving
                 document.getElementById('rawCodeInput').dataset.reloadCourse = reloadCourseOnSave;
 
                 document.getElementById('codeEditorView').style.display = 'flex';
@@ -459,27 +474,20 @@
             const reloadCourse = document.getElementById('rawCodeInput').dataset.reloadCourse === 'true';
 
             try {
-                // Basic JSON validation before saving
                 JSON.parse(code); 
-                
                 const res = await api(path, 'PUT', { message: `Admin manual edit: ${path}`, content: b64EncodeUnicode(code), sha: sha });
                 alert("Saved!");
                 
-                // If we edited the Course JSON, we need to update our local activeCourse memory
                 if(reloadCourse) {
                     activeCourse.data = JSON.parse(code);
                     activeCourse.sha = res.content.sha;
                     renderChapters();
                 }
-                
                 closeEditor();
-            } catch(e) { 
-                alert("Save failed. Make sure your JSON formatting is valid!"); 
-            }
+            } catch(e) { alert("Save failed. Make sure your JSON formatting is valid!"); }
             hideLoading();
         }
 
-        // Modals
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
     </script>
