@@ -6,35 +6,45 @@
     {
       "title": "Chapter 1: Electric Charges and Fields",
       "contents": [
-        { 
-          "title": "Handwritten Notes", 
-          "file": "ch1-notes.pdf", 
-          "type": "PDF" 
+        {
+          "title": "Handwritten Notes",
+          "file": "ch1-notes.pdf",
+          "type": "PDF"
         },
-        { 
-          "title": "Textbook Summary", 
-          "file": "ch1n.json", 
-          "type": "Notes" 
+        {
+          "title": "Textbook Summary",
+          "file": "ch1n.json",
+          "type": "Notes"
         },
-        { 
-          "title": "Practice MCQs (Level 1)", 
-          "file": "ch1.json", 
-          "type": "Quiz" 
+        {
+          "title": "Practice MCQs (Level 1)",
+          "file": "ch1.json",
+          "type": "Quiz"
         }
       ]
     },
     {
       "title": "Chapter 2: Electrostatic Potential",
       "contents": [
-        { 
-          "title": "Concept Notes", 
-          "file": "ch2-notes.pdf", 
-          "type": "PDF" 
+        {
+          "title": "Concept Notes",
+          "file": "ch2-notes.pdf",
+          "type": "PDF"
         },
-        { 
-          "title": "Advanced Quiz", 
-          "file": "physics-ch2-mcqs.json", 
-          "type": "Quiz" 
+        {
+          "title": "Advanced Quiz",
+          "file": "physics-ch2-mcqs.json",
+          "type": "Quiz"
+        }
+      ]
+    },
+    {
+      "title": "Amit Kumar",
+      "contents": [
+        {
+          "title": "Testing",
+          "file": "physicsn3.1.json",
+          "type": "notes"
         }
       ]
     }
