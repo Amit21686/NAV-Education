@@ -84,8 +84,12 @@
     </header>
 
     <div id="viewCourses" class="view-container active">
-        <div class="list-item" style="background: rgba(16,185,129,0.1); border-color: var(--success); justify-content: center; cursor: pointer; margin-bottom: 20px;" onclick="editMasterCatalog()">
+        <div class="list-item" style="background: rgba(16,185,129,0.1); border-color: var(--success); justify-content: center; cursor: pointer; margin-bottom: 10px;" onclick="editMasterCatalog()">
             <i class="fas fa-database" style="color: var(--success);"></i> <span style="color: var(--success); font-weight: 600;">Edit Master Catalog (library.json)</span>
+        </div>
+
+        <div class="list-item" style="background: rgba(244,63,94,0.1); border-color: var(--danger); justify-content: center; cursor: pointer; margin-bottom: 20px;" onclick="showAllFiles()">
+            <i class="fas fa-laptop-code" style="color: var(--danger);"></i> <span style="color: var(--danger); font-weight: 600;">Developer Mode (System Files)</span>
         </div>
         
         <div id="courseList"></div>
@@ -103,6 +107,10 @@
     <div id="viewContents" class="view-container">
         <div id="contentList"></div>
         <button class="fab" onclick="openModal('contentModal')"><i class="fas fa-plus"></i></button>
+    </div>
+
+    <div id="viewAllfiles" class="view-container">
+        <div id="allFilesList"></div>
     </div>
 
     <div id="codeEditorView">
@@ -203,24 +211,54 @@
         function navigateBack() {
             if (currentView === 'contents') { renderChapters(); } 
             else if (currentView === 'chapters') { loadCourses(); }
+            else if (currentView === 'allfiles') { loadCourses(); } // Handle back from Developer Mode
         }
 
         // ==========================================
-        // 🔥 MASTER CATALOG LOGIC 🔥
+        // 🔥 NEW: DEVELOPER MODE (ALL FILES) 🔥
+        // ==========================================
+        function showAllFiles() {
+            const list = document.getElementById('allFilesList');
+            list.innerHTML = '';
+            
+            repoFiles.forEach(f => {
+                if (f.type === 'file') { // Ignore folders for simple editing
+                    let icon = 'fa-file-code';
+                    let color = 'var(--text-muted)';
+                    if(f.name.endsWith('.html')) { icon = 'fa-html5'; color = '#e34f26'; }
+                    if(f.name.endsWith('.css')) { icon = 'fa-css3-alt'; color = '#264de4'; }
+                    if(f.name.endsWith('.js')) { icon = 'fa-js-square'; color = '#f7df1e'; }
+                    if(f.name.endsWith('.json')) { icon = 'fa-database'; color = 'var(--primary)'; }
+                    
+                    list.innerHTML += `
+                        <div class="list-item">
+                            <div class="list-item-content" onclick="openEditor('${f.path}', '${f.sha}')">
+                                <div class="list-title"><i class="fab ${icon}" style="color:${color}; margin-right:8px;"></i> ${f.name}</div>
+                                <div class="list-subtitle">Size: ${(f.size / 1024).toFixed(1)} KB</div>
+                            </div>
+                            <div class="list-actions">
+                                <button class="icon-action code" onclick="openEditor('${f.path}', '${f.sha}')"><i class="fas fa-code"></i></button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            switchView('viewAllfiles', 'System Files', true);
+        }
+
+        // ==========================================
+        // MASTER CATALOG LOGIC
         // ==========================================
         async function editMasterCatalog() {
             showLoading("Opening Master Catalog...");
             try {
-                // Fetch library.json
                 const fileData = await api('library.json');
                 openEditor('library.json', fileData.sha, false);
             } catch(e) {
-                // If it doesn't exist, prompt the admin to create it
                 if(confirm("The master catalog 'library.json' does not exist yet. Create it now?")) {
                     const template = JSON.stringify([
                         { id: "physics", title: "Physics Masterclass", icon: "⚛️", description: "A sample description." }
                     ], null, 2);
-                    
                     showLoading("Creating Master Catalog...");
                     try {
                         const res = await api('library.json', 'PUT', { message: "Created master library.json", content: b64EncodeUnicode(template) });
@@ -243,7 +281,6 @@
                 
                 let found = false;
                 repoFiles.forEach(f => {
-                    // Exclude library.json and other non-course files from the regular course list
                     if(f.name.endsWith('.json') && !f.name.match(/[nq]\d+\.\d+\.json/) && f.name !== 'library.json' && f.name !== 'package.json') {
                         found = true;
                         list.innerHTML += `
@@ -269,14 +306,45 @@
 
         async function deleteCourse(path, sha, event) {
             event.stopPropagation(); 
-            if(!confirm(`Are you absolutely sure you want to permanently delete '${path}'? This cannot be undone!`)) return;
+            if(!confirm(`Are you absolutely sure you want to permanently delete '${path}' AND all its associated notes and quizzes? This cannot be undone!`)) return;
             
-            showLoading("Deleting Course...");
+            showLoading("Executing Cascading Delete...");
             try {
+                const courseId = path.split('.')[0];
+                const courseFileData = await api(path);
+                const courseData = JSON.parse(b64DecodeUnicode(courseFileData.content));
+
+                if (courseData.chapters) {
+                    for (let chap of courseData.chapters) {
+                        if (chap.contents) {
+                            for (let item of chap.contents) {
+                                const targetFile = repoFiles.find(f => f.name === item.file);
+                                if (targetFile) {
+                                    try { await api(item.file, 'DELETE', { message: `Cascading delete: ${item.file}`, sha: targetFile.sha }); } catch(err) {}
+                                }
+                            }
+                        }
+                    }
+                }
+
                 await api(path, 'DELETE', { message: `Deleted course config ${path}`, sha: sha });
-                alert("Course deleted successfully!");
+
+                try {
+                    const libData = await api('library.json');
+                    let libraryArr = JSON.parse(b64DecodeUnicode(libData.content));
+                    const initialLength = libraryArr.length;
+                    libraryArr = libraryArr.filter(c => c.id !== courseId);
+                    if (libraryArr.length !== initialLength) {
+                        await api('library.json', 'PUT', { message: `Removed ${courseId} from library.json`, content: b64EncodeUnicode(JSON.stringify(libraryArr, null, 2)), sha: libData.sha });
+                    }
+                } catch(err) {}
+
+                alert("Course and all associated contents deleted successfully!");
                 loadCourses();
-            } catch(e) { alert("Failed to delete course."); }
+            } catch(e) { 
+                console.error(e);
+                alert("Failed to delete course completely. Check console."); 
+            }
             hideLoading();
         }
 
@@ -289,13 +357,17 @@
             showLoading("Creating...");
             try {
                 await api(`${id}.json`, 'PUT', { message: `Created course ${title}`, content: b64EncodeUnicode(JSON.stringify(courseJSON, null, 2)) });
+                
+                try {
+                    const libData = await api('library.json');
+                    let libraryArr = JSON.parse(b64DecodeUnicode(libData.content));
+                    libraryArr.push({ id: id, title: title, icon: "📚", description: "Learn and master concepts." });
+                    await api('library.json', 'PUT', { message: `Auto-added ${id} to library.json`, content: b64EncodeUnicode(JSON.stringify(libraryArr, null, 2)), sha: libData.sha });
+                } catch(err) { console.warn("Could not auto-add to library.json."); }
+
                 closeModal('courseModal');
                 document.getElementById('newCourseTitle').value = ''; document.getElementById('newCourseId').value = '';
                 loadCourses();
-                
-                setTimeout(() => {
-                    alert(`Course '${id}.json' created! Don't forget to add it to library.json so students can see it.`);
-                }, 500);
             } catch(e) { alert("Error creating course."); }
             hideLoading();
         }
@@ -417,6 +489,7 @@
 
                 closeModal('contentModal');
                 document.getElementById('newContentTitle').value = '';
+                repoFiles = await api('');
                 renderContents();
             } catch(e) { alert("Failed to generate content."); }
             hideLoading();
@@ -432,10 +505,16 @@
                 activeCourse.sha = res.content.sha;
 
                 try {
-                    const fileData = await api(filename);
-                    await api(filename, 'DELETE', { message: `Deleted file ${filename}`, sha: fileData.sha });
+                    const targetFile = repoFiles.find(f => f.name === filename);
+                    if(targetFile) {
+                        await api(filename, 'DELETE', { message: `Deleted file ${filename}`, sha: targetFile.sha });
+                    } else {
+                        const fileData = await api(filename);
+                        await api(filename, 'DELETE', { message: `Deleted file ${filename}`, sha: fileData.sha });
+                    }
                 } catch(e) {}
 
+                repoFiles = await api('');
                 renderContents();
             } catch(e) { alert("Delete failed."); }
             hideLoading();
@@ -474,7 +553,7 @@
             const reloadCourse = document.getElementById('rawCodeInput').dataset.reloadCourse === 'true';
 
             try {
-                JSON.parse(code); 
+                if(path.endsWith('.json')) JSON.parse(code); 
                 const res = await api(path, 'PUT', { message: `Admin manual edit: ${path}`, content: b64EncodeUnicode(code), sha: sha });
                 alert("Saved!");
                 
@@ -484,7 +563,7 @@
                     renderChapters();
                 }
                 closeEditor();
-            } catch(e) { alert("Save failed. Make sure your JSON formatting is valid!"); }
+            } catch(e) { alert("Save failed. If this is a JSON file, check for syntax errors!"); }
             hideLoading();
         }
 
