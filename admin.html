@@ -111,6 +111,9 @@
         .folder-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 10px; text-align: center; cursor: pointer; transition: 0.2s; }
         .folder-card:active { transform: scale(0.95); border-color: var(--primary); }
         .folder-icon { font-size: 2.5rem; margin-bottom: 10px; }
+
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--success); color: white; padding: 12px 24px; border-radius: 30px; font-size: 0.9rem; font-weight: 500; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; opacity: 0; transition: 0.3s; display: flex; align-items: center; gap: 8px; white-space: nowrap;}
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
@@ -130,6 +133,7 @@
         <div class="spinner"></div>
         <div id="loadingText" style="font-weight: 500;">Processing...</div>
     </div>
+    <div id="toastContainer" class="toast"></div>
 
     <header class="app-header">
         <div class="header-icon" id="backBtn" onclick="navigateBack()" style="visibility: hidden;"><i class="fas fa-arrow-left"></i></div>
@@ -171,7 +175,7 @@
         <header class="app-header">
             <div class="header-icon" onclick="closeEditor()"><i class="fas fa-times"></i></div>
             
-            <button id="editorModeToggle" class="btn" style="background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid var(--primary); padding: 5px 15px; font-size: 0.8rem;" onclick="toggleEditorMode()" style="display:none;">
+            <button id="editorModeToggle" class="btn" style="background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid var(--primary); padding: 5px 15px; font-size: 0.8rem; display:none;" onclick="toggleEditorMode()">
                 <i class="fas fa-eye"></i> Visual Builder
             </button>
             
@@ -251,13 +255,18 @@
     <input type="file" id="hiddenImageUploader" accept="image/*" style="display: none;">
     <input type="hidden" id="currentTargetTextarea">
     
+    <input type="file" id="systemFileUploader" style="display: none;">
     <input type="file" id="replaceFileUploader" style="display: none;">
     <input type="hidden" id="replaceFilePath">
     <input type="hidden" id="replaceFileSha">
 
     <script>
-        function b64EncodeUnicode(str) { return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) { return String.fromCharCode('0x' + p1); })); }
-        function b64DecodeUnicode(str) { return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join('')); }
+        // --- BASE64 FIX ---
+        function b64EncodeUnicode(str) { return btoa(unescape(encodeURIComponent(str))); }
+        function b64DecodeUnicode(str) { 
+            try { return decodeURIComponent(escape(atob(str.replace(/\s/g, '')))); } 
+            catch(e) { return atob(str.replace(/\s/g, '')); }
+        }
 
         let gh = { owner: '', repo: '', token: '' };
         let repoFiles = [];
@@ -268,8 +277,16 @@
         let parsedVisualData = null; 
         let visualFileType = null; 
         
-        // Memory for Folder View
         let currentVirtualFolder = '';
+        let toastTimeout;
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastContainer');
+            if(toastTimeout) clearTimeout(toastTimeout);
+            toast.innerHTML = `<i class="fas fa-check-circle"></i> ${msg}`;
+            toast.classList.add('show');
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), 2000);
+        }
 
         function jumpToTop() { if (editor) { editor.navigateFileStart(); editor.scrollToLine(0, true, true, function () {}); } }
         function jumpToBottom() { if (editor) { const lastLine = editor.session.getLength(); editor.navigateFileEnd(); editor.scrollToLine(lastLine, true, true, function () {}); } }
@@ -397,34 +414,32 @@
             let filesHtml = '';
             filtered.forEach(f => {
                 let icon = 'fa-file-code'; let color = 'var(--text-muted)';
+                let isPdf = false;
                 
                 if(f.name.endsWith('.html')) { icon = 'fa-html5'; color = '#e34f26'; }
                 else if(f.name.endsWith('.css')) { icon = 'fa-css3-alt'; color = '#264de4'; }
                 else if(f.name.endsWith('.js')) { icon = 'fa-js-square'; color = '#f7df1e'; }
                 else if(f.name.endsWith('.json')) { icon = 'fa-database'; color = 'var(--primary)'; }
-                else if(f.name.endsWith('.pdf')) { icon = 'fa-file-pdf'; color = '#f43f5e'; }
+                else if(f.name.endsWith('.pdf')) { icon = 'fa-file-pdf'; color = '#f43f5e'; isPdf = true;}
                 else if(f.name.match(/\.(jpg|jpeg|png|gif|svg)$/i)) { icon = 'fa-image'; color = '#10b981'; }
 
                 const isEditable = !!f.name.match(/\.(html|css|js|json)$/i);
                 
-                let editAction = `openEditor('${f.path}', '${f.sha}')`;
-                let viewAction = `window.open('https://raw.githubusercontent.com/${gh.owner}/${gh.repo}/main/${f.path}', '_blank')`;
+                let editCodeAction = `openEditor('${f.path}', '${f.sha}')`;
+                let viewLiveAction = `window.open('https://${gh.owner}.github.io/${gh.repo}/${f.path}', '_blank')`;
+                let viewRawAction = `window.open('https://raw.githubusercontent.com/${gh.owner}/${gh.repo}/main/${f.path}', '_blank')`;
                 
-                // GitHub Pages Viewer Fix
-                if(f.name.endsWith('.html') || f.name.endsWith('.pdf')) {
-                    viewAction = `window.open('https://${gh.owner}.github.io/${gh.repo}/${f.path}', '_blank')`;
-                }
-
-                let clickAction = isEditable ? editAction : viewAction;
+                let primaryClick = isEditable ? editCodeAction : (isPdf ? viewLiveAction : viewRawAction);
 
                 filesHtml += `
                     <div class="list-item">
-                        <div class="list-item-content" onclick="${clickAction}">
+                        <div class="list-item-content" onclick="${primaryClick}">
                             <div class="list-title"><i class="fas ${icon}" style="color:${color}; margin-right:8px;"></i> ${f.name}</div>
                             <div class="list-subtitle">${(f.size / 1024).toFixed(1)} KB</div>
                         </div>
                         <div class="list-actions">
-                            ${isEditable ? `<button class="icon-action code" onclick="${editAction}" title="Edit"><i class="fas fa-edit"></i></button>` : `<button class="icon-action view" onclick="${viewAction}" title="View"><i class="fas fa-eye"></i></button>`}
+                            ${isEditable ? `<button class="icon-action code" onclick="${editCodeAction}" title="Edit Code"><i class="fas fa-edit"></i></button>` : ''}
+                            <button class="icon-action view" onclick="${isPdf || f.name.endsWith('.html') ? viewLiveAction : viewRawAction}" title="View Live"><i class="fas fa-eye"></i></button>
                             <button class="icon-action replace" onclick="triggerReplace('${f.path}', '${f.sha}')" title="Replace File"><i class="fas fa-sync-alt"></i></button>
                             <button class="icon-action delete" onclick="deleteSystemFile('${f.path}', '${f.sha}')" title="Delete"><i class="fas fa-trash"></i></button>
                         </div>
@@ -440,9 +455,10 @@
             try {
                 await api(path, 'DELETE', { message: `Deleted ${path}`, sha: sha });
                 repoFiles = await api(''); 
+                showToast("File Deleted");
                 if(currentVirtualFolder) openVirtualFolder(currentVirtualFolder);
                 else initSmartExplorer(); 
-            } catch(e) { alert("Delete failed."); }
+            } catch(e) { alert("Delete failed: " + e.message); hideLoading(); }
             hideLoading();
         }
 
@@ -453,9 +469,10 @@
             try {
                 await api(name, 'PUT', { message: `Created ${name}`, content: b64EncodeUnicode("") });
                 repoFiles = await api('');
+                showToast("File Created");
                 if(currentVirtualFolder) openVirtualFolder(currentVirtualFolder);
                 else initSmartExplorer();
-            } catch(e) { alert("Failed to create file."); }
+            } catch(e) { alert("Failed to create file."); hideLoading(); }
             hideLoading();
         }
 
@@ -471,6 +488,7 @@
                         let base64 = event.target.result.split(',')[1];
                         await api(name, 'PUT', { message: `Uploaded ${name}`, content: base64 });
                         repoFiles = await api(''); 
+                        showToast("File Uploaded");
                         if(currentVirtualFolder) openVirtualFolder(currentVirtualFolder);
                         else initSmartExplorer();
                     } catch(err) { alert("Upload failed."); }
@@ -507,7 +525,7 @@
                     try {
                         let base64 = event.target.result.split(',')[1];
                         await api(path, 'PUT', { message: `Replaced ${path}`, content: base64, sha: sha });
-                        alert("File successfully replaced!");
+                        showToast("File Replaced!");
                         repoFiles = await api(''); 
                         
                         if(currentView === 'allfiles') {
@@ -589,8 +607,9 @@
                         await api('library.json', 'PUT', { message: `Removed from library`, content: b64EncodeUnicode(JSON.stringify(libraryObj, null, 2)), sha: libData.sha });
                     }
                 } catch(err) {}
+                showToast("Course Deleted");
                 loadCourses();
-            } catch(e) { alert("Failed to delete."); }
+            } catch(e) { alert("Failed to delete."); hideLoading(); }
             hideLoading();
         }
 
@@ -610,8 +629,10 @@
                     if(libData) putData.sha = libData.sha;
                     await api('library.json', 'PUT', putData);
                 } catch(err) {}
-                closeModal('courseModal'); document.getElementById('newCourseTitle').value = ''; document.getElementById('newCourseId').value = ''; loadCourses();
-            } catch(e) { alert("Error creating course."); }
+                closeModal('courseModal'); document.getElementById('newCourseTitle').value = ''; document.getElementById('newCourseId').value = ''; 
+                showToast("Course Created");
+                loadCourses();
+            } catch(e) { alert("Error creating course."); hideLoading(); }
             hideLoading();
         }
 
@@ -621,7 +642,7 @@
                 const file = await api(path);
                 activeCourse.data = JSON.parse(b64DecodeUnicode(file.content)); activeCourse.path = path; activeCourse.sha = file.sha;
                 renderChapters();
-            } catch(e) { alert("Failed to parse JSON."); }
+            } catch(e) { alert("Failed to parse JSON."); hideLoading(); }
             hideLoading();
         }
 
@@ -645,8 +666,10 @@
             showLoading("Saving Chapter...");
             try {
                 const res = await api(activeCourse.path, 'PUT', { message: `Added ${title}`, content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)), sha: activeCourse.sha });
-                activeCourse.sha = res.content.sha; closeModal('chapterModal'); document.getElementById('newChapTitle').value = ''; renderChapters();
-            } catch(e) { alert("Failed to save."); }
+                activeCourse.sha = res.content.sha; closeModal('chapterModal'); document.getElementById('newChapTitle').value = ''; 
+                showToast("Chapter Added");
+                renderChapters();
+            } catch(e) { alert("Failed to save."); hideLoading(); }
             hideLoading();
         }
 
@@ -659,23 +682,28 @@
             else {
                 chap.contents.forEach((item, itemIdx) => {
                     let icon = 'fa-file-alt'; let color = 'var(--primary)';
-                    let isEditable = true; let viewLink = '';
+                    let isPdf = false;
                     
                     if(item.type === 'quiz') { icon = 'fa-brain'; color = 'var(--success)'; }
-                    else if(item.type === 'pdf') { icon = 'fa-file-pdf'; color = 'var(--danger)'; isEditable = false; viewLink = `https://${gh.owner}.github.io/${gh.repo}/${item.file}`; }
-                    else if(item.type === 'html') { icon = 'fa-html5'; color = '#e34f26'; viewLink = `https://${gh.owner}.github.io/${gh.repo}/${item.file}`; }
+                    else if(item.type === 'pdf') { icon = 'fa-file-pdf'; color = 'var(--danger)'; isPdf = true; }
+                    else if(item.type === 'html') { icon = 'fa-html5'; color = '#e34f26'; }
                     
-                    const clickAction = isEditable ? `openEditor('${item.file}', '')` : `window.open('${viewLink}', '_blank')`;
+                    let isEditable = !!item.file.match(/\.(html|css|js|json)$/i);
+                    let editCodeAction = `openEditor('${item.file}', '')`;
+                    let viewLiveAction = `window.open('https://${gh.owner}.github.io/${gh.repo}/${item.file}', '_blank')`;
+                    
+                    let primaryClick = isEditable ? editCodeAction : viewLiveAction;
                     const replaceAction = `triggerReplaceWithFetch('${item.file}')`;
 
                     list.innerHTML += `
                         <div class="list-item">
-                            <div class="list-item-content" onclick="${clickAction}">
+                            <div class="list-item-content" onclick="${primaryClick}">
                                 <div class="list-title"><i class="fas ${icon}" style="color:${color}; margin-right:8px;"></i> ${item.title}</div>
                                 <div class="list-subtitle">File: ${item.file}</div>
                             </div>
                             <div class="list-actions">
-                                ${isEditable ? `<button class="icon-action code" onclick="${clickAction}" title="Edit"><i class="fas fa-edit"></i></button>` : `<button class="icon-action view" onclick="${clickAction}" title="View"><i class="fas fa-eye"></i></button>`}
+                                ${isEditable ? `<button class="icon-action code" onclick="${editCodeAction}" title="Edit"><i class="fas fa-edit"></i></button>` : ''}
+                                <button class="icon-action view" onclick="${viewLiveAction}" title="View Live"><i class="fas fa-eye"></i></button>
                                 <button class="icon-action replace" onclick="${replaceAction}" title="Replace File"><i class="fas fa-sync-alt"></i></button>
                                 <button class="icon-action delete" onclick="deleteContent(${itemIdx}, '${item.file}')" title="Delete"><i class="fas fa-trash"></i></button>
                             </div>
@@ -715,8 +743,9 @@
                         activeCourse.data.chapters[activeChapIndex].contents = contentsArr;
                         const res = await api(activeCourse.path, 'PUT', { message: `Linked ${filename}`, content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)), sha: activeCourse.sha });
                         activeCourse.sha = res.content.sha;
-                        closeModal('contentModal'); document.getElementById('newContentTitle').value = ''; document.getElementById('pdfFileInput').value = ''; repoFiles = await api(''); renderContents();
-                    } catch (err) { alert("Failed to upload PDF."); }
+                        closeModal('contentModal'); document.getElementById('newContentTitle').value = ''; document.getElementById('pdfFileInput').value = ''; 
+                        repoFiles = await api(''); showToast("PDF Linked!"); renderContents();
+                    } catch (err) { alert("Failed to upload PDF."); hideLoading(); }
                     hideLoading();
                 };
                 reader.readAsDataURL(pdfFile);
@@ -737,8 +766,8 @@
                 const res = await api(activeCourse.path, 'PUT', { message: `Linked ${filename}`, content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)), sha: activeCourse.sha });
                 activeCourse.sha = res.content.sha;
                 
-                closeModal('contentModal'); document.getElementById('newContentTitle').value = ''; repoFiles = await api(''); renderContents();
-            } catch(e) { alert("Failed to generate."); }
+                closeModal('contentModal'); document.getElementById('newContentTitle').value = ''; repoFiles = await api(''); showToast("Content Linked!"); renderContents();
+            } catch(e) { alert("Failed to generate."); hideLoading(); }
             hideLoading();
         }
 
@@ -754,8 +783,8 @@
                     if(targetFile) { await api(filename, 'DELETE', { message: `Deleted ${filename}`, sha: targetFile.sha }); } 
                     else { const fileData = await api(filename); await api(filename, 'DELETE', { message: `Deleted ${filename}`, sha: fileData.sha }); }
                 } catch(e) {}
-                repoFiles = await api(''); renderContents();
-            } catch(e) { alert("Delete failed."); }
+                repoFiles = await api(''); showToast("Item Deleted!"); renderContents();
+            } catch(e) { alert("Delete failed."); hideLoading(); }
             hideLoading();
         }
 
@@ -770,7 +799,7 @@
 
             let html = `<div class="inblock-media-row">`;
             matches.forEach(img => {
-                let url = `https://raw.githubusercontent.com/${gh.owner}/${gh.repo}/main/${img}?t=${Date.now()}`; // Cache buster
+                let url = `https://raw.githubusercontent.com/${gh.owner}/${gh.repo}/main/${img}?t=${Date.now()}`;
                 html += `
                     <div class="inblock-media-card">
                         <img src="${url}" class="inblock-media-img">
@@ -794,15 +823,15 @@
                 
                 let textarea = document.getElementById(targetId);
                 let val = textarea.value;
-                // Safer Regex to remove the entire img tag regardless of parameters
                 let tagRegex = new RegExp(`(?:<br>\\s*)?<img[^>]*src=["'][^"']*${imgName}[^"']*["'][^>]*>(?:\\s*<br>)?`, 'g');
                 val = val.replace(tagRegex, '');
-                val = val.replace(new RegExp(imgName, 'g'), ''); // Fallback
+                val = val.replace(new RegExp(imgName, 'g'), ''); 
                 textarea.value = val;
                 
                 if(visualFileType === 'quiz') extractVisualQuizData(); else extractVisualNotesData();
                 if(visualFileType === 'quiz') buildVisualQuizUI(); else buildVisualNotesUI();
-            } catch(e) { alert("Failed to delete image."); }
+                showToast("Image Deleted");
+            } catch(e) { alert("Failed to delete image."); hideLoading(); }
             hideLoading();
         }
 
@@ -837,20 +866,19 @@
                             try { const oldFileData = await api(oldImgName); await api(oldImgName, 'DELETE', { message: `Deleted old image`, sha: oldFileData.sha }); } catch(err) {}
                             
                             let textarea = document.getElementById(targetId);
-                            // Replace old filename (ignoring parameters) with new filename + cache buster
                             textarea.value = textarea.value.replace(new RegExp(oldImgName + '(\\?t=\\d+)?', 'g'), newFilename + `?t=${Date.now()}`);
-                            alert("Image Replaced!");
+                            showToast("Image Replaced!");
                         } else {
                             let targetId = instruction;
                             let textarea = document.getElementById(targetId);
                             textarea.value += ` <br><img src="${imgUrl}" style="max-width:100%; border-radius:8px;"> <br>`;
-                            alert("Image Attached!");
+                            showToast("Image Attached!");
                         }
                         
                         if(visualFileType === 'quiz') extractVisualQuizData(); else extractVisualNotesData();
                         if(visualFileType === 'quiz') buildVisualQuizUI(); else buildVisualNotesUI();
 
-                    } catch(err) { alert("Error handling image."); }
+                    } catch(err) { alert("Error handling image."); hideLoading(); }
                     hideLoading(); document.getElementById('hiddenImageUploader').value = ''; 
                 };
                 reader.readAsDataURL(file);
@@ -867,8 +895,14 @@
             showLoading("Loading Editor...");
             try {
                 let codeStr = "";
-                if(!sha) { const fileData = await api(path); sha = fileData.sha; codeStr = b64DecodeUnicode(fileData.content); } 
-                else { const fileData = await api(path); codeStr = b64DecodeUnicode(fileData.content); }
+                if(!sha) { 
+                    try { const fileData = await api(path); sha = fileData.sha; codeStr = b64DecodeUnicode(fileData.content); } 
+                    catch(apiErr) { throw new Error("Could not fetch file from GitHub."); }
+                } 
+                else { 
+                    try { const fileData = await api(path); codeStr = b64DecodeUnicode(fileData.content); } 
+                    catch(apiErr) { throw new Error("Could not fetch file content."); }
+                }
                 
                 document.getElementById('editPath').value = path;
                 document.getElementById('editSha').value = sha;
@@ -878,6 +912,7 @@
                 else if(path.endsWith('.css')) editor.session.setMode("ace/mode/css");
                 else if(path.endsWith('.js')) editor.session.setMode("ace/mode/javascript");
                 else editor.session.setMode("ace/mode/json");
+                
                 editor.setValue(codeStr, -1); 
 
                 const toggleBtn = document.getElementById('editorModeToggle');
@@ -894,7 +929,7 @@
                     document.getElementById('currentEditorMode').value = 'code'; showCodeMode();
                 }
                 document.getElementById('codeEditorView').style.display = 'flex'; editor.resize(); 
-            } catch(e) { alert("Failed to load file content."); }
+            } catch(e) { alert("Error: " + e.message); hideLoading(); }
             hideLoading();
         }
 
@@ -946,7 +981,7 @@
             const modal = document.getElementById('livePreviewModal'); const contentArea = document.getElementById('mockupContentArea'); let html = '';
             if (visualFileType === 'quiz') {
                 html += `<div style="text-align:center; color:var(--primary); margin-bottom:20px; font-weight:600;"><i class="fas fa-brain"></i> Quiz Preview</div>`;
-                parsedVisualData.forEach((q, i) => {
+                (parsedVisualData || []).forEach((q, i) => {
                     html += `<div style="margin-bottom: 30px;"><strong>Q${i+1}.</strong> <div style="margin-bottom:15px; font-size:1.1rem; font-weight:600;">${q.question || ''}</div>`;
                     const labels = ['A', 'B', 'C', 'D'];
                     (q.options || []).forEach((opt, oIdx) => {
@@ -1071,7 +1106,8 @@
 
         function extractVisualNotesData() {
             let newBlocks = [];
-            for (let i = 0; i < parsedVisualData.blocks.length; i++) {
+            const blocksLen = parsedVisualData.blocks ? parsedVisualData.blocks.length : 0;
+            for (let i = 0; i < blocksLen; i++) {
                 if(!document.getElementById(`bCard_${i}`)) continue;
                 let bType = document.getElementById(`bType_${i}`).value; let bContent = document.getElementById(`bContent_${i}`).value;
                 let blockObj = { type: bType, content: bContent }; if (bType === 'callout') { blockObj.style = "info"; blockObj.icon = "fas fa-info-circle"; }
@@ -1094,10 +1130,10 @@
             try {
                 if(path.endsWith('.json')) JSON.parse(code); 
                 const res = await api(path, 'PUT', { message: `Admin manual edit: ${path}`, content: b64EncodeUnicode(code), sha: sha });
-                alert("Saved Successfully!");
+                showToast("Saved Successfully!");
                 if(reloadCourse) { activeCourse.data = JSON.parse(code); activeCourse.sha = res.content.sha; renderChapters(); }
                 document.getElementById('editSha').value = res.content.sha;
-            } catch(e) { alert("Save failed! Check JSON syntax."); }
+            } catch(e) { alert("Save failed! Check JSON syntax."); hideLoading(); }
             hideLoading();
         }
 
