@@ -5,7 +5,13 @@
   "chapters": [
     {
       "title": "Solution",
-      "contents": []
+      "contents": [
+        {
+          "title": "Solution Summary Notes",
+          "file": "chemistryn1.1.json",
+          "type": "notes"
+        }
+      ]
     }
   ]
 }
