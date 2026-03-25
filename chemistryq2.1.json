@@ -1,13 +1,62 @@
 [
   {
-    "question": "AI SE GENERATE KIYA HUA JSON YAHA PASTE KAREIN.",
-    "options": [
-      "A",
-      "B",
-      "C",
-      "D"
-    ],
+    "question": "For a first-order reaction, the unit of rate constant k is:",
+    "options": ["s^-1", "mol L^-1 s^-1", "L mol^-1 s^-1", "mol^-1 L s^-1"],
     "correctIndex": 0,
-    "explanation": ""
+    "explanation": "For a first-order reaction, rate = k[A]. Since rate has units of mol L^-1 s^-1 and concentration has units of mol L^-1, k must have units of s^-1."
+  },
+  {
+    "question": "The half-life of a first-order reaction is given by:",
+    "options": ["$t_{1/2} = \\frac{0.693}{k}$", "$t_{1/2} = \\frac{1}{k[A]_0}$", "$t_{1/2} = \\frac{k}{0.693}$", "$t_{1/2} = \\frac{[A]_0}{2k}$"],
+    "correctIndex": 0,
+    "explanation": "For first-order reactions, half-life is independent of initial concentration and is given by $t_{1/2} = 0.693/k$."
+  },
+  {
+    "question": "If the concentration of reactant is doubled, the rate of a second-order reaction will:",
+    "options": ["Remain same", "Double", "Triple", "Increase four times"],
+    "correctIndex": 3,
+    "explanation": "For a second-order reaction, rate = k[A]^2. If concentration doubles, rate becomes (2A)^2 = 4A^2, so rate increases four times."
+  },
+  {
+    "question": "Which of the following is an example of zero-order reaction?",
+    "options": ["Decomposition of ammonia", "Photochemical reaction", "Reaction in enzyme catalysis at high substrate concentration", "Radioactive decay"],
+    "correctIndex": 2,
+    "explanation": "In enzyme catalysis at high substrate concentration, the enzyme becomes saturated, and the rate becomes independent of concentration, showing zero-order kinetics."
+  },
+  {
+    "question": "The integrated rate equation for a first-order reaction is:",
+    "options": ["$[A] = [A]_0 - kt$", "$\\ln[A] = \\ln[A]_0 - kt$", "$\\frac{1}{[A]} = \\frac{1}{[A]_0} + kt$", "$[A] = kt$"],
+    "correctIndex": 1,
+    "explanation": "The integrated rate equation for first-order reactions is $\\ln[A] = \\ln[A]_0 - kt$, showing exponential decay of concentration."
+  },
+  {
+    "question": "The rate constant of a reaction depends on:",
+    "options": ["Initial concentration", "Time", "Temperature", "Extent of reaction"],
+    "correctIndex": 2,
+    "explanation": "The rate constant depends on temperature and nature of reactants, not on concentration or time."
+  },
+  {
+    "question": "Arrhenius equation is given by:",
+    "options": ["$k = Ae^{-E_a/RT}$", "$k = \\frac{E_a}{RT}$", "$k = Ae^{E_a/RT}$", "$k = RT/E_a$"],
+    "correctIndex": 0,
+    "explanation": "Arrhenius equation is $k = Ae^{-E_a/RT}$, where A is frequency factor, Ea is activation energy, R is gas constant, and T is temperature."
+  },
+  {
+    "question": "The molecularity of a reaction is:",
+    "options": ["Always fractional", "Always zero", "Always a whole number", "Can be negative"],
+    "correctIndex": 2,
+    "explanation": "Molecularity is defined as the number of reacting species in an elementary step, so it is always a whole number."
+  },
+  {
+    "question": "Which factor does NOT affect the rate of reaction?",
+    "options": ["Temperature", "Catalyst", "Pressure", "Color of reactant"],
+    "correctIndex": 3,
+    "explanation": "Color of reactant has no effect on reaction rate, while temperature, catalyst, and pressure (for gases) affect the rate."
+  },
+  {
+    "question": "For a zero-order reaction, the graph of concentration vs time is:",
+    "options": ["Exponential curve", "Straight line with negative slope", "Straight line with positive slope", "Parabolic curve"],
+    "correctIndex": 1,
+    "explanation": "For zero-order reactions, $[A] = [A]_0 - kt$, which represents a straight line with negative slope when plotted against time."
   }
 ]
