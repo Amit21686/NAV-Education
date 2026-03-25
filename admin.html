@@ -6,31 +6,32 @@
     <title>NAV Admin Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ext-searchbox.js" type="text/javascript" charset="utf-8"></script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         :root { --primary: #6366f1; --bg: #020617; --card: #1e293b; --text: #f8fafc; --text-muted: #94a3b8; --border: #334155; --danger: #f43f5e; --success: #10b981; --info: #3b82f6;}
         body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        /* Utility */
         .btn { padding: 12px 15px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:active { transform: scale(0.96); }
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
-        .input-field { width: 100%; padding: 14px; margin-bottom: 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; }
+        .input-field { width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; font-size: 0.9rem;}
         
-        /* Auth Screen */
         #authScreen { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; justify-content: center; padding: 20px; }
         .auth-box { background: var(--card); padding: 30px 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
 
-        /* App Layout */
         .app-header { background: var(--card); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: relative; z-index: 10; flex-shrink: 0;}
-        .header-title { font-weight: 600; font-size: 1.1rem; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px; }
-        .header-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.05); cursor: pointer; font-size: 1.1rem; }
+        .header-title { font-weight: 600; font-size: 1rem; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px; }
+        .header-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.05); cursor: pointer; font-size: 1rem; transition: 0.2s;}
+        .header-icon:active { background: rgba(255,255,255,0.2); transform: scale(0.9); }
         
         .view-container { flex: 1; overflow-y: auto; padding: 20px 15px 80px 15px; display: none; }
         .view-container.active { display: block; }
 
-        /* List Items */
         .list-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .list-item-content { flex: 1; overflow: hidden; cursor: pointer; }
         .list-title { font-weight: 600; font-size: 1rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -40,30 +41,30 @@
         .icon-action.code { color: #a5b4fc; }
         .icon-action.delete { color: var(--danger); }
 
-        /* Floating Action Button (FAB) */
         .fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 15px rgba(99,102,241,0.4); border: none; cursor: pointer; z-index: 100; transition: transform 0.2s; }
         .fab:active { transform: scale(0.9); }
 
-        /* Code Editor View */
+        /* EDITOR LAYOUT */
         #codeEditorView { display: none; flex-direction: column; height: 100vh; width: 100vw; position: fixed; top: 0; left: 0; background: var(--bg); z-index: 500; }
-        #rawCodeInput { flex: 1; background: #000; color: #a5b4fc; font-family: monospace; font-size: 0.85rem; padding: 15px; border: none; resize: none; width: 100%; outline: none; }
+        #aceEditorContainer { flex: 1; width: 100%; position: relative; } 
+        
+        /* 🔥 VISUAL BUILDER STYLES 🔥 */
+        #visualEditorContainer { flex: 1; width: 100%; overflow-y: auto; padding: 20px; display: none; background: var(--bg); }
+        .visual-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .v-label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; font-weight: 500; text-transform: uppercase;}
+        .v-textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; font-size: 0.9rem; resize: vertical; min-height: 80px; margin-bottom: 15px; }
+        .v-input { width: 100%; padding: 10px 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; font-size: 0.9rem; margin-bottom: 10px; }
+        .v-select { width: 100%; padding: 10px; background: #0f172a; border: 1px solid var(--primary); color: white; border-radius: 8px; font-family: inherit; font-size: 0.9rem; margin-bottom: 15px; font-weight: 600;}
+        .v-row { display: flex; gap: 10px; align-items: flex-start; }
+        .v-del-btn { background: rgba(244,63,94,0.1); color: var(--danger); border: 1px solid rgba(244,63,94,0.3); padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; cursor: pointer; float: right; margin-top: -10px; }
 
-        /* Modals */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-overlay.active { display: flex; }
         .modal-card { background: var(--card); width: 100%; border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
-
-        /* Loading */
+        
         #loadingOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; backdrop-filter: blur(5px); }
         .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        
-        /* AI Prompt Styles */
-        .prompt-container { background: #0f172a; border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 25px; }
-        .prompt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .prompt-code { background: #000; color: #a5b4fc; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.8rem; white-space: pre-wrap; max-height: 250px; overflow-y: auto; border: 1px solid var(--border); }
-        .copy-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 5px; }
-        .copy-btn:active { background: var(--success); }
     </style>
 </head>
 <body>
@@ -91,20 +92,14 @@
     </header>
 
     <div id="viewCourses" class="view-container active">
-        
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
             <div class="list-item" style="flex: 1; background: rgba(16,185,129,0.1); border-color: var(--success); justify-content: center; cursor: pointer; margin: 0; padding: 12px;" onclick="editMasterCatalog()">
-                <i class="fas fa-database" style="color: var(--success);"></i> <span style="color: var(--success); font-weight: 600; font-size: 0.85rem;">Master Catalog</span>
+                <i class="fas fa-database" style="color: var(--success);"></i> <span style="color: var(--success); font-weight: 600; font-size: 0.85rem;">Catalog</span>
             </div>
             <div class="list-item" style="flex: 1; background: rgba(244,63,94,0.1); border-color: var(--danger); justify-content: center; cursor: pointer; margin: 0; padding: 12px;" onclick="showAllFiles()">
                 <i class="fas fa-laptop-code" style="color: var(--danger);"></i> <span style="color: var(--danger); font-weight: 600; font-size: 0.85rem;">System Files</span>
             </div>
         </div>
-
-        <div class="list-item" style="background: rgba(139,92,246,0.1); border-color: #8b5cf6; justify-content: center; cursor: pointer; margin-bottom: 20px;" onclick="showAIPrompts()">
-            <i class="fas fa-robot" style="color: #8b5cf6;"></i> <span style="color: #8b5cf6; font-weight: 600;">AI Content Generator Prompts</span>
-        </div>
-        
         <div id="courseList"></div>
         <button class="fab" onclick="openModal('courseModal')"><i class="fas fa-plus"></i></button>
     </div>
@@ -126,66 +121,26 @@
         <div id="allFilesList"></div>
     </div>
 
-    <div id="viewAiprompts" class="view-container">
-        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; text-align: center;">Copy these exact prompts and paste them into ChatGPT or Gemini to generate perfectly formatted code for your app.</p>
-        
-        <div class="prompt-container">
-            <div class="prompt-header">
-                <h3 style="color: var(--success); font-size: 1.1rem;"><i class="fas fa-brain"></i> MCQ Quiz Prompt</h3>
-                <button class="copy-btn" onclick="copyPrompt('quizPrompt')"><i class="far fa-copy"></i> Copy</button>
-            </div>
-            <div class="prompt-code" id="quizPrompt">I am building an educational app. I need you to generate a multiple-choice quiz about [INSERT TOPIC HERE] for [INSERT GRADE LEVEL HERE]. 
-
-Generate [INSERT NUMBER] questions.
-
-CRITICAL RULES FOR YOUR OUTPUT:
-1. You MUST output ONLY a valid, raw JSON array. Do not include any markdown blocks (like ```json). Just the raw array starting with [ and ending with ].
-2. Use this exact schema for every object:
-   - "question": The question text.
-   - "options": An array of exactly 4 string options.
-   - "correctIndex": The integer index of the correct answer (0 for A, 1 for B, 2 for C, 3 for D).
-   - "explanation": A detailed explanation of why the answer is correct.
-3. Math Formatting: If you use math, use MathJax formatting. Use $...$ for inline math and $$...$$ for block math. For chemistry, use \ce{...} inside the math delimiters. 
-4. Image Support: If a question needs a diagram, include an HTML image tag directly inside the text string: <br><img src='[https://via.placeholder.com/400x200?text=Diagram+Needed](https://via.placeholder.com/400x200?text=Diagram+Needed)' alt='description'>.</div>
-        </div>
-
-        <div class="prompt-container">
-            <div class="prompt-header">
-                <h3 style="color: var(--info); font-size: 1.1rem;"><i class="fas fa-book-open"></i> Study Notes Prompt</h3>
-                <button class="copy-btn" onclick="copyPrompt('notesPrompt')"><i class="far fa-copy"></i> Copy</button>
-            </div>
-            <div class="prompt-code" id="notesPrompt">I am building an educational app. I need you to generate Study Notes about [INSERT TOPIC HERE] for [INSERT GRADE LEVEL HERE].
-
-CRITICAL RULES FOR YOUR OUTPUT:
-1. You MUST output ONLY a valid, raw JSON object. Do not include any markdown blocks (like ```json). Just the raw object starting with { and ending with }.
-2. Use MathJax formatting for math: $...$ for inline, $$...$$ for blocks, and \ce{...} for chemistry.
-3. Use this exact schema:
-
-{
-  "title": "[Insert Title Here]",
-  "topic": "[Insert Chapter Name Here]",
-  "blocks": [
-    { "type": "h1", "content": "Heading text" },
-    { "type": "paragraph", "content": "Detailed paragraph text." },
-    { "type": "callout", "style": "info", "icon": "fas fa-info-circle", "title": "Important Note", "content": "Callout description here." },
-    { "type": "list", "ordered": false, "items": ["Bullet 1", "Bullet 2"] },
-    { "type": "table", "headers": ["Concept", "Formula"], "rows": [["Force", "$F=ma$"]] }
-  ]
-}
-
-Available block types you can use: "h1", "h2", "h3", "paragraph", "callout", "list", "table". Use 'info', 'warning', or 'success' for callout styles.</div>
-        </div>
-    </div>
-
     <div id="codeEditorView">
         <header class="app-header">
             <div class="header-icon" onclick="closeEditor()"><i class="fas fa-times"></i></div>
-            <div class="header-title" id="editorTitle" style="font-size: 0.9rem;">Editing File</div>
-            <div class="header-icon" style="color: var(--success);" onclick="saveCode()"><i class="fas fa-check"></i></div>
+            
+            <button id="editorModeToggle" class="btn" style="background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid var(--primary); padding: 5px 15px; font-size: 0.8rem;" onclick="toggleEditorMode()" style="display:none;">
+                <i class="fas fa-eye"></i> Visual Builder
+            </button>
+
+            <div style="display: flex; gap: 10px;">
+                <div class="header-icon" id="searchBtn" style="color: var(--info);" onclick="triggerSearch()"><i class="fas fa-search"></i></div>
+                <div class="header-icon" style="color: var(--success);" onclick="saveContent()"><i class="fas fa-save"></i></div>
+            </div>
         </header>
+        
         <input type="hidden" id="editPath">
         <input type="hidden" id="editSha">
-        <textarea id="rawCodeInput" spellcheck="false" autocorrect="off"></textarea>
+        <input type="hidden" id="reloadCourseFlag">
+        <input type="hidden" id="currentEditorMode" value="code"> <div id="aceEditorContainer"></div>
+        
+        <div id="visualEditorContainer"></div>
     </div>
 
     <div class="modal-overlay" id="courseModal" onclick="closeModal('courseModal')">
@@ -193,7 +148,6 @@ Available block types you can use: "h1", "h2", "h3", "paragraph", "callout", "li
             <h3 style="margin-bottom: 15px;">Create New Course</h3>
             <input type="text" id="newCourseTitle" class="input-field" placeholder="Course Title (e.g., Physics)">
             <input type="text" id="newCourseId" class="input-field" placeholder="Short ID (e.g., physics)">
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px; text-align: center;">Will auto-sync to library.json</p>
             <button class="btn btn-primary" style="width: 100%;" onclick="createCourse()">Create Course</button>
         </div>
     </div>
@@ -214,8 +168,7 @@ Available block types you can use: "h1", "h2", "h3", "paragraph", "callout", "li
                 <option value="notes">Study Notes</option>
                 <option value="quiz">MCQ Quiz</option>
             </select>
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px; text-align: center;">File will be auto-named and linked.</p>
-            <button class="btn btn-primary" style="width: 100%;" onclick="createContent()">Generate Empty Template</button>
+            <button class="btn btn-primary" style="width: 100%;" onclick="createContent()">Generate File</button>
         </div>
     </div>
 
@@ -228,8 +181,20 @@ Available block types you can use: "h1", "h2", "h3", "paragraph", "callout", "li
         let currentView = 'courses'; 
         let activeCourse = { path: '', sha: '', data: null };
         let activeChapIndex = -1;
+        
+        let editor;
+        let parsedVisualData = null; // Holds the JSON array/object when in visual mode
+        let visualFileType = null; // 'quiz' or 'notes'
+
+        function initAceEditor() {
+            editor = ace.edit("aceEditorContainer");
+            editor.setTheme("ace/theme/twilight");
+            editor.session.setMode("ace/mode/json");
+            editor.setOptions({ fontSize: "14px", showLineNumbers: true, showGutter: true, wrap: true, useWorker: false });
+        }
 
         window.onload = () => {
+            initAceEditor();
             if (localStorage.getItem('ghToken')) {
                 gh = { owner: localStorage.getItem('ghOwner'), repo: localStorage.getItem('ghRepo'), token: localStorage.getItem('ghToken') };
                 document.getElementById('authScreen').style.display = 'none';
@@ -238,13 +203,10 @@ Available block types you can use: "h1", "h2", "h3", "paragraph", "callout", "li
         };
 
         function loginGH() {
-            gh.owner = document.getElementById('ghOwner').value.trim();
-            gh.repo = document.getElementById('ghRepo').value.trim();
-            gh.token = document.getElementById('ghToken').value.trim();
+            gh.owner = document.getElementById('ghOwner').value.trim(); gh.repo = document.getElementById('ghRepo').value.trim(); gh.token = document.getElementById('ghToken').value.trim();
             if(!gh.token) return alert("Token required!");
             localStorage.setItem('ghOwner', gh.owner); localStorage.setItem('ghRepo', gh.repo); localStorage.setItem('ghToken', gh.token);
-            document.getElementById('authScreen').style.display = 'none';
-            loadCourses();
+            document.getElementById('authScreen').style.display = 'none'; loadCourses();
         }
 
         function logoutGH() { localStorage.clear(); window.location.reload(); }
@@ -271,27 +233,12 @@ Available block types you can use: "h1", "h2", "h3", "paragraph", "callout", "li
 
         function navigateBack() {
             if (currentView === 'contents') { renderChapters(); } 
-            else if (currentView === 'chapters' || currentView === 'allfiles' || currentView === 'aiprompts') { loadCourses(); }
-        }
-
-        // 🔥 AI PROMPT COPY LOGIC 🔥
-        function showAIPrompts() {
-            switchView('viewAiprompts', 'AI Assistants', true);
-        }
-        
-        function copyPrompt(id) {
-            const text = document.getElementById(id).innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Prompt copied to clipboard! Paste it directly into ChatGPT or Gemini.");
-            }).catch(err => {
-                alert("Failed to copy. Please manually select and copy the text.");
-            });
+            else if (currentView === 'chapters' || currentView === 'allfiles') { loadCourses(); }
         }
 
         function showAllFiles() {
             const list = document.getElementById('allFilesList');
             list.innerHTML = '';
-            
             repoFiles.forEach(f => {
                 if (f.type === 'file') { 
                     let icon = 'fa-file-code'; let color = 'var(--text-muted)';
@@ -299,15 +246,13 @@ Available block types you can use: "h1", "h2", "h3", "paragraph", "callout", "li
                     if(f.name.endsWith('.css')) { icon = 'fa-css3-alt'; color = '#264de4'; }
                     if(f.name.endsWith('.js')) { icon = 'fa-js-square'; color = '#f7df1e'; }
                     if(f.name.endsWith('.json')) { icon = 'fa-database'; color = 'var(--primary)'; }
-                    
                     list.innerHTML += `
                         <div class="list-item">
                             <div class="list-item-content" onclick="openEditor('${f.path}', '${f.sha}')">
                                 <div class="list-title"><i class="fab ${icon}" style="color:${color}; margin-right:8px;"></i> ${f.name}</div>
-                                <div class="list-subtitle">Size: ${(f.size / 1024).toFixed(1)} KB</div>
                             </div>
                             <div class="list-actions">
-                                <button class="icon-action code" onclick="openEditor('${f.path}', '${f.sha}')"><i class="fas fa-code"></i></button>
+                                <button class="icon-action code" onclick="openEditor('${f.path}', '${f.sha}')"><i class="fas fa-edit"></i></button>
                             </div>
                         </div>
                     `;
@@ -323,11 +268,7 @@ Available block types you can use: "h1", "h2", "h3", "paragraph", "callout", "li
                 openEditor('library.json', fileData.sha, false);
             } catch(e) {
                 if(confirm("The master catalog 'library.json' does not exist yet. Create it now?")) {
-                    const template = JSON.stringify({
-                        "courses": [
-                            { "id": "physics", "category": "science", "icon": "⚛️", "title": "Class 12 Physics", "badge": "Popular", "badgeClass": "", "lessons": "12", "users": "12.5k", "tags": ["NCERT", "Board Exams"] }
-                        ]
-                    }, null, 2);
+                    const template = JSON.stringify({ "courses": [] }, null, 2);
                     showLoading("Creating Master Catalog...");
                     try {
                         const res = await api('library.json', 'PUT', { message: "Created master library.json", content: b64EncodeUnicode(template) });
@@ -342,10 +283,7 @@ Available block types you can use: "h1", "h2", "h3", "paragraph", "callout", "li
             showLoading("Loading Courses...");
             try {
                 repoFiles = await api('');
-                const list = document.getElementById('courseList');
-                list.innerHTML = '';
-                
-                let found = false;
+                const list = document.getElementById('courseList'); list.innerHTML = ''; let found = false;
                 repoFiles.forEach(f => {
                     if(f.name.endsWith('.json') && !f.name.match(/[nq]\d+\.\d+\.json/) && f.name !== 'library.json' && f.name !== 'package.json') {
                         found = true;
@@ -355,16 +293,12 @@ Available block types you can use: "h1", "h2", "h3", "paragraph", "callout", "li
                                     <div class="list-title"><i class="fas fa-book" style="color:var(--primary); margin-right:8px;"></i> ${f.name}</div>
                                     <div class="list-subtitle">Tap to view chapters</div>
                                 </div>
-                                <div class="list-actions">
-                                    <button class="icon-action code" onclick="openEditor('${f.path}', '${f.sha}')"><i class="fas fa-code"></i></button>
-                                    <button class="icon-action delete" onclick="deleteCourse('${f.path}', '${f.sha}', event)"><i class="fas fa-trash"></i></button>
-                                </div>
+                                <div class="list-actions"><button class="icon-action delete" onclick="deleteCourse('${f.path}', '${f.sha}', event)"><i class="fas fa-trash"></i></button></div>
                             </div>
                         `;
                     }
                 });
                 if(!found) list.innerHTML += `<div style="text-align:center; padding: 40px 20px; color:var(--text-muted);">No courses found. Create one!</div>`;
-                
                 switchView('viewCourses', 'All Courses', false);
             } catch(e) { alert("Failed to fetch repository."); logoutGH(); }
             hideLoading();
@@ -372,89 +306,35 @@ Available block types you can use: "h1", "h2", "h3", "paragraph", "callout", "li
 
         async function deleteCourse(path, sha, event) {
             event.stopPropagation(); 
-            if(!confirm(`Are you absolutely sure you want to permanently delete '${path}' AND all its associated notes and quizzes? This cannot be undone!`)) return;
-            
-            showLoading("Executing Cascading Delete...");
+            if(!confirm(`Delete '${path}' and ALL contents?`)) return;
+            showLoading("Deleting...");
             try {
-                const courseId = path.split('.')[0];
                 const courseFileData = await api(path);
                 const courseData = JSON.parse(b64DecodeUnicode(courseFileData.content));
-
                 if (courseData.chapters) {
                     for (let chap of courseData.chapters) {
                         if (chap.contents) {
                             for (let item of chap.contents) {
                                 const targetFile = repoFiles.find(f => f.name === item.file);
-                                if (targetFile) {
-                                    try { await api(item.file, 'DELETE', { message: `Cascading delete: ${item.file}`, sha: targetFile.sha }); } catch(err) {}
-                                }
+                                if (targetFile) try { await api(item.file, 'DELETE', { message: `Del: ${item.file}`, sha: targetFile.sha }); } catch(err) {}
                             }
                         }
                     }
                 }
-
-                await api(path, 'DELETE', { message: `Deleted course config ${path}`, sha: sha });
-
-                try {
-                    const libData = await api('library.json');
-                    let libraryObj = JSON.parse(b64DecodeUnicode(libData.content));
-                    
-                    if(libraryObj.courses) {
-                        const initialLength = libraryObj.courses.length;
-                        libraryObj.courses = libraryObj.courses.filter(c => c.id !== courseId);
-                        if (libraryObj.courses.length !== initialLength) {
-                            await api('library.json', 'PUT', { message: `Removed ${courseId} from library.json`, content: b64EncodeUnicode(JSON.stringify(libraryObj, null, 2)), sha: libData.sha });
-                        }
-                    }
-                } catch(err) { console.warn("Library.json cleanup skipped."); }
-
-                alert("Course and all associated contents deleted successfully!");
+                await api(path, 'DELETE', { message: `Deleted course ${path}`, sha: sha });
                 loadCourses();
-            } catch(e) { alert("Failed to delete course completely. Check console."); }
+            } catch(e) { alert("Failed to delete."); }
             hideLoading();
         }
 
         async function createCourse() {
-            const title = document.getElementById('newCourseTitle').value.trim();
-            const id = document.getElementById('newCourseId').value.trim().toLowerCase();
+            const title = document.getElementById('newCourseTitle').value.trim(); const id = document.getElementById('newCourseId').value.trim().toLowerCase();
             if(!title || !id) return alert("Fill all fields");
-
-            const courseJSON = { title: title, icon: "📚", description: "Learn and master concepts.", chapters: [] };
+            const courseJSON = { title: title, icon: "📚", description: "Learn concepts.", chapters: [] };
             showLoading("Creating...");
             try {
-                await api(`${id}.json`, 'PUT', { message: `Created course ${title}`, content: b64EncodeUnicode(JSON.stringify(courseJSON, null, 2)) });
-                
-                try {
-                    let libData, libraryObj;
-                    try {
-                        libData = await api('library.json');
-                        libraryObj = JSON.parse(b64DecodeUnicode(libData.content));
-                        if (!libraryObj.courses) libraryObj.courses = [];
-                    } catch(err) {
-                        libraryObj = { courses: [] }; 
-                    }
-                    
-                    libraryObj.courses.push({
-                        id: id,
-                        category: "general", 
-                        icon: "📚",
-                        title: title,
-                        badge: "New",
-                        badgeClass: "success",
-                        lessons: "0",
-                        users: "0",
-                        tags: ["New Course"]
-                    });
-                    
-                    let putData = { message: `Auto-added ${id} to library.json`, content: b64EncodeUnicode(JSON.stringify(libraryObj, null, 2)) };
-                    if(libData) putData.sha = libData.sha;
-                    
-                    await api('library.json', 'PUT', putData);
-                } catch(err) { console.warn("Could not auto-add to library.json."); }
-
-                closeModal('courseModal');
-                document.getElementById('newCourseTitle').value = ''; document.getElementById('newCourseId').value = '';
-                loadCourses();
+                await api(`${id}.json`, 'PUT', { message: `Created ${title}`, content: b64EncodeUnicode(JSON.stringify(courseJSON, null, 2)) });
+                closeModal('courseModal'); document.getElementById('newCourseTitle').value = ''; document.getElementById('newCourseId').value = ''; loadCourses();
             } catch(e) { alert("Error creating course."); }
             hideLoading();
         }
@@ -463,29 +343,18 @@ Available block types you can use: "h1", "h2", "h3", "paragraph", "callout", "li
             showLoading("Loading Chapters...");
             try {
                 const file = await api(path);
-                activeCourse.data = JSON.parse(b64DecodeUnicode(file.content));
-                activeCourse.path = path;
-                activeCourse.sha = file.sha;
+                activeCourse.data = JSON.parse(b64DecodeUnicode(file.content)); activeCourse.path = path; activeCourse.sha = file.sha;
                 renderChapters();
-            } catch(e) { alert("Failed to parse course JSON."); }
+            } catch(e) { alert("Failed to parse JSON."); }
             hideLoading();
         }
 
         function renderChapters() {
-            const list = document.getElementById('chapterList');
-            list.innerHTML = '';
-            if (!activeCourse.data.chapters || activeCourse.data.chapters.length === 0) {
-                list.innerHTML = `<div style="text-align:center; padding: 30px; color:var(--text-muted);">No chapters yet.</div>`;
-            } else {
+            const list = document.getElementById('chapterList'); list.innerHTML = '';
+            if (!activeCourse.data.chapters || activeCourse.data.chapters.length === 0) list.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted);">No chapters yet.</div>`;
+            else {
                 activeCourse.data.chapters.forEach((chap, idx) => {
-                    list.innerHTML += `
-                        <div class="list-item">
-                            <div class="list-item-content" onclick="openChapter(${idx})">
-                                <div class="list-title"><i class="fas fa-folder-open" style="color:var(--secondary); margin-right:8px;"></i> ${chap.title}</div>
-                                <div class="list-subtitle">${chap.contents ? chap.contents.length : 0} Items Inside</div>
-                            </div>
-                        </div>
-                    `;
+                    list.innerHTML += `<div class="list-item"><div class="list-item-content" onclick="openChapter(${idx})"><div class="list-title"><i class="fas fa-folder-open" style="color:var(--secondary); margin-right:8px;"></i> ${chap.title}</div><div class="list-subtitle">${chap.contents ? chap.contents.length : 0} Items</div></div></div>`;
                 });
             }
             switchView('viewChapters', activeCourse.data.title, true);
@@ -494,42 +363,34 @@ Available block types you can use: "h1", "h2", "h3", "paragraph", "callout", "li
         function editCourseCode() { openEditor(activeCourse.path, activeCourse.sha, true); }
 
         async function createChapter() {
-            const title = document.getElementById('newChapTitle').value.trim();
-            if(!title) return;
+            const title = document.getElementById('newChapTitle').value.trim(); if(!title) return;
             if(!activeCourse.data.chapters) activeCourse.data.chapters = [];
             activeCourse.data.chapters.push({ title: title, contents: [] });
-
             showLoading("Saving Chapter...");
             try {
-                const res = await api(activeCourse.path, 'PUT', { message: `Added chapter: ${title}`, content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)), sha: activeCourse.sha });
-                activeCourse.sha = res.content.sha; 
-                closeModal('chapterModal');
-                document.getElementById('newChapTitle').value = '';
-                renderChapters();
-            } catch(e) { alert("Failed to save chapter."); }
+                const res = await api(activeCourse.path, 'PUT', { message: `Added ${title}`, content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)), sha: activeCourse.sha });
+                activeCourse.sha = res.content.sha; closeModal('chapterModal'); document.getElementById('newChapTitle').value = ''; renderChapters();
+            } catch(e) { alert("Failed to save."); }
             hideLoading();
         }
 
         function openChapter(index) { activeChapIndex = index; renderContents(); }
 
         function renderContents() {
-            const list = document.getElementById('contentList');
-            list.innerHTML = '';
+            const list = document.getElementById('contentList'); list.innerHTML = '';
             const chap = activeCourse.data.chapters[activeChapIndex];
-            if (!chap.contents || chap.contents.length === 0) {
-                list.innerHTML = `<div style="text-align:center; padding: 30px; color:var(--text-muted);">Empty chapter.</div>`;
-            } else {
+            if (!chap.contents || chap.contents.length === 0) list.innerHTML = `<div style="text-align:center; padding: 30px; color:var(--text-muted);">Empty chapter.</div>`;
+            else {
                 chap.contents.forEach((item, itemIdx) => {
-                    let icon = item.type === 'quiz' ? 'fa-brain' : 'fa-file-alt';
-                    let color = item.type === 'quiz' ? 'var(--success)' : 'var(--primary)';
+                    let icon = item.type === 'quiz' ? 'fa-brain' : 'fa-file-alt'; let color = item.type === 'quiz' ? 'var(--success)' : 'var(--primary)';
                     list.innerHTML += `
                         <div class="list-item">
-                            <div class="list-item-content">
+                            <div class="list-item-content" onclick="openEditor('${item.file}', '')">
                                 <div class="list-title"><i class="fas ${icon}" style="color:${color}; margin-right:8px;"></i> ${item.title}</div>
                                 <div class="list-subtitle">File: ${item.file}</div>
                             </div>
                             <div class="list-actions">
-                                <button class="icon-action code" onclick="openEditor('${item.file}', '')"><i class="fas fa-code"></i></button>
+                                <button class="icon-action code" onclick="openEditor('${item.file}', '')"><i class="fas fa-edit"></i></button>
                                 <button class="icon-action delete" onclick="deleteContent(${itemIdx}, '${item.file}')"><i class="fas fa-trash"></i></button>
                             </div>
                         </div>
@@ -540,108 +401,316 @@ Available block types you can use: "h1", "h2", "h3", "paragraph", "callout", "li
         }
 
         async function createContent() {
-            const title = document.getElementById('newContentTitle').value.trim();
-            const type = document.getElementById('newContentType').value;
+            const title = document.getElementById('newContentTitle').value.trim(); const type = document.getElementById('newContentType').value;
             if(!title) return alert("Title required");
-
-            showLoading("Generating Smart Content...");
+            showLoading("Generating File...");
             try {
-                const subjectPrefix = activeCourse.path.split('.')[0];
-                const typeChar = type === 'notes' ? 'n' : 'q';
-                const chapNum = activeChapIndex + 1;
-                const contentsArr = activeCourse.data.chapters[activeChapIndex].contents || [];
-                const itemNum = contentsArr.length + 1;
+                const subjectPrefix = activeCourse.path.split('.')[0]; const typeChar = type === 'notes' ? 'n' : 'q'; const chapNum = activeChapIndex + 1;
+                const contentsArr = activeCourse.data.chapters[activeChapIndex].contents || []; const itemNum = contentsArr.length + 1;
                 const filename = `${subjectPrefix}${typeChar}${chapNum}.${itemNum}.json`;
 
-                let fileJSON = "";
-                if(type === 'notes') {
-                    fileJSON = JSON.stringify({ title: title, topic: activeCourse.data.chapters[activeChapIndex].title, blocks: [{ type: "paragraph", content: "AI SE GENERATE KIYA HUA JSON YAHA PASTE KAREIN." }] }, null, 2);
-                } else {
-                    fileJSON = JSON.stringify([{ question: "AI SE GENERATE KIYA HUA JSON YAHA PASTE KAREIN.", options: ["A", "B", "C", "D"], correctIndex: 0, explanation: "" }], null, 2);
-                }
-
-                await api(filename, 'PUT', { message: `Created ${type}: ${title}`, content: b64EncodeUnicode(fileJSON) });
-                contentsArr.push({ title: title, file: filename, type: type });
-                activeCourse.data.chapters[activeChapIndex].contents = contentsArr;
-
-                const res = await api(activeCourse.path, 'PUT', { message: `Linked ${filename} to course`, content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)), sha: activeCourse.sha });
+                let fileJSON = type === 'notes' ? JSON.stringify({ title: title, topic: activeCourse.data.chapters[activeChapIndex].title, blocks: [] }, null, 2) : JSON.stringify([], null, 2);
+                await api(filename, 'PUT', { message: `Created ${title}`, content: b64EncodeUnicode(fileJSON) });
+                
+                contentsArr.push({ title: title, file: filename, type: type }); activeCourse.data.chapters[activeChapIndex].contents = contentsArr;
+                const res = await api(activeCourse.path, 'PUT', { message: `Linked ${filename}`, content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)), sha: activeCourse.sha });
                 activeCourse.sha = res.content.sha;
-
-                closeModal('contentModal');
-                document.getElementById('newContentTitle').value = '';
-                repoFiles = await api('');
-                renderContents();
-            } catch(e) { alert("Failed to generate content."); }
+                closeModal('contentModal'); document.getElementById('newContentTitle').value = ''; repoFiles = await api(''); renderContents();
+            } catch(e) { alert("Failed to generate."); }
             hideLoading();
         }
 
         async function deleteContent(itemIdx, filename) {
-            if(!confirm(`Delete '${filename}' and remove from course?`)) return;
+            if(!confirm(`Delete '${filename}'?`)) return;
             showLoading("Deleting...");
             try {
                 activeCourse.data.chapters[activeChapIndex].contents.splice(itemIdx, 1);
                 const res = await api(activeCourse.path, 'PUT', { message: `Unlinked ${filename}`, content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)), sha: activeCourse.sha });
                 activeCourse.sha = res.content.sha;
-
                 try {
                     const targetFile = repoFiles.find(f => f.name === filename);
-                    if(targetFile) {
-                        await api(filename, 'DELETE', { message: `Deleted file ${filename}`, sha: targetFile.sha });
-                    } else {
-                        const fileData = await api(filename);
-                        await api(filename, 'DELETE', { message: `Deleted file ${filename}`, sha: fileData.sha });
-                    }
+                    if(targetFile) { await api(filename, 'DELETE', { message: `Deleted ${filename}`, sha: targetFile.sha }); } 
+                    else { const fileData = await api(filename); await api(filename, 'DELETE', { message: `Deleted ${filename}`, sha: fileData.sha }); }
                 } catch(e) {}
-
-                repoFiles = await api('');
-                renderContents();
+                repoFiles = await api(''); renderContents();
             } catch(e) { alert("Delete failed."); }
             hideLoading();
         }
 
+        // ==========================================
+        // 🔥 THE HYBRID EDITOR ENGINE (Visual + Code) 🔥
+        // ==========================================
         async function openEditor(path, sha, reloadCourseOnSave = false) {
-            showLoading("Opening code...");
+            showLoading("Loading Editor...");
             try {
-                if(!sha) {
-                    const fileData = await api(path);
-                    sha = fileData.sha;
-                    document.getElementById('rawCodeInput').value = b64DecodeUnicode(fileData.content);
-                } else {
-                    const fileData = await api(path);
-                    document.getElementById('rawCodeInput').value = b64DecodeUnicode(fileData.content);
-                }
+                let codeStr = "";
+                if(!sha) { const fileData = await api(path); sha = fileData.sha; codeStr = b64DecodeUnicode(fileData.content); } 
+                else { const fileData = await api(path); codeStr = b64DecodeUnicode(fileData.content); }
                 
                 document.getElementById('editPath').value = path;
                 document.getElementById('editSha').value = sha;
-                document.getElementById('editorTitle').textContent = path;
-                document.getElementById('rawCodeInput').dataset.reloadCourse = reloadCourseOnSave;
+                document.getElementById('reloadCourseFlag').value = reloadCourseOnSave;
+                
+                // Set initial code
+                if(path.endsWith('.html')) editor.session.setMode("ace/mode/html");
+                else if(path.endsWith('.css')) editor.session.setMode("ace/mode/css");
+                else if(path.endsWith('.js')) editor.session.setMode("ace/mode/javascript");
+                else editor.session.setMode("ace/mode/json");
+                editor.setValue(codeStr, -1); 
+
+                // Check if it's a Quiz or Notes file to enable Visual Mode
+                const toggleBtn = document.getElementById('editorModeToggle');
+                const searchBtn = document.getElementById('searchBtn');
+                
+                if (path.match(/q\d+\.\d+\.json$/)) {
+                    visualFileType = 'quiz';
+                    toggleBtn.style.display = 'block';
+                    toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Visual Builder';
+                    document.getElementById('currentEditorMode').value = 'visual'; // Default to visual for teachers!
+                    syncCodeToVisual();
+                } else if (path.match(/n\d+\.\d+\.json$/)) {
+                    visualFileType = 'notes';
+                    toggleBtn.style.display = 'block';
+                    toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Visual Builder';
+                    document.getElementById('currentEditorMode').value = 'visual';
+                    syncCodeToVisual();
+                } else {
+                    visualFileType = null;
+                    toggleBtn.style.display = 'none';
+                    document.getElementById('currentEditorMode').value = 'code';
+                    showCodeMode();
+                }
 
                 document.getElementById('codeEditorView').style.display = 'flex';
+                editor.resize(); 
             } catch(e) { alert("Failed to load file content."); }
             hideLoading();
         }
 
         function closeEditor() { document.getElementById('codeEditorView').style.display = 'none'; }
+        function triggerSearch() { if(document.getElementById('currentEditorMode').value === 'code') editor.execCommand("find"); }
 
-        async function saveCode() {
+        function toggleEditorMode() {
+            const currentMode = document.getElementById('currentEditorMode').value;
+            const toggleBtn = document.getElementById('editorModeToggle');
+            
+            if (currentMode === 'code') {
+                // Moving to Visual
+                if (!syncCodeToVisual()) return; // If JSON is invalid, don't switch
+                document.getElementById('currentEditorMode').value = 'visual';
+                toggleBtn.innerHTML = '<i class="fas fa-code"></i> Raw Code';
+            } else {
+                // Moving to Code
+                syncVisualToCode();
+                document.getElementById('currentEditorMode').value = 'code';
+                toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Visual Builder';
+                showCodeMode();
+            }
+        }
+
+        function showCodeMode() {
+            document.getElementById('visualEditorContainer').style.display = 'none';
+            document.getElementById('aceEditorContainer').style.display = 'block';
+            document.getElementById('searchBtn').style.display = 'block';
+            editor.resize();
+        }
+
+        function showVisualMode() {
+            document.getElementById('aceEditorContainer').style.display = 'none';
+            document.getElementById('visualEditorContainer').style.display = 'block';
+            document.getElementById('searchBtn').style.display = 'none';
+        }
+
+        // --- TRANSLATORS ---
+        function syncCodeToVisual() {
+            try {
+                parsedVisualData = JSON.parse(editor.getValue());
+                if (visualFileType === 'quiz') buildVisualQuizUI();
+                else if (visualFileType === 'notes') buildVisualNotesUI();
+                showVisualMode();
+                return true;
+            } catch(e) {
+                alert("Cannot switch to Visual Mode. The JSON code has syntax errors. Please fix them first.");
+                return false;
+            }
+        }
+
+        function syncVisualToCode() {
+            if (visualFileType === 'quiz') extractVisualQuizData();
+            else if (visualFileType === 'notes') extractVisualNotesData();
+            
+            // Format nicely and push to Ace Editor
+            editor.setValue(JSON.stringify(parsedVisualData, null, 2), -1);
+        }
+
+        // --- VISUAL QUIZ BUILDER ---
+        function buildVisualQuizUI() {
+            const container = document.getElementById('visualEditorContainer');
+            container.innerHTML = `<h3 style="margin-bottom: 20px; color: var(--primary);"><i class="fas fa-brain"></i> Quiz Builder</h3>`;
+            
+            if(!Array.isArray(parsedVisualData)) parsedVisualData = [];
+            
+            parsedVisualData.forEach((q, i) => {
+                container.innerHTML += `
+                    <div class="visual-card" id="qCard_${i}">
+                        <button class="v-del-btn" onclick="deleteVisualItem(${i})"><i class="fas fa-trash"></i></button>
+                        <h4 style="margin-bottom:15px;">Question ${i+1}</h4>
+                        
+                        <label class="v-label">Question Text (Supports MathJax $...$)</label>
+                        <textarea class="v-textarea" id="vq_${i}">${q.question || ''}</textarea>
+                        
+                        <div class="v-row">
+                            <div style="flex:1;">
+                                <label class="v-label">Option A</label><input class="v-input" id="vo_${i}_0" value="${q.options?.[0] || ''}">
+                                <label class="v-label">Option B</label><input class="v-input" id="vo_${i}_1" value="${q.options?.[1] || ''}">
+                            </div>
+                            <div style="flex:1;">
+                                <label class="v-label">Option C</label><input class="v-input" id="vo_${i}_2" value="${q.options?.[2] || ''}">
+                                <label class="v-label">Option D</label><input class="v-input" id="vo_${i}_3" value="${q.options?.[3] || ''}">
+                            </div>
+                        </div>
+
+                        <label class="v-label" style="margin-top:10px;">Correct Answer</label>
+                        <select class="v-select" id="vc_${i}">
+                            <option value="0" ${q.correctIndex===0?'selected':''}>Option A</option>
+                            <option value="1" ${q.correctIndex===1?'selected':''}>Option B</option>
+                            <option value="2" ${q.correctIndex===2?'selected':''}>Option C</option>
+                            <option value="3" ${q.correctIndex===3?'selected':''}>Option D</option>
+                        </select>
+
+                        <label class="v-label">Explanation</label>
+                        <textarea class="v-textarea" id="ve_${i}" style="min-height:50px;">${q.explanation || ''}</textarea>
+                    </div>
+                `;
+            });
+            container.innerHTML += `<button class="btn btn-outline" style="width:100%; border-style:dashed;" onclick="addVisualQuizItem()"><i class="fas fa-plus"></i> Add New Question</button>`;
+        }
+
+        function extractVisualQuizData() {
+            let newData = [];
+            for (let i = 0; i < parsedVisualData.length; i++) {
+                if(!document.getElementById(`qCard_${i}`)) continue; // Skipped deleted items
+                newData.push({
+                    question: document.getElementById(`vq_${i}`).value,
+                    options: [
+                        document.getElementById(`vo_${i}_0`).value,
+                        document.getElementById(`vo_${i}_1`).value,
+                        document.getElementById(`vo_${i}_2`).value,
+                        document.getElementById(`vo_${i}_3`).value
+                    ],
+                    correctIndex: parseInt(document.getElementById(`vc_${i}`).value),
+                    explanation: document.getElementById(`ve_${i}`).value
+                });
+            }
+            parsedVisualData = newData;
+        }
+
+        function addVisualQuizItem() {
+            extractVisualQuizData();
+            parsedVisualData.push({ question: "", options: ["", "", "", ""], correctIndex: 0, explanation: "" });
+            buildVisualQuizUI();
+        }
+
+        // --- VISUAL NOTES BUILDER ---
+        function buildVisualNotesUI() {
+            const container = document.getElementById('visualEditorContainer');
+            container.innerHTML = `<h3 style="margin-bottom: 20px; color: var(--info);"><i class="fas fa-book-open"></i> Notes Builder</h3>`;
+            
+            if(!parsedVisualData.blocks) parsedVisualData = { title: "", topic: "", blocks: [] };
+
+            container.innerHTML += `
+                <div style="margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                    <label class="v-label">Main Title</label>
+                    <input class="v-input" id="vn_title" value="${parsedVisualData.title || ''}" placeholder="e.g. Newton's Laws">
+                    <label class="v-label">Sub-Topic / Chapter</label>
+                    <input class="v-input" id="vn_topic" value="${parsedVisualData.topic || ''}" placeholder="e.g. Chapter 5">
+                </div>
+                <div id="blocksContainer"></div>
+            `;
+
+            let blocksHtml = '';
+            parsedVisualData.blocks.forEach((b, i) => {
+                blocksHtml += `
+                    <div class="visual-card" id="bCard_${i}" style="padding: 15px;">
+                        <button class="v-del-btn" onclick="deleteVisualItem(${i})"><i class="fas fa-trash"></i></button>
+                        <div class="v-row" style="margin-bottom: 10px;">
+                            <select class="v-select" id="bType_${i}" style="margin:0; width:150px;">
+                                <option value="h1" ${b.type==='h1'?'selected':''}>Main Heading</option>
+                                <option value="h2" ${b.type==='h2'?'selected':''}>Sub Heading</option>
+                                <option value="paragraph" ${b.type==='paragraph'?'selected':''}>Paragraph</option>
+                                <option value="callout" ${b.type==='callout'?'selected':''}>Info Box</option>
+                            </select>
+                            <span style="font-size:0.8rem; color:var(--text-muted); margin-top:10px;">Block ${i+1}</span>
+                        </div>
+                        <textarea class="v-textarea" id="bContent_${i}" style="margin:0;" placeholder="Type content here...">${b.content || ''}</textarea>
+                    </div>
+                `;
+            });
+            document.getElementById('blocksContainer').innerHTML = blocksHtml;
+            container.innerHTML += `<button class="btn btn-outline" style="width:100%; border-style:dashed;" onclick="addVisualNoteBlock()"><i class="fas fa-plus"></i> Add Text Block</button>`;
+        }
+
+        function extractVisualNotesData() {
+            let newBlocks = [];
+            for (let i = 0; i < parsedVisualData.blocks.length; i++) {
+                if(!document.getElementById(`bCard_${i}`)) continue;
+                
+                let bType = document.getElementById(`bType_${i}`).value;
+                let bContent = document.getElementById(`bContent_${i}`).value;
+                
+                let blockObj = { type: bType, content: bContent };
+                if (bType === 'callout') { blockObj.style = "info"; blockObj.icon = "fas fa-info-circle"; }
+                
+                newBlocks.push(blockObj);
+            }
+            parsedVisualData.title = document.getElementById('vn_title').value;
+            parsedVisualData.topic = document.getElementById('vn_topic').value;
+            parsedVisualData.blocks = newBlocks;
+        }
+
+        function addVisualNoteBlock() {
+            extractVisualNotesData();
+            parsedVisualData.blocks.push({ type: "paragraph", content: "" });
+            buildVisualNotesUI();
+        }
+
+        function deleteVisualItem(index) {
+            if(!confirm("Remove this item?")) return;
+            if (visualFileType === 'quiz') {
+                extractVisualQuizData(); parsedVisualData.splice(index, 1); buildVisualQuizUI();
+            } else {
+                extractVisualNotesData(); parsedVisualData.blocks.splice(index, 1); buildVisualNotesUI();
+            }
+        }
+
+        // --- THE MASTER SAVE FUNCTION ---
+        async function saveContent() {
+            // Ensure Visual Mode data is pushed to Code Mode before saving!
+            if (document.getElementById('currentEditorMode').value === 'visual') {
+                syncVisualToCode(); 
+            }
+
             showLoading("Saving...");
             const path = document.getElementById('editPath').value;
             const sha = document.getElementById('editSha').value;
-            const code = document.getElementById('rawCodeInput').value;
-            const reloadCourse = document.getElementById('rawCodeInput').dataset.reloadCourse === 'true';
+            const code = editor.getValue(); 
+            const reloadCourse = document.getElementById('reloadCourseFlag').value === 'true';
 
             try {
                 if(path.endsWith('.json')) JSON.parse(code); 
                 const res = await api(path, 'PUT', { message: `Admin manual edit: ${path}`, content: b64EncodeUnicode(code), sha: sha });
-                alert("Saved!");
+                alert("Saved Successfully!");
                 
                 if(reloadCourse) {
                     activeCourse.data = JSON.parse(code);
                     activeCourse.sha = res.content.sha;
                     renderChapters();
                 }
-                closeEditor();
-            } catch(e) { alert("Save failed. If this is a JSON file, check for syntax errors!"); }
+                
+                // Update SHA so they can hit save again without closing
+                document.getElementById('editSha').value = res.content.sha;
+                
+            } catch(e) { alert("Save failed! If this is a JSON file, check for syntax errors."); }
             hideLoading();
         }
 
