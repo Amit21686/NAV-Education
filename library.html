@@ -34,7 +34,11 @@
         .app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .brand h1 { font-size: 1.6rem; font-weight: 600; }
         .brand h1 span { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .icon-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; cursor: pointer; color: var(--text); }
+        
+        /* Updated icon-btn for images */
+        .icon-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; cursor: pointer; color: var(--text); overflow: hidden; transition: 0.2s;}
+        .icon-btn:active { transform: scale(0.95); border-color: var(--primary); }
+
         .welcome-card { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--radius-xl); padding: 24px; color: white; margin-bottom: 20px; }
         .banner-card { width: 100%; margin: 14px 0; border-radius: var(--radius-lg); overflow: hidden; cursor: pointer; border: 2px solid rgba(255,255,255,0.1); }
         .banner-image { width: 100%; height: auto; display: block; }
@@ -97,7 +101,10 @@
         <header class="app-header">
             <div class="brand"><h1>NAV <span>Education</span></h1></div>
             <div style="display: flex; gap: 8px;">
-                <div class="icon-btn" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i></div>
+                <div class="icon-btn" onclick="window.location.href='profile.html'">
+                    <img id="headerAvatar" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
+                    <span id="headerFallback"><i class="fas fa-user"></i></span>
+                </div>
             </div>
         </header>
 
@@ -157,10 +164,25 @@
             setTimeout(() => toast.classList.remove('show'), 2000);
         }
 
+        // ==================== THEME & AVATAR ====================
         function applyTheme() {
             if (localStorage.getItem('nav_darkMode') === 'false') document.body.classList.add('light-theme');
             const accent = localStorage.getItem('nav_accentColor');
             if (accent) document.documentElement.style.setProperty('--primary', accent);
+        }
+
+        // Added logic to load profile image from local storage
+        function loadUserAvatar() {
+            const avatarUrl = localStorage.getItem('nav_profileAvatar');
+            if (avatarUrl) {
+                const img = document.getElementById('headerAvatar');
+                const fallback = document.getElementById('headerFallback');
+                if (img && fallback) {
+                    img.src = avatarUrl;
+                    img.style.display = 'block';
+                    fallback.style.display = 'none';
+                }
+            }
         }
 
         // ==================== LOAD & MERGE USER DATA ====================
@@ -273,6 +295,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('loadingOverlay').classList.add('active');
             applyTheme();
+            loadUserAvatar(); // Fetch the avatar on load
             loadLibraryData();
             setTimeout(() => document.getElementById('loadingOverlay').classList.remove('active'), 400);
         });
