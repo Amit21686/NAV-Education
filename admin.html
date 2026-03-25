@@ -3,90 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NAV Admin Portal</title>
+    <title>NAV Admin | Education Portal</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.js" type="text/javascript" charset="utf-8"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ext-searchbox.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ext-searchbox.js"></script>
 
     <script>
         window.MathJax = {
             tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
-            svg: { fontCache: 'none' }, startup: { typeset: false }
+            svg: { fontCache: 'none' },
+            startup: { typeset: false }
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        :root { --primary: #6366f1; --bg: #020617; --card: #1e293b; --text: #f8fafc; --text-muted: #94a3b8; --border: #334155; --danger: #f43f5e; --success: #10b981; --info: #3b82f6;}
+        :root { 
+            --primary: #6366f1; --bg: #020617; --card: #1e293b; 
+            --text: #f8fafc; --text-muted: #94a3b8; --border: #334155; 
+            --danger: #f43f5e; --success: #10b981; --info: #3b82f6; --warning: #f59e0b;
+        }
         body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); height: 100dvh; overflow: hidden; display: flex; flex-direction: column; }
         
-        .btn { padding: 12px 15px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+        .flex { display: flex; } 
+        .items-center { align-items: center; } 
+        .justify-between { justify-content: space-between; }
+        .text-center { text-align: center; }
+        
+        .btn { padding: 12px 15px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; transition: 0.2s; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:active { transform: scale(0.96); }
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
         .btn-danger { background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.3); color: var(--danger); }
-        .input-field { width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; font-size: 0.9rem;}
+        .btn:active { transform: scale(0.96); }
         
-        #authScreen { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; justify-content: center; padding: 20px; }
-        .auth-box { background: var(--card); padding: 30px 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+        .input-field { width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; font-size: 0.9rem;}
+        .input-field:focus { outline: none; border-color: var(--primary); }
 
-        .app-header { background: var(--card); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: relative; z-index: 10; flex-shrink: 0;}
-        .header-title { font-weight: 600; font-size: 1rem; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px; }
-        .header-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.05); cursor: pointer; font-size: 1rem; transition: 0.2s;}
-        .header-icon:active { background: rgba(255,255,255,0.2); transform: scale(0.9); }
+        #authScreen { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; justify-content: center; padding: 20px; }
+        .auth-box { background: var(--card); padding: 30px 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .app-header { background: var(--card); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); z-index: 10; flex-shrink: 0;}
+        .header-title { font-weight: 600; font-size: 1.1rem; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px; }
+        .header-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.05); cursor: pointer; transition: 0.2s;}
+        .header-icon:active { transform: scale(0.9); }
         
         .view-container { flex: 1; overflow-y: auto; padding: 20px 15px 120px 15px; display: none; }
         .view-container.active { display: block; }
-
-        .list-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        
+        .list-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border-left: 4px solid var(--border); transition: 0.2s; }
+        .list-item:active { transform: scale(0.98); }
         .list-item-content { flex: 1; overflow: hidden; cursor: pointer; }
-        .list-title { font-weight: 600; font-size: 1rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .list-subtitle { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
-        .list-actions { display: flex; gap: 8px; }
-        .icon-action { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: var(--text); border: none; cursor: pointer; transition: 0.2s; }
-        .icon-action:active { transform: scale(0.9); }
-        .icon-action.code { color: #a5b4fc; }
-        .icon-action.edit { color: var(--warning); }
-        .icon-action.delete { color: var(--danger); }
-        .icon-action.replace { color: var(--info); }
-        .icon-action.view { color: var(--success); }
+        .list-title { font-weight: 600; font-size: 1rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 10px;}
+        .list-subtitle { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 8px;}
+        .list-actions { display: flex; gap: 6px; }
+        
+        .icon-action { width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: var(--text); border: none; cursor: pointer; transition: 0.2s; }
+        .icon-action:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
+        
+        .fab { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 10px 25px rgba(99,102,241,0.4); border: none; cursor: pointer; z-index: 100; transition: 0.2s; }
+        .fab:active { transform: scale(0.9) translateY(5px); }
 
-        .fab { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 15px rgba(99,102,241,0.4); border: none; cursor: pointer; z-index: 100; transition: transform 0.2s; }
-        .fab:active { transform: scale(0.9); }
+        .folder-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+        .folder-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 10px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .folder-card:active { transform: scale(0.95); border-color: var(--primary); }
+        .folder-icon { font-size: 2.5rem; margin-bottom: 10px; }
 
-        /* EDITOR LAYOUT */
+        /* EDITOR UI */
         #codeEditorView { display: none; flex-direction: column; height: 100dvh; width: 100vw; position: fixed; top: 0; left: 0; background: var(--bg); z-index: 500; padding-bottom: env(safe-area-inset-bottom); }
         #aceEditorContainer { flex: 1; width: 100%; position: relative; margin-bottom: 30px;} 
-        
         .jump-btn-wrapper { position: absolute; bottom: 50px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 510; }
-        .jump-btn { width: 45px; height: 45px; border-radius: 50%; background: var(--card); border: 1px solid var(--border); color: var(--text); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; transition: 0.2s; }
+        .jump-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--card); border: 1px solid var(--border); color: var(--text); display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; transition: 0.2s; }
         .jump-btn:active { transform: scale(0.9); background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* VISUAL BUILDER STYLES */
+        /* VISUAL BUILDER */
         #visualEditorContainer { flex: 1; width: 100%; overflow-y: auto; padding: 20px; padding-bottom: 250px; display: none; background: var(--bg); }
         .visual-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .v-label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; font-weight: 500; text-transform: uppercase;}
         .v-textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; font-size: 0.9rem; resize: vertical; min-height: 80px; margin-bottom: 5px; }
-        
-        .v-preview-box { background: rgba(255,255,255,0.05); border: 1px dashed var(--primary); padding: 12px; border-radius: 8px; font-size: 0.95rem; color: white; min-height: 45px; margin-bottom: 15px; overflow-x: auto; }
-        .v-preview-box img { max-width: 100%; height: auto; border-radius: 8px; margin-top: 5px; }
-        
-        .v-input { width: 100%; padding: 10px 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; font-size: 0.9rem; margin-bottom: 10px; }
-        .v-select { width: 100%; padding: 10px; background: #0f172a; border: 1px solid var(--primary); color: white; border-radius: 8px; font-family: inherit; font-size: 0.9rem; margin-bottom: 15px; font-weight: 600;}
-        .v-row { display: flex; gap: 10px; align-items: flex-start; }
+        .v-input { width: 100%; padding: 10px 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; margin-bottom: 10px; }
+        .v-select { width: 100%; padding: 10px; background: #0f172a; border: 1px solid var(--primary); color: white; border-radius: 8px; font-family: inherit; margin-bottom: 15px; font-weight: 600; outline: none;}
         .v-del-btn { background: rgba(244,63,94,0.1); color: var(--danger); border: 1px solid rgba(244,63,94,0.3); padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 5px;}
         .v-img-btn { background: rgba(59,130,246,0.1); color: var(--info); border: 1px solid rgba(59,130,246,0.3); padding: 4px 10px; border-radius: 5px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.2s;}
         .v-img-btn:active { transform: scale(0.95); background: var(--info); color: white;}
         
-        /* IN-BLOCK MEDIA THUMBNAILS */
-        .inblock-media-row { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 10px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; }
-        .inblock-media-card { background: var(--card); border: 1px solid var(--border); padding: 5px; border-radius: 5px; min-width: 120px; text-align: center; }
+        .v-preview-box { background: rgba(255,255,255,0.05); border: 1px dashed var(--primary); padding: 12px; border-radius: 8px; font-size: 0.95rem; color: white; min-height: 45px; margin-bottom: 15px; overflow-x: auto; }
+        .v-preview-box img { max-width: 100%; height: auto; border-radius: 8px; margin-top: 5px; }
+        
+        /* IN-BLOCK MEDIA */
+        .inblock-media-row { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 10px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px dashed var(--border);}
+        .inblock-media-card { background: var(--bg); border: 1px solid var(--border); padding: 5px; border-radius: 5px; min-width: 120px; max-width: 120px; text-align: center; }
         .inblock-media-img { width: 100%; height: 60px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; background: #000; }
         .inblock-media-name { font-size: 0.6rem; color: var(--text-muted); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 110px; }
 
+        /* LIVE PREVIEW MOCKUP */
         .mobile-mockup-wrapper { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px);}
         .mobile-mockup { width: 100%; max-width: 400px; height: 85vh; background: #020617; border: 12px solid #1e293b; border-radius: 35px; overflow: hidden; display: flex; flex-direction: column; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .mockup-header { background: #1e293b; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 0.9rem; border-bottom: 1px solid var(--border);}
@@ -97,1048 +110,1427 @@
         .mockup-content h1 { font-size: 1.5rem; margin-bottom: 10px; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 5px;}
         .mockup-content h2 { font-size: 1.2rem; margin: 15px 0 10px; }
         .mockup-content .m-callout { background: rgba(59,130,246,0.15); border-left: 4px solid var(--info); padding: 15px; border-radius: 0 8px 8px 0; margin: 15px 0; }
-        .mockup-content img { max-width: 100%; border-radius: 8px; margin: 10px 0; border: 1px solid var(--border);}
+        .mockup-content img { max-width: 100%; border-radius: 8px; margin: 10px 0;}
 
+        /* OVERLAYS & TOASTS */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-overlay.active { display: flex; }
-        .modal-card { background: var(--card); width: 100%; border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+        .modal-card { background: var(--card); width: 100%; border-radius: 12px; padding: 20px; border: 1px solid var(--border); max-width: 400px; margin: 0 auto; }
         
         #loadingOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; backdrop-filter: blur(5px); }
-        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        .spinner { width: 45px; height: 45px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        
-        .folder-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
-        .folder-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 10px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .folder-card:active { transform: scale(0.95); border-color: var(--primary); }
-        .folder-icon { font-size: 2.5rem; margin-bottom: 10px; }
 
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--success); color: white; padding: 12px 24px; border-radius: 30px; font-size: 0.9rem; font-weight: 500; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; opacity: 0; transition: 0.3s; display: flex; align-items: center; gap: 8px; white-space: nowrap;}
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--card); color: white; padding: 12px 24px; border-radius: 30px; font-size: 0.9rem; font-weight: 500; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; opacity: 0; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; gap: 8px; white-space: nowrap;}
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        .status-badge { font-size: 0.65rem; padding: 2px 8px; border-radius: 12px; font-weight: 600; text-transform: uppercase;}
+        .badge-draft { background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.4); }
+        .badge-published { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.4); }
     </style>
 </head>
 <body>
 
     <div id="authScreen">
         <div class="auth-box">
-            <div style="font-size: 3rem; margin-bottom: 10px;">🛡️</div>
-            <h2 style="margin-bottom: 20px;">Admin Login</h2>
+            <div style="font-size: 3.5rem; margin-bottom: 15px;">🛡️</div>
+            <h2 style="margin-bottom: 25px;">Admin Login</h2>
             <input type="text" id="ghOwner" class="input-field" placeholder="GitHub Username">
             <input type="text" id="ghRepo" class="input-field" placeholder="Repository Name">
-            <input type="password" id="ghToken" class="input-field" placeholder="Personal Access Token (PAT)">
-            <button class="btn btn-primary" style="width: 100%;" onclick="loginGH()">Connect Repository</button>
+            <input type="password" id="ghToken" class="input-field" placeholder="Personal Access Token">
+            <button class="btn btn-primary" style="width: 100%;" onclick="App.loginGH()">Connect Repository</button>
         </div>
     </div>
 
-    <div id="loadingOverlay">
-        <div class="spinner"></div>
-        <div id="loadingText" style="font-weight: 500;">Processing...</div>
-    </div>
+    <div id="loadingOverlay"><div class="spinner"></div><div id="loadingText" style="font-weight: 500;">Processing...</div></div>
     <div id="toastContainer" class="toast"></div>
 
     <header class="app-header">
-        <div class="header-icon" id="backBtn" onclick="navigateBack()" style="visibility: hidden;"><i class="fas fa-arrow-left"></i></div>
-        <div class="header-title" id="appTitle">Courses</div>
-        <div class="header-icon" onclick="logoutGH()"><i class="fas fa-sign-out-alt"></i></div>
+        <div class="header-icon" id="backBtn" onclick="Nav.back()" style="visibility: hidden;"><i class="fas fa-arrow-left"></i></div>
+        <div class="header-title" id="appTitle">NAV Education</div>
+        <div class="header-icon" onclick="App.logoutGH()"><i class="fas fa-sign-out-alt"></i></div>
     </header>
 
     <div id="viewCourses" class="view-container active">
-        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-            <div class="list-item" style="flex: 1; background: rgba(16,185,129,0.1); border-color: var(--success); justify-content: center; cursor: pointer; margin: 0; padding: 12px;" onclick="editMasterCatalog()">
-                <i class="fas fa-database" style="color: var(--success);"></i> <span style="color: var(--success); font-weight: 600; font-size: 0.85rem;">Catalog</span>
+        <div class="flex gap-2" style="margin-bottom: 20px;">
+            <div class="list-item flex-col items-center" style="flex: 1; padding: 15px; margin: 0; cursor: pointer; border-color: var(--success); background: rgba(16,185,129,0.05);" onclick="CourseEngine.editMasterCatalog()">
+                <i class="fas fa-database" style="font-size: 1.5rem; color: var(--success); margin-bottom: 5px;"></i>
+                <span style="font-size: 0.8rem; font-weight: 600; color: var(--success);">Catalog</span>
             </div>
-            <div class="list-item" style="flex: 1; background: rgba(59,130,246,0.1); border-color: var(--info); justify-content: center; cursor: pointer; margin: 0; padding: 12px;" onclick="initSmartExplorer()">
-                <i class="fas fa-folder-tree" style="color: var(--info);"></i> <span style="color: var(--info); font-weight: 600; font-size: 0.85rem;">File Manager</span>
+            <div class="list-item flex-col items-center" style="flex: 1; padding: 15px; margin: 0; cursor: pointer; border-color: var(--info); background: rgba(59,130,246,0.05);" onclick="Nav.push('filemanager')">
+                <i class="fas fa-folder-tree" style="font-size: 1.5rem; color: var(--info); margin-bottom: 5px;"></i>
+                <span style="font-size: 0.8rem; font-weight: 600; color: var(--info);">File Manager</span>
             </div>
         </div>
         <div id="courseList"></div>
-        <button class="fab" onclick="openModal('courseModal')"><i class="fas fa-plus"></i></button>
+        <button class="fab" onclick="UI.openModal('courseModal')"><i class="fas fa-plus"></i></button>
     </div>
 
     <div id="viewChapters" class="view-container">
-        <div class="list-item" style="background: rgba(99,102,241,0.1); border-color: var(--primary); justify-content: center; cursor: pointer; margin-bottom: 20px;" onclick="editCourseCode()">
-            <i class="fas fa-code" style="color: var(--primary);"></i> <span style="color: var(--primary); font-weight: 600;">Edit Course Config (JSON)</span>
+        <div class="list-item" style="border-color: var(--primary); background: rgba(99,102,241,0.05); justify-content: center; cursor: pointer; margin-bottom: 20px;" onclick="CourseEngine.editCourseCode()">
+            <span style="color: var(--primary); font-weight: 600;"><i class="fas fa-code"></i> Edit Course JSON</span>
         </div>
         <div id="chapterList"></div>
-        <button class="fab" onclick="openModal('chapterModal')"><i class="fas fa-plus"></i></button>
+        <button class="fab" onclick="UI.openModal('chapterModal')"><i class="fas fa-plus"></i></button>
     </div>
 
     <div id="viewContents" class="view-container">
         <div id="contentList"></div>
-        <button class="fab" onclick="openModal('contentModal')"><i class="fas fa-plus"></i></button>
+        <button class="fab" onclick="UI.openModal('contentModal')"><i class="fas fa-plus"></i></button>
     </div>
 
-    <div id="viewAllfiles" class="view-container">
-        <div id="allFilesList"></div>
+    <div id="viewFileManager" class="view-container">
+        <div id="fileManagerList"></div>
     </div>
 
     <div id="codeEditorView">
         <header class="app-header">
-            <div class="header-icon" onclick="closeEditor()"><i class="fas fa-times"></i></div>
+            <div class="header-icon" onclick="Nav.back()"><i class="fas fa-times"></i></div>
             
-            <button id="editorModeToggle" class="btn" style="background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid var(--primary); padding: 5px 15px; font-size: 0.8rem; display:none;" onclick="toggleEditorMode()">
-                <i class="fas fa-eye"></i> Visual Builder
+            <button id="editorModeToggle" class="btn btn-outline" style="color: #a5b4fc; border-color: var(--primary); padding: 5px 15px; font-size: 0.8rem; display:none;" onclick="EditorEngine.toggleMode()">
+                <i class="fas fa-eye"></i> Visual
             </button>
             
-            <button id="livePreviewBtn" class="btn" style="background: rgba(16,185,129,0.15); color: var(--success); border: 1px solid var(--success); padding: 5px 15px; font-size: 0.8rem; display:none;" onclick="openLiveAppPreview()">
-                <i class="fas fa-mobile-alt"></i> Preview
+            <button id="livePreviewBtn" class="btn btn-outline" style="color: var(--success); border-color: var(--success); padding: 5px 15px; font-size: 0.8rem; display:none;" onclick="PreviewEngine.open()">
+                <i class="fas fa-mobile-alt"></i> Run
             </button>
 
-            <div style="display: flex; gap: 10px;">
-                <div class="header-icon" id="searchBtn" style="color: var(--info);" onclick="triggerSearch()"><i class="fas fa-search"></i></div>
-                <div class="header-icon" style="color: var(--success);" onclick="saveContent()"><i class="fas fa-save"></i></div>
+            <div class="flex gap-2">
+                <div class="header-icon" id="searchBtn" style="color: var(--info);" onclick="EditorEngine.triggerSearch()"><i class="fas fa-search"></i></div>
+                <div class="header-icon" style="color: var(--success);" onclick="EditorEngine.save()"><i class="fas fa-save"></i></div>
             </div>
         </header>
         
-        <input type="hidden" id="editPath">
-        <input type="hidden" id="editSha">
-        <input type="hidden" id="reloadCourseFlag">
-        <input type="hidden" id="currentEditorMode" value="code">
-        
         <div id="aceEditorContainer"></div>
+        <div id="visualEditorContainer"><div id="visualContentArea"></div></div>
         
         <div class="jump-btn-wrapper" id="jumpButtons" style="display: none;">
-            <div class="jump-btn" onclick="jumpToTop()"><i class="fas fa-chevron-up"></i></div>
-            <div class="jump-btn" onclick="jumpToBottom()"><i class="fas fa-chevron-down"></i></div>
-        </div>
-
-        <div id="visualEditorContainer">
-            <div id="visualContentArea"></div>
+            <div class="jump-btn" onclick="EditorEngine.jumpToTop()"><i class="fas fa-chevron-up"></i></div>
+            <div class="jump-btn" onclick="EditorEngine.jumpToBottom()"><i class="fas fa-chevron-down"></i></div>
         </div>
     </div>
 
     <div class="mobile-mockup-wrapper" id="livePreviewModal">
         <div class="mobile-mockup">
             <div class="mockup-header">
-                <i class="fas fa-arrow-left" onclick="closeLiveAppPreview()" style="cursor:pointer;"></i>
-                <span id="mockupTitle">Live App Preview</span>
+                <i class="fas fa-arrow-left" onclick="Nav.back()" style="cursor:pointer;"></i>
+                <span id="mockupTitle">App Preview</span>
                 <i class="fas fa-ellipsis-v"></i>
             </div>
             <div class="mockup-content" id="mockupContentArea"></div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="courseModal" onclick="closeModal('courseModal')">
+    <div class="modal-overlay" id="courseModal" onclick="UI.closeModal('courseModal')">
         <div class="modal-card" onclick="event.stopPropagation()">
-            <h3 style="margin-bottom: 15px;">Create New Course</h3>
-            <input type="text" id="newCourseTitle" class="input-field" placeholder="Course Title (e.g., Physics)">
-            <input type="text" id="newCourseId" class="input-field" placeholder="Short ID (e.g., physics)">
-            <button class="btn btn-primary" style="width: 100%;" onclick="createCourse()">Create Course</button>
+            <h3 style="margin-bottom: 15px;">New Course</h3>
+            <input type="text" id="newCourseTitle" class="input-field" placeholder="Course Title (e.g. Physics)">
+            <input type="text" id="newCourseId" class="input-field" placeholder="Short ID (e.g. physics12)">
+            <button class="btn btn-primary" style="width: 100%;" onclick="CourseEngine.createCourse()">Create Course</button>
         </div>
     </div>
 
-    <div class="modal-overlay" id="chapterModal" onclick="closeModal('chapterModal')">
+    <div class="modal-overlay" id="chapterModal" onclick="UI.closeModal('chapterModal')">
         <div class="modal-card" onclick="event.stopPropagation()">
-            <h3 style="margin-bottom: 15px;">Add Chapter</h3>
-            <input type="text" id="newChapTitle" class="input-field" placeholder="e.g., Chapter 1: Kinematics">
-            <button class="btn btn-primary" style="width: 100%;" onclick="createChapter()">Add Chapter</button>
+            <h3 style="margin-bottom: 15px;">New Chapter</h3>
+            <input type="text" id="newChapTitle" class="input-field" placeholder="e.g. Chapter 1: Kinematics">
+            <button class="btn btn-primary" style="width: 100%;" onclick="CourseEngine.createChapter()">Add Chapter</button>
         </div>
     </div>
 
-    <div class="modal-overlay" id="contentModal" onclick="closeModal('contentModal')">
+    <div class="modal-overlay" id="contentModal" onclick="UI.closeModal('contentModal')">
         <div class="modal-card" onclick="event.stopPropagation()">
             <h3 style="margin-bottom: 15px;">Add Material</h3>
-            <input type="text" id="newContentTitle" class="input-field" placeholder="Title (e.g., Intro Notes)">
-            <select id="newContentType" class="input-field" onchange="toggleContentUpload()">
+            <input type="text" id="newContentTitle" class="input-field" placeholder="Material Title">
+            <select id="newContentType" class="input-field" onchange="UI.toggleContentUpload()">
                 <option value="notes">Study Notes (.json)</option>
                 <option value="quiz">MCQ Quiz (.json)</option>
-                <option value="html">Custom HTML Page (.html)</option>
-                <option value="pdf">Handwritten PDF (.pdf)</option>
+                <option value="html">Custom Page (.html)</option>
+                <option value="pdf">Handwritten Document (.pdf)</option>
             </select>
             <div id="pdfUploadDiv" style="display:none; margin-bottom: 15px;">
-                <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; display:block;">Select PDF File</label>
+                <label style="font-size: 0.8rem; color: var(--text-muted); display:block; margin-bottom:5px;">Select PDF File</label>
                 <input type="file" id="pdfFileInput" accept="application/pdf" class="input-field" style="padding: 8px;">
             </div>
-            <button class="btn btn-primary" style="width: 100%;" onclick="createContent()">Generate / Upload</button>
+            <button class="btn btn-primary" style="width: 100%;" onclick="CourseEngine.createContent()">Add to Chapter</button>
         </div>
     </div>
 
-    <input type="file" id="hiddenImageUploader" accept="image/*" style="display: none;">
-    <input type="hidden" id="currentTargetTextarea">
+    <input type="hidden" id="editPath">
+    <input type="hidden" id="editSha">
+    <input type="hidden" id="reloadCourseFlag">
     
-    <input type="file" id="systemFileUploader" style="display: none;">
-    <input type="file" id="replaceFileUploader" style="display: none;">
-    <input type="hidden" id="replaceFilePath">
-    <input type="hidden" id="replaceFileSha">
+    <input type="file" id="sysFileUploader" style="display: none;">
+    <input type="file" id="sysReplaceUploader" style="display: none;">
+    <input type="hidden" id="sysReplacePath">
+    <input type="hidden" id="sysReplaceSha">
+    
+    <input type="file" id="visualImgUploader" accept="image/*" style="display: none;">
+    <input type="hidden" id="visualTargetId">
 
     <script>
-        // --- BASE64 FIX ---
-        function b64EncodeUnicode(str) { return btoa(unescape(encodeURIComponent(str))); }
-        function b64DecodeUnicode(str) { 
-            try { return decodeURIComponent(escape(atob(str.replace(/\s/g, '')))); } 
-            catch(e) { return atob(str.replace(/\s/g, '')); }
-        }
+        // ==========================================
+        // 1. SECURE BASE64 ENCODER/DECODER
+        // ==========================================
+        const Utils = {
+            b64Encode: (str) => {
+                return btoa(unescape(encodeURIComponent(str)));
+            },
+            b64Decode: (str) => {
+                let cleanStr = str.replace(/\s/g, '');
+                try {
+                    return decodeURIComponent(escape(atob(cleanStr)));
+                } catch(e) {
+                    try {
+                        const binary = atob(cleanStr);
+                        const bytes = new Uint8Array(binary.length);
+                        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+                        return new TextDecoder().decode(bytes);
+                    } catch(err) {
+                        return atob(cleanStr);
+                    }
+                }
+            },
+            getExt: (filename) => filename.split('.').pop().toLowerCase()
+        };
 
-        let gh = { owner: '', repo: '', token: '' };
-        let repoFiles = [];
-        let currentView = 'courses'; 
-        let activeCourse = { path: '', sha: '', data: null };
-        let activeChapIndex = -1;
-        let editor;
-        let parsedVisualData = null; 
-        let visualFileType = null; 
-        
-        let currentVirtualFolder = '';
-        let toastTimeout;
+        // ==========================================
+        // 2. STATE & ROBUST API MANAGER
+        // ==========================================
+        const State = {
+            gh: { owner: '', repo: '', token: '' },
+            repoFiles: [],
+            activeCourse: { path: '', sha: '', data: null },
+            activeChapIndex: -1,
+            fmFolder: '',
+            editorMode: 'code',
+            editorFileType: null,
+            visualData: null,
+            mathTimeout: null,
+            toastTimeout: null,
+            originalCode: '',
+            currentHash: ''
+        };
 
-        function showToast(msg) {
-            const toast = document.getElementById('toastContainer');
-            if(toastTimeout) clearTimeout(toastTimeout);
-            toast.innerHTML = `<i class="fas fa-check-circle"></i> ${msg}`;
-            toast.classList.add('show');
-            toastTimeout = setTimeout(() => toast.classList.remove('show'), 2000);
-        }
-
-        function jumpToTop() { if (editor) { editor.navigateFileStart(); editor.scrollToLine(0, true, true, function () {}); } }
-        function jumpToBottom() { if (editor) { const lastLine = editor.session.getLength(); editor.navigateFileEnd(); editor.scrollToLine(lastLine, true, true, function () {}); } }
-
-        let mathJaxTimeout = null;
-        function updateLivePreview(inputId, previewId) {
-            const val = document.getElementById(inputId).value;
-            const previewBox = document.getElementById(previewId);
-            if(!val.trim()) { previewBox.innerHTML = '<span style="color:var(--text-muted); font-style:italic;">Preview will appear here...</span>'; return; }
-            previewBox.innerHTML = val;
-            clearTimeout(mathJaxTimeout);
-            mathJaxTimeout = setTimeout(() => {
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([previewBox]).catch(e => console.log(e));
-            }, 600);
-        }
-
-        function initAceEditor() {
-            editor = ace.edit("aceEditorContainer");
-            editor.setTheme("ace/theme/twilight");
-            editor.session.setMode("ace/mode/json");
-            editor.setOptions({ fontSize: "14px", showLineNumbers: true, showGutter: true, wrap: true, useWorker: false, scrollPastEnd: 0.8 });
-        }
-
-        window.onload = () => {
-            initAceEditor();
-            if (localStorage.getItem('ghToken')) {
-                gh = { owner: localStorage.getItem('ghOwner'), repo: localStorage.getItem('ghRepo'), token: localStorage.getItem('ghToken') };
-                document.getElementById('authScreen').style.display = 'none';
-                loadCourses();
+        const API = {
+            request: async (endpoint, method = 'GET', body = null) => {
+                let cleanEndpoint = endpoint ? '/' + endpoint.replace(/^\/+|\/+$/g, '') : '';
+                let url = `https://api.github.com/repos/${State.gh.owner}/${State.gh.repo}/contents${cleanEndpoint}`;
+                
+                if (method === 'GET') url += `?t=${Date.now()}`; 
+                
+                const opt = { 
+                    method: method, 
+                    headers: { 
+                        'Authorization': `Bearer ${State.gh.token}`, 
+                        'Accept': 'application/vnd.github.v3+json'
+                    } 
+                };
+                if (body) opt.body = JSON.stringify(body);
+                
+                try {
+                    const res = await fetch(url, opt);
+                    
+                    if (res.status === 404 && !cleanEndpoint && method === 'GET') {
+                        return []; 
+                    }
+                    
+                    if (res.status === 401) throw new Error("Unauthorized");
+                    if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+                    
+                    if (method === 'DELETE') {
+                        try { return await res.json(); } catch(e) { return {}; }
+                    }
+                    return await res.json();
+                } catch (error) {
+                    console.error("API Call Failed:", error);
+                    throw error;
+                }
+            },
+            deleteFile: async (path, sha, msg) => {
+                return await API.request(path, 'DELETE', { message: msg, sha: sha });
+            },
+            createOrUpdate: async (path, content, msg, sha = null) => {
+                let payload = { message: msg, content: content };
+                if (sha) payload.sha = sha;
+                return await API.request(path, 'PUT', payload);
             }
         };
 
-        function loginGH() {
-            gh.owner = document.getElementById('ghOwner').value.trim(); gh.repo = document.getElementById('ghRepo').value.trim(); gh.token = document.getElementById('ghToken').value.trim();
-            if(!gh.token) return alert("Token required!");
-            localStorage.setItem('ghOwner', gh.owner); localStorage.setItem('ghRepo', gh.repo); localStorage.setItem('ghToken', gh.token);
-            document.getElementById('authScreen').style.display = 'none'; loadCourses();
-        }
-
-        function logoutGH() { localStorage.clear(); window.location.reload(); }
-
-        async function api(endpoint, method = 'GET', body = null) {
-            const url = `https://api.github.com/repos/${gh.owner}/${gh.repo}/contents/${endpoint}`;
-            const opt = { method, headers: { 'Authorization': `token ${gh.token}`, 'Accept': 'application/vnd.github.v3+json' } };
-            if (body) opt.body = JSON.stringify(body);
-            const res = await fetch(url, opt);
-            if (!res.ok) throw new Error(await res.text());
-            return await res.json();
-        }
-
-        function showLoading(msg) { document.getElementById('loadingText').textContent = msg; document.getElementById('loadingOverlay').style.display = 'flex'; }
-        function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
-
-        function switchView(viewId, title, showBack) {
-            document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            document.getElementById('appTitle').textContent = title;
-            document.getElementById('backBtn').style.visibility = showBack ? 'visible' : 'hidden';
-            currentView = viewId.replace('view', '').toLowerCase();
-        }
-
-        function navigateBack() {
-            if (currentView === 'contents') { renderChapters(); } 
-            else if (currentView === 'chapters' || currentView === 'allfiles') { loadCourses(); }
-        }
-
         // ==========================================
-        // 🔥 SMART VIRTUAL FILE MANAGER WITH MEMORY 🔥
+        // 3. UI CONTROLS 
         // ==========================================
-        function initSmartExplorer() {
-            currentVirtualFolder = ''; 
-            const list = document.getElementById('allFilesList');
-            list.innerHTML = `
-                <div class="folder-grid">
-                    <div class="folder-card" style="border-color: #10b981;" onclick="openVirtualFolder('images')">
-                        <div class="folder-icon" style="color: #10b981;"><i class="fas fa-images"></i></div>
-                        <div style="font-weight:600; font-size:0.9rem;">Images</div>
-                    </div>
-                    <div class="folder-card" style="border-color: #f43f5e;" onclick="openVirtualFolder('pdfs')">
-                        <div class="folder-icon" style="color: #f43f5e;"><i class="fas fa-file-pdf"></i></div>
-                        <div style="font-weight:600; font-size:0.9rem;">PDFs</div>
-                    </div>
-                    <div class="folder-card" style="border-color: var(--success);" onclick="openVirtualFolder('quizzes')">
-                        <div class="folder-icon" style="color: var(--success);"><i class="fas fa-brain"></i></div>
-                        <div style="font-weight:600; font-size:0.9rem;">Quizzes</div>
-                    </div>
-                    <div class="folder-card" style="border-color: var(--primary);" onclick="openVirtualFolder('notes')">
-                        <div class="folder-icon" style="color: var(--primary);"><i class="fas fa-book-open"></i></div>
-                        <div style="font-weight:600; font-size:0.9rem;">Notes</div>
-                    </div>
-                    <div class="folder-card" style="border-color: var(--info); grid-column: span 2;" onclick="openVirtualFolder('system')">
-                        <div class="folder-icon" style="color: var(--info);"><i class="fas fa-cogs"></i></div>
-                        <div style="font-weight:600; font-size:0.9rem;">Core System Files</div>
-                    </div>
-                </div>
-            `;
-            switchView('viewAllfiles', 'Smart File Manager', true);
-        }
-
-        function openVirtualFolder(category) {
-            currentVirtualFolder = category; 
-            const list = document.getElementById('allFilesList');
-            let headerHtml = `
-                <div style="display:flex; gap:10px; margin-bottom:15px;">
-                    <button class="btn btn-outline" style="flex:1;" onclick="document.getElementById('systemFileUploader').click()"><i class="fas fa-upload"></i> Upload File</button>
-                    <button class="btn btn-outline" style="flex:1;" onclick="openCreateFileModal()"><i class="fas fa-file-medical"></i> New File</button>
-                </div>
-                <div class="list-item" style="background:rgba(255,255,255,0.05); justify-content:center; cursor:pointer; margin-bottom:20px;" onclick="initSmartExplorer()">
-                    <span style="font-weight:600; color:var(--text-muted);"><i class="fas fa-arrow-left"></i> Back to Folders</span>
-                </div>
-            `;
-
-            let filtered = [];
-            if (category === 'images') filtered = repoFiles.filter(f => f.name.match(/\.(jpg|jpeg|png|gif|svg)$/i));
-            else if (category === 'pdfs') filtered = repoFiles.filter(f => f.name.endsWith('.pdf'));
-            else if (category === 'quizzes') filtered = repoFiles.filter(f => f.name.match(/q\d+\.\d+\.json$/));
-            else if (category === 'notes') filtered = repoFiles.filter(f => f.name.match(/n\d+\.\d+\.json$/));
-            else if (category === 'system') filtered = repoFiles.filter(f => f.name.match(/\.(html|css|js)$/) || f.name === 'library.json' || f.name === 'package.json');
-
-            if(filtered.length === 0) {
-                list.innerHTML = headerHtml + `<div style="text-align:center; padding: 20px; color:var(--text-muted);">No files found here.</div>`;
-                return;
+        const UI = {
+            showLoading: (msg) => { document.getElementById('loadingText').textContent = msg; document.getElementById('loadingOverlay').style.display = 'flex'; },
+            hideLoading: () => { document.getElementById('loadingOverlay').style.display = 'none'; },
+            showToast: (msg) => {
+                const t = document.getElementById('toastContainer');
+                clearTimeout(State.toastTimeout);
+                t.innerHTML = `<i class="fas fa-check-circle" style="color:var(--success);"></i> ${msg}`;
+                t.classList.add('show');
+                State.toastTimeout = setTimeout(() => t.classList.remove('show'), 2500);
+            },
+            switchView: (viewId, title, showBack) => {
+                document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+                document.getElementById(viewId).classList.add('active');
+                document.getElementById('appTitle').textContent = title;
+                document.getElementById('backBtn').style.visibility = showBack ? 'visible' : 'hidden';
+            },
+            openModal: (id) => {
+                Nav.push('modal_' + id); 
+            },
+            closeModal: (id) => {
+                if (window.location.hash === '#modal_' + id) Nav.back();
+                else document.getElementById(id).classList.remove('active');
+            },
+            toggleContentUpload: () => {
+                const type = document.getElementById('newContentType').value;
+                document.getElementById('pdfUploadDiv').style.display = type === 'pdf' ? 'block' : 'none';
             }
-
-            let filesHtml = '';
-            filtered.forEach(f => {
-                let icon = 'fa-file-code'; let color = 'var(--text-muted)';
-                let isPdf = false;
-                
-                if(f.name.endsWith('.html')) { icon = 'fa-html5'; color = '#e34f26'; }
-                else if(f.name.endsWith('.css')) { icon = 'fa-css3-alt'; color = '#264de4'; }
-                else if(f.name.endsWith('.js')) { icon = 'fa-js-square'; color = '#f7df1e'; }
-                else if(f.name.endsWith('.json')) { icon = 'fa-database'; color = 'var(--primary)'; }
-                else if(f.name.endsWith('.pdf')) { icon = 'fa-file-pdf'; color = '#f43f5e'; isPdf = true;}
-                else if(f.name.match(/\.(jpg|jpeg|png|gif|svg)$/i)) { icon = 'fa-image'; color = '#10b981'; }
-
-                const isEditable = !!f.name.match(/\.(html|css|js|json)$/i);
-                
-                let editCodeAction = `openEditor('${f.path}', '${f.sha}')`;
-                let viewLiveAction = `window.open('https://${gh.owner}.github.io/${gh.repo}/${f.path}', '_blank')`;
-                let viewRawAction = `window.open('https://raw.githubusercontent.com/${gh.owner}/${gh.repo}/main/${f.path}', '_blank')`;
-                
-                let primaryClick = isEditable ? editCodeAction : (isPdf ? viewLiveAction : viewRawAction);
-
-                filesHtml += `
-                    <div class="list-item">
-                        <div class="list-item-content" onclick="${primaryClick}">
-                            <div class="list-title"><i class="fas ${icon}" style="color:${color}; margin-right:8px;"></i> ${f.name}</div>
-                            <div class="list-subtitle">${(f.size / 1024).toFixed(1)} KB</div>
-                        </div>
-                        <div class="list-actions">
-                            ${isEditable ? `<button class="icon-action code" onclick="${editCodeAction}" title="Edit Code"><i class="fas fa-edit"></i></button>` : ''}
-                            <button class="icon-action view" onclick="${isPdf || f.name.endsWith('.html') ? viewLiveAction : viewRawAction}" title="View Live"><i class="fas fa-eye"></i></button>
-                            <button class="icon-action replace" onclick="triggerReplace('${f.path}', '${f.sha}')" title="Replace File"><i class="fas fa-sync-alt"></i></button>
-                            <button class="icon-action delete" onclick="deleteSystemFile('${f.path}', '${f.sha}')" title="Delete"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                `;
-            });
-            list.innerHTML = headerHtml + filesHtml;
-        }
-
-        async function deleteSystemFile(path, sha) {
-            if(!confirm(`Permanently delete '${path}'?`)) return;
-            showLoading("Deleting...");
-            try {
-                await api(path, 'DELETE', { message: `Deleted ${path}`, sha: sha });
-                repoFiles = await api(''); 
-                showToast("File Deleted");
-                if(currentVirtualFolder) openVirtualFolder(currentVirtualFolder);
-                else initSmartExplorer(); 
-            } catch(e) { alert("Delete failed: " + e.message); hideLoading(); }
-            hideLoading();
-        }
-
-        async function openCreateFileModal() {
-            const name = prompt("Enter new filename (e.g. page.html, style.css):");
-            if(!name) return;
-            showLoading("Creating file...");
-            try {
-                await api(name, 'PUT', { message: `Created ${name}`, content: b64EncodeUnicode("") });
-                repoFiles = await api('');
-                showToast("File Created");
-                if(currentVirtualFolder) openVirtualFolder(currentVirtualFolder);
-                else initSmartExplorer();
-            } catch(e) { alert("Failed to create file."); hideLoading(); }
-            hideLoading();
-        }
-
-        document.getElementById('systemFileUploader').addEventListener('change', async function(e) {
-            let file = e.target.files[0]; if (!file) return;
-            let name = prompt("Save as filename:", file.name.replace(/\s+/g, '_'));
-            if(!name) return;
-            showLoading("Uploading File...");
-            try {
-                let reader = new FileReader();
-                reader.onload = async function(event) {
-                    try {
-                        let base64 = event.target.result.split(',')[1];
-                        await api(name, 'PUT', { message: `Uploaded ${name}`, content: base64 });
-                        repoFiles = await api(''); 
-                        showToast("File Uploaded");
-                        if(currentVirtualFolder) openVirtualFolder(currentVirtualFolder);
-                        else initSmartExplorer();
-                    } catch(err) { alert("Upload failed."); }
-                    hideLoading(); document.getElementById('systemFileUploader').value = ''; 
-                };
-                reader.readAsDataURL(file);
-            } catch(err) { hideLoading(); alert("File read failed."); }
-        });
-
-        // REPLACE FILE ENGINE
-        function triggerReplace(path, sha) {
-            document.getElementById('replaceFilePath').value = path;
-            document.getElementById('replaceFileSha').value = sha;
-            document.getElementById('replaceFileUploader').click();
-        }
-
-        async function triggerReplaceWithFetch(path) {
-            showLoading("Preparing...");
-            try {
-                let fileSha = ''; let cached = repoFiles.find(f => f.name === path);
-                if (cached) fileSha = cached.sha; else { const data = await api(path); fileSha = data.sha; }
-                hideLoading(); triggerReplace(path, fileSha);
-            } catch(e) { hideLoading(); alert("Could not fetch file info."); }
-        }
-
-        document.getElementById('replaceFileUploader').addEventListener('change', async function(e) {
-            let file = e.target.files[0]; if (!file) return;
-            const path = document.getElementById('replaceFilePath').value;
-            const sha = document.getElementById('replaceFileSha').value;
-            showLoading("Overwriting File...");
-            try {
-                let reader = new FileReader();
-                reader.onload = async function(event) {
-                    try {
-                        let base64 = event.target.result.split(',')[1];
-                        await api(path, 'PUT', { message: `Replaced ${path}`, content: base64, sha: sha });
-                        showToast("File Replaced!");
-                        repoFiles = await api(''); 
-                        
-                        if(currentView === 'allfiles') {
-                            if(currentVirtualFolder) openVirtualFolder(currentVirtualFolder);
-                            else initSmartExplorer();
-                        }
-                        else if(currentView === 'contents') renderContents();
-                    } catch(err) { alert("Failed to overwrite file."); }
-                    hideLoading(); document.getElementById('replaceFileUploader').value = '';
-                };
-                reader.readAsDataURL(file);
-            } catch(err) { hideLoading(); alert("File read failed."); }
-        });
+        };
 
         // ==========================================
-        // MASTER CATALOG & COURSES
+        // 4. SECURE HARDWARE ROUTER
         // ==========================================
-        async function editMasterCatalog() {
-            showLoading("Opening Catalog...");
-            try { const fileData = await api('library.json'); openEditor('library.json', fileData.sha, false); } 
-            catch(e) {
-                if(confirm("'library.json' not found. Create it?")) {
-                    const template = JSON.stringify({ "courses": [] }, null, 2);
-                    showLoading("Creating...");
-                    try { const res = await api('library.json', 'PUT', { message: "Init library.json", content: b64EncodeUnicode(template) }); openEditor('library.json', res.content.sha, false); } catch(err) {}
+        const Nav = {
+            push: (hashId) => {
+                if (window.location.hash !== '#' + hashId) {
+                    history.pushState(null, null, '#' + hashId);
                 }
-            } hideLoading();
-        }
+                Nav.handleRoute(); 
+            },
+            back: () => { history.back(); },
+            initRouter: () => {
+                if(!window.location.hash || window.location.hash === '#') {
+                    history.replaceState(null, null, '#home');
+                }
+                window.addEventListener('popstate', Nav.handleRoute);
+                Nav.handleRoute(); 
+            },
+            handleRoute: () => {
+                let newHash = window.location.hash.replace('#', '') || 'home';
+                let oldHash = State.currentHash;
+                State.currentHash = newHash;
 
-        async function loadCourses() {
-            showLoading("Loading Courses...");
-            try {
-                repoFiles = await api('');
-                const list = document.getElementById('courseList'); list.innerHTML = ''; let found = false;
-                repoFiles.forEach(f => {
-                    if(f.type === 'file' && f.name.endsWith('.json') && !f.name.match(/[nq]\d+\.\d+\.json/) && f.name !== 'library.json' && f.name !== 'package.json') {
-                        found = true;
-                        list.innerHTML += `
-                            <div class="list-item">
-                                <div class="list-item-content" onclick="openCourse('${f.path}', '${f.sha}')">
-                                    <div class="list-title"><i class="fas fa-book" style="color:var(--primary); margin-right:8px;"></i> ${f.name}</div>
-                                    <div class="list-subtitle">Tap to view chapters</div>
-                                </div>
-                                <div class="list-actions"><button class="icon-action delete" onclick="deleteCourse('${f.path}', '${f.sha}', event)"><i class="fas fa-trash"></i></button></div>
-                            </div>
-                        `;
+                // Auto-save when leaving editor
+                if (oldHash === 'editor' && newHash !== 'editor' && newHash !== 'preview') {
+                    EditorEngine.save(true);
+                }
+
+                // Hide overlays
+                document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+                if (newHash !== 'editor' && newHash !== 'preview') document.getElementById('codeEditorView').style.display = 'none';
+                if (newHash !== 'preview') document.getElementById('livePreviewModal').style.display = 'none';
+                
+                // Route to Modal
+                if (newHash.startsWith('modal_')) {
+                    let modalId = newHash.replace('modal_', '');
+                    let mEl = document.getElementById(modalId);
+                    if(mEl) mEl.classList.add('active');
+                    UI.hideLoading();
+                    return; 
+                }
+
+                // Route to Views
+                if (newHash === 'home') {
+                    UI.switchView('viewCourses', 'Courses', false);
+                } else if (newHash === 'chapters') {
+                    if (State.activeCourse.data) {
+                        CourseEngine.renderChapters(); 
+                        UI.switchView('viewChapters', State.activeCourse.data.title, true);
+                    } else { Nav.push('home'); }
+                } else if (newHash === 'contents') {
+                    if (State.activeCourse.data && State.activeCourse.data.chapters[State.activeChapIndex]) {
+                        CourseEngine.renderContents(); 
+                        UI.switchView('viewContents', State.activeCourse.data.chapters[State.activeChapIndex].title, true);
+                    } else { Nav.push('home'); }
+                } else if (newHash === 'filemanager') {
+                    FileManager.renderRoot();
+                } else if (newHash.startsWith('folder_')) {
+                    FileManager.renderFolder(newHash.replace('folder_', ''));
+                } else if (newHash === 'editor') {
+                    document.getElementById('codeEditorView').style.display = 'flex';
+                } else if (newHash === 'preview') {
+                    document.getElementById('codeEditorView').style.display = 'flex';
+                    document.getElementById('livePreviewModal').style.display = 'flex';
+                }
+                
+                UI.hideLoading(); // Prevent stuck screen
+            }
+        };
+
+        const App = {
+            init: () => {
+                EditorEngine.init();
+                if (localStorage.getItem('ghToken')) {
+                    State.gh.owner = localStorage.getItem('ghOwner');
+                    State.gh.repo = localStorage.getItem('ghRepo');
+                    State.gh.token = localStorage.getItem('ghToken');
+                    document.getElementById('authScreen').style.display = 'none';
+                    CourseEngine.loadAll().then(() => Nav.initRouter());
+                } else {
+                    Nav.initRouter();
+                }
+            },
+            loginGH: () => {
+                State.gh.owner = document.getElementById('ghOwner').value.trim();
+                State.gh.repo = document.getElementById('ghRepo').value.trim();
+                State.gh.token = document.getElementById('ghToken').value.trim();
+                if(!State.gh.token) return alert("Token Required!");
+                
+                localStorage.setItem('ghOwner', State.gh.owner);
+                localStorage.setItem('ghRepo', State.gh.repo);
+                localStorage.setItem('ghToken', State.gh.token);
+                
+                document.getElementById('authScreen').style.display = 'none';
+                CourseEngine.loadAll().then(() => Nav.initRouter());
+            },
+            logoutGH: () => { localStorage.clear(); window.location.reload(); }
+        };
+
+        // ==========================================
+        // 5. COURSE ENGINE
+        // ==========================================
+        const CourseEngine = {
+            loadAll: async () => {
+                UI.showLoading("Loading Courses...");
+                try {
+                    State.repoFiles = await API.request('');
+                    const list = document.getElementById('courseList');
+                    list.innerHTML = '';
+                    
+                    let found = false;
+                    if(Array.isArray(State.repoFiles)) {
+                        State.repoFiles.forEach(f => {
+                            if(f.type === 'file' && f.name.endsWith('.json') && !f.name.match(/[nq]\d+\.\d+\.json/) && f.name !== 'library.json' && f.name !== 'package.json') {
+                                found = true;
+                                list.innerHTML += `
+                                    <div class="list-item">
+                                        <div class="list-item-content" onclick="CourseEngine.openCourse('${f.path}', '${f.sha}')">
+                                            <div class="list-title"><i class="fas fa-book" style="color:var(--primary);"></i> ${f.name}</div>
+                                            <div class="list-subtitle">Tap to view chapters</div>
+                                        </div>
+                                        <div class="list-actions">
+                                            <button class="icon-action delete" onclick="CourseEngine.deleteCourse('${f.path}', '${f.sha}', event)"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        });
                     }
-                });
-                if(!found) list.innerHTML += `<div style="text-align:center; padding: 40px 20px; color:var(--text-muted);">No courses found.</div>`;
-                switchView('viewCourses', 'All Courses', false);
-            } catch(e) { alert("Failed to fetch repository."); logoutGH(); }
-            hideLoading();
-        }
+                    if(!found) list.innerHTML = `<div class="text-center" style="padding: 40px 20px; color:var(--text-muted);">No courses found. Start by creating one!</div>`;
+                } catch(e) {
+                    if (e.message.includes("Unauthorized")) {
+                        alert("Your PAT token is invalid or expired.");
+                        App.logoutGH();
+                    } else {
+                        alert(`Network Error: ${e.message}`);
+                    }
+                }
+                UI.hideLoading();
+            },
 
-        async function deleteCourse(path, sha, event) {
-            event.stopPropagation(); 
-            if(!confirm(`Delete '${path}' and ALL associated files?`)) return;
-            showLoading("Deleting...");
-            try {
-                const courseFileData = await api(path);
-                const courseData = JSON.parse(b64DecodeUnicode(courseFileData.content));
-                if (courseData.chapters) {
-                    for (let chap of courseData.chapters) {
-                        if (chap.contents) {
-                            for (let item of chap.contents) {
-                                try {
-                                    const targetFileData = await api(item.file);
-                                    await api(item.file, 'DELETE', { message: `Del: ${item.file}`, sha: targetFileData.sha });
-                                } catch(err) {}
+            createCourse: async () => {
+                const title = document.getElementById('newCourseTitle').value.trim();
+                const id = document.getElementById('newCourseId').value.trim().toLowerCase().replace(/\s+/g, '');
+                
+                if(!title || !id) return alert("Fields required!");
+                UI.showLoading("Creating Course...");
+                
+                try {
+                    const courseJSON = { title: title, description: "Learn concepts.", chapters: [] };
+                    await API.createOrUpdate(`${id}.json`, Utils.b64Encode(JSON.stringify(courseJSON, null, 2)), `Created course ${title}`);
+                    
+                    try {
+                        let libObj = { courses: [] }; let libSha = null;
+                        let existing = State.repoFiles.find(f => f.name === 'library.json');
+                        if(existing) {
+                            const libData = await API.request('library.json');
+                            libObj = JSON.parse(Utils.b64Decode(libData.content));
+                            libSha = libData.sha;
+                        }
+                        if(!libObj.courses) libObj.courses = [];
+                        libObj.courses.push({ id: id, title: title, category: "general", icon: "📚", badge: "New" });
+                        
+                        await API.createOrUpdate('library.json', Utils.b64Encode(JSON.stringify(libObj, null, 2)), `Added ${id}`, libSha);
+                    } catch(err) { console.log("Library sync failed, skipping."); }
+                    
+                    document.getElementById('newCourseTitle').value = '';
+                    document.getElementById('newCourseId').value = '';
+                    Nav.back(); 
+                    CourseEngine.loadAll();
+                    UI.showToast("Course Created!");
+                } catch(e) {
+                    alert("Error creating course.");
+                    UI.hideLoading();
+                }
+            },
+
+            deleteCourse: async (path, sha, event) => {
+                event.stopPropagation();
+                if(!confirm(`Permanently delete '${path}' and all contents inside?`)) return;
+                UI.showLoading("Deleting Everything...");
+                
+                try {
+                    const cDataRaw = await API.request(path);
+                    const cData = JSON.parse(Utils.b64Decode(cDataRaw.content));
+                    
+                    if (cData.chapters) {
+                        for (let chap of cData.chapters) {
+                            if (chap.contents) {
+                                for (let item of chap.contents) {
+                                    let tFile = State.repoFiles.find(f => f.name === item.file);
+                                    if(tFile) {
+                                        try { await API.deleteFile(item.file, tFile.sha, `Cascading del: ${item.file}`); } catch(e){}
+                                    }
+                                }
                             }
                         }
                     }
+                    await API.deleteFile(path, sha, `Deleted course ${path}`);
+                    
+                    try {
+                        let existing = State.repoFiles.find(f => f.name === 'library.json');
+                        if(existing) {
+                            const libData = await API.request('library.json');
+                            let libObj = JSON.parse(Utils.b64Decode(libData.content));
+                            libObj.courses = libObj.courses.filter(c => c.id !== path.split('.')[0]);
+                            await API.createOrUpdate('library.json', Utils.b64Encode(JSON.stringify(libObj, null, 2)), `Removed ${path}`, libData.sha);
+                        }
+                    } catch(e){}
+                    
+                    CourseEngine.loadAll();
+                    UI.showToast("Course Deleted!");
+                } catch(e) {
+                    alert("Delete failed.");
+                    UI.hideLoading();
                 }
-                await api(path, 'DELETE', { message: `Deleted course ${path}`, sha: sha });
+            },
+
+            openCourse: async (path, sha) => {
+                UI.showLoading("Opening Course...");
                 try {
-                    const libData = await api('library.json'); let libraryObj = JSON.parse(b64DecodeUnicode(libData.content));
-                    if(libraryObj.courses) {
-                        libraryObj.courses = libraryObj.courses.filter(c => c.id !== path.split('.')[0]);
-                        await api('library.json', 'PUT', { message: `Removed from library`, content: b64EncodeUnicode(JSON.stringify(libraryObj, null, 2)), sha: libData.sha });
+                    const file = await API.request(path);
+                    State.activeCourse.data = JSON.parse(Utils.b64Decode(file.content));
+                    State.activeCourse.path = path;
+                    State.activeCourse.sha = file.sha;
+                    Nav.push('chapters'); 
+                } catch(e) {
+                    alert("Failed to parse course JSON. Check file encoding.");
+                    UI.hideLoading();
+                }
+            },
+
+            editCourseCode: () => {
+                EditorEngine.open(State.activeCourse.path, State.activeCourse.sha, true);
+            },
+
+            editMasterCatalog: async () => {
+                UI.showLoading("Loading Catalog...");
+                try {
+                    const fileData = await API.request('library.json');
+                    EditorEngine.open('library.json', fileData.sha, false);
+                } catch(e) {
+                    if(confirm("library.json not found. Create it?")) {
+                        UI.showLoading("Creating...");
+                        try {
+                            const res = await API.createOrUpdate('library.json', Utils.b64Encode(JSON.stringify({ courses: [] }, null, 2)), "Init library");
+                            EditorEngine.open('library.json', res.content.sha, false);
+                        } catch(err){ UI.hideLoading(); }
+                    } else {
+                        UI.hideLoading();
                     }
-                } catch(err) {}
-                showToast("Course Deleted");
-                loadCourses();
-            } catch(e) { alert("Failed to delete."); hideLoading(); }
-            hideLoading();
-        }
+                }
+            },
 
-        async function createCourse() {
-            const title = document.getElementById('newCourseTitle').value.trim(); const id = document.getElementById('newCourseId').value.trim().toLowerCase();
-            if(!title || !id) return alert("Fill all fields");
-            const courseJSON = { title: title, icon: "📚", description: "Learn concepts.", chapters: [] };
-            showLoading("Creating...");
-            try {
-                await api(`${id}.json`, 'PUT', { message: `Created ${title}`, content: b64EncodeUnicode(JSON.stringify(courseJSON, null, 2)) });
+            renderChapters: () => {
+                const list = document.getElementById('chapterList');
+                list.innerHTML = '';
+                
+                if (!State.activeCourse.data.chapters || State.activeCourse.data.chapters.length === 0) {
+                    list.innerHTML = `<div class="text-center" style="padding:30px; color:var(--text-muted);">No chapters added.</div>`;
+                } else {
+                    State.activeCourse.data.chapters.forEach((chap, idx) => {
+                        list.innerHTML += `
+                            <div class="list-item">
+                                <div class="list-item-content" onclick="CourseEngine.openChapter(${idx})">
+                                    <div class="list-title"><i class="fas fa-folder-open" style="color:var(--secondary);"></i> ${chap.title}</div>
+                                    <div class="list-subtitle">${chap.contents ? chap.contents.length : 0} Items Inside</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            },
+
+            createChapter: async () => {
+                const title = document.getElementById('newChapTitle').value.trim();
+                if(!title) return;
+                
+                if(!State.activeCourse.data.chapters) State.activeCourse.data.chapters = [];
+                State.activeCourse.data.chapters.push({ title: title, contents: [] });
+                
+                UI.showLoading("Saving Chapter...");
                 try {
-                    let libData, libraryObj;
-                    try { libData = await api('library.json'); libraryObj = JSON.parse(b64DecodeUnicode(libData.content)); if (!libraryObj.courses) libraryObj.courses = []; } 
-                    catch(err) { libraryObj = { courses: [] }; }
-                    libraryObj.courses.push({ id: id, category: "science", icon: "📚", title: title, badge: "New", badgeClass: "success", lessons: "0", users: "0", tags: ["New Course"] });
-                    let putData = { message: `Auto-added ${id}`, content: b64EncodeUnicode(JSON.stringify(libraryObj, null, 2)) };
-                    if(libData) putData.sha = libData.sha;
-                    await api('library.json', 'PUT', putData);
-                } catch(err) {}
-                closeModal('courseModal'); document.getElementById('newCourseTitle').value = ''; document.getElementById('newCourseId').value = ''; 
-                showToast("Course Created");
-                loadCourses();
-            } catch(e) { alert("Error creating course."); hideLoading(); }
-            hideLoading();
-        }
+                    const res = await API.createOrUpdate(State.activeCourse.path, Utils.b64Encode(JSON.stringify(State.activeCourse.data, null, 2)), `Added ${title}`, State.activeCourse.sha);
+                    State.activeCourse.sha = res.content.sha;
+                    
+                    document.getElementById('newChapTitle').value = '';
+                    Nav.back();
+                    CourseEngine.renderChapters();
+                    UI.showToast("Chapter Added!");
+                } catch(e) {
+                    alert("Save failed.");
+                    UI.hideLoading();
+                }
+            },
 
-        async function openCourse(path, sha) {
-            showLoading("Loading Chapters...");
-            try {
-                const file = await api(path);
-                activeCourse.data = JSON.parse(b64DecodeUnicode(file.content)); activeCourse.path = path; activeCourse.sha = file.sha;
-                renderChapters();
-            } catch(e) { alert("Failed to parse JSON."); hideLoading(); }
-            hideLoading();
-        }
+            openChapter: (index) => {
+                State.activeChapIndex = index;
+                Nav.push('contents'); 
+            },
 
-        function renderChapters() {
-            const list = document.getElementById('chapterList'); list.innerHTML = '';
-            if (!activeCourse.data.chapters || activeCourse.data.chapters.length === 0) list.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted);">No chapters yet.</div>`;
-            else {
-                activeCourse.data.chapters.forEach((chap, idx) => {
-                    list.innerHTML += `<div class="list-item"><div class="list-item-content" onclick="openChapter(${idx})"><div class="list-title"><i class="fas fa-folder-open" style="color:var(--secondary); margin-right:8px;"></i> ${chap.title}</div><div class="list-subtitle">${chap.contents ? chap.contents.length : 0} Items</div></div></div>`;
-                });
+            renderContents: () => {
+                const list = document.getElementById('contentList');
+                list.innerHTML = '';
+                
+                const chap = State.activeCourse.data.chapters[State.activeChapIndex];
+                
+                if (!chap.contents || chap.contents.length === 0) {
+                    list.innerHTML = `<div class="text-center" style="padding: 30px; color:var(--text-muted);">Empty chapter.</div>`;
+                } else {
+                    chap.contents.forEach((item, itemIdx) => {
+                        let icon = 'fa-file-alt'; let color = 'var(--primary)'; let isEditable = true;
+                        
+                        if(item.type === 'quiz') { icon = 'fa-brain'; color = 'var(--success)'; }
+                        else if(item.type === 'pdf') { icon = 'fa-file-pdf'; color = 'var(--danger)'; isEditable = false; }
+                        else if(item.type === 'html') { icon = 'fa-html5'; color = '#e34f26'; }
+                        
+                        let isPub = item.status === 'published';
+                        let borderStyle = isPub ? 'border-left: 4px solid var(--success);' : 'border-left: 4px solid var(--warning);';
+                        let statusBadge = isPub ? `<span class="status-badge badge-published">Published</span>` : `<span class="status-badge badge-draft">Draft</span>`;
+                        let pubIcon = isPub ? 'fa-eye-slash' : 'fa-upload'; 
+                        let pubColor = isPub ? 'var(--warning)' : 'var(--success)';
+                        
+                        let viewLink = `window.open('https://${State.gh.owner}.github.io/${State.gh.repo}/${item.file}', '_blank')`;
+                        let clickAction = isEditable ? `EditorEngine.open('${item.file}', '')` : viewLink;
+
+                        list.innerHTML += `
+                            <div class="list-item" style="${borderStyle}">
+                                <div class="list-item-content" onclick="${clickAction}">
+                                    <div class="list-title"><i class="fas ${icon}" style="color:${color};"></i> ${item.title}</div>
+                                    <div class="list-subtitle">${statusBadge} <span style="opacity:0.5;">•</span> ${item.file}</div>
+                                </div>
+                                <div class="list-actions">
+                                    <button class="icon-action" style="color:${pubColor};" onclick="CourseEngine.togglePublish(${itemIdx})" title="Toggle Publish/Draft"><i class="fas ${pubIcon}"></i></button>
+                                    ${isEditable ? `<button class="icon-action code" onclick="${clickAction}"><i class="fas fa-edit"></i></button>` : `<button class="icon-action view" onclick="${viewLink}"><i class="fas fa-eye"></i></button>`}
+                                    <button class="icon-action replace" onclick="FileManager.triggerReplaceViaFetch('${item.file}')"><i class="fas fa-sync-alt"></i></button>
+                                    <button class="icon-action delete" onclick="CourseEngine.deleteContent(${itemIdx}, '${item.file}')"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            },
+
+            createContent: async () => {
+                const title = document.getElementById('newContentTitle').value.trim();
+                const type = document.getElementById('newContentType').value;
+                if(!title) return alert("Title required!");
+                
+                const prefix = State.activeCourse.path.split('.')[0];
+                const chapNum = State.activeChapIndex + 1;
+                const contentsArr = State.activeCourse.data.chapters[State.activeChapIndex].contents || [];
+                const itemNum = contentsArr.length + 1;
+
+                if (type === 'pdf') {
+                    const pdfFile = document.getElementById('pdfFileInput').files[0];
+                    if (!pdfFile) return alert("Please select a PDF!");
+                    
+                    UI.showLoading("Uploading PDF...");
+                    let reader = new FileReader();
+                    reader.onload = async (e) => {
+                        try {
+                            const fname = `${prefix}p${chapNum}.${itemNum}.pdf`; 
+                            await API.createOrUpdate(fname, e.target.result.split(',')[1], `Uploaded PDF`);
+                            
+                            contentsArr.push({ title, file: fname, type, status: 'draft' });
+                            State.activeCourse.data.chapters[State.activeChapIndex].contents = contentsArr;
+                            
+                            const res = await API.createOrUpdate(State.activeCourse.path, Utils.b64Encode(JSON.stringify(State.activeCourse.data, null, 2)), `Linked ${fname}`, State.activeCourse.sha);
+                            State.activeCourse.sha = res.content.sha;
+                            
+                            document.getElementById('newContentTitle').value = '';
+                            document.getElementById('pdfFileInput').value = '';
+                            Nav.back();
+                            State.repoFiles = await API.request('');
+                            CourseEngine.renderContents();
+                            UI.showToast("PDF Uploaded as Draft!");
+                        } catch (err) { alert("Failed to upload PDF."); UI.hideLoading(); }
+                    };
+                    reader.readAsDataURL(pdfFile);
+                    return;
+                }
+
+                UI.showLoading("Generating File...");
+                try {
+                    let typeChar = type === 'quiz' ? 'q' : (type === 'html' ? 'h' : 'n');
+                    let ext = type === 'html' ? '.html' : '.json';
+                    
+                    let fileJSON = '';
+                    if (type === 'quiz') {
+                        fileJSON = JSON.stringify([], null, 2);
+                    } else if (type === 'html') {
+                        fileJSON = `<!DOCTYPE html>\n<html>\n<head><title>${title}</title></head>\n<body>\n<h1>${title}</h1>\n</body>\n</html>`;
+                    } else {
+                        fileJSON = JSON.stringify({ title: title, topic: State.activeCourse.data.chapters[State.activeChapIndex].title, blocks: [] }, null, 2);
+                    }
+                    
+                    const filename = `${prefix}${typeChar}${chapNum}.${itemNum}${ext}`;
+                    await API.createOrUpdate(filename, Utils.b64Encode(fileJSON), `Created ${title}`);
+                    
+                    contentsArr.push({ title, file: filename, type, status: 'draft' });
+                    State.activeCourse.data.chapters[State.activeChapIndex].contents = contentsArr;
+                    
+                    const res = await API.createOrUpdate(State.activeCourse.path, Utils.b64Encode(JSON.stringify(State.activeCourse.data, null, 2)), `Linked ${filename}`, State.activeCourse.sha);
+                    State.activeCourse.sha = res.content.sha;
+                    
+                    document.getElementById('newContentTitle').value = '';
+                    Nav.back();
+                    State.repoFiles = await API.request('');
+                    CourseEngine.renderContents();
+                    UI.showToast("Content Created as Draft!");
+                } catch(e) {
+                    alert("Creation failed.");
+                    UI.hideLoading();
+                }
+            },
+
+            togglePublish: async (idx) => {
+                const item = State.activeCourse.data.chapters[State.activeChapIndex].contents[idx];
+                item.status = item.status === 'published' ? 'draft' : 'published';
+                
+                UI.showLoading(item.status === 'published' ? "Publishing to App..." : "Moving to Drafts...");
+                try {
+                    const res = await API.createOrUpdate(State.activeCourse.path, Utils.b64Encode(JSON.stringify(State.activeCourse.data, null, 2)), `Status update`, State.activeCourse.sha);
+                    State.activeCourse.sha = res.content.sha;
+                    UI.showToast(item.status === 'published' ? "Published Live!" : "Moved to Drafts!");
+                    CourseEngine.renderContents();
+                } catch(e) {
+                    item.status = item.status === 'published' ? 'draft' : 'published';
+                    alert("Failed to update status.");
+                    UI.hideLoading();
+                }
+            },
+
+            deleteContent: async (idx, filename) => {
+                if(!confirm(`Delete '${filename}'? This cannot be undone.`)) return;
+                UI.showLoading("Removing...");
+                try {
+                    State.activeCourse.data.chapters[State.activeChapIndex].contents.splice(idx, 1);
+                    const res = await API.createOrUpdate(State.activeCourse.path, Utils.b64Encode(JSON.stringify(State.activeCourse.data, null, 2)), `Unlinked ${filename}`, State.activeCourse.sha);
+                    State.activeCourse.sha = res.content.sha;
+                    
+                    try {
+                        let tFile = State.repoFiles.find(f => f.name === filename);
+                        if(tFile) {
+                            await API.deleteFile(filename, tFile.sha, "Del file");
+                        } else {
+                            const d = await API.request(filename);
+                            await API.deleteFile(filename, d.sha, "Del");
+                        }
+                    } catch(e){}
+                    
+                    State.repoFiles = await API.request('');
+                    CourseEngine.renderContents();
+                    UI.showToast("Deleted Successfully!");
+                } catch(e) {
+                    alert("Delete failed.");
+                    UI.hideLoading();
+                }
             }
-            switchView('viewChapters', activeCourse.data.title, true);
-        }
+        };
 
-        function editCourseCode() { openEditor(activeCourse.path, activeCourse.sha, true); }
+        // ==========================================
+        // 6. FILE MANAGER ENGINE
+        // ==========================================
+        const FileManager = {
+            renderRoot: () => {
+                State.fmFolder = '';
+                const list = document.getElementById('fileManagerList');
+                list.innerHTML = `
+                    <div class="folder-grid">
+                        <div class="folder-card" style="border-color: #10b981;" onclick="Nav.push('folder_images')">
+                            <div class="folder-icon" style="color:#10b981;"><i class="fas fa-images"></i></div>
+                            <div style="font-weight:600;font-size:0.9rem;">Images</div>
+                        </div>
+                        <div class="folder-card" style="border-color: #f43f5e;" onclick="Nav.push('folder_pdfs')">
+                            <div class="folder-icon" style="color:#f43f5e;"><i class="fas fa-file-pdf"></i></div>
+                            <div style="font-weight:600;font-size:0.9rem;">PDFs</div>
+                        </div>
+                        <div class="folder-card" style="border-color: var(--success);" onclick="Nav.push('folder_quizzes')">
+                            <div class="folder-icon" style="color:var(--success);"><i class="fas fa-brain"></i></div>
+                            <div style="font-weight:600;font-size:0.9rem;">Quizzes</div>
+                        </div>
+                        <div class="folder-card" style="border-color: var(--primary);" onclick="Nav.push('folder_notes')">
+                            <div class="folder-icon" style="color:var(--primary);"><i class="fas fa-book-open"></i></div>
+                            <div style="font-weight:600;font-size:0.9rem;">Notes</div>
+                        </div>
+                        <div class="folder-card" style="border-color: var(--info); grid-column: span 2;" onclick="Nav.push('folder_system')">
+                            <div class="folder-icon" style="color:var(--info);"><i class="fas fa-cogs"></i></div>
+                            <div style="font-weight:600;font-size:0.9rem;">Core System Files</div>
+                        </div>
+                    </div>
+                `;
+                UI.switchView('viewFileManager', 'File Manager', true);
+            },
 
-        async function createChapter() {
-            const title = document.getElementById('newChapTitle').value.trim(); if(!title) return;
-            if(!activeCourse.data.chapters) activeCourse.data.chapters = [];
-            activeCourse.data.chapters.push({ title: title, contents: [] });
-            showLoading("Saving Chapter...");
-            try {
-                const res = await api(activeCourse.path, 'PUT', { message: `Added ${title}`, content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)), sha: activeCourse.sha });
-                activeCourse.sha = res.content.sha; closeModal('chapterModal'); document.getElementById('newChapTitle').value = ''; 
-                showToast("Chapter Added");
-                renderChapters();
-            } catch(e) { alert("Failed to save."); hideLoading(); }
-            hideLoading();
-        }
+            renderFolder: (category) => {
+                State.fmFolder = category;
+                const list = document.getElementById('fileManagerList');
+                
+                let html = `
+                    <div class="flex gap-2" style="margin-bottom:15px;">
+                        <button class="btn btn-outline" style="flex:1;" onclick="document.getElementById('sysFileUploader').click()"><i class="fas fa-upload"></i> Upload</button>
+                        <button class="btn btn-outline" style="flex:1;" onclick="FileManager.createFile()"><i class="fas fa-file-medical"></i> New File</button>
+                    </div>
+                `;
 
-        function openChapter(index) { activeChapIndex = index; renderContents(); }
+                let filtered = [];
+                if (category === 'images') filtered = State.repoFiles.filter(f => f.name.match(/\.(jpg|jpeg|png|gif|svg)$/i));
+                else if (category === 'pdfs') filtered = State.repoFiles.filter(f => f.name.endsWith('.pdf'));
+                else if (category === 'quizzes') filtered = State.repoFiles.filter(f => f.name.match(/q\d+\.\d+\.json$/));
+                else if (category === 'notes') filtered = State.repoFiles.filter(f => f.name.match(/n\d+\.\d+\.json$/));
+                else if (category === 'system') filtered = State.repoFiles.filter(f => f.name.match(/\.(html|css|js)$/) || ['library.json', 'package.json'].includes(f.name));
 
-        function renderContents() {
-            const list = document.getElementById('contentList'); list.innerHTML = '';
-            const chap = activeCourse.data.chapters[activeChapIndex];
-            if (!chap.contents || chap.contents.length === 0) list.innerHTML = `<div style="text-align:center; padding: 30px; color:var(--text-muted);">Empty chapter.</div>`;
-            else {
-                chap.contents.forEach((item, itemIdx) => {
-                    let icon = 'fa-file-alt'; let color = 'var(--primary)';
-                    let isPdf = false;
+                if(filtered.length === 0) {
+                    list.innerHTML = html + `<div class="text-center" style="padding:20px; color:var(--text-muted);">No files found here.</div>`;
+                    UI.switchView('viewFileManager', 'Folder: ' + category, true);
+                    return;
+                }
+
+                filtered.forEach(f => {
+                    let ext = Utils.getExt(f.name);
+                    let icon = 'fa-file-code'; let color = 'var(--text-muted)';
                     
-                    if(item.type === 'quiz') { icon = 'fa-brain'; color = 'var(--success)'; }
-                    else if(item.type === 'pdf') { icon = 'fa-file-pdf'; color = 'var(--danger)'; isPdf = true; }
-                    else if(item.type === 'html') { icon = 'fa-html5'; color = '#e34f26'; }
-                    
-                    let isEditable = !!item.file.match(/\.(html|css|js|json)$/i);
-                    let editCodeAction = `openEditor('${item.file}', '')`;
-                    let viewLiveAction = `window.open('https://${gh.owner}.github.io/${gh.repo}/${item.file}', '_blank')`;
-                    
-                    let primaryClick = isEditable ? editCodeAction : viewLiveAction;
-                    const replaceAction = `triggerReplaceWithFetch('${item.file}')`;
+                    if(ext === 'html') { icon = 'fa-html5'; color = '#e34f26'; }
+                    else if(ext === 'css') { icon = 'fa-css3-alt'; color = '#264de4'; }
+                    else if(ext === 'js') { icon = 'fa-js-square'; color = '#f7df1e'; }
+                    else if(ext === 'json') { icon = 'fa-database'; color = 'var(--primary)'; }
+                    else if(ext === 'pdf') { icon = 'fa-file-pdf'; color = '#f43f5e'; }
+                    else if(['jpg','jpeg','png','gif','svg'].includes(ext)) { icon = 'fa-image'; color = '#10b981'; }
 
-                    list.innerHTML += `
+                    const isEditable = ['html','css','js','json'].includes(ext);
+                    
+                    let editAction = `EditorEngine.open('${f.path}', '${f.sha}')`;
+                    let viewRaw = `window.open('https://raw.githubusercontent.com/${State.gh.owner}/${State.gh.repo}/main/${f.path}', '_blank')`;
+                    let viewLive = `window.open('https://${State.gh.owner}.github.io/${State.gh.repo}/${f.path}', '_blank')`;
+                    
+                    let primaryAction = isEditable ? editAction : (['html', 'pdf'].includes(ext) ? viewLive : viewRaw);
+
+                    html += `
                         <div class="list-item">
-                            <div class="list-item-content" onclick="${primaryClick}">
-                                <div class="list-title"><i class="fas ${icon}" style="color:${color}; margin-right:8px;"></i> ${item.title}</div>
-                                <div class="list-subtitle">File: ${item.file}</div>
+                            <div class="list-item-content" onclick="${primaryAction}">
+                                <div class="list-title"><i class="fas ${icon}" style="color:${color};"></i> ${f.name}</div>
+                                <div class="list-subtitle">${(f.size / 1024).toFixed(1)} KB</div>
                             </div>
                             <div class="list-actions">
-                                ${isEditable ? `<button class="icon-action code" onclick="${editCodeAction}" title="Edit"><i class="fas fa-edit"></i></button>` : ''}
-                                <button class="icon-action view" onclick="${viewLiveAction}" title="View Live"><i class="fas fa-eye"></i></button>
-                                <button class="icon-action replace" onclick="${replaceAction}" title="Replace File"><i class="fas fa-sync-alt"></i></button>
-                                <button class="icon-action delete" onclick="deleteContent(${itemIdx}, '${item.file}')" title="Delete"><i class="fas fa-trash"></i></button>
+                                ${isEditable ? `<button class="icon-action code" onclick="${editAction}" title="Edit"><i class="fas fa-edit"></i></button>` : `<button class="icon-action view" onclick="${['html','pdf'].includes(ext) ? viewLive : viewRaw}" title="View"><i class="fas fa-eye"></i></button>`}
+                                <button class="icon-action replace" onclick="FileManager.triggerReplace('${f.path}', '${f.sha}')" title="Replace"><i class="fas fa-sync-alt"></i></button>
+                                <button class="icon-action delete" onclick="FileManager.deleteFile('${f.path}', '${f.sha}')" title="Delete"><i class="fas fa-trash"></i></button>
                             </div>
                         </div>
                     `;
                 });
-            }
-            switchView('viewContents', chap.title, true);
-        }
-
-        function toggleContentUpload() {
-            const type = document.getElementById('newContentType').value;
-            document.getElementById('pdfUploadDiv').style.display = type === 'pdf' ? 'block' : 'none';
-        }
-
-        async function createContent() {
-            const title = document.getElementById('newContentTitle').value.trim(); 
-            const type = document.getElementById('newContentType').value;
-            if(!title) return alert("Title required");
-            
-            const subjectPrefix = activeCourse.path.split('.')[0]; 
-            const chapNum = activeChapIndex + 1;
-            const contentsArr = activeCourse.data.chapters[activeChapIndex].contents || []; 
-            const itemNum = contentsArr.length + 1;
-
-            if (type === 'pdf') {
-                const pdfFile = document.getElementById('pdfFileInput').files[0];
-                if (!pdfFile) return alert("Please select a PDF!");
-                showLoading("Uploading PDF...");
-                let reader = new FileReader();
-                reader.onload = async function(e) {
-                    try {
-                        let base64 = e.target.result.split(',')[1];
-                        const filename = `${subjectPrefix}p${chapNum}.${itemNum}.pdf`; 
-                        await api(filename, 'PUT', { message: `Uploaded PDF: ${title}`, content: base64 });
-                        contentsArr.push({ title: title, file: filename, type: type }); 
-                        activeCourse.data.chapters[activeChapIndex].contents = contentsArr;
-                        const res = await api(activeCourse.path, 'PUT', { message: `Linked ${filename}`, content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)), sha: activeCourse.sha });
-                        activeCourse.sha = res.content.sha;
-                        closeModal('contentModal'); document.getElementById('newContentTitle').value = ''; document.getElementById('pdfFileInput').value = ''; 
-                        repoFiles = await api(''); showToast("PDF Linked!"); renderContents();
-                    } catch (err) { alert("Failed to upload PDF."); hideLoading(); }
-                    hideLoading();
-                };
-                reader.readAsDataURL(pdfFile);
-                return;
-            }
-
-            showLoading("Generating File...");
-            try {
-                let typeChar = 'n'; let ext = '.json'; let fileJSON = '';
-                if(type === 'quiz') { typeChar = 'q'; fileJSON = JSON.stringify([], null, 2); }
-                else if(type === 'html') { typeChar = 'h'; ext = '.html'; fileJSON = `<!DOCTYPE html>\n<html>\n<head>\n<title>${title}</title>\n</head>\n<body>\n<h1>${title}</h1>\n</body>\n</html>`; }
-                else { fileJSON = JSON.stringify({ title: title, topic: activeCourse.data.chapters[activeChapIndex].title, blocks: [] }, null, 2); }
                 
-                const filename = `${subjectPrefix}${typeChar}${chapNum}.${itemNum}${ext}`;
-                await api(filename, 'PUT', { message: `Created ${title}`, content: b64EncodeUnicode(fileJSON) });
-                
-                contentsArr.push({ title: title, file: filename, type: type }); activeCourse.data.chapters[activeChapIndex].contents = contentsArr;
-                const res = await api(activeCourse.path, 'PUT', { message: `Linked ${filename}`, content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)), sha: activeCourse.sha });
-                activeCourse.sha = res.content.sha;
-                
-                closeModal('contentModal'); document.getElementById('newContentTitle').value = ''; repoFiles = await api(''); showToast("Content Linked!"); renderContents();
-            } catch(e) { alert("Failed to generate."); hideLoading(); }
-            hideLoading();
-        }
+                list.innerHTML = html;
+                UI.switchView('viewFileManager', 'Folder: ' + category, true);
+            },
 
-        async function deleteContent(itemIdx, filename) {
-            if(!confirm(`Delete '${filename}'?`)) return;
-            showLoading("Deleting...");
-            try {
-                activeCourse.data.chapters[activeChapIndex].contents.splice(itemIdx, 1);
-                const res = await api(activeCourse.path, 'PUT', { message: `Unlinked ${filename}`, content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)), sha: activeCourse.sha });
-                activeCourse.sha = res.content.sha;
+            createFile: async () => {
+                const name = prompt("Enter filename (e.g. style.css):");
+                if(!name) return;
+                UI.showLoading("Creating file...");
                 try {
-                    const targetFile = repoFiles.find(f => f.name === filename);
-                    if(targetFile) { await api(filename, 'DELETE', { message: `Deleted ${filename}`, sha: targetFile.sha }); } 
-                    else { const fileData = await api(filename); await api(filename, 'DELETE', { message: `Deleted ${filename}`, sha: fileData.sha }); }
-                } catch(e) {}
-                repoFiles = await api(''); showToast("Item Deleted!"); renderContents();
-            } catch(e) { alert("Delete failed."); hideLoading(); }
-            hideLoading();
-        }
+                    await API.createOrUpdate(name, Utils.b64Encode(""), `Created ${name}`);
+                    State.repoFiles = await API.request('');
+                    FileManager.renderFolder(State.fmFolder);
+                    UI.showToast("File Created!");
+                } catch(e) {
+                    alert("Failed to create file.");
+                    UI.hideLoading();
+                }
+            },
 
-        // ==========================================
-        // 🔥 IN-BLOCK IMAGE UPLOADER & SWAP ENGINE 🔥
-        // ==========================================
-        function generateInBlockMediaHTML(text, targetId) {
-            if(!text) return '';
-            const regex = /img_\d+\.(?:jpg|jpeg|png|gif|svg)/gi;
-            let matches = [...new Set(text.match(regex) || [])];
-            if(matches.length === 0) return '';
+            deleteFile: async (path, sha) => {
+                if(!confirm(`Permanently delete '${path}'?`)) return;
+                UI.showLoading("Deleting...");
+                try {
+                    await API.deleteFile(path, sha, `Deleted ${path}`);
+                    State.repoFiles = await API.request('');
+                    FileManager.renderFolder(State.fmFolder);
+                    UI.showToast("File Deleted!");
+                } catch(e) {
+                    alert("Delete failed.");
+                    UI.hideLoading();
+                }
+            },
 
-            let html = `<div class="inblock-media-row">`;
-            matches.forEach(img => {
-                let url = `https://raw.githubusercontent.com/${gh.owner}/${gh.repo}/main/${img}?t=${Date.now()}`;
-                html += `
-                    <div class="inblock-media-card">
-                        <img src="${url}" class="inblock-media-img">
-                        <div class="inblock-media-name">${img}</div>
-                        <div style="display:flex; gap:5px;">
-                            <button class="btn btn-outline" style="padding:2px 5px; flex:1; color:var(--info); border-color:var(--info);" onclick="triggerInBlockReplace('${img}', '${targetId}')" title="Replace"><i class="fas fa-sync-alt"></i></button>
-                            <button class="btn btn-danger" style="padding:2px 5px; flex:1; margin:0;" onclick="triggerInBlockDelete('${img}', '${targetId}')" title="Delete"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                `;
-            });
-            html += `</div>`;
-            return html;
-        }
+            triggerReplace: (path, sha) => {
+                document.getElementById('sysReplacePath').value = path;
+                document.getElementById('sysReplaceSha').value = sha;
+                document.getElementById('sysReplaceUploader').click();
+            },
 
-        async function triggerInBlockDelete(imgName, targetId) {
-            if(!confirm(`Delete ${imgName} from repo and this block?`)) return;
-            showLoading("Deleting Image...");
-            try {
-                try { const fileData = await api(imgName); await api(imgName, 'DELETE', { message: `Deleted ${imgName}`, sha: fileData.sha }); } catch(e) {}
-                
-                let textarea = document.getElementById(targetId);
-                let val = textarea.value;
-                let tagRegex = new RegExp(`(?:<br>\\s*)?<img[^>]*src=["'][^"']*${imgName}[^"']*["'][^>]*>(?:\\s*<br>)?`, 'g');
-                val = val.replace(tagRegex, '');
-                val = val.replace(new RegExp(imgName, 'g'), ''); 
-                textarea.value = val;
-                
-                if(visualFileType === 'quiz') extractVisualQuizData(); else extractVisualNotesData();
-                if(visualFileType === 'quiz') buildVisualQuizUI(); else buildVisualNotesUI();
-                showToast("Image Deleted");
-            } catch(e) { alert("Failed to delete image."); hideLoading(); }
-            hideLoading();
-        }
+            triggerReplaceViaFetch: async (path) => {
+                UI.showLoading("Fetching Details...");
+                try {
+                    let fileSha = '';
+                    let cached = State.repoFiles.find(f => f.name === path);
+                    if (cached) {
+                        fileSha = cached.sha;
+                    } else {
+                        const data = await API.request(path);
+                        fileSha = data.sha;
+                    }
+                    UI.hideLoading();
+                    FileManager.triggerReplace(path, fileSha);
+                } catch(e) {
+                    UI.hideLoading();
+                    alert("Error fetching file info for replacement.");
+                }
+            }
+        };
 
-        function triggerInBlockReplace(imgName, targetId) {
-            document.getElementById('currentTargetTextarea').value = 'INBLOCK_SWAP:' + targetId + ':' + imgName;
-            document.getElementById('hiddenImageUploader').click();
-        }
-
-        function startImageUpload(targetTextareaId) {
-            document.getElementById('currentTargetTextarea').value = targetTextareaId;
-            document.getElementById('hiddenImageUploader').click();
-        }
-
-        document.getElementById('hiddenImageUploader').addEventListener('change', async function(e) {
+        // File Manager Upload Listeners
+        document.getElementById('sysFileUploader').addEventListener('change', async (e) => {
             let file = e.target.files[0]; if (!file) return;
-            showLoading("Uploading Image...");
-            try {
-                let reader = new FileReader();
-                reader.onload = async function(event) {
-                    try {
-                        let base64 = event.target.result.split(',')[1]; let ext = file.name.split('.').pop(); let newFilename = `img_${Date.now()}.${ext}`;
-                        await api(newFilename, 'PUT', { message: `Uploaded image ${newFilename}`, content: base64 });
-                        
-                        let instruction = document.getElementById('currentTargetTextarea').value; 
-                        let imgUrl = `https://raw.githubusercontent.com/${gh.owner}/${gh.repo}/main/${newFilename}?t=${Date.now()}`;
-                        
-                        if(instruction.startsWith('INBLOCK_SWAP:')) {
-                            let parts = instruction.split(':');
-                            let targetId = parts[1];
-                            let oldImgName = parts[2];
-                            
-                            try { const oldFileData = await api(oldImgName); await api(oldImgName, 'DELETE', { message: `Deleted old image`, sha: oldFileData.sha }); } catch(err) {}
-                            
-                            let textarea = document.getElementById(targetId);
-                            textarea.value = textarea.value.replace(new RegExp(oldImgName + '(\\?t=\\d+)?', 'g'), newFilename + `?t=${Date.now()}`);
-                            showToast("Image Replaced!");
-                        } else {
-                            let targetId = instruction;
-                            let textarea = document.getElementById(targetId);
-                            textarea.value += ` <br><img src="${imgUrl}" style="max-width:100%; border-radius:8px;"> <br>`;
-                            showToast("Image Attached!");
-                        }
-                        
-                        if(visualFileType === 'quiz') extractVisualQuizData(); else extractVisualNotesData();
-                        if(visualFileType === 'quiz') buildVisualQuizUI(); else buildVisualNotesUI();
-
-                    } catch(err) { alert("Error handling image."); hideLoading(); }
-                    hideLoading(); document.getElementById('hiddenImageUploader').value = ''; 
-                };
-                reader.readAsDataURL(file);
-            } catch(err) { hideLoading(); alert("File read failed."); }
+            let name = prompt("Save as filename:", file.name.replace(/\s+/g, '_'));
+            if(!name) return;
+            
+            UI.showLoading("Uploading...");
+            let reader = new FileReader();
+            reader.onload = async (event) => {
+                try {
+                    await API.createOrUpdate(name, event.target.result.split(',')[1], `Uploaded ${name}`);
+                    State.repoFiles = await API.request('');
+                    FileManager.renderFolder(State.fmFolder);
+                    UI.showToast("Upload Successful!");
+                } catch(err) {
+                    alert("Upload failed.");
+                }
+                UI.hideLoading();
+                document.getElementById('sysFileUploader').value = ''; 
+            };
+            reader.readAsDataURL(file);
         });
 
-
-        // ==========================================
-        // 🔥 HYBRID EDITOR & LIVE PREVIEW 🔥
-        // ==========================================
-        async function openEditor(path, sha, reloadCourseOnSave = false) {
-            if (path.endsWith('.pdf')) { alert("PDFs cannot be edited here."); return; }
+        document.getElementById('sysReplaceUploader').addEventListener('change', async (e) => {
+            let file = e.target.files[0]; if (!file) return;
+            const path = document.getElementById('sysReplacePath').value;
+            const sha = document.getElementById('sysReplaceSha').value;
             
-            showLoading("Loading Editor...");
-            try {
-                let codeStr = "";
-                if(!sha) { 
-                    try { const fileData = await api(path); sha = fileData.sha; codeStr = b64DecodeUnicode(fileData.content); } 
-                    catch(apiErr) { throw new Error("Could not fetch file from GitHub."); }
-                } 
-                else { 
-                    try { const fileData = await api(path); codeStr = b64DecodeUnicode(fileData.content); } 
-                    catch(apiErr) { throw new Error("Could not fetch file content."); }
+            UI.showLoading("Replacing File...");
+            let reader = new FileReader();
+            reader.onload = async (event) => {
+                try {
+                    await API.createOrUpdate(path, event.target.result.split(',')[1], `Replaced ${path}`, sha);
+                    State.repoFiles = await API.request('');
+                    
+                    if(State.currentHash === 'contents') {
+                        CourseEngine.renderContents();
+                    } else {
+                        FileManager.renderFolder(State.fmFolder);
+                    }
+                    UI.showToast("File Replaced!");
+                } catch(err) {
+                    alert("Replace failed.");
                 }
-                
-                document.getElementById('editPath').value = path;
-                document.getElementById('editSha').value = sha;
-                document.getElementById('reloadCourseFlag').value = reloadCourseOnSave;
-                
-                if(path.endsWith('.html')) editor.session.setMode("ace/mode/html");
-                else if(path.endsWith('.css')) editor.session.setMode("ace/mode/css");
-                else if(path.endsWith('.js')) editor.session.setMode("ace/mode/javascript");
-                else editor.session.setMode("ace/mode/json");
-                
-                editor.setValue(codeStr, -1); 
+                UI.hideLoading();
+                document.getElementById('sysReplaceUploader').value = '';
+            };
+            reader.readAsDataURL(file);
+        });
 
-                const toggleBtn = document.getElementById('editorModeToggle');
-                const previewBtn = document.getElementById('livePreviewBtn');
-                
-                if (path.match(/q\d+\.\d+\.json$/)) {
-                    visualFileType = 'quiz'; toggleBtn.style.display = 'block'; previewBtn.style.display = 'block';
-                    toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Visual Builder'; document.getElementById('currentEditorMode').value = 'visual'; syncCodeToVisual();
-                } else if (path.match(/n\d+\.\d+\.json$/)) {
-                    visualFileType = 'notes'; toggleBtn.style.display = 'block'; previewBtn.style.display = 'block';
-                    toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Visual Builder'; document.getElementById('currentEditorMode').value = 'visual'; syncCodeToVisual();
+        // ==========================================
+        // 7. HYBRID EDITOR ENGINE
+        // ==========================================
+        let aceEditor;
+        const EditorEngine = {
+            init: () => {
+                aceEditor = ace.edit("aceEditorContainer");
+                aceEditor.setTheme("ace/theme/twilight");
+                aceEditor.session.setMode("ace/mode/json");
+                aceEditor.setOptions({ fontSize: "14px", showLineNumbers: true, showGutter: true, wrap: true, useWorker: false, scrollPastEnd: 0.8 });
+            },
+
+            open: async (path, sha, reloadCourse = false) => {
+                if (path.endsWith('.pdf')) return alert("PDFs cannot be edited here. Use Replace button.");
+                UI.showLoading("Loading Editor...");
+                try {
+                    let codeStr = "";
+                    if (!sha) {
+                        const fData = await API.request(path);
+                        sha = fData.sha;
+                        codeStr = Utils.b64Decode(fData.content);
+                    } else {
+                        const fData = await API.request(path);
+                        codeStr = Utils.b64Decode(fData.content);
+                    }
+                    
+                    document.getElementById('editPath').value = path;
+                    document.getElementById('editSha').value = sha;
+                    State.reloadCourseOnSave = reloadCourse;
+                    
+                    State.originalCode = codeStr; // Save state for auto-save diff
+                    
+                    let ext = Utils.getExt(path);
+                    if(ext === 'html') aceEditor.session.setMode("ace/mode/html");
+                    else if(ext === 'css') aceEditor.session.setMode("ace/mode/css");
+                    else if(ext === 'js') aceEditor.session.setMode("ace/mode/javascript");
+                    else aceEditor.session.setMode("ace/mode/json");
+                    
+                    aceEditor.setValue(codeStr, -1); 
+
+                    const tBtn = document.getElementById('editorModeToggle');
+                    const pBtn = document.getElementById('livePreviewBtn');
+                    
+                    if (path.match(/q\d+\.\d+\.json$/)) {
+                        State.editorFileType = 'quiz'; tBtn.style.display = 'block'; pBtn.style.display = 'block';
+                        tBtn.innerHTML = '<i class="fas fa-eye"></i> Visual'; State.editorMode = 'visual'; VisualBuilder.syncToVisual();
+                    } else if (path.match(/n\d+\.\d+\.json$/)) {
+                        State.editorFileType = 'notes'; tBtn.style.display = 'block'; pBtn.style.display = 'block';
+                        tBtn.innerHTML = '<i class="fas fa-eye"></i> Visual'; State.editorMode = 'visual'; VisualBuilder.syncToVisual();
+                    } else {
+                        State.editorFileType = null; tBtn.style.display = 'none'; pBtn.style.display = 'none';
+                        State.editorMode = 'code'; EditorEngine.showCodeUI();
+                    }
+                    
+                    Nav.push('editor');
+                } catch(e) {
+                    UI.hideLoading();
+                    alert(`Load Error: ${e.message}. The file may be corrupt or empty.`);
+                }
+            },
+
+            triggerSearch: () => { if(State.editorMode === 'code') aceEditor.execCommand("find"); },
+            jumpToTop: () => { aceEditor.navigateFileStart(); aceEditor.scrollToLine(0, true, true, ()=>{}); },
+            jumpToBottom: () => { const ll = aceEditor.session.getLength(); aceEditor.navigateFileEnd(); aceEditor.scrollToLine(ll, true, true, ()=>{}); },
+            
+            toggleMode: () => {
+                const tBtn = document.getElementById('editorModeToggle');
+                const pBtn = document.getElementById('livePreviewBtn');
+                if (State.editorMode === 'code') {
+                    if (!VisualBuilder.syncToVisual()) return; 
+                    State.editorMode = 'visual';
+                    tBtn.innerHTML = '<i class="fas fa-code"></i> Code';
+                    pBtn.style.display = 'block';
                 } else {
-                    visualFileType = null; toggleBtn.style.display = 'none'; previewBtn.style.display = 'none';
-                    document.getElementById('currentEditorMode').value = 'code'; showCodeMode();
+                    VisualBuilder.syncToCode();
+                    State.editorMode = 'code';
+                    tBtn.innerHTML = '<i class="fas fa-eye"></i> Visual';
+                    pBtn.style.display = 'none';
+                    EditorEngine.showCodeUI();
                 }
-                document.getElementById('codeEditorView').style.display = 'flex'; editor.resize(); 
-            } catch(e) { alert("Error: " + e.message); hideLoading(); }
-            hideLoading();
-        }
+            },
 
-        function closeEditor() { document.getElementById('codeEditorView').style.display = 'none'; }
-        function triggerSearch() { if(document.getElementById('currentEditorMode').value === 'code') editor.execCommand("find"); }
+            showCodeUI: () => {
+                document.getElementById('visualEditorContainer').style.display = 'none';
+                document.getElementById('aceEditorContainer').style.display = 'block';
+                document.getElementById('searchBtn').style.display = 'block';
+                document.getElementById('jumpButtons').style.display = 'flex';
+                aceEditor.resize();
+            },
 
-        function toggleEditorMode() {
-            const currentMode = document.getElementById('currentEditorMode').value;
-            const toggleBtn = document.getElementById('editorModeToggle');
-            const previewBtn = document.getElementById('livePreviewBtn');
-            if (currentMode === 'code') {
-                if (!syncCodeToVisual()) return; 
-                document.getElementById('currentEditorMode').value = 'visual'; toggleBtn.innerHTML = '<i class="fas fa-code"></i> Raw Code';
-                previewBtn.style.display = 'block';
-            } else {
-                syncVisualToCode(); document.getElementById('currentEditorMode').value = 'code'; toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Visual Builder'; showCodeMode();
-                previewBtn.style.display = 'none';
+            showVisualUI: () => {
+                document.getElementById('aceEditorContainer').style.display = 'none';
+                document.getElementById('visualEditorContainer').style.display = 'block';
+                document.getElementById('searchBtn').style.display = 'none';
+                document.getElementById('jumpButtons').style.display = 'none';
+                if (window.MathJax) setTimeout(() => MathJax.typesetPromise(), 200);
+            },
+
+            // Integrated Smart Auto-Save
+            save: async (silent = false) => {
+                if (State.editorMode === 'visual') {
+                    VisualBuilder.syncToCode();
+                }
+                
+                const currentCode = aceEditor.getValue();
+                
+                // Diff Check - Stop useless API calls
+                if (currentCode === State.originalCode) {
+                    if (!silent) UI.showToast("No changes detected.");
+                    return;
+                }
+                
+                if (!silent) UI.showLoading("Saving Changes...");
+                else UI.showToast("Auto-saving draft...");
+
+                const path = document.getElementById('editPath').value;
+                const sha = document.getElementById('editSha').value;
+                
+                try {
+                    if(path.endsWith('.json')) JSON.parse(currentCode); 
+                    
+                    const res = await API.createOrUpdate(path, Utils.b64Encode(currentCode), `Admin edit: ${path}`, sha);
+                    document.getElementById('editSha').value = res.content.sha;
+                    State.originalCode = currentCode; 
+                    
+                    if(State.reloadCourseOnSave) {
+                        State.activeCourse.data = JSON.parse(currentCode);
+                        State.activeCourse.sha = res.content.sha;
+                        CourseEngine.renderChapters();
+                    }
+                    if(!silent) UI.showToast("Changes Saved!");
+                } catch(e) {
+                    if(!silent) alert("Save failed! Please check for JSON syntax errors.");
+                    else UI.showToast("Auto-save skipped: Syntax error!");
+                }
+                if(!silent) UI.hideLoading();
             }
-        }
+        };
 
-        function showCodeMode() { 
-            document.getElementById('visualEditorContainer').style.display = 'none'; 
-            document.getElementById('aceEditorContainer').style.display = 'block'; 
-            document.getElementById('searchBtn').style.display = 'block'; 
-            document.getElementById('jumpButtons').style.display = 'flex'; 
-            editor.resize(); 
-        }
-        
-        function showVisualMode() { 
-            document.getElementById('aceEditorContainer').style.display = 'none'; 
-            document.getElementById('visualEditorContainer').style.display = 'block'; 
-            document.getElementById('searchBtn').style.display = 'none'; 
-            document.getElementById('jumpButtons').style.display = 'none'; 
-            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) { setTimeout(() => { MathJax.typesetPromise(); }, 200); }
-        }
+        // ==========================================
+        // 8. VISUAL BUILDER
+        // ==========================================
+        const VisualBuilder = {
+            syncToVisual: () => {
+                try {
+                    const val = aceEditor.getValue();
+                    State.visualData = val.trim() === "" ? (State.editorFileType === 'quiz' ? [] : {}) : JSON.parse(val);
+                    if (State.editorFileType === 'quiz') VisualBuilder.buildQuiz();
+                    else if (State.editorFileType === 'notes') VisualBuilder.buildNotes();
+                    EditorEngine.showVisualUI();
+                    return true;
+                } catch(e) {
+                    alert("Syntax errors found in JSON. You must fix them in Code View before switching to Visual Mode.");
+                    return false;
+                }
+            },
 
-        function syncCodeToVisual() {
-            try { parsedVisualData = JSON.parse(editor.getValue()); if (visualFileType === 'quiz') buildVisualQuizUI(); else if (visualFileType === 'notes') buildVisualNotesUI(); showVisualMode(); return true; } 
-            catch(e) { alert("Syntax errors in JSON. Fix them in Code View before switching."); return false; }
-        }
-        function syncVisualToCode() {
-            if (visualFileType === 'quiz') extractVisualQuizData(); else if (visualFileType === 'notes') extractVisualNotesData();
-            editor.setValue(JSON.stringify(parsedVisualData, null, 2), -1);
-        }
+            syncToCode: () => {
+                if (State.editorFileType === 'quiz') VisualBuilder.extractQuiz();
+                else if (State.editorFileType === 'notes') VisualBuilder.extractNotes();
+                aceEditor.setValue(JSON.stringify(State.visualData, null, 2), -1);
+            },
 
-        // --- FULL APP PREVIEW LOGIC ---
-        function openLiveAppPreview() {
-            if (visualFileType === 'quiz') extractVisualQuizData(); else if (visualFileType === 'notes') extractVisualNotesData();
-            const modal = document.getElementById('livePreviewModal'); const contentArea = document.getElementById('mockupContentArea'); let html = '';
-            if (visualFileType === 'quiz') {
-                html += `<div style="text-align:center; color:var(--primary); margin-bottom:20px; font-weight:600;"><i class="fas fa-brain"></i> Quiz Preview</div>`;
-                (parsedVisualData || []).forEach((q, i) => {
-                    html += `<div style="margin-bottom: 30px;"><strong>Q${i+1}.</strong> <div style="margin-bottom:15px; font-size:1.1rem; font-weight:600;">${q.question || ''}</div>`;
-                    const labels = ['A', 'B', 'C', 'D'];
-                    (q.options || []).forEach((opt, oIdx) => {
-                        const isCorrect = q.correctIndex === oIdx ? 'm-correct' : '';
-                        const icon = q.correctIndex === oIdx ? '<i class="fas fa-check-circle" style="float:right;"></i>' : '';
-                        html += `<div class="m-option ${isCorrect}"><strong>${labels[oIdx]}.</strong> <div style="flex:1;">${opt}</div> ${icon}</div>`;
-                    });
-                    if(q.explanation) { html += `<div class="m-callout" style="font-size:0.85rem;"><strong style="display:block; margin-bottom:5px;"><i class="fas fa-lightbulb"></i> Explanation</strong>${q.explanation}</div>`; }
-                    html += `</div><hr style="border-color:rgba(255,255,255,0.1); margin:20px 0;">`;
-                });
-            } else if (visualFileType === 'notes') {
-                if(parsedVisualData.topic) html += `<div style="color:var(--primary); font-weight:700; text-transform:uppercase; font-size:0.8rem; margin-bottom:5px;">${parsedVisualData.topic}</div>`;
-                if(parsedVisualData.title) html += `<h1>${parsedVisualData.title}</h1>`;
-                (parsedVisualData.blocks || []).forEach(b => {
-                    if (b.type === 'h1') html += `<h1>${b.content}</h1>`; else if (b.type === 'h2') html += `<h2>${b.content}</h2>`;
-                    else if (b.type === 'paragraph') html += `<p style="margin-bottom:15px;">${b.content}</p>`; else if (b.type === 'callout') html += `<div class="m-callout"><strong><i class="fas fa-info-circle"></i> Info</strong><br>${b.content}</div>`;
-                });
-            }
-            contentArea.innerHTML = html; modal.style.display = 'flex';
-            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) { MathJax.typesetPromise([contentArea]).catch(e => console.log(e)); }
-        }
+            liveMath: (inputId, prevId) => {
+                const val = document.getElementById(inputId).value;
+                const box = document.getElementById(prevId);
+                if(!val.trim()) { box.innerHTML = '<span style="color:var(--text-muted); font-style:italic;">Preview...</span>'; return; }
+                box.innerHTML = val;
+                clearTimeout(State.mathTimeout);
+                State.mathTimeout = setTimeout(() => {
+                    if(window.MathJax) MathJax.typesetPromise([box]).catch(e => console.log(e));
+                }, 600);
+            },
 
-        function closeLiveAppPreview() { document.getElementById('livePreviewModal').style.display = 'none'; }
-
-        // --- UI BUILDERS ---
-        function buildVisualQuizUI() {
-            const container = document.getElementById('visualContentArea');
-            container.innerHTML = `<h3 style="margin-bottom: 20px; color: var(--primary);"><i class="fas fa-brain"></i> Quiz Builder</h3>`;
-            if(!Array.isArray(parsedVisualData)) parsedVisualData = [];
-            
-            parsedVisualData.forEach((q, i) => {
-                container.innerHTML += `
-                    <div class="visual-card" id="qCard_${i}">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                            <h4>Question ${i+1}</h4>
-                            <button class="v-del-btn" onclick="deleteVisualItem(${i})"><i class="fas fa-trash"></i></button>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <label class="v-label">Question Text</label><button class="v-img-btn" onclick="startImageUpload('vq_${i}')"><i class="fas fa-image"></i> Image</button>
-                        </div>
-                        <textarea class="v-textarea" id="vq_${i}" oninput="updateLivePreview('vq_${i}', 'vq_${i}_prev')">${q.question || ''}</textarea>
-                        ${generateInBlockMediaHTML(q.question, `vq_${i}`)}
-                        <div class="v-preview-box" id="vq_${i}_prev">${q.question || '<span style="color:var(--text-muted); font-style:italic;">Preview will appear here...</span>'}</div>
-                        
-                        <div class="v-row">
-                            <div style="flex:1;"><label class="v-label">Option A</label><input class="v-input" id="vo_${i}_0" value="${q.options?.[0] || ''}"><label class="v-label">Option B</label><input class="v-input" id="vo_${i}_1" value="${q.options?.[1] || ''}"></div>
-                            <div style="flex:1;"><label class="v-label">Option C</label><input class="v-input" id="vo_${i}_2" value="${q.options?.[2] || ''}"><label class="v-label">Option D</label><input class="v-input" id="vo_${i}_3" value="${q.options?.[3] || ''}"></div>
-                        </div>
-
-                        <label class="v-label" style="margin-top:10px;">Correct Answer</label>
-                        <select class="v-select" id="vc_${i}">
-                            <option value="0" ${q.correctIndex===0?'selected':''}>Option A</option><option value="1" ${q.correctIndex===1?'selected':''}>Option B</option>
-                            <option value="2" ${q.correctIndex===2?'selected':''}>Option C</option><option value="3" ${q.correctIndex===3?'selected':''}>Option D</option>
-                        </select>
-
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <label class="v-label">Explanation</label><button class="v-img-btn" onclick="startImageUpload('ve_${i}')"><i class="fas fa-image"></i> Image</button>
-                        </div>
-                        <textarea class="v-textarea" id="ve_${i}" style="min-height:50px;" oninput="updateLivePreview('ve_${i}', 've_${i}_prev')">${q.explanation || ''}</textarea>
-                        ${generateInBlockMediaHTML(q.explanation, `ve_${i}`)}
-                        <div class="v-preview-box" id="ve_${i}_prev">${q.explanation || '<span style="color:var(--text-muted); font-style:italic;">Preview will appear here...</span>'}</div>
-                    </div>
-                `;
-            });
-            container.innerHTML += `<button class="btn btn-outline" style="width:100%; border-style:dashed;" onclick="addVisualQuizItem()"><i class="fas fa-plus"></i> Add Question</button>`;
-            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) { setTimeout(() => { MathJax.typesetPromise(); }, 200); }
-        }
-
-        function extractVisualQuizData() {
-            let newData = [];
-            for (let i = 0; i < parsedVisualData.length; i++) {
-                if(!document.getElementById(`qCard_${i}`)) continue;
-                newData.push({
-                    question: document.getElementById(`vq_${i}`).value,
-                    options: [ document.getElementById(`vo_${i}_0`).value, document.getElementById(`vo_${i}_1`).value, document.getElementById(`vo_${i}_2`).value, document.getElementById(`vo_${i}_3`).value ],
-                    correctIndex: parseInt(document.getElementById(`vc_${i}`).value),
-                    explanation: document.getElementById(`ve_${i}`).value
-                });
-            }
-            parsedVisualData = newData;
-        }
-
-        function addVisualQuizItem() { extractVisualQuizData(); parsedVisualData.push({ question: "", options: ["", "", "", ""], correctIndex: 0, explanation: "" }); buildVisualQuizUI(); }
-
-        function buildVisualNotesUI() {
-            const container = document.getElementById('visualContentArea');
-            container.innerHTML = `<h3 style="margin-bottom: 20px; color: var(--info);"><i class="fas fa-book-open"></i> Notes Builder</h3>`;
-            if(!parsedVisualData.blocks) parsedVisualData = { title: "", topic: "", blocks: [] };
-
-            container.innerHTML += `
-                <div style="margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
-                    <label class="v-label">Main Title</label><input class="v-input" id="vn_title" value="${parsedVisualData.title || ''}">
-                    <label class="v-label">Sub-Topic / Chapter</label><input class="v-input" id="vn_topic" value="${parsedVisualData.topic || ''}">
-                </div>
-                <div id="blocksContainer"></div>
-            `;
-
-            let blocksHtml = '';
-            parsedVisualData.blocks.forEach((b, i) => {
-                blocksHtml += `
-                    <div class="visual-card" id="bCard_${i}" style="padding: 15px;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                            <select class="v-select" id="bType_${i}" style="margin:0; width:150px;">
-                                <option value="h1" ${b.type==='h1'?'selected':''}>Main Heading</option><option value="h2" ${b.type==='h2'?'selected':''}>Sub Heading</option>
-                                <option value="paragraph" ${b.type==='paragraph'?'selected':''}>Paragraph</option><option value="callout" ${b.type==='callout'?'selected':''}>Info Box</option>
+            buildQuiz: () => {
+                const c = document.getElementById('visualContentArea');
+                c.innerHTML = `<h3 style="margin-bottom: 20px; color: var(--primary);"><i class="fas fa-brain"></i> Quiz Builder</h3>`;
+                
+                if(!Array.isArray(State.visualData)) State.visualData = [];
+                
+                State.visualData.forEach((q, i) => {
+                    c.innerHTML += `
+                        <div class="visual-card" id="qCard_${i}">
+                            <div class="flex justify-between items-center" style="margin-bottom:15px;">
+                                <h4>Question ${i+1}</h4>
+                                <button class="v-del-btn" onclick="VisualBuilder.deleteItem(${i})"><i class="fas fa-trash"></i></button>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <label class="v-label">Question Text</label>
+                                <button class="v-img-btn" onclick="MediaEngine.openUploader('vq_${i}')"><i class="fas fa-image"></i> Image</button>
+                            </div>
+                            <textarea class="v-textarea" id="vq_${i}" oninput="VisualBuilder.liveMath('vq_${i}', 'vqp_${i}')">${q.question || ''}</textarea>
+                            ${MediaEngine.renderInBlockImages(q.question, `vq_${i}`)}
+                            <div class="v-preview-box" id="vqp_${i}">${q.question || '...'}</div>
+                            
+                            <div class="flex gap-2">
+                                <div style="flex:1;"><label class="v-label">Opt A</label><input class="v-input" id="vo_${i}_0" value="${q.options?.[0] || ''}"><label class="v-label">Opt B</label><input class="v-input" id="vo_${i}_1" value="${q.options?.[1] || ''}"></div>
+                                <div style="flex:1;"><label class="v-label">Opt C</label><input class="v-input" id="vo_${i}_2" value="${q.options?.[2] || ''}"><label class="v-label">Opt D</label><input class="v-input" id="vo_${i}_3" value="${q.options?.[3] || ''}"></div>
+                            </div>
+                            
+                            <label class="v-label" style="margin-top:10px;">Correct Answer</label>
+                            <select class="v-select" id="vc_${i}">
+                                <option value="0" ${q.correctIndex===0?'selected':''}>Option A</option>
+                                <option value="1" ${q.correctIndex===1?'selected':''}>Option B</option>
+                                <option value="2" ${q.correctIndex===2?'selected':''}>Option C</option>
+                                <option value="3" ${q.correctIndex===3?'selected':''}>Option D</option>
                             </select>
-                            <button class="v-del-btn" onclick="deleteVisualItem(${i})" style="margin:0;"><i class="fas fa-trash"></i></button>
+
+                            <div class="flex justify-between items-center">
+                                <label class="v-label">Explanation</label>
+                                <button class="v-img-btn" onclick="MediaEngine.openUploader('ve_${i}')"><i class="fas fa-image"></i> Image</button>
+                            </div>
+                            <textarea class="v-textarea" id="ve_${i}" oninput="VisualBuilder.liveMath('ve_${i}', 'vep_${i}')">${q.explanation || ''}</textarea>
+                            ${MediaEngine.renderInBlockImages(q.explanation, `ve_${i}`)}
+                            <div class="v-preview-box" id="vep_${i}">${q.explanation || '...'}</div>
                         </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:5px; align-items: center;">
-                            <span style="font-size:0.8rem; color:var(--text-muted);">Block ${i+1}</span><button class="v-img-btn" onclick="startImageUpload('bContent_${i}')"><i class="fas fa-image"></i> Attach Image</button>
-                        </div>
-                        <textarea class="v-textarea" id="bContent_${i}" style="margin-bottom:5px;" placeholder="Type content here..." oninput="updateLivePreview('bContent_${i}', 'bContent_${i}_prev')">${b.content || ''}</textarea>
-                        ${generateInBlockMediaHTML(b.content, `bContent_${i}`)}
-                        <div class="v-preview-box" id="bContent_${i}_prev">${b.content || '<span style="color:var(--text-muted); font-style:italic;">Preview will appear here...</span>'}</div>
+                    `;
+                });
+                c.innerHTML += `<button class="btn btn-outline" style="width:100%; border-style:dashed;" onclick="VisualBuilder.addQuizItem()"><i class="fas fa-plus"></i> Add Question</button>`;
+                if(window.MathJax) setTimeout(() => MathJax.typesetPromise(), 200);
+            },
+
+            extractQuiz: () => {
+                let n = [];
+                for (let i = 0; i < State.visualData.length; i++) {
+                    if(!document.getElementById(`qCard_${i}`)) continue;
+                    n.push({
+                        question: document.getElementById(`vq_${i}`).value,
+                        options: [
+                            document.getElementById(`vo_${i}_0`).value,
+                            document.getElementById(`vo_${i}_1`).value,
+                            document.getElementById(`vo_${i}_2`).value,
+                            document.getElementById(`vo_${i}_3`).value
+                        ],
+                        correctIndex: parseInt(document.getElementById(`vc_${i}`).value),
+                        explanation: document.getElementById(`ve_${i}`).value
+                    });
+                }
+                State.visualData = n;
+            },
+
+            addQuizItem: () => {
+                VisualBuilder.extractQuiz();
+                State.visualData.push({ question: "", options: ["", "", "", ""], correctIndex: 0, explanation: "" });
+                VisualBuilder.buildQuiz();
+            },
+
+            buildNotes: () => {
+                const c = document.getElementById('visualContentArea');
+                c.innerHTML = `<h3 style="margin-bottom: 20px; color: var(--info);"><i class="fas fa-book-open"></i> Notes Builder</h3>`;
+                
+                if(!State.visualData) State.visualData = {};
+                if(!State.visualData.blocks) State.visualData.blocks = [];
+                
+                c.innerHTML += `
+                    <div style="margin-bottom:25px; border-bottom:1px solid var(--border); padding-bottom:15px;">
+                        <label class="v-label">Main Title</label>
+                        <input class="v-input" id="vn_title" value="${State.visualData.title || ''}">
+                        <label class="v-label">Sub-Topic / Chapter</label>
+                        <input class="v-input" id="vn_topic" value="${State.visualData.topic || ''}">
                     </div>
+                    <div id="blocksContainer"></div>
                 `;
-            });
-            document.getElementById('blocksContainer').innerHTML = blocksHtml;
-            container.innerHTML += `<button class="btn btn-outline" style="width:100%; border-style:dashed;" onclick="addVisualNoteBlock()"><i class="fas fa-plus"></i> Add Text Block</button>`;
-            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) { setTimeout(() => { MathJax.typesetPromise(); }, 200); }
-        }
 
-        function extractVisualNotesData() {
-            let newBlocks = [];
-            const blocksLen = parsedVisualData.blocks ? parsedVisualData.blocks.length : 0;
-            for (let i = 0; i < blocksLen; i++) {
-                if(!document.getElementById(`bCard_${i}`)) continue;
-                let bType = document.getElementById(`bType_${i}`).value; let bContent = document.getElementById(`bContent_${i}`).value;
-                let blockObj = { type: bType, content: bContent }; if (bType === 'callout') { blockObj.style = "info"; blockObj.icon = "fas fa-info-circle"; }
-                newBlocks.push(blockObj);
+                let html = '';
+                State.visualData.blocks.forEach((b, i) => {
+                    html += `
+                        <div class="visual-card" id="bCard_${i}" style="padding: 15px;">
+                            <div class="flex justify-between items-center" style="margin-bottom:10px;">
+                                <select class="v-select" id="bType_${i}" style="margin:0; width:150px;">
+                                    <option value="h1" ${b.type==='h1'?'selected':''}>Heading 1</option>
+                                    <option value="h2" ${b.type==='h2'?'selected':''}>Heading 2</option>
+                                    <option value="paragraph" ${b.type==='paragraph'?'selected':''}>Paragraph</option>
+                                    <option value="callout" ${b.type==='callout'?'selected':''}>Callout Box</option>
+                                </select>
+                                <button class="v-del-btn" onclick="VisualBuilder.deleteItem(${i})" style="margin:0;"><i class="fas fa-trash"></i></button>
+                            </div>
+                            
+                            <div class="flex justify-between items-center" style="margin-bottom:5px;">
+                                <span style="font-size:0.8rem; color:var(--text-muted);">Block ${i+1}</span>
+                                <button class="v-img-btn" onclick="MediaEngine.openUploader('bContent_${i}')"><i class="fas fa-image"></i> Media</button>
+                            </div>
+                            
+                            <textarea class="v-textarea" id="bContent_${i}" style="margin-bottom:5px;" oninput="VisualBuilder.liveMath('bContent_${i}', 'bContentp_${i}')">${b.content || ''}</textarea>
+                            ${MediaEngine.renderInBlockImages(b.content, `bContent_${i}`)}
+                            <div class="v-preview-box" id="bContentp_${i}">${b.content || '...'}</div>
+                        </div>
+                    `;
+                });
+                document.getElementById('blocksContainer').innerHTML = html;
+                c.innerHTML += `<button class="btn btn-outline" style="width:100%; border-style:dashed;" onclick="VisualBuilder.addNoteBlock()"><i class="fas fa-plus"></i> Add Block</button>`;
+                if(window.MathJax) setTimeout(() => MathJax.typesetPromise(), 200);
+            },
+
+            extractNotes: () => {
+                let nb = [];
+                for (let i = 0; i < State.visualData.blocks.length; i++) {
+                    if(!document.getElementById(`bCard_${i}`)) continue;
+                    let t = document.getElementById(`bType_${i}`).value;
+                    let c = document.getElementById(`bContent_${i}`).value;
+                    let obj = { type: t, content: c };
+                    if (t === 'callout') { obj.style = "info"; obj.icon = "fas fa-info-circle"; }
+                    nb.push(obj);
+                }
+                State.visualData.title = document.getElementById('vn_title').value;
+                State.visualData.topic = document.getElementById('vn_topic').value;
+                State.visualData.blocks = nb;
+            },
+
+            addNoteBlock: () => {
+                VisualBuilder.extractNotes();
+                State.visualData.blocks.push({ type: "paragraph", content: "" });
+                VisualBuilder.buildNotes();
+            },
+
+            deleteItem: (idx) => {
+                if(!confirm("Remove item?")) return;
+                if (State.editorFileType === 'quiz') {
+                    VisualBuilder.extractQuiz();
+                    State.visualData.splice(idx, 1);
+                    VisualBuilder.buildQuiz();
+                } else {
+                    VisualBuilder.extractNotes();
+                    State.visualData.blocks.splice(idx, 1);
+                    VisualBuilder.buildNotes();
+                }
             }
-            parsedVisualData.title = document.getElementById('vn_title').value; parsedVisualData.topic = document.getElementById('vn_topic').value; parsedVisualData.blocks = newBlocks;
-        }
+        };
 
-        function addVisualNoteBlock() { extractVisualNotesData(); parsedVisualData.blocks.push({ type: "paragraph", content: "" }); buildVisualNotesUI(); }
-        function deleteVisualItem(index) {
-            if(!confirm("Remove this item?")) return;
-            if (visualFileType === 'quiz') { extractVisualQuizData(); parsedVisualData.splice(index, 1); buildVisualQuizUI(); } 
-            else { extractVisualNotesData(); parsedVisualData.blocks.splice(index, 1); buildVisualNotesUI(); }
-        }
+        // ==========================================
+        // 9. IN-BLOCK MEDIA ENGINE
+        // ==========================================
+        const MediaEngine = {
+            renderInBlockImages: (text, targetId) => {
+                if(!text) return '';
+                const matches = [...new Set(text.match(/img_\d+\.(?:jpg|jpeg|png|gif|svg)/gi) || [])];
+                if(matches.length === 0) return '';
+                
+                let html = `<div class="inblock-media-row">`;
+                matches.forEach(img => {
+                    let url = `https://raw.githubusercontent.com/${State.gh.owner}/${State.gh.repo}/main/${img}?t=${Date.now()}`;
+                    html += `
+                        <div class="inblock-media-card">
+                            <img src="${url}" class="inblock-media-img" loading="lazy">
+                            <div class="flex gap-2">
+                                <button class="btn btn-outline" style="padding:4px; flex:1; color:var(--info); border-color:var(--info);" onclick="MediaEngine.openUploader('INBLOCK_SWAP:${targetId}:${img}')"><i class="fas fa-sync-alt"></i></button>
+                                <button class="btn btn-danger" style="padding:4px; flex:1; margin:0;" onclick="MediaEngine.deleteImage('${img}', '${targetId}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                return html + `</div>`;
+            },
 
-        async function saveContent() {
-            if (document.getElementById('currentEditorMode').value === 'visual') syncVisualToCode(); 
-            showLoading("Saving...");
-            const path = document.getElementById('editPath').value; const sha = document.getElementById('editSha').value; const code = editor.getValue(); const reloadCourse = document.getElementById('reloadCourseFlag').value === 'true';
-            try {
-                if(path.endsWith('.json')) JSON.parse(code); 
-                const res = await api(path, 'PUT', { message: `Admin manual edit: ${path}`, content: b64EncodeUnicode(code), sha: sha });
-                showToast("Saved Successfully!");
-                if(reloadCourse) { activeCourse.data = JSON.parse(code); activeCourse.sha = res.content.sha; renderChapters(); }
-                document.getElementById('editSha').value = res.content.sha;
-            } catch(e) { alert("Save failed! Check JSON syntax."); hideLoading(); }
-            hideLoading();
-        }
+            deleteImage: async (imgName, targetId) => {
+                if(!confirm(`Delete image permanently from GitHub?`)) return;
+                UI.showLoading("Deleting Media...");
+                try {
+                    try {
+                        const fd = await API.request(imgName);
+                        await API.deleteFile(imgName, fd.sha, "Del Media");
+                    } catch(e) {}
+                    
+                    let tArea = document.getElementById(targetId);
+                    let v = tArea.value;
+                    v = v.replace(new RegExp(`(?:<br>\\s*)?<img[^>]*src=["'][^"']*${imgName}[^"']*["'][^>]*>(?:\\s*<br>)?`, 'g'), '');
+                    v = v.replace(new RegExp(imgName, 'g'), ''); 
+                    tArea.value = v;
+                    
+                    if(State.editorFileType === 'quiz') { VisualBuilder.extractQuiz(); VisualBuilder.buildQuiz(); }
+                    else { VisualBuilder.extractNotes(); VisualBuilder.buildNotes(); }
+                    
+                    UI.showToast("Media Deleted!");
+                } catch(e) {
+                    alert("Failed to delete.");
+                }
+                UI.hideLoading();
+            },
 
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+            openUploader: (targetId) => {
+                document.getElementById('visualTargetId').value = targetId;
+                document.getElementById('visualImgUploader').click();
+            }
+        };
+
+        document.getElementById('visualImgUploader').addEventListener('change', async (e) => {
+            let f = e.target.files[0]; if (!f) return;
+            UI.showLoading("Uploading Media...");
+            
+            let reader = new FileReader();
+            reader.onload = async (event) => {
+                try {
+                    let b64 = event.target.result.split(',')[1];
+                    let ext = Utils.getExt(f.name);
+                    let nFile = `img_${Date.now()}.${ext}`;
+                    
+                    await API.createOrUpdate(nFile, b64, `Upload media`);
+                    
+                    let inst = document.getElementById('visualTargetId').value; 
+                    let imgUrl = `https://raw.githubusercontent.com/${State.gh.owner}/${State.gh.repo}/main/${nFile}?t=${Date.now()}`;
+                    
+                    if(inst.startsWith('INBLOCK_SWAP:')) {
+                        let p = inst.split(':');
+                        let tId = p[1];
+                        let oldImg = p[2];
+                        
+                        try {
+                            const od = await API.request(oldImg);
+                            await API.deleteFile(oldImg, od.sha, "Del old");
+                        } catch(err) {}
+                        
+                        let ta = document.getElementById(tId);
+                        ta.value = ta.value.replace(new RegExp(oldImg + '(\\?t=\\d+)?', 'g'), nFile + `?t=${Date.now()}`);
+                    } else {
+                        let ta = document.getElementById(inst);
+                        ta.value += ` <br><img src="${imgUrl}" style="max-width:100%; border-radius:8px;"> <br>`;
+                    }
+                    
+                    if(State.editorFileType === 'quiz') { VisualBuilder.extractQuiz(); VisualBuilder.buildQuiz(); }
+                    else { VisualBuilder.extractNotes(); VisualBuilder.buildNotes(); }
+                    
+                    UI.showToast("Media Saved!");
+                } catch(err) {
+                    alert("Media upload error.");
+                }
+                UI.hideLoading();
+                document.getElementById('visualImgUploader').value = ''; 
+            };
+            reader.readAsDataURL(f);
+        });
+
+        // ==========================================
+        // 10. APP MOCKUP PREVIEW ENGINE
+        // ==========================================
+        const PreviewEngine = {
+            open: () => {
+                if (State.editorFileType === 'quiz') VisualBuilder.extractQuiz();
+                else if (State.editorFileType === 'notes') VisualBuilder.extractNotes();
+                
+                const m = document.getElementById('livePreviewModal');
+                const c = document.getElementById('mockupContentArea');
+                let h = '';
+                
+                if (State.editorFileType === 'quiz') {
+                    h += `<div class="text-center" style="color:var(--primary); margin-bottom:20px; font-weight:600;"><i class="fas fa-brain"></i> Quiz UI</div>`;
+                    State.visualData.forEach((q, i) => {
+                        h += `<div style="margin-bottom:30px;"><strong>Q${i+1}.</strong> <div style="margin-bottom:15px; font-size:1.1rem; font-weight:600;">${q.question || ''}</div>`;
+                        ['A','B','C','D'].forEach((lbl, oIdx) => {
+                            let ic = q.correctIndex === oIdx ? 'm-correct' : '';
+                            let check = q.correctIndex === oIdx ? '<i class="fas fa-check-circle" style="float:right;"></i>' : '';
+                            h += `<div class="m-option ${ic}"><strong>${lbl}.</strong> <div style="flex:1;">${q.options?.[oIdx]||''}</div> ${check}</div>`;
+                        });
+                        if(q.explanation) h += `<div class="m-callout" style="font-size:0.85rem;"><strong style="display:block; margin-bottom:5px;"><i class="fas fa-lightbulb"></i> Explanation</strong>${q.explanation}</div>`;
+                        h += `</div><hr style="border-color:rgba(255,255,255,0.1); margin:20px 0;">`;
+                    });
+                } else if (State.editorFileType === 'notes') {
+                    if(State.visualData.topic) h += `<div style="color:var(--primary); font-weight:700; text-transform:uppercase; font-size:0.8rem; margin-bottom:5px;">${State.visualData.topic}</div>`;
+                    if(State.visualData.title) h += `<h1>${State.visualData.title}</h1>`;
+                    (State.visualData.blocks || []).forEach(b => {
+                        if (b.type === 'h1') h += `<h1>${b.content}</h1>`;
+                        else if (b.type === 'h2') h += `<h2>${b.content}</h2>`;
+                        else if (b.type === 'paragraph') h += `<p style="margin-bottom:15px;">${b.content}</p>`;
+                        else if (b.type === 'callout') h += `<div class="m-callout"><strong><i class="fas fa-info-circle"></i> Info</strong><br>${b.content}</div>`;
+                    });
+                }
+                
+                c.innerHTML = h;
+                Nav.push('preview'); 
+                if(window.MathJax) MathJax.typesetPromise([c]).catch(e=>console.log(e));
+            },
+            close: () => {
+                window.history.back();
+            }
+        };
+
+        // BOOT THE APP
+        window.onload = App.init;
+
     </script>
 </body>
 </html>
