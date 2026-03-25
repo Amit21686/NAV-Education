@@ -15,7 +15,13 @@
     },
     {
       "title": "Chemical Kinetics",
-      "contents": []
+      "contents": [
+        {
+          "title": "Chapter MCQs",
+          "file": "chemistryq2.1.json",
+          "type": "quiz"
+        }
+      ]
     }
   ]
 }
