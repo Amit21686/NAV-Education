@@ -1,7 +1,7 @@
 {
   "courses": [
     {
-      "id": "physics", 
+      "id": "physics",
       "category": "science",
       "status": "in-progress",
       "icon": "⚛️",
@@ -11,10 +11,13 @@
       "lessons": "12",
       "users": "12.5k",
       "progress": 0,
-      "tags": ["NCERT", "Board Exams"]
+      "tags": [
+        "NCERT",
+        "Board Exams"
+      ]
     },
     {
-      "id": "math", 
+      "id": "math",
       "category": "math",
       "status": "not-started",
       "icon": "📐",
@@ -24,7 +27,23 @@
       "lessons": "20",
       "users": "5k",
       "progress": 0,
-      "tags": ["Integration", "Derivatives"]
+      "tags": [
+        "Integration",
+        "Derivatives"
+      ]
+    },
+    {
+      "id": "chemistry",
+      "category": "general",
+      "icon": "📚",
+      "title": "Chemistry",
+      "badge": "New",
+      "badgeClass": "success",
+      "lessons": "0",
+      "users": "0",
+      "tags": [
+        "New Course"
+      ]
     }
   ],
   "materials": [
