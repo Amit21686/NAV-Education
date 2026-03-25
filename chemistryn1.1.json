@@ -1,10 +1,50 @@
 {
-  "title": "Solution Summary Notes",
-  "topic": "Solution",
+  "title": "Chemical Kinetics Summary Notes",
+  "topic": "Chemical Kinetics",
   "blocks": [
     {
       "type": "h2",
-      "content": "AI SE GENERATE KIYA HUA JSON YAHA PASTE KAREIN. <br><img src=\"img_1774407160892.jpg\" alt=\"Image\"> <br>"
+      "content": "Chemical Kinetics - Quick Revision Notes <br><img src=\"img_1774407160892.jpg\" alt=\"Image\"> <br>"
+    },
+    {
+      "type": "p",
+      "content": "<b>1. Rate of Reaction:</b><br>Rate = Change in concentration / Time<br>$$\\text{Rate} = -\\frac{d[A]}{dt}$$"
+    },
+    {
+      "type": "p",
+      "content": "<b>2. Order of Reaction:</b><br>Sum of powers of concentration terms in rate law.<br>Example: $$\\text{Rate} = k[A]^n$$"
+    },
+    {
+      "type": "p",
+      "content": "<b>3. Molecularity:</b><br>Number of reacting species in elementary step.<br>Always a whole number (1, 2, 3...)."
+    },
+    {
+      "type": "p",
+      "content": "<b>4. Zero Order Reaction:</b><br>Rate = k<br>Integrated form: $$[A] = [A]_0 - kt$$<br>Graph: Straight line (negative slope)"
+    },
+    {
+      "type": "p",
+      "content": "<b>5. First Order Reaction:</b><br>Rate = k[A]<br>Integrated form: $$\\ln[A] = \\ln[A]_0 - kt$$<br>Half-life: $$t_{1/2} = \\frac{0.693}{k}$$"
+    },
+    {
+      "type": "p",
+      "content": "<b>6. Second Order Reaction:</b><br>Rate = k[A]^2<br>Integrated form: $$\\frac{1}{[A]} = \\frac{1}{[A]_0} + kt$$"
+    },
+    {
+      "type": "p",
+      "content": "<b>7. Arrhenius Equation:</b><br>$$k = Ae^{-E_a/RT}$$<br>Where:<br>A = Frequency factor<br>Eₐ = Activation energy<br>R = Gas constant<br>T = Temperature"
+    },
+    {
+      "type": "p",
+      "content": "<b>8. Factors Affecting Rate:</b><br>- Temperature ↑ → Rate ↑<br>- Concentration ↑ → Rate ↑<br>- Catalyst → Lowers activation energy<br>- Surface area ↑ → Rate ↑"
+    },
+    {
+      "type": "p",
+      "content": "<b>9. Half-Life Summary:</b><br>- Zero order: Depends on initial concentration<br>- First order: Independent of concentration<br>- Second order: Inversely proportional to initial concentration"
+    },
+    {
+      "type": "p",
+      "content": "<b>10. Important Graphs:</b><br>- Zero order: [A] vs t → Straight line<br>- First order: ln[A] vs t → Straight line<br>- Second order: 1/[A] vs t → Straight line"
     }
   ]
 }
