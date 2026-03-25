@@ -1,3 +1,11 @@
 {
-  "courses": []
+  "courses": [
+    {
+      "id": "p",
+      "title": "Physics",
+      "category": "general",
+      "icon": "📚",
+      "badge": "New"
+    }
+  ]
 }
