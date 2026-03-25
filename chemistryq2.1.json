@@ -2,9 +2,9 @@
   {
     "question": "Evaluate the following complex integral: $$\\int_{0}^{\\pi} \\sin(x) dx$$",
     "options": [
-      "$0$", 
-      "$1$", 
-      "$2$", 
+      "$0$",
+      "$1$",
+      "$2$",
       "$-2$"
     ],
     "correctIndex": 2,
@@ -35,9 +35,9 @@
   {
     "question": "Identify the laboratory equipment shown below:<br><br><img src='https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=400&q=80' alt='Lab Glassware'>",
     "options": [
-      "Microscope", 
-      "Bunsen Burner", 
-      "Erlenmeyer Flasks and Beakers", 
+      "Microscope",
+      "Bunsen Burner",
+      "Erlenmeyer Flasks and Beakers",
       "Centrifuge"
     ],
     "correctIndex": 2,
