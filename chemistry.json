@@ -2,5 +2,10 @@
   "title": "Chemistry",
   "icon": "📚",
   "description": "Learn and master concepts.",
-  "chapters": []
+  "chapters": [
+    {
+      "title": "Solution",
+      "contents": []
+    }
+  ]
 }
