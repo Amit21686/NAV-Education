@@ -15,6 +15,11 @@
           "title": "Solution pdf",
           "file": "chemistryp1.2.pdf",
           "type": "pdf"
+        },
+        {
+          "title": "India map",
+          "file": "chemistryh1.3.html",
+          "type": "html"
         }
       ]
     },
