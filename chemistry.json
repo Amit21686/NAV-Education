@@ -10,6 +10,11 @@
           "title": "Solution Summary Notes",
           "file": "chemistryn1.1.json",
           "type": "notes"
+        },
+        {
+          "title": "Solution pdf",
+          "file": "chemistryp1.2.pdf",
+          "type": "pdf"
         }
       ]
     },
