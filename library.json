@@ -31,19 +31,6 @@
         "Integration",
         "Derivatives"
       ]
-    },
-    {
-      "id": "chemistry",
-      "category": "general",
-      "icon": "📚",
-      "title": "Chemistry",
-      "badge": "New",
-      "badgeClass": "success",
-      "lessons": "0",
-      "users": "0",
-      "tags": [
-        "New Course"
-      ]
     }
   ],
   "materials": [
