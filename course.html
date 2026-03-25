@@ -7,12 +7,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], packages: {'[+]': ['mhchem']} },
+            loader: {load: ['[tex]/mhchem']},
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         :root {
             --primary: #6366f1; --secondary: #8b5cf6; --bg: #020617; --bg-card: rgba(30, 41, 59, 0.8);
             --border: rgba(255, 255, 255, 0.08); --text: #f1f5f9; --text-muted: #94a3b8;
-            --radius-md: 12px; --radius-lg: 16px;
+            --success: #10b981; --warning: #f59e0b; --error: #f43f5e;
+            --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px;
         }
         body.light-theme { --bg: #f8fafc; --bg-card: #ffffff; --border: #e2e8f0; --text: #0f172a; --text-muted: #475569; }
         body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
@@ -22,11 +32,15 @@
         .container { max-width: 600px; width: 100%; padding: 20px; z-index: 1; }
 
         .app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .back-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(10px); color: var(--text);}
-        .back-btn:active { transform: scale(0.95); }
+        .icon-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(10px); color: var(--text); transition: 0.2s;}
+        .icon-btn:active { transform: scale(0.95); }
 
         .course-hero { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--radius-lg); padding: 30px 20px; text-align: center; color: white; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(99,102,241,0.2);}
         .course-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 5px; }
+
+        /* Course Progress Bar */
+        .overall-progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-top: 15px; overflow: hidden; }
+        .overall-progress-fill { height: 100%; background: white; width: 0%; transition: width 0.5s ease; }
 
         /* Chapter Accordion Style */
         .chapter-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 15px; overflow: hidden; backdrop-filter: blur(10px); }
@@ -46,15 +60,40 @@
         .icon-json { background: rgba(99,102,241,0.15); color: #6366f1; }
         .icon-notes { background: rgba(245,158,11,0.15); color: #f59e0b; }
 
-        .mat-info { flex: 1; }
-        .mat-title { font-size: 0.9rem; font-weight: 500; }
+        .mat-info { flex: 1; overflow: hidden; }
+        .mat-title { font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+        /* MathJax Adjustments for Titles */
+        .mat-title mjx-container { margin: 0 !important; }
         .mat-type { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
+
+        /* Status Badges */
+        .status-badge { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 12px; display: inline-flex; align-items: center; }
+        .status-done { color: var(--success); background: rgba(16,185,129,0.1); }
+        .status-score { color: var(--primary); background: rgba(99,102,241,0.1); }
+
+        /* Quiz Options Modal */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 25px 20px; width: 100%; max-width: 320px; transform: scale(0.9); transition: transform 0.3s; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        
+        .action-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: var(--radius-md); font-family: inherit; font-size: 1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; }
+        .action-btn:active { transform: scale(0.96); }
+        .btn-warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        /* 🔥 Added specific styling for the new Learn button 🔥 */
+        .btn-success { background: linear-gradient(135deg, #10b981, #059669); }
+
+        /* Toast */
+        .toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-card); backdrop-filter: blur(20px); color: var(--text); padding: 10px 20px; border-radius: 40px; font-size: 0.85rem; border: 1px solid var(--border); box-shadow: 0 8px 24px rgba(0,0,0,0.5); z-index: 10000; opacity: 0; transition: all 0.3s; display: flex; align-items: center; gap: 8px; font-weight: 500; white-space: nowrap; }
+        body.light-theme .toast { background: #ffffff; color: #0f172a; border-color: #e2e8f0; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.success { border-color: var(--success); }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="app-header">
-            <div class="back-btn" onclick="window.location.href='library.html'"><i class="fas fa-arrow-left"></i></div>
+            <div class="icon-btn back-btn" onclick="window.location.href='library.html'"><i class="fas fa-arrow-left"></i></div>
             <div style="font-weight: 600;">Course Hub</div>
             <div style="width: 42px;"></div>
         </header>
@@ -62,12 +101,33 @@
         <div class="course-hero">
             <div id="courseIcon" style="font-size: 3rem; margin-bottom: 10px;">📚</div>
             <h2 class="course-title" id="courseTitle">Loading Course...</h2>
-            <p style="font-size: 0.85rem; opacity: 0.9;" id="courseDesc">Select a chapter to begin learning.</p>
+            <div style="display:flex; justify-content:center; align-items:center; gap:10px; margin-top: 10px; font-size: 0.85rem;">
+                <span id="courseProgressText">0% Complete</span>
+            </div>
+            <div class="overall-progress-bar">
+                <div class="overall-progress-fill" id="courseProgressBar"></div>
+            </div>
+            <p style="font-size: 0.85rem; opacity: 0.9; margin-top: 10px;" id="courseDesc">Select a chapter to begin learning.</p>
         </div>
 
-        <div id="chaptersContainer">
-            </div>
+        <div id="chaptersContainer"></div>
     </div>
+
+    <div id="quizActionModal" class="modal-overlay" onclick="closeQuizModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 1.1rem; font-weight: 600;" id="quizModalTitle">Assessment Options</h3>
+                <div class="icon-btn" style="width:32px; height:32px; font-size:0.9rem;" onclick="closeQuizModal()"><i class="fas fa-times"></i></div>
+            </div>
+            <button class="action-btn" onclick="startSelectedQuiz()"><i class="fas fa-play"></i> Play Quiz</button>
+            
+            <button class="action-btn btn-success" onclick="learnSelectedQuiz()"><i class="fas fa-book-reader"></i> Learn / Read MCQs</button>
+            
+            <button class="action-btn btn-warning" onclick="viewSelectedLeaderboard()" style="margin-bottom: 0;"><i class="fas fa-trophy"></i> View Leaderboard</button>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast"></div>
 
     <script>
         function applyTheme() {
@@ -77,82 +137,124 @@
         }
         applyTheme();
 
-        // Standard JSON format for a Course updated for new naming convention
+        let toastTimeout;
+        function showToast(msg, type='info') {
+            const toast = document.getElementById('toastContainer');
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toast.className = `toast ${type}`;
+            let icon = type === 'success' ? 'fa-check-circle' : 'fa-info-circle';
+            toast.innerHTML = `<i class="fas ${icon}" style="color:var(--${type})"></i> ${msg}`;
+            toast.classList.add('show');
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
         const fallbackCourseData = {
-            title: "Physics Masterclass",
-            icon: "⚛️",
-            description: "Master the concepts of modern physics.",
-            chapters: [
-                {
-                    title: "Chapter 1: Kinematics",
-                    contents: [
-                        { title: "Kinematics Handwritten Notes", file: "physics-notes1.pdf", type: "pdf" },
-                        { title: "Kinematics Interactive Notes", file: "physicsn1.json", type: "notes" },
-                        { title: "Kinematics Practice Test", file: "physicsq1.json", type: "quiz" }
-                    ]
-                },
-                {
-                    title: "Chapter 2: Laws of Motion",
-                    contents: [
-                        { title: "Newton's Laws Notes", file: "physicsn2.json", type: "notes" },
-                        { title: "Newton's Laws Quiz", file: "physicsq2.json", type: "quiz" }
-                    ]
-                }
-            ]
+            title: "Physics Masterclass", icon: "⚛️", description: "Master the concepts of modern physics.",
+            chapters: [{
+                title: "Chapter 1: Kinematics",
+                contents: [
+                    { title: "Kinematics Handwritten Notes", file: "physics1.1.pdf" },
+                    { title: "Kinematics Part 1: Intro", file: "physicsn1.1.json" },
+                    { title: "Basic Practice Test", file: "physicsq1.1.json" }
+                ]
+            }]
         };
 
-        async function loadCourseContent() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const courseId = urlParams.get('id');
+        window.currentCourseData = null;
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('id');
 
+        async function loadCourseContent() {
             try {
-                // Expects a file named courseId.json (e.g. physics.json) to exist in your folder
                 const res = await fetch(`${courseId}.json`);
                 if (!res.ok) throw new Error();
-                const courseData = await res.json();
-                renderCourse(courseData);
+                window.currentCourseData = await res.json();
+                renderCourse(window.currentCourseData);
             } catch (e) {
-                console.log("Could not fetch course JSON. Using fallback data.");
+                window.currentCourseData = fallbackCourseData;
                 renderCourse(fallbackCourseData);
             }
         }
 
+        // ================= MATHEMATICAL OVERALL PROGRESS =================
+        function recalculateAndSaveOverallProgress(data) {
+            if(!data) return 0;
+            const itemProg = JSON.parse(localStorage.getItem('nav_item_progress')) || {};
+            let totalItems = 0;
+            let earnedProgress = 0;
+
+            // Iterate over all items in the course
+            data.chapters.forEach(chap => {
+                chap.contents.forEach(mat => {
+                    totalItems++;
+                    earnedProgress += (itemProg[mat.file] || 0); // Adds accuracy fraction (e.g. 0.8) or completion (1.0)
+                });
+            });
+
+            // Calculate precise percentage
+            let finalPct = totalItems === 0 ? 0 : Math.round((earnedProgress / totalItems) * 100);
+            
+            // Save global progress so index.html and library.html can read it
+            if(courseId) {
+                let courseProg = JSON.parse(localStorage.getItem('nav_course_progress')) || {};
+                courseProg[courseId] = finalPct;
+                localStorage.setItem('nav_course_progress', JSON.stringify(courseProg));
+            }
+
+            // Update UI Progress Bar
+            document.getElementById('courseProgressBar').style.width = `${finalPct}%`;
+            document.getElementById('courseProgressText').textContent = `${finalPct}% Complete`;
+            
+            return finalPct;
+        }
+
         function renderCourse(data) {
-            document.getElementById('courseTitle').textContent = data.title;
-            document.getElementById('courseIcon').textContent = data.icon;
-            document.getElementById('courseDesc').textContent = data.description || "Select a chapter to begin learning.";
+            // Allows HTML in title/desc in case you use math/images
+            document.getElementById('courseTitle').innerHTML = data.title;
+            document.getElementById('courseIcon').innerHTML = data.icon;
+            document.getElementById('courseDesc').innerHTML = data.description || "Select a chapter to begin learning.";
+
+            // Calculate the genuine mathematical progress before rendering
+            recalculateAndSaveOverallProgress(data);
 
             const container = document.getElementById('chaptersContainer');
             container.innerHTML = '';
+            
+            const itemProg = JSON.parse(localStorage.getItem('nav_item_progress')) || {};
 
             data.chapters.forEach((chap, index) => {
                 let contentHtml = '';
                 
                 chap.contents.forEach(item => {
-                    let iconClass = "icon-html";
-                    let iconName = "fas fa-file-alt";
-                    let displayType = item.type || item.file.split('.').pop();
-                    
-                    const typeStr = item.type ? item.type.toLowerCase() : "";
+                    let iconClass = "icon-html"; let iconName = "fas fa-file-alt"; let displayType = 'Document';
+                    let itemType = item.type ? item.type.toLowerCase() : '';
 
-                    // Match logic: ends with .pdf
-                    if (item.file.endsWith('.pdf') || typeStr === 'pdf') { 
-                        iconClass = "icon-pdf"; iconName = "fas fa-file-pdf"; displayType = 'PDF';
+                    if (!itemType) {
+                        if (item.file.match(/\.pdf$/i)) itemType = 'pdf';
+                        else if (item.file.match(/\.html$/i)) itemType = 'html';
+                        else if (item.file.match(/n\d+\.\d+\.json$/i)) itemType = 'notes';
+                        else if (item.file.match(/q\d+\.\d+\.json$/i)) itemType = 'quiz';
                     }
-                    // Match logic: contains 'n' followed by a number and ends with .json (e.g., physicsn1.json)
-                    else if (item.file.match(/n\d*\.json$/) || typeStr === 'notes') { 
-                        iconClass = "icon-notes"; iconName = "fas fa-book-open"; displayType = 'Interactive Notes';
-                    }
-                    // Match logic: contains 'q' followed by a number and ends with .json (e.g., physicsq1.json)
-                    else if (item.file.match(/q\d*\.json$/) || typeStr === 'quiz') { 
-                        iconClass = "icon-json"; iconName = "fas fa-brain"; displayType = 'Quiz';
+
+                    if (itemType === 'pdf') { iconClass = "icon-pdf"; iconName = "fas fa-file-pdf"; displayType = 'PDF Document'; }
+                    else if (itemType === 'notes') { iconClass = "icon-notes"; iconName = "fas fa-book-open"; displayType = 'Interactive Notes'; }
+                    else if (itemType === 'quiz') { iconClass = "icon-json"; iconName = "fas fa-brain"; displayType = 'Practice Quiz'; }
+                    else if (itemType === 'html') { iconClass = "icon-html"; iconName = "fas fa-globe"; displayType = 'Web Page'; }
+
+                    // GENUINE STATUS BADGE UI (Shows exact accuracy or checkmark)
+                    let progressVal = itemProg[item.file] || 0;
+                    let statusHtml = '';
+                    if (itemType === 'quiz' && progressVal > 0) {
+                        statusHtml = `<span class="status-badge status-score">${Math.round(progressVal * 100)}%</span>`;
+                    } else if (itemType !== 'quiz' && progressVal >= 1) {
+                        statusHtml = `<span class="status-badge status-done"><i class="fas fa-check"></i></span>`;
                     }
 
                     contentHtml += `
-                        <div class="material-item" onclick="routeContent('${item.file}')">
+                        <div class="material-item" onclick="routeContent('${item.file}', '${itemType}', '${item.title.replace(/'/g, "\\'")}')">
                             <div class="mat-icon ${iconClass}"><i class="${iconName}"></i></div>
                             <div class="mat-info">
-                                <div class="mat-title">${item.title}</div>
+                                <div class="mat-title">${item.title} ${statusHtml}</div>
                                 <div class="mat-type">${displayType}</div>
                             </div>
                             <i class="fas fa-chevron-right" style="color: var(--text-muted); font-size: 0.8rem;"></i>
@@ -163,15 +265,19 @@
                 const isOpen = index === 0 ? 'open' : '';
                 const chapHtml = `
                     <div class="chapter-card ${isOpen}" onclick="toggleChapter(this, event)">
-                        <div class="chapter-header">
-                            <span>${chap.title}</span>
-                            <i class="fas fa-chevron-down toggle-icon" style="transition:0.3s; transform: ${isOpen ? 'rotate(180deg)' : 'rotate(0deg)'}"></i>
-                        </div>
+                        <div class="chapter-header"><span>${chap.title}</span><i class="fas fa-chevron-down toggle-icon" style="transition:0.3s; transform: ${isOpen ? 'rotate(180deg)' : 'rotate(0deg)'}"></i></div>
                         <div class="chapter-content">${contentHtml}</div>
                     </div>
                 `;
                 container.insertAdjacentHTML('beforeend', chapHtml);
             });
+
+            // Trigger MathJax in case any titles contained equations
+            setTimeout(() => {
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                    MathJax.typesetPromise([document.getElementById('courseTitle'), document.getElementById('courseDesc'), document.getElementById('chaptersContainer')]);
+                }
+            }, 100);
         }
 
         function toggleChapter(card, event) {
@@ -181,30 +287,102 @@
             card.querySelector('.toggle-icon').style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
         }
 
-        // --- NEW STRICT ROUTING LOGIC FOR IDnCHAP.json & IDqCHAP.json ---
-        function routeContent(filename) {
-            // Check if file is Notes: Matches patterns like 'physicsn1.json', 'mathn12.json', or 'n.json'
-            if (filename.match(/n\d*\.json$/)) {
-                window.location.href = `notes.html?file=${filename}`;
-            } 
-            // Check if file is Quiz: Matches patterns like 'physicsq1.json', 'mathq12.json', or 'q.json'
-            else if (filename.match(/q\d*\.json$/)) {
-                window.location.href = `mcqs.html?file=${filename}`;
-            } 
-            // PDF Document
-            else if (filename.endsWith('.pdf')) {
-                window.open(filename, '_blank'); 
-            } 
-            // Standard HTML page
-            else if (filename.endsWith('.html')) {
-                window.location.href = filename;
-            }
-            else {
-                alert("Unsupported file format or naming convention.");
+        let pendingQuizFile = "";
+
+        // ================= GENUINE TIME TRACKING LOGIC =================
+        function checkAndLogReturningTime() {
+            if (localStorage.getItem('nav_learning_active') === 'true') {
+                const startTime = parseInt(localStorage.getItem('nav_learning_start'));
+                
+                if (startTime) {
+                    const timeSpentMs = Date.now() - startTime;
+                    
+                    if (timeSpentMs > 5000) {
+                        let currentTotalMs = parseInt(localStorage.getItem('nav_total_ms')) || 0;
+                        let currentTodayMs = parseInt(localStorage.getItem('nav_today_ms')) || 0;
+                        
+                        localStorage.setItem('nav_total_ms', currentTotalMs + timeSpentMs);
+                        localStorage.setItem('nav_today_ms', currentTodayMs + timeSpentMs);
+                        
+                        const minutes = Math.floor(timeSpentMs / 60000);
+                        const seconds = Math.floor((timeSpentMs % 60000) / 1000);
+                        
+                        if (minutes > 0) {
+                            showToast(`Tracked ${minutes}m ${seconds}s of study time!`, 'success');
+                        } else {
+                            showToast(`Tracked ${seconds} seconds of study time!`, 'success');
+                        }
+                    }
+                }
+                
+                localStorage.removeItem('nav_learning_active');
+                localStorage.removeItem('nav_learning_start');
+                
+                // Re-render UI to display newly earned checkmarks
+                if(window.currentCourseData) renderCourse(window.currentCourseData);
             }
         }
 
-        document.addEventListener('DOMContentLoaded', loadCourseContent);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCourseContent();
+            checkAndLogReturningTime();
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                checkAndLogReturningTime();
+            }
+        });
+        // ===============================================================
+
+        function routeContent(filename, type, title = "") {
+            try {
+                // 1. Log Activity Feed
+                let feed = JSON.parse(localStorage.getItem('nav_activity_feed')) || [];
+                let actionText = type === 'quiz' ? `Viewed Assessment` : `Studying ${title || 'Notes'}`;
+                let icon = type === 'quiz' ? "🧠" : "📖";
+                
+                feed.unshift({ text: actionText, points: 10, icon: icon, time: new Date().toISOString() });
+                if(feed.length > 5) feed.pop(); 
+                localStorage.setItem('nav_activity_feed', JSON.stringify(feed));
+
+                // 2. Mark Item as 100% Complete (if it's not a quiz)
+                if (type !== 'quiz') {
+                    let itemProg = JSON.parse(localStorage.getItem('nav_item_progress')) || {};
+                    itemProg[filename] = 1.0; // 1.0 represents 100% read
+                    localStorage.setItem('nav_item_progress', JSON.stringify(itemProg));
+                    
+                    // Instantly recalculate the overall progress bar
+                    recalculateAndSaveOverallProgress(window.currentCourseData);
+                }
+
+                // 3. Start the Genuine Stopwatch if opening Notes or PDF
+                if (type === 'notes' || type === 'pdf' || type === 'html') {
+                    localStorage.setItem('nav_learning_start', Date.now().toString());
+                    localStorage.setItem('nav_learning_active', 'true');
+                }
+            } catch(e) {}
+
+            // ROUTING
+            if (type === 'notes') { window.location.href = `notes.html?file=${filename}`; } 
+            else if (type === 'quiz') {
+                pendingQuizFile = filename;
+                if (title) document.getElementById('quizModalTitle').innerHTML = title; // Allows math in title
+                document.getElementById('quizActionModal').classList.add('active');
+            } 
+            else if (type === 'pdf') { window.open(filename, '_blank'); } 
+            else if (type === 'html') { window.location.href = filename; }
+        }
+
+        function closeQuizModal(event) { document.getElementById('quizActionModal').classList.remove('active'); }
+        
+        // Modal Routings
+        function startSelectedQuiz() { window.location.href = `mcqs.html?file=${pendingQuizFile}`; }
+        
+        // 🔥 NEW: Routing for Learn Mode 🔥
+        function learnSelectedQuiz() { window.location.href = `mcqs.html?file=${pendingQuizFile}&mode=learn`; }
+        
+        function viewSelectedLeaderboard() { window.location.href = `mcqs.html?file=${pendingQuizFile}&lb=true`; }
     </script>
 </body>
 </html>
