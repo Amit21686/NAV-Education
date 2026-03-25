@@ -1,5 +1,10 @@
 {
   "title": "Physics",
   "description": "Learn concepts.",
-  "chapters": []
+  "chapters": [
+    {
+      "title": "Electric charge and field",
+      "contents": []
+    }
+  ]
 }
