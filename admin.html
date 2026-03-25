@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        :root { --primary: #6366f1; --bg: #020617; --card: #1e293b; --text: #f8fafc; --text-muted: #94a3b8; --border: #334155; --danger: #f43f5e; --success: #10b981; }
+        :root { --primary: #6366f1; --bg: #020617; --card: #1e293b; --text: #f8fafc; --text-muted: #94a3b8; --border: #334155; --danger: #f43f5e; --success: #10b981; --info: #3b82f6;}
         body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
         /* Utility */
@@ -22,8 +22,8 @@
         #authScreen { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; justify-content: center; padding: 20px; }
         .auth-box { background: var(--card); padding: 30px 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
 
-        /* 🔥 FIX: Changed position to relative and added flex-shrink: 0 so it never overlaps content 🔥 */
-        .app-header { background: var(--card); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: relative; z-index: 10; flex-shrink: 0; }
+        /* App Layout */
+        .app-header { background: var(--card); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: relative; z-index: 10; flex-shrink: 0;}
         .header-title { font-weight: 600; font-size: 1.1rem; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px; }
         .header-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.05); cursor: pointer; font-size: 1.1rem; }
         
@@ -57,6 +57,13 @@
         #loadingOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; backdrop-filter: blur(5px); }
         .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* AI Prompt Styles */
+        .prompt-container { background: #0f172a; border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 25px; }
+        .prompt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .prompt-code { background: #000; color: #a5b4fc; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.8rem; white-space: pre-wrap; max-height: 250px; overflow-y: auto; border: 1px solid var(--border); }
+        .copy-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .copy-btn:active { background: var(--success); }
     </style>
 </head>
 <body>
@@ -84,12 +91,18 @@
     </header>
 
     <div id="viewCourses" class="view-container active">
-        <div class="list-item" style="background: rgba(16,185,129,0.1); border-color: var(--success); justify-content: center; cursor: pointer; margin-bottom: 10px;" onclick="editMasterCatalog()">
-            <i class="fas fa-database" style="color: var(--success);"></i> <span style="color: var(--success); font-weight: 600;">Edit Master Catalog (library.json)</span>
+        
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <div class="list-item" style="flex: 1; background: rgba(16,185,129,0.1); border-color: var(--success); justify-content: center; cursor: pointer; margin: 0; padding: 12px;" onclick="editMasterCatalog()">
+                <i class="fas fa-database" style="color: var(--success);"></i> <span style="color: var(--success); font-weight: 600; font-size: 0.85rem;">Master Catalog</span>
+            </div>
+            <div class="list-item" style="flex: 1; background: rgba(244,63,94,0.1); border-color: var(--danger); justify-content: center; cursor: pointer; margin: 0; padding: 12px;" onclick="showAllFiles()">
+                <i class="fas fa-laptop-code" style="color: var(--danger);"></i> <span style="color: var(--danger); font-weight: 600; font-size: 0.85rem;">System Files</span>
+            </div>
         </div>
 
-        <div class="list-item" style="background: rgba(244,63,94,0.1); border-color: var(--danger); justify-content: center; cursor: pointer; margin-bottom: 20px;" onclick="showAllFiles()">
-            <i class="fas fa-laptop-code" style="color: var(--danger);"></i> <span style="color: var(--danger); font-weight: 600;">Developer Mode (System Files)</span>
+        <div class="list-item" style="background: rgba(139,92,246,0.1); border-color: #8b5cf6; justify-content: center; cursor: pointer; margin-bottom: 20px;" onclick="showAIPrompts()">
+            <i class="fas fa-robot" style="color: #8b5cf6;"></i> <span style="color: #8b5cf6; font-weight: 600;">AI Content Generator Prompts</span>
         </div>
         
         <div id="courseList"></div>
@@ -113,6 +126,57 @@
         <div id="allFilesList"></div>
     </div>
 
+    <div id="viewAiprompts" class="view-container">
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; text-align: center;">Copy these exact prompts and paste them into ChatGPT or Gemini to generate perfectly formatted code for your app.</p>
+        
+        <div class="prompt-container">
+            <div class="prompt-header">
+                <h3 style="color: var(--success); font-size: 1.1rem;"><i class="fas fa-brain"></i> MCQ Quiz Prompt</h3>
+                <button class="copy-btn" onclick="copyPrompt('quizPrompt')"><i class="far fa-copy"></i> Copy</button>
+            </div>
+            <div class="prompt-code" id="quizPrompt">I am building an educational app. I need you to generate a multiple-choice quiz about [INSERT TOPIC HERE] for [INSERT GRADE LEVEL HERE]. 
+
+Generate [INSERT NUMBER] questions.
+
+CRITICAL RULES FOR YOUR OUTPUT:
+1. You MUST output ONLY a valid, raw JSON array. Do not include any markdown blocks (like ```json). Just the raw array starting with [ and ending with ].
+2. Use this exact schema for every object:
+   - "question": The question text.
+   - "options": An array of exactly 4 string options.
+   - "correctIndex": The integer index of the correct answer (0 for A, 1 for B, 2 for C, 3 for D).
+   - "explanation": A detailed explanation of why the answer is correct.
+3. Math Formatting: If you use math, use MathJax formatting. Use $...$ for inline math and $$...$$ for block math. For chemistry, use \ce{...} inside the math delimiters. 
+4. Image Support: If a question needs a diagram, include an HTML image tag directly inside the text string: <br><img src='[https://via.placeholder.com/400x200?text=Diagram+Needed](https://via.placeholder.com/400x200?text=Diagram+Needed)' alt='description'>.</div>
+        </div>
+
+        <div class="prompt-container">
+            <div class="prompt-header">
+                <h3 style="color: var(--info); font-size: 1.1rem;"><i class="fas fa-book-open"></i> Study Notes Prompt</h3>
+                <button class="copy-btn" onclick="copyPrompt('notesPrompt')"><i class="far fa-copy"></i> Copy</button>
+            </div>
+            <div class="prompt-code" id="notesPrompt">I am building an educational app. I need you to generate Study Notes about [INSERT TOPIC HERE] for [INSERT GRADE LEVEL HERE].
+
+CRITICAL RULES FOR YOUR OUTPUT:
+1. You MUST output ONLY a valid, raw JSON object. Do not include any markdown blocks (like ```json). Just the raw object starting with { and ending with }.
+2. Use MathJax formatting for math: $...$ for inline, $$...$$ for blocks, and \ce{...} for chemistry.
+3. Use this exact schema:
+
+{
+  "title": "[Insert Title Here]",
+  "topic": "[Insert Chapter Name Here]",
+  "blocks": [
+    { "type": "h1", "content": "Heading text" },
+    { "type": "paragraph", "content": "Detailed paragraph text." },
+    { "type": "callout", "style": "info", "icon": "fas fa-info-circle", "title": "Important Note", "content": "Callout description here." },
+    { "type": "list", "ordered": false, "items": ["Bullet 1", "Bullet 2"] },
+    { "type": "table", "headers": ["Concept", "Formula"], "rows": [["Force", "$F=ma$"]] }
+  ]
+}
+
+Available block types you can use: "h1", "h2", "h3", "paragraph", "callout", "list", "table". Use 'info', 'warning', or 'success' for callout styles.</div>
+        </div>
+    </div>
+
     <div id="codeEditorView">
         <header class="app-header">
             <div class="header-icon" onclick="closeEditor()"><i class="fas fa-times"></i></div>
@@ -129,8 +193,8 @@
             <h3 style="margin-bottom: 15px;">Create New Course</h3>
             <input type="text" id="newCourseTitle" class="input-field" placeholder="Course Title (e.g., Physics)">
             <input type="text" id="newCourseId" class="input-field" placeholder="Short ID (e.g., physics)">
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px; text-align: center;">Remember to add this to library.json later!</p>
-            <button class="btn btn-primary" style="width: 100%;" onclick="createCourse()">Create Course File</button>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px; text-align: center;">Will auto-sync to library.json</p>
+            <button class="btn btn-primary" style="width: 100%;" onclick="createCourse()">Create Course</button>
         </div>
     </div>
 
@@ -151,18 +215,15 @@
                 <option value="quiz">MCQ Quiz</option>
             </select>
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px; text-align: center;">File will be auto-named and linked.</p>
-            <button class="btn btn-primary" style="width: 100%;" onclick="createContent()">Generate Content</button>
+            <button class="btn btn-primary" style="width: 100%;" onclick="createContent()">Generate Empty Template</button>
         </div>
     </div>
 
     <script>
         function b64EncodeUnicode(str) { return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) { return String.fromCharCode('0x' + p1); })); }
         function b64DecodeUnicode(str) { return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join('')); }
-    </script>
 
-    <script>
         let gh = { owner: '', repo: '', token: '' };
-        
         let repoFiles = [];
         let currentView = 'courses'; 
         let activeCourse = { path: '', sha: '', data: null };
@@ -210,21 +271,30 @@
 
         function navigateBack() {
             if (currentView === 'contents') { renderChapters(); } 
-            else if (currentView === 'chapters') { loadCourses(); }
-            else if (currentView === 'allfiles') { loadCourses(); } 
+            else if (currentView === 'chapters' || currentView === 'allfiles' || currentView === 'aiprompts') { loadCourses(); }
         }
 
-        // ==========================================
-        // DEVELOPER MODE (ALL FILES)
-        // ==========================================
+        // 🔥 AI PROMPT COPY LOGIC 🔥
+        function showAIPrompts() {
+            switchView('viewAiprompts', 'AI Assistants', true);
+        }
+        
+        function copyPrompt(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Prompt copied to clipboard! Paste it directly into ChatGPT or Gemini.");
+            }).catch(err => {
+                alert("Failed to copy. Please manually select and copy the text.");
+            });
+        }
+
         function showAllFiles() {
             const list = document.getElementById('allFilesList');
             list.innerHTML = '';
             
             repoFiles.forEach(f => {
                 if (f.type === 'file') { 
-                    let icon = 'fa-file-code';
-                    let color = 'var(--text-muted)';
+                    let icon = 'fa-file-code'; let color = 'var(--text-muted)';
                     if(f.name.endsWith('.html')) { icon = 'fa-html5'; color = '#e34f26'; }
                     if(f.name.endsWith('.css')) { icon = 'fa-css3-alt'; color = '#264de4'; }
                     if(f.name.endsWith('.js')) { icon = 'fa-js-square'; color = '#f7df1e'; }
@@ -246,9 +316,6 @@
             switchView('viewAllfiles', 'System Files', true);
         }
 
-        // ==========================================
-        // MASTER CATALOG LOGIC
-        // ==========================================
         async function editMasterCatalog() {
             showLoading("Opening Master Catalog...");
             try {
@@ -256,9 +323,11 @@
                 openEditor('library.json', fileData.sha, false);
             } catch(e) {
                 if(confirm("The master catalog 'library.json' does not exist yet. Create it now?")) {
-                    const template = JSON.stringify([
-                        { id: "physics", title: "Physics Masterclass", icon: "⚛️", description: "A sample description." }
-                    ], null, 2);
+                    const template = JSON.stringify({
+                        "courses": [
+                            { "id": "physics", "category": "science", "icon": "⚛️", "title": "Class 12 Physics", "badge": "Popular", "badgeClass": "", "lessons": "12", "users": "12.5k", "tags": ["NCERT", "Board Exams"] }
+                        ]
+                    }, null, 2);
                     showLoading("Creating Master Catalog...");
                     try {
                         const res = await api('library.json', 'PUT', { message: "Created master library.json", content: b64EncodeUnicode(template) });
@@ -269,9 +338,6 @@
             hideLoading();
         }
 
-        // ==========================================
-        // LEVEL 1: COURSES
-        // ==========================================
         async function loadCourses() {
             showLoading("Loading Courses...");
             try {
@@ -331,20 +397,20 @@
 
                 try {
                     const libData = await api('library.json');
-                    let libraryArr = JSON.parse(b64DecodeUnicode(libData.content));
-                    const initialLength = libraryArr.length;
-                    libraryArr = libraryArr.filter(c => c.id !== courseId);
-                    if (libraryArr.length !== initialLength) {
-                        await api('library.json', 'PUT', { message: `Removed ${courseId} from library.json`, content: b64EncodeUnicode(JSON.stringify(libraryArr, null, 2)), sha: libData.sha });
+                    let libraryObj = JSON.parse(b64DecodeUnicode(libData.content));
+                    
+                    if(libraryObj.courses) {
+                        const initialLength = libraryObj.courses.length;
+                        libraryObj.courses = libraryObj.courses.filter(c => c.id !== courseId);
+                        if (libraryObj.courses.length !== initialLength) {
+                            await api('library.json', 'PUT', { message: `Removed ${courseId} from library.json`, content: b64EncodeUnicode(JSON.stringify(libraryObj, null, 2)), sha: libData.sha });
+                        }
                     }
-                } catch(err) {}
+                } catch(err) { console.warn("Library.json cleanup skipped."); }
 
                 alert("Course and all associated contents deleted successfully!");
                 loadCourses();
-            } catch(e) { 
-                console.error(e);
-                alert("Failed to delete course completely. Check console."); 
-            }
+            } catch(e) { alert("Failed to delete course completely. Check console."); }
             hideLoading();
         }
 
@@ -359,10 +425,31 @@
                 await api(`${id}.json`, 'PUT', { message: `Created course ${title}`, content: b64EncodeUnicode(JSON.stringify(courseJSON, null, 2)) });
                 
                 try {
-                    const libData = await api('library.json');
-                    let libraryArr = JSON.parse(b64DecodeUnicode(libData.content));
-                    libraryArr.push({ id: id, title: title, icon: "📚", description: "Learn and master concepts." });
-                    await api('library.json', 'PUT', { message: `Auto-added ${id} to library.json`, content: b64EncodeUnicode(JSON.stringify(libraryArr, null, 2)), sha: libData.sha });
+                    let libData, libraryObj;
+                    try {
+                        libData = await api('library.json');
+                        libraryObj = JSON.parse(b64DecodeUnicode(libData.content));
+                        if (!libraryObj.courses) libraryObj.courses = [];
+                    } catch(err) {
+                        libraryObj = { courses: [] }; 
+                    }
+                    
+                    libraryObj.courses.push({
+                        id: id,
+                        category: "general", 
+                        icon: "📚",
+                        title: title,
+                        badge: "New",
+                        badgeClass: "success",
+                        lessons: "0",
+                        users: "0",
+                        tags: ["New Course"]
+                    });
+                    
+                    let putData = { message: `Auto-added ${id} to library.json`, content: b64EncodeUnicode(JSON.stringify(libraryObj, null, 2)) };
+                    if(libData) putData.sha = libData.sha;
+                    
+                    await api('library.json', 'PUT', putData);
                 } catch(err) { console.warn("Could not auto-add to library.json."); }
 
                 closeModal('courseModal');
@@ -372,7 +459,6 @@
             hideLoading();
         }
 
-        // --- LEVEL 2: CHAPTERS ---
         async function openCourse(path, sha) {
             showLoading("Loading Chapters...");
             try {
@@ -388,7 +474,6 @@
         function renderChapters() {
             const list = document.getElementById('chapterList');
             list.innerHTML = '';
-            
             if (!activeCourse.data.chapters || activeCourse.data.chapters.length === 0) {
                 list.innerHTML = `<div style="text-align:center; padding: 30px; color:var(--text-muted);">No chapters yet.</div>`;
             } else {
@@ -411,7 +496,6 @@
         async function createChapter() {
             const title = document.getElementById('newChapTitle').value.trim();
             if(!title) return;
-
             if(!activeCourse.data.chapters) activeCourse.data.chapters = [];
             activeCourse.data.chapters.push({ title: title, contents: [] });
 
@@ -426,21 +510,18 @@
             hideLoading();
         }
 
-        // --- LEVEL 3: CONTENTS ---
         function openChapter(index) { activeChapIndex = index; renderContents(); }
 
         function renderContents() {
             const list = document.getElementById('contentList');
             list.innerHTML = '';
             const chap = activeCourse.data.chapters[activeChapIndex];
-
             if (!chap.contents || chap.contents.length === 0) {
                 list.innerHTML = `<div style="text-align:center; padding: 30px; color:var(--text-muted);">Empty chapter.</div>`;
             } else {
                 chap.contents.forEach((item, itemIdx) => {
                     let icon = item.type === 'quiz' ? 'fa-brain' : 'fa-file-alt';
                     let color = item.type === 'quiz' ? 'var(--success)' : 'var(--primary)';
-                    
                     list.innerHTML += `
                         <div class="list-item">
                             <div class="list-item-content">
@@ -474,13 +555,12 @@
 
                 let fileJSON = "";
                 if(type === 'notes') {
-                    fileJSON = JSON.stringify({ title: title, topic: activeCourse.data.chapters[activeChapIndex].title, blocks: [{ type: "paragraph", content: "New notes content." }] }, null, 2);
+                    fileJSON = JSON.stringify({ title: title, topic: activeCourse.data.chapters[activeChapIndex].title, blocks: [{ type: "paragraph", content: "AI SE GENERATE KIYA HUA JSON YAHA PASTE KAREIN." }] }, null, 2);
                 } else {
-                    fileJSON = JSON.stringify([{ question: "Sample Q?", options: ["A", "B", "C", "D"], correctIndex: 0, explanation: "Exp." }], null, 2);
+                    fileJSON = JSON.stringify([{ question: "AI SE GENERATE KIYA HUA JSON YAHA PASTE KAREIN.", options: ["A", "B", "C", "D"], correctIndex: 0, explanation: "" }], null, 2);
                 }
 
                 await api(filename, 'PUT', { message: `Created ${type}: ${title}`, content: b64EncodeUnicode(fileJSON) });
-
                 contentsArr.push({ title: title, file: filename, type: type });
                 activeCourse.data.chapters[activeChapIndex].contents = contentsArr;
 
@@ -489,7 +569,6 @@
 
                 closeModal('contentModal');
                 document.getElementById('newContentTitle').value = '';
-                
                 repoFiles = await api('');
                 renderContents();
             } catch(e) { alert("Failed to generate content."); }
@@ -501,7 +580,6 @@
             showLoading("Deleting...");
             try {
                 activeCourse.data.chapters[activeChapIndex].contents.splice(itemIdx, 1);
-                
                 const res = await api(activeCourse.path, 'PUT', { message: `Unlinked ${filename}`, content: b64EncodeUnicode(JSON.stringify(activeCourse.data, null, 2)), sha: activeCourse.sha });
                 activeCourse.sha = res.content.sha;
 
@@ -521,7 +599,6 @@
             hideLoading();
         }
 
-        // --- RAW CODE EDITOR ---
         async function openEditor(path, sha, reloadCourseOnSave = false) {
             showLoading("Opening code...");
             try {
