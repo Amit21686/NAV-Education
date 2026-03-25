@@ -1,44 +1,8 @@
 {
   "courses": [
-    {
-      "id": "physics",
-      "category": "science",
-      "status": "in-progress",
-      "icon": "⚛️",
-      "title": "Class 12 Physics",
-      "badge": "Popular",
-      "badgeClass": "",
-      "lessons": "12",
-      "users": "12.5k",
-      "progress": 0,
-      "tags": [
-        "NCERT",
-        "Board Exams"
-      ]
-    },
-    {
-      "id": "math",
-      "category": "math",
-      "status": "not-started",
-      "icon": "📐",
-      "title": "Calculus Mastery",
-      "badge": "New",
-      "badgeClass": "success",
-      "lessons": "20",
-      "users": "5k",
-      "progress": 0,
-      "tags": [
-        "Integration",
-        "Derivatives"
-      ]
-    }
+
   ],
   "materials": [
-    {
-      "id": "formulas",
-      "icon": "📝",
-      "title": "Physics Formulas",
-      "subtitle": "Quick Revision"
-    }
+  
   ]
 }
