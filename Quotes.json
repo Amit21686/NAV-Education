@@ -7,11 +7,10 @@
     "text": "Push yourself, because no one else is going to do it for you.",
     "author": "Motivation"
   },
-  
-
   {
     "text": "Success doesn't come from what you do occasionally, it comes from what you do consistently.",
-    "author": "Discipline"
+    "author": "Discipline",
+    "active": false
   },
   {
     "text": "Don't watch the clock; do what it does — keep going.",
@@ -89,8 +88,6 @@
     "text": "Success starts with self-discipline.",
     "author": "Discipline"
   },
-  
-  
   {
     "text": "Scheduled server maintenance tonight at 11 PM. Quizzes might be unavailable.",
     "author": "Admin",
