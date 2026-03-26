@@ -4,7 +4,14 @@
   "chapters": [
     {
       "title": "Solution",
-      "contents": []
+      "contents": [
+        {
+          "title": "Solution",
+          "file": "chq1.1.json",
+          "type": "quiz",
+          "status": "draft"
+        }
+      ]
     }
   ]
 }
