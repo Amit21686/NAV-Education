@@ -314,10 +314,10 @@
 
         const API = {
             request: async (endpoint, method = 'GET', body = null) => {
-                let cleanEndpoint = endpoint ? '/' + endpoint.replace(/^\/+|\/+$/g, '') : '';
-                let url = `https://api.github.com/repos/${State.gh.owner}/${State.gh.repo}/contents${cleanEndpoint}`;
-                
-                if (method === 'GET') url += `?t=${Date.now()}`; 
+                const owner = encodeURIComponent(State.gh.owner);
+                const repo = encodeURIComponent(State.gh.repo);
+                const cleanEndpoint = endpoint ? '/' + endpoint.replace(/^\/+|\/+$/g, '') : '';
+                const url = `https://api.github.com/repos/${owner}/${repo}/contents${cleanEndpoint}`;
                 
                 const opt = { 
                     method: method, 
@@ -328,24 +328,20 @@
                 };
                 if (body) opt.body = JSON.stringify(body);
                 
-                try {
-                    const res = await fetch(url, opt);
-                    
-                    if (res.status === 404 && !cleanEndpoint && method === 'GET') {
-                        return []; 
-                    }
-                    
-                    if (res.status === 401) throw new Error("Unauthorized");
-                    if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
-                    
-                    if (method === 'DELETE') {
-                        try { return await res.json(); } catch(e) { return {}; }
-                    }
-                    return await res.json();
-                } catch (error) {
-                    console.error("API Call Failed:", error);
-                    throw error;
+                const res = await fetch(url, opt);
+                
+                // Safe Catch for Empty Repo
+                if (res.status === 404 && !cleanEndpoint && method === 'GET') {
+                    return []; 
                 }
+                
+                if (res.status === 401) throw new Error("Unauthorized");
+                if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
+                
+                if (method === 'DELETE') {
+                    try { return await res.json(); } catch(e) { return {}; }
+                }
+                return await res.json();
             },
             deleteFile: async (path, sha, msg) => {
                 return await API.request(path, 'DELETE', { message: msg, sha: sha });
@@ -420,6 +416,7 @@
                 let oldHash = State.currentHash;
                 State.currentHash = newHash;
 
+                // Auto-save Engine
                 if (oldHash === 'editor' && newHash !== 'editor' && newHash !== 'preview') {
                     EditorEngine.save(true); 
                 }
@@ -523,16 +520,22 @@
                     }
                     if(!found) list.innerHTML = `<div class="text-center" style="padding: 40px 20px; color:var(--text-muted);">No courses found. Start by creating one!</div>`;
                 } catch(e) {
-                    if (e.message.includes("Unauthorized")) {
+                    let msg = e.message || String(e);
+                    if (msg.includes("Unauthorized") || msg.includes("401")) {
                         alert("Your PAT token is invalid or expired.");
                         App.logoutGH();
+                    } else if (msg.includes("404")) {
+                        alert("Repository not found. Ensure the repository name is correct.");
+                        App.logoutGH();
                     } else {
-                        alert(`Network Error: ${e.message}`);
+                        alert(`Connection Error: ${msg}`);
                     }
+                } finally {
+                    UI.hideLoading();
                 }
-                UI.hideLoading();
             },
 
+            // 🛑 FIXED LOGIC: DIRECT FETCH FOR library.json TO PREVENT HTTP 422
             createCourse: async () => {
                 const title = document.getElementById('newCourseTitle').value.trim();
                 const id = document.getElementById('newCourseId').value.trim().toLowerCase().replace(/\s+/g, '');
@@ -545,18 +548,24 @@
                     await API.createOrUpdate(`${id}.json`, Utils.b64Encode(JSON.stringify(courseJSON, null, 2)), `Created course ${title}`);
                     
                     try {
-                        let libObj = { courses: [] }; let libSha = null;
-                        let existing = State.repoFiles.find(f => f.name === 'library.json');
-                        if(existing) {
+                        let libObj = { courses: [] }; 
+                        let libSha = null;
+                        
+                        try {
                             const libData = await API.request('library.json');
                             libObj = JSON.parse(Utils.b64Decode(libData.content));
                             libSha = libData.sha;
+                        } catch(fetchErr) {
+                            // Valid if it doesn't exist yet
                         }
+                        
                         if(!libObj.courses) libObj.courses = [];
-                        libObj.courses.push({ id: id, title: title, category: "general", icon: "📚", badge: "New" });
+                        if (!libObj.courses.find(c => c.id === id)) {
+                            libObj.courses.push({ id: id, title: title, category: "general", icon: "📚", badge: "New" });
+                        }
                         
                         await API.createOrUpdate('library.json', Utils.b64Encode(JSON.stringify(libObj, null, 2)), `Added ${id}`, libSha);
-                    } catch(err) {}
+                    } catch(err) { console.error(err); alert("Course created, but failed to link to library.json"); }
                     
                     document.getElementById('newCourseTitle').value = '';
                     document.getElementById('newCourseId').value = '';
@@ -592,14 +601,17 @@
                     await API.deleteFile(path, sha, `Deleted course ${path}`);
                     
                     try {
-                        let existing = State.repoFiles.find(f => f.name === 'library.json');
-                        if(existing) {
-                            const libData = await API.request('library.json');
+                        let libData;
+                        try { libData = await API.request('library.json'); } catch(e) { libData = null; }
+                        
+                        if(libData) {
                             let libObj = JSON.parse(Utils.b64Decode(libData.content));
-                            libObj.courses = libObj.courses.filter(c => c.id !== path.split('.')[0]);
-                            await API.createOrUpdate('library.json', Utils.b64Encode(JSON.stringify(libObj, null, 2)), `Removed ${path}`, libData.sha);
+                            if (libObj.courses) {
+                                libObj.courses = libObj.courses.filter(c => c.id !== path.split('.')[0]);
+                                await API.createOrUpdate('library.json', Utils.b64Encode(JSON.stringify(libObj, null, 2)), `Removed ${path}`, libData.sha);
+                            }
                         }
-                    } catch(e){}
+                    } catch(e){ console.error(e); }
                     
                     CourseEngine.loadAll();
                     UI.showToast("Course Deleted!");
@@ -636,9 +648,11 @@
                         try {
                             const res = await API.createOrUpdate('library.json', Utils.b64Encode(JSON.stringify({ courses: [] }, null, 2)), "Init library");
                             EditorEngine.open('library.json', res.content.sha, false);
-                        } catch(err){}
+                        } catch(err){ UI.hideLoading(); }
+                    } else {
+                        UI.hideLoading();
                     }
-                } finally { UI.hideLoading(); }
+                }
             },
 
             renderChapters: () => {
@@ -884,13 +898,6 @@
                 State.fmFolder = category;
                 const list = document.getElementById('fileManagerList');
                 
-                // 🛑 FIXED: Dynamic Multiple Accept Attribute 🛑
-                const uploader = document.getElementById('sysFileUploader');
-                if (category === 'images') uploader.setAttribute('accept', 'image/*');
-                else if (category === 'pdfs') uploader.setAttribute('accept', '.pdf');
-                else if (category === 'quizzes' || category === 'notes') uploader.setAttribute('accept', '.json');
-                else uploader.removeAttribute('accept'); // System can accept anything
-
                 let html = `
                     <div class="flex gap-2" style="margin-bottom:15px;">
                         <button class="btn btn-outline" style="flex:1;" onclick="document.getElementById('sysFileUploader').click()"><i class="fas fa-upload"></i> Upload</button>
@@ -899,23 +906,11 @@
                 `;
 
                 let filtered = [];
-                if (category === 'images') {
-                    filtered = State.repoFiles.filter(f => f.name.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i));
-                } else if (category === 'pdfs') {
-                    filtered = State.repoFiles.filter(f => f.name.match(/\.pdf$/i));
-                } else if (category === 'quizzes') {
-                    filtered = State.repoFiles.filter(f => f.name.match(/q\d+\.\d+\.json$/i) || f.name.toLowerCase().includes('quiz'));
-                } else if (category === 'notes') {
-                    filtered = State.repoFiles.filter(f => f.name.match(/n\d+\.\d+\.json$/i) || f.name.toLowerCase().includes('note'));
-                } else if (category === 'system') {
-                    filtered = State.repoFiles.filter(f => {
-                        let isImg = f.name.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i);
-                        let isPdf = f.name.match(/\.pdf$/i);
-                        let isQuiz = f.name.match(/q\d+\.\d+\.json$/i) || f.name.toLowerCase().includes('quiz');
-                        let isNote = f.name.match(/n\d+\.\d+\.json$/i) || f.name.toLowerCase().includes('note');
-                        return !isImg && !isPdf && !isQuiz && !isNote;
-                    });
-                }
+                if (category === 'images') filtered = State.repoFiles.filter(f => f.name.match(/\.(jpg|jpeg|png|gif|svg)$/i));
+                else if (category === 'pdfs') filtered = State.repoFiles.filter(f => f.name.endsWith('.pdf'));
+                else if (category === 'quizzes') filtered = State.repoFiles.filter(f => f.name.match(/q\d+\.\d+\.json$/));
+                else if (category === 'notes') filtered = State.repoFiles.filter(f => f.name.match(/n\d+\.\d+\.json$/));
+                else if (category === 'system') filtered = State.repoFiles.filter(f => f.name.match(/\.(html|css|js)$/) || ['library.json', 'package.json'].includes(f.name));
 
                 if(filtered.length === 0) {
                     list.innerHTML = html + `<div class="text-center" style="padding:20px; color:var(--text-muted);">No files found here.</div>`;
@@ -932,7 +927,7 @@
                     else if(ext === 'js') { icon = 'fa-js-square'; color = '#f7df1e'; }
                     else if(ext === 'json') { icon = 'fa-database'; color = 'var(--primary)'; }
                     else if(ext === 'pdf') { icon = 'fa-file-pdf'; color = '#f43f5e'; }
-                    else if(['jpg','jpeg','png','gif','svg','webp'].includes(ext)) { icon = 'fa-image'; color = '#10b981'; }
+                    else if(['jpg','jpeg','png','gif','svg'].includes(ext)) { icon = 'fa-image'; color = '#10b981'; }
 
                     const isEditable = ['html','css','js','json'].includes(ext);
                     
@@ -962,15 +957,8 @@
             },
 
             createFile: async () => {
-                const namePrompt = prompt("Enter filename (e.g. style.css):");
-                if(!namePrompt) return;
-                
-                let name = namePrompt.replace(/\s+/g, '_');
-                
-                // 🛑 AUTO-PREFIX FIX FOR CREATED FILES
-                if (State.fmFolder === 'quizzes' && !name.toLowerCase().includes('quiz') && !name.match(/q\d+\.\d+\.json$/i)) name = 'quiz_' + name;
-                if (State.fmFolder === 'notes' && !name.toLowerCase().includes('note') && !name.match(/n\d+\.\d+\.json$/i)) name = 'note_' + name;
-
+                const name = prompt("Enter filename (e.g. style.css):");
+                if(!name) return;
                 UI.showLoading("Creating file...");
                 try {
                     await API.createOrUpdate(name, Utils.b64Encode(""), `Created ${name}`);
@@ -1021,80 +1009,27 @@
             }
         };
 
-        // File Manager MULTIPLE Upload Listeners
+        // File Manager Upload Listeners
         document.getElementById('sysFileUploader').addEventListener('change', async (e) => {
-            let files = e.target.files; 
-            if (!files || files.length === 0) return;
+            let file = e.target.files[0]; if (!file) return;
+            let name = prompt("Save as filename:", file.name.replace(/\s+/g, '_'));
+            if(!name) return;
             
-            let isMultiple = files.length > 1;
-            if (isMultiple) {
-                if (!confirm(`Upload ${files.length} files with their original names?`)) {
-                    document.getElementById('sysFileUploader').value = '';
-                    return;
-                }
-            }
-
-            UI.showLoading(isMultiple ? `Uploading 1 of ${files.length}...` : "Uploading...");
-            let success = 0;
-
-            for (let i = 0; i < files.length; i++) {
-                let file = files[i];
-                let name = file.name.replace(/\s+/g, '_');
-                
-                // 🛑 AUTO-PREFIX FIX FOR UPLOADED FILES
-                if (State.fmFolder === 'quizzes' && !name.toLowerCase().includes('quiz') && !name.match(/q\d+\.\d+\.json$/i)) {
-                    name = 'quiz_' + name;
-                } else if (State.fmFolder === 'notes' && !name.toLowerCase().includes('note') && !name.match(/n\d+\.\d+\.json$/i)) {
-                    name = 'note_' + name;
-                }
-
-                if (!isMultiple) {
-                    let pName = prompt("Save as filename:", name);
-                    if (!pName) continue;
-                    name = pName;
-                } else {
-                    UI.showLoading(`Uploading ${i+1} of ${files.length}...\n(${name})`);
-                }
-
+            UI.showLoading("Uploading...");
+            let reader = new FileReader();
+            reader.onload = async (event) => {
                 try {
-                    const base64 = await new Promise((resolve, reject) => {
-                        let reader = new FileReader();
-                        reader.onload = ev => {
-                            let res = ev.target.result;
-                            resolve(res.includes(',') ? res.split(',')[1] : res);
-                        };
-                        reader.onerror = ev => reject(ev);
-                        reader.readAsDataURL(file);
-                    });
-                    
-                    let sha = null;
-                    let existing = State.repoFiles.find(f => f.name === name);
-                    if (existing) {
-                        if(isMultiple && !confirm(`File '${name}' already exists. Overwrite?`)) continue;
-                        sha = existing.sha;
-                    }
-
-                    await API.createOrUpdate(name, base64, `Uploaded ${name}`, sha);
-                    success++;
-                } catch(err) {
-                    console.error("Upload failed for " + name);
-                }
-            }
-
-            if (success > 0) {
-                UI.showLoading("Refreshing Directory...");
-                try {
+                    await API.createOrUpdate(name, event.target.result.split(',')[1], `Uploaded ${name}`);
                     State.repoFiles = await API.request('');
-                    if(State.fmFolder) FileManager.renderFolder(State.fmFolder);
-                    else FileManager.renderRoot();
-                    UI.showToast(`${success} File(s) Uploaded!`);
-                } catch(e) {
-                    alert("Files uploaded, but failed to refresh directory.");
+                    FileManager.renderFolder(State.fmFolder);
+                    UI.showToast("Upload Successful!");
+                } catch(err) {
+                    alert("Upload failed.");
                 }
-            }
-            
-            UI.hideLoading();
-            document.getElementById('sysFileUploader').value = ''; 
+                UI.hideLoading();
+                document.getElementById('sysFileUploader').value = ''; 
+            };
+            reader.readAsDataURL(file);
         });
 
         document.getElementById('sysReplaceUploader').addEventListener('change', async (e) => {
@@ -1106,10 +1041,7 @@
             let reader = new FileReader();
             reader.onload = async (event) => {
                 try {
-                    let base64 = event.target.result;
-                    base64 = base64.includes(',') ? base64.split(',')[1] : base64;
-                    
-                    await API.createOrUpdate(path, base64, `Replaced ${path}`, sha);
+                    await API.createOrUpdate(path, event.target.result.split(',')[1], `Replaced ${path}`, sha);
                     State.repoFiles = await API.request('');
                     
                     if(State.currentHash === 'contents') {
@@ -1120,7 +1052,8 @@
                     UI.showToast("File Replaced!");
                 } catch(err) {
                     alert("Replace failed.");
-                } finally { UI.hideLoading(); }
+                }
+                UI.hideLoading();
                 document.getElementById('sysReplaceUploader').value = '';
             };
             reader.readAsDataURL(file);
@@ -1158,7 +1091,7 @@
                     document.getElementById('editSha').value = sha;
                     State.reloadCourseOnSave = reloadCourse;
                     
-                    State.originalCode = codeStr; 
+                    State.originalCode = codeStr; // Save state for auto-save diff
                     
                     if (aceEditor) {
                         let ext = Utils.getExt(path);
@@ -1504,7 +1437,8 @@
                     UI.showToast("Media Deleted!");
                 } catch(e) {
                     alert("Failed to delete.");
-                } finally { UI.hideLoading(); }
+                }
+                UI.hideLoading();
             },
 
             openUploader: (targetId) => {
@@ -1552,7 +1486,8 @@
                     UI.showToast("Media Saved!");
                 } catch(err) {
                     alert("Media upload error.");
-                } finally { UI.hideLoading(); }
+                }
+                UI.hideLoading();
                 document.getElementById('visualImgUploader').value = ''; 
             };
             reader.readAsDataURL(f);
