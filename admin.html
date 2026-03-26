@@ -21,112 +21,173 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 
     <style>
+        /* ===== PREMIUM RESET & VARIABLES ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         :root { 
-            --primary: #6366f1; --bg: #020617; --card: #1e293b; 
+            --primary: #6366f1; --primary-hover: #4f46e5; --bg: #020617; --card: #1e293b; 
             --text: #f8fafc; --text-muted: #94a3b8; --border: #334155; 
             --danger: #f43f5e; --success: #10b981; --info: #3b82f6; --warning: #f59e0b;
         }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); height: 100dvh; overflow: hidden; display: flex; flex-direction: column; }
+        body { 
+            font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); 
+            height: 100dvh; overflow: hidden; display: flex; flex-direction: column; 
+            overscroll-behavior-y: none; /* Prevents pull-to-refresh bounce on mobile */
+        }
         
+        /* Utility Classes */
         .flex { display: flex; } 
         .items-center { align-items: center; } 
         .justify-between { justify-content: space-between; }
         .text-center { text-align: center; }
         
-        .btn { padding: 12px 15px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; transition: 0.2s; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        /* Smooth Buttons */
+        .btn { 
+            padding: 14px 18px; border-radius: 12px; font-weight: 600; border: none; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; 
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); font-size: 0.95rem;
+        }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
+        .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
         .btn-danger { background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.3); color: var(--danger); }
-        .btn:active { transform: scale(0.96); }
+        .btn:active { transform: scale(0.95); box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
         
-        .input-field { width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; font-size: 0.9rem;}
-        .input-field:focus { outline: none; border-color: var(--primary); }
+        /* Inputs */
+        .input-field { 
+            width: 100%; padding: 14px 16px; margin-bottom: 15px; background: rgba(0,0,0,0.2); 
+            border: 1.5px solid var(--border); color: white; border-radius: 12px; font-family: inherit; 
+            font-size: 0.95rem; transition: border-color 0.3s ease;
+        }
+        .input-field:focus { outline: none; border-color: var(--primary); background: rgba(0,0,0,0.4); }
 
+        /* Auth Screen */
         #authScreen { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; justify-content: center; padding: 20px; }
-        .auth-box { background: var(--card); padding: 30px 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .auth-box { background: var(--card); padding: 35px 25px; border-radius: 20px; border: 1px solid var(--border); text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5); animation: fadeUp 0.5s ease; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .app-header { background: var(--card); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); z-index: 10; flex-shrink: 0;}
-        .header-title { font-weight: 600; font-size: 1.1rem; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px; }
-        .header-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.05); cursor: pointer; transition: 0.2s;}
-        .header-icon:active { transform: scale(0.9); }
+        /* Premium Header */
+        .app-header { 
+            background: rgba(30, 41, 59, 0.85); padding: 15px 20px; display: flex; align-items: center; 
+            justify-content: space-between; border-bottom: 1px solid var(--border); z-index: 10; 
+            flex-shrink: 0; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+        }
+        .header-title { font-weight: 600; font-size: 1.15rem; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px; letter-spacing: 0.5px; }
+        .header-icon { 
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; 
+            border-radius: 50%; background: rgba(255,255,255,0.05); cursor: pointer; transition: 0.2s; font-size: 1.1rem;
+        }
+        .header-icon:active { transform: scale(0.9); background: rgba(255,255,255,0.1); }
         
-        .view-container { flex: 1; overflow-y: auto; padding: 20px 15px 120px 15px; display: none; }
-        .view-container.active { display: block; }
+        /* View Containers with smooth entry */
+        .view-container { 
+            flex: 1; overflow-y: auto; padding: 20px 15px 120px 15px; display: none; 
+            -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
+        }
+        .view-container.active { display: block; animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
-        .list-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border-left: 4px solid var(--border); transition: 0.2s; }
-        .list-item:active { transform: scale(0.98); }
+        /* Premium List Cards */
+        .list-item { 
+            background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; 
+            margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; 
+            gap: 12px; border-left: 4px solid var(--border); transition: transform 0.2s ease, box-shadow 0.2s ease; 
+        }
+        .list-item:active { transform: scale(0.98); box-shadow: inset 0 0 10px rgba(0,0,0,0.1); }
         .list-item-content { flex: 1; overflow: hidden; cursor: pointer; }
-        .list-title { font-weight: 600; font-size: 1rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 10px;}
-        .list-subtitle { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 8px;}
-        .list-actions { display: flex; gap: 6px; }
+        .list-title { font-weight: 600; font-size: 1.05rem; color: var(--text); display: flex; align-items: flex-start; gap: 12px; line-height: 1.4;}
+        .list-subtitle { font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; display: flex; align-items: center; gap: 8px;}
+        .list-actions { display: flex; gap: 8px; }
         
-        .icon-action { width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: var(--text); border: none; cursor: pointer; transition: 0.2s; }
-        .icon-action:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
+        .icon-action { 
+            width: 38px; height: 38px; border-radius: 10px; background: rgba(255,255,255,0.05); 
+            display: flex; align-items: center; justify-content: center; color: var(--text); 
+            border: 1px solid transparent; cursor: pointer; transition: 0.2s; font-size: 1rem;
+        }
+        .icon-action:active { transform: scale(0.85); background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.2); }
         
-        .fab { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 10px 25px rgba(99,102,241,0.4); border: none; cursor: pointer; z-index: 100; transition: 0.2s; }
-        .fab:active { transform: scale(0.9) translateY(5px); }
+        /* Floating Action Button (FAB) */
+        .fab { 
+            position: fixed; bottom: 35px; right: 25px; width: 65px; height: 65px; border-radius: 50%; 
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2rem; 
+            box-shadow: 0 10px 25px rgba(99,102,241,0.5); border: none; cursor: pointer; z-index: 100; transition: 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); 
+        }
+        .fab:active { transform: scale(0.85) translateY(5px); box-shadow: 0 5px 15px rgba(99,102,241,0.4); }
 
+        /* Folders */
         .folder-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
-        .folder-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 10px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .folder-card:active { transform: scale(0.95); border-color: var(--primary); }
-        .folder-icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .folder-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 25px 10px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .folder-card:active { transform: scale(0.94); border-color: var(--primary); background: rgba(99,102,241,0.05); }
+        .folder-icon { font-size: 2.8rem; margin-bottom: 12px; }
+
+        /* Categories/Tabs */
+        .category-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; }
+        .category-tabs::-webkit-scrollbar { display: none; }
+        .category-tab { padding: 8px 20px; background: var(--card); border: 1.5px solid var(--border); border-radius: 40px; font-size: 0.85rem; font-weight: 500; white-space: nowrap; cursor: pointer; transition: 0.2s; }
+        .category-tab.active { background: var(--primary); border-color: var(--primary); color: white; box-shadow: 0 4px 10px rgba(99,102,241,0.3); }
 
         /* EDITOR UI */
         #codeEditorView { display: none; flex-direction: column; height: 100dvh; width: 100vw; position: fixed; top: 0; left: 0; background: var(--bg); z-index: 500; padding-bottom: env(safe-area-inset-bottom); }
         #aceEditorContainer { flex: 1; width: 100%; position: relative; margin-bottom: 30px;} 
-        .jump-btn-wrapper { position: absolute; bottom: 50px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 510; }
-        .jump-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--card); border: 1px solid var(--border); color: var(--text); display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; transition: 0.2s; }
-        .jump-btn:active { transform: scale(0.9); background: var(--primary); color: white; border-color: var(--primary); }
+        .jump-btn-wrapper { position: absolute; bottom: 50px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 510; }
+        .jump-btn { width: 45px; height: 45px; border-radius: 50%; background: var(--card); border: 1px solid var(--border); color: var(--text); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.5); cursor: pointer; transition: 0.2s; }
+        .jump-btn:active { transform: scale(0.85); background: var(--primary); color: white; border-color: var(--primary); }
 
         /* VISUAL BUILDER */
-        #visualEditorContainer { flex: 1; width: 100%; overflow-y: auto; padding: 20px; padding-bottom: 250px; display: none; background: var(--bg); }
-        .visual-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .v-label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; font-weight: 500; text-transform: uppercase;}
-        .v-textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; font-size: 0.9rem; resize: vertical; min-height: 80px; margin-bottom: 5px; }
-        .v-input { width: 100%; padding: 10px 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; margin-bottom: 10px; }
-        .v-select { width: 100%; padding: 10px; background: #0f172a; border: 1px solid var(--primary); color: white; border-radius: 8px; font-family: inherit; margin-bottom: 15px; font-weight: 600; outline: none;}
-        .v-del-btn { background: rgba(244,63,94,0.1); color: var(--danger); border: 1px solid rgba(244,63,94,0.3); padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 5px;}
-        .v-img-btn { background: rgba(59,130,246,0.1); color: var(--info); border: 1px solid rgba(59,130,246,0.3); padding: 4px 10px; border-radius: 5px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.2s;}
-        .v-img-btn:active { transform: scale(0.95); background: var(--info); color: white;}
+        #visualEditorContainer { flex: 1; width: 100%; overflow-y: auto; padding: 20px; padding-bottom: 250px; display: none; background: var(--bg); -webkit-overflow-scrolling: touch;}
+        .visual-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .v-label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
+        .v-textarea { width: 100%; padding: 14px; background: rgba(0,0,0,0.2); border: 1.5px solid var(--border); color: white; border-radius: 10px; font-family: inherit; font-size: 0.95rem; resize: vertical; min-height: 90px; margin-bottom: 10px; transition: 0.3s;}
+        .v-textarea:focus { outline: none; border-color: var(--primary); background: rgba(0,0,0,0.4); }
+        .v-input { width: 100%; padding: 12px 14px; background: rgba(0,0,0,0.2); border: 1.5px solid var(--border); color: white; border-radius: 10px; font-family: inherit; margin-bottom: 10px; transition: 0.3s; }
+        .v-input:focus { outline: none; border-color: var(--primary); }
+        .v-select { width: 100%; padding: 12px; background: #0f172a; border: 1.5px solid var(--primary); color: white; border-radius: 10px; font-family: inherit; margin-bottom: 15px; font-weight: 600; outline: none; appearance: none; }
         
-        .v-preview-box { background: rgba(255,255,255,0.05); border: 1px dashed var(--primary); padding: 12px; border-radius: 8px; font-size: 0.95rem; color: white; min-height: 45px; margin-bottom: 15px; overflow-x: auto; }
-        .v-preview-box img { max-width: 100%; height: auto; border-radius: 8px; margin-top: 5px; }
+        .v-del-btn { background: rgba(244,63,94,0.1); color: var(--danger); border: 1px solid rgba(244,63,94,0.3); padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s;}
+        .v-del-btn:active { transform: scale(0.9); background: var(--danger); color: white; }
+        .v-img-btn { background: rgba(59,130,246,0.1); color: var(--info); border: 1px solid rgba(59,130,246,0.3); padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s;}
+        .v-img-btn:active { transform: scale(0.9); background: var(--info); color: white;}
+        
+        .v-preview-box { background: rgba(255,255,255,0.03); border: 1px dashed var(--primary); padding: 15px; border-radius: 10px; font-size: 0.95rem; color: white; min-height: 50px; margin-bottom: 15px; overflow-x: auto; line-height: 1.5; }
+        .v-preview-box img { max-width: 100%; height: auto; border-radius: 8px; margin-top: 8px; }
         
         /* IN-BLOCK MEDIA */
-        .inblock-media-row { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 10px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px dashed var(--border);}
-        .inblock-media-card { background: var(--bg); border: 1px solid var(--border); padding: 5px; border-radius: 5px; min-width: 120px; max-width: 120px; text-align: center; }
-        .inblock-media-img { width: 100%; height: 60px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; background: #000; }
-        .inblock-media-name { font-size: 0.6rem; color: var(--text-muted); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 110px; }
+        .inblock-media-row { display: flex; gap: 12px; overflow-x: auto; margin-bottom: 15px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 10px; border: 1px dashed var(--border);}
+        .inblock-media-card { background: var(--bg); border: 1px solid var(--border); padding: 6px; border-radius: 8px; min-width: 130px; max-width: 130px; text-align: center; }
+        .inblock-media-img { width: 100%; height: 70px; object-fit: cover; border-radius: 6px; margin-bottom: 8px; background: #000; }
 
         /* LIVE PREVIEW MOCKUP */
-        .mobile-mockup-wrapper { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px);}
-        .mobile-mockup { width: 100%; max-width: 400px; height: 85vh; background: #020617; border: 12px solid #1e293b; border-radius: 35px; overflow: hidden; display: flex; flex-direction: column; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .mockup-header { background: #1e293b; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 0.9rem; border-bottom: 1px solid var(--border);}
-        .mockup-content { flex: 1; overflow-y: auto; padding: 20px; background: #020617; color: #f8fafc; font-size: 0.95rem; line-height: 1.6;}
-        
-        .mockup-content .m-option { background: rgba(255,255,255,0.1); border: 2px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;}
-        .mockup-content .m-correct { border-color: var(--success); background: rgba(16,185,129,0.15); color: var(--success); }
-        .mockup-content h1 { font-size: 1.5rem; margin-bottom: 10px; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 5px;}
-        .mockup-content h2 { font-size: 1.2rem; margin: 15px 0 10px; }
-        .mockup-content .m-callout { background: rgba(59,130,246,0.15); border-left: 4px solid var(--info); padding: 15px; border-radius: 0 8px 8px 0; margin: 15px 0; }
-        .mockup-content img { max-width: 100%; border-radius: 8px; margin: 10px 0;}
+        .mobile-mockup-wrapper { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px);}
+        .mobile-mockup { width: 100%; max-width: 400px; height: 85vh; background: #020617; border: 14px solid #1e293b; border-radius: 40px; overflow: hidden; display: flex; flex-direction: column; position: relative; box-shadow: 0 25px 60px rgba(0,0,0,0.6); }
+        .mockup-header { background: #1e293b; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 1rem; border-bottom: 1px solid var(--border);}
+        .mockup-content { flex: 1; overflow-y: auto; padding: 20px; background: #020617; color: #f8fafc; font-size: 0.95rem; line-height: 1.6; -webkit-overflow-scrolling: touch;}
 
-        /* OVERLAYS & TOASTS */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-overlay.active { display: flex; }
-        .modal-card { background: var(--card); width: 100%; border-radius: 12px; padding: 20px; border: 1px solid var(--border); max-width: 400px; margin: 0 auto; }
+        /* OVERLAYS & MODALS */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.active { display: flex; animation: fadeModal 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        @keyframes fadeModal { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
         
-        #loadingOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; backdrop-filter: blur(5px); text-align: center; }
-        .spinner { width: 45px; height: 45px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        .modal-card { background: var(--card); width: 100%; border-radius: 20px; padding: 25px; border: 1px solid var(--border); max-width: 400px; margin: 0 auto; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        
+        /* LOADING */
+        #loadingOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; backdrop-filter: blur(8px); text-align: center; }
+        .spinner { width: 50px; height: 50px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 15px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--card); color: white; padding: 12px 24px; border-radius: 30px; font-size: 0.9rem; font-weight: 500; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; opacity: 0; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; gap: 8px;}
+        /* TOAST */
+        .toast { 
+            position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%) translateY(100px); 
+            background: rgba(30, 41, 59, 0.95); color: white; padding: 14px 28px; border-radius: 40px; 
+            font-size: 0.95rem; font-weight: 500; border: 1px solid var(--border); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; opacity: 0; 
+            transition: 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); display: flex; align-items: center; gap: 10px;
+            backdrop-filter: blur(10px);
+        }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         
-        .status-badge { font-size: 0.65rem; padding: 2px 8px; border-radius: 12px; font-weight: 600; text-transform: uppercase;}
-        .badge-draft { background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.4); }
-        .badge-published { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.4); }
+        /* BADGES */
+        .status-badge { font-size: 0.7rem; padding: 4px 10px; border-radius: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
+        .badge-draft { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-published { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
     </style>
 </head>
 <body>
@@ -142,7 +203,7 @@
         </div>
     </div>
 
-    <div id="loadingOverlay"><div class="spinner"></div><div id="loadingText" style="font-weight: 500;">Processing...</div></div>
+    <div id="loadingOverlay"><div class="spinner"></div><div id="loadingText" style="font-weight: 500; letter-spacing:0.5px;">Processing...</div></div>
     <div id="toastContainer" class="toast"></div>
 
     <header class="app-header">
@@ -154,16 +215,36 @@
     <div id="viewCourses" class="view-container active">
         <div class="flex gap-2" style="margin-bottom: 20px;">
             <div class="list-item flex-col items-center" style="flex: 1; padding: 15px; margin: 0; cursor: pointer; border-color: var(--success); background: rgba(16,185,129,0.05);" onclick="CourseEngine.editMasterCatalog()">
-                <i class="fas fa-database" style="font-size: 1.5rem; color: var(--success); margin-bottom: 5px;"></i>
-                <span style="font-size: 0.8rem; font-weight: 600; color: var(--success);">Catalog</span>
+                <i class="fas fa-database" style="font-size: 1.5rem; color: var(--success); margin-bottom: 8px;"></i>
+                <span style="font-size: 0.85rem; font-weight: 600; color: var(--success);">Catalog</span>
             </div>
+            
+            <div class="list-item flex-col items-center" style="flex: 1; padding: 15px; margin: 0; cursor: pointer; border-color: var(--warning); background: rgba(245,158,11,0.05);" onclick="Nav.push('quotes')">
+                <i class="fas fa-bullhorn" style="font-size: 1.5rem; color: var(--warning); margin-bottom: 8px;"></i>
+                <span style="font-size: 0.85rem; font-weight: 600; color: var(--warning);">Alerts</span>
+            </div>
+
             <div class="list-item flex-col items-center" style="flex: 1; padding: 15px; margin: 0; cursor: pointer; border-color: var(--info); background: rgba(59,130,246,0.05);" onclick="Nav.push('filemanager')">
-                <i class="fas fa-folder-tree" style="font-size: 1.5rem; color: var(--info); margin-bottom: 5px;"></i>
-                <span style="font-size: 0.8rem; font-weight: 600; color: var(--info);">File Manager</span>
+                <i class="fas fa-folder-tree" style="font-size: 1.5rem; color: var(--info); margin-bottom: 8px;"></i>
+                <span style="font-size: 0.85rem; font-weight: 600; color: var(--info);">Files</span>
             </div>
         </div>
         <div id="courseList"></div>
         <button class="fab" onclick="UI.openModal('courseModal')"><i class="fas fa-plus"></i></button>
+    </div>
+
+    <div id="viewQuotes" class="view-container">
+        <div class="list-item" style="border-color: var(--primary); background: rgba(99,102,241,0.05); justify-content: center; cursor: pointer; margin-bottom: 20px;" onclick="QuotesEngine.editCode()">
+            <span style="color: var(--primary); font-weight: 600;"><i class="fas fa-code"></i> Edit Raw JSON</span>
+        </div>
+        
+        <div class="category-tabs" style="margin-bottom: 15px;">
+            <div class="category-tab active" id="tab_quotes_all" onclick="QuotesEngine.render('all')">All Entries</div>
+            <div class="category-tab" id="tab_quotes_only" onclick="QuotesEngine.render('quotes')">Quotes</div>
+            <div class="category-tab" id="tab_notices_only" onclick="QuotesEngine.render('notices')">Notices</div>
+        </div>
+        <div id="quotesList"></div>
+        <button class="fab" onclick="QuotesEngine.openModal(-1)"><i class="fas fa-plus"></i></button>
     </div>
 
     <div id="viewChapters" class="view-container">
@@ -187,11 +268,11 @@
         <header class="app-header">
             <div class="header-icon" onclick="Nav.back()"><i class="fas fa-times"></i></div>
             
-            <button id="editorModeToggle" class="btn btn-outline" style="color: #a5b4fc; border-color: var(--primary); padding: 5px 15px; font-size: 0.8rem; display:none;" onclick="EditorEngine.toggleMode()">
+            <button id="editorModeToggle" class="btn btn-outline" style="color: #a5b4fc; border-color: var(--primary); padding: 6px 16px; font-size: 0.85rem; display:none;" onclick="EditorEngine.toggleMode()">
                 <i class="fas fa-eye"></i> Visual
             </button>
             
-            <button id="livePreviewBtn" class="btn btn-outline" style="color: var(--success); border-color: var(--success); padding: 5px 15px; font-size: 0.8rem; display:none;" onclick="PreviewEngine.open()">
+            <button id="livePreviewBtn" class="btn btn-outline" style="color: var(--success); border-color: var(--success); padding: 6px 16px; font-size: 0.85rem; display:none;" onclick="PreviewEngine.open()">
                 <i class="fas fa-mobile-alt"></i> Run
             </button>
 
@@ -221,9 +302,37 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="quoteModal" onclick="UI.closeModal('quoteModal')">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <h3 id="quoteModalTitle" style="margin-bottom: 18px;">Add Entry</h3>
+            
+            <label style="color:var(--text-muted); font-size:0.85rem; display:block; margin-bottom:6px; text-align:left;">Type:</label>
+            <select id="quoteType" class="input-field" onchange="QuotesEngine.toggleStatusUI()">
+                <option value="quote">Inspirational Quote</option>
+                <option value="notice">System Notice / Alert</option>
+            </select>
+            
+            <label style="color:var(--text-muted); font-size:0.85rem; display:block; margin-bottom:6px; text-align:left;">Text / Message:</label>
+            <textarea id="quoteText" class="input-field" placeholder="Enter text here..." rows="4"></textarea>
+            
+            <label style="color:var(--text-muted); font-size:0.85rem; display:block; margin-bottom:6px; text-align:left;">Author / Tag:</label>
+            <input type="text" id="quoteAuthor" class="input-field" placeholder="e.g. NAV Education">
+            
+            <div id="noticeStatusDiv" style="display:none; margin-bottom:18px; align-items:center; gap:10px;">
+                <label style="color:var(--text-muted); font-size:0.85rem; min-width: 60px; text-align:left;">Status:</label>
+                <select id="noticeStatus" class="input-field" style="margin:0;">
+                    <option value="active">Active (Visible)</option>
+                    <option value="inactive">Inactive (Hidden)</option>
+                </select>
+            </div>
+            
+            <button class="btn btn-primary" style="width: 100%; margin-top: 5px;" onclick="QuotesEngine.saveEntry()">Save Entry</button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="courseModal" onclick="UI.closeModal('courseModal')">
         <div class="modal-card" onclick="event.stopPropagation()">
-            <h3 style="margin-bottom: 15px;">New Course</h3>
+            <h3 style="margin-bottom: 18px;">New Course</h3>
             <input type="text" id="newCourseTitle" class="input-field" placeholder="Course Title (e.g. Physics)">
             <input type="text" id="newCourseId" class="input-field" placeholder="Short ID (e.g. physics12)">
             <button class="btn btn-primary" style="width: 100%;" onclick="CourseEngine.createCourse()">Create Course</button>
@@ -232,7 +341,7 @@
 
     <div class="modal-overlay" id="chapterModal" onclick="UI.closeModal('chapterModal')">
         <div class="modal-card" onclick="event.stopPropagation()">
-            <h3 style="margin-bottom: 15px;">New Chapter</h3>
+            <h3 style="margin-bottom: 18px;">New Chapter</h3>
             <input type="text" id="newChapTitle" class="input-field" placeholder="e.g. Chapter 1: Kinematics">
             <button class="btn btn-primary" style="width: 100%;" onclick="CourseEngine.createChapter()">Add Chapter</button>
         </div>
@@ -240,7 +349,7 @@
 
     <div class="modal-overlay" id="contentModal" onclick="UI.closeModal('contentModal')">
         <div class="modal-card" onclick="event.stopPropagation()">
-            <h3 style="margin-bottom: 15px;">Add Material</h3>
+            <h3 style="margin-bottom: 18px;">Add Material</h3>
             <input type="text" id="newContentTitle" class="input-field" placeholder="Material Title">
             <select id="newContentType" class="input-field" onchange="UI.toggleContentUpload()">
                 <option value="notes">Study Notes (.json)</option>
@@ -248,9 +357,9 @@
                 <option value="html">Custom Page (.html)</option>
                 <option value="pdf">Handwritten Document (.pdf)</option>
             </select>
-            <div id="pdfUploadDiv" style="display:none; margin-bottom: 15px;">
-                <label style="font-size: 0.8rem; color: var(--text-muted); display:block; margin-bottom:5px;">Select PDF File</label>
-                <input type="file" id="pdfFileInput" accept="application/pdf" class="input-field" style="padding: 8px;">
+            <div id="pdfUploadDiv" style="display:none; margin-bottom: 18px;">
+                <label style="font-size: 0.85rem; color: var(--text-muted); display:block; margin-bottom:6px; text-align:left;">Select PDF File</label>
+                <input type="file" id="pdfFileInput" accept="application/pdf" class="input-field" style="padding: 10px;">
             </div>
             <button class="btn btn-primary" style="width: 100%;" onclick="CourseEngine.createContent()">Add to Chapter</button>
         </div>
@@ -270,25 +379,19 @@
 
     <script>
         // ==========================================
-        // 1. FAIL-SAFE ENCODING 
+        // 1. SECURE & SAFE UTF-8 ENCODING 
         // ==========================================
         const Utils = {
-            b64Encode: (str) => {
-                return btoa(unescape(encodeURIComponent(str)));
-            },
+            b64Encode: (str) => { return btoa(unescape(encodeURIComponent(str))); },
             b64Decode: (str) => {
                 let cleanStr = str.replace(/\s/g, '');
-                try {
-                    return decodeURIComponent(escape(atob(cleanStr)));
-                } catch(e) {
+                try { return decodeURIComponent(escape(atob(cleanStr))); } 
+                catch(e) {
                     try {
-                        const binary = atob(cleanStr);
-                        const bytes = new Uint8Array(binary.length);
+                        const binary = atob(cleanStr); const bytes = new Uint8Array(binary.length);
                         for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
                         return new TextDecoder().decode(bytes);
-                    } catch(err) {
-                        return atob(cleanStr);
-                    }
+                    } catch(err) { return atob(cleanStr); }
                 }
             },
             getExt: (filename) => filename.split('.').pop().toLowerCase()
@@ -303,49 +406,40 @@
             activeCourse: { path: '', sha: '', data: null },
             activeChapIndex: -1,
             fmFolder: '',
-            editorMode: 'code',
-            editorFileType: null,
-            visualData: null,
-            mathTimeout: null,
-            toastTimeout: null,
-            originalCode: '',
-            currentHash: ''
+            editorMode: 'code', editorFileType: null, visualData: null,
+            mathTimeout: null, toastTimeout: null,
+            originalCode: '', currentHash: '',
+            
+            quotesData: [],
+            quotesSha: null,
+            quotesFileName: 'Quotes.json',
+            editQuoteIndex: -1
         };
 
         const API = {
             request: async (endpoint, method = 'GET', body = null) => {
-                const owner = encodeURIComponent(State.gh.owner);
-                const repo = encodeURIComponent(State.gh.repo);
-                const cleanEndpoint = endpoint ? '/' + endpoint.replace(/^\/+|\/+$/g, '') : '';
-                const url = `https://api.github.com/repos/${owner}/${repo}/contents${cleanEndpoint}`;
+                let cleanEndpoint = endpoint ? '/' + endpoint.replace(/^\/+|\/+$/g, '') : '';
+                let url = `https://api.github.com/repos/${State.gh.owner}/${State.gh.repo}/contents${cleanEndpoint}`;
+                
+                if (method === 'GET') url += `?t=${Date.now()}`; 
                 
                 const opt = { 
                     method: method, 
-                    headers: { 
-                        'Authorization': `Bearer ${State.gh.token}`, 
-                        'Accept': 'application/vnd.github.v3+json'
-                    } 
+                    headers: { 'Authorization': `Bearer ${State.gh.token}`, 'Accept': 'application/vnd.github.v3+json' } 
                 };
                 if (body) opt.body = JSON.stringify(body);
                 
                 const res = await fetch(url, opt);
-                
-                // Safe Catch for Empty Repo
-                if (res.status === 404 && !cleanEndpoint && method === 'GET') {
-                    return []; 
-                }
+                if (res.status === 404 && !cleanEndpoint && method === 'GET') return []; 
+                if (res.status === 404 && method === 'GET') throw new Error("404"); 
                 
                 if (res.status === 401) throw new Error("Unauthorized");
                 if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
                 
-                if (method === 'DELETE') {
-                    try { return await res.json(); } catch(e) { return {}; }
-                }
+                if (method === 'DELETE') { try { return await res.json(); } catch(e) { return {}; } }
                 return await res.json();
             },
-            deleteFile: async (path, sha, msg) => {
-                return await API.request(path, 'DELETE', { message: msg, sha: sha });
-            },
+            deleteFile: async (path, sha, msg) => { return await API.request(path, 'DELETE', { message: msg, sha: sha }); },
             createOrUpdate: async (path, content, msg, sha = null) => {
                 let payload = { message: msg, content: content };
                 if (sha) payload.sha = sha;
@@ -357,13 +451,8 @@
         // 3. UI CONTROLS 
         // ==========================================
         const UI = {
-            showLoading: (msg) => { 
-                document.getElementById('loadingText').innerText = msg; 
-                document.getElementById('loadingOverlay').style.display = 'flex'; 
-            },
-            hideLoading: () => { 
-                document.getElementById('loadingOverlay').style.display = 'none'; 
-            },
+            showLoading: (msg) => { document.getElementById('loadingText').innerText = msg; document.getElementById('loadingOverlay').style.display = 'flex'; },
+            hideLoading: () => { document.getElementById('loadingOverlay').style.display = 'none'; },
             showToast: (msg) => {
                 const t = document.getElementById('toastContainer');
                 clearTimeout(State.toastTimeout);
@@ -377,14 +466,8 @@
                 document.getElementById('appTitle').textContent = title;
                 document.getElementById('backBtn').style.visibility = showBack ? 'visible' : 'hidden';
             },
-            openModal: (id) => {
-                document.getElementById(id).classList.add('active');
-                Nav.push('modal_' + id); 
-            },
-            closeModal: (id) => {
-                if (window.location.hash === '#modal_' + id) Nav.back();
-                else document.getElementById(id).classList.remove('active');
-            },
+            openModal: (id) => { document.getElementById(id).classList.add('active'); Nav.push('modal_' + id); },
+            closeModal: (id) => { if (window.location.hash === '#modal_' + id) Nav.back(); else document.getElementById(id).classList.remove('active'); },
             toggleContentUpload: () => {
                 const type = document.getElementById('newContentType').value;
                 document.getElementById('pdfUploadDiv').style.display = type === 'pdf' ? 'block' : 'none';
@@ -395,17 +478,10 @@
         // 4. SECURE HARDWARE ROUTER
         // ==========================================
         const Nav = {
-            push: (hashId) => {
-                if (window.location.hash !== '#' + hashId) {
-                    history.pushState(null, null, '#' + hashId);
-                }
-                Nav.handleRoute(); 
-            },
+            push: (hashId) => { if (window.location.hash !== '#' + hashId) { history.pushState(null, null, '#' + hashId); } Nav.handleRoute(); },
             back: () => { history.back(); },
             initRouter: () => {
-                if(!window.location.hash || window.location.hash === '#') {
-                    history.replaceState(null, null, '#home');
-                }
+                if(!window.location.hash || window.location.hash === '#') { history.replaceState(null, null, '#home'); }
                 window.addEventListener('popstate', Nav.handleRoute);
                 Nav.handleRoute(); 
             },
@@ -416,10 +492,7 @@
                 let oldHash = State.currentHash;
                 State.currentHash = newHash;
 
-                // Auto-save Engine
-                if (oldHash === 'editor' && newHash !== 'editor' && newHash !== 'preview') {
-                    EditorEngine.save(true); 
-                }
+                if (oldHash === 'editor' && newHash !== 'editor' && newHash !== 'preview') EditorEngine.save(true); 
 
                 if (newHash !== 'editor' && newHash !== 'preview') document.getElementById('codeEditorView').style.display = 'none';
                 if (newHash !== 'preview') document.getElementById('livePreviewModal').style.display = 'none';
@@ -428,32 +501,21 @@
                     let modalId = newHash.replace('modal_', '');
                     let mEl = document.getElementById(modalId);
                     if(mEl) mEl.classList.add('active');
-                    UI.hideLoading();
-                    return; 
+                    UI.hideLoading(); return; 
                 }
 
-                if (newHash === 'home') {
-                    UI.switchView('viewCourses', 'Courses', false);
-                } else if (newHash === 'chapters') {
-                    if (State.activeCourse.data) {
-                        CourseEngine.renderChapters(); 
-                        UI.switchView('viewChapters', State.activeCourse.data.title, true);
-                    } else { Nav.push('home'); }
+                if (newHash === 'home') { UI.switchView('viewCourses', 'Courses', false); } 
+                else if (newHash === 'quotes') { QuotesEngine.load(); } 
+                else if (newHash === 'chapters') {
+                    if (State.activeCourse.data) { CourseEngine.renderChapters(); UI.switchView('viewChapters', State.activeCourse.data.title, true); } else { Nav.push('home'); }
                 } else if (newHash === 'contents') {
                     if (State.activeCourse.data && State.activeCourse.data.chapters[State.activeChapIndex]) {
-                        CourseEngine.renderContents(); 
-                        UI.switchView('viewContents', State.activeCourse.data.chapters[State.activeChapIndex].title, true);
+                        CourseEngine.renderContents(); UI.switchView('viewContents', State.activeCourse.data.chapters[State.activeChapIndex].title, true);
                     } else { Nav.push('home'); }
-                } else if (newHash === 'filemanager') {
-                    FileManager.renderRoot();
-                } else if (newHash.startsWith('folder_')) {
-                    FileManager.renderFolder(newHash.replace('folder_', ''));
-                } else if (newHash === 'editor') {
-                    document.getElementById('codeEditorView').style.display = 'flex';
-                } else if (newHash === 'preview') {
-                    document.getElementById('codeEditorView').style.display = 'flex';
-                    document.getElementById('livePreviewModal').style.display = 'flex';
-                }
+                } else if (newHash === 'filemanager') { FileManager.renderRoot(); } 
+                else if (newHash.startsWith('folder_')) { FileManager.renderFolder(newHash.replace('folder_', '')); } 
+                else if (newHash === 'editor') { document.getElementById('codeEditorView').style.display = 'flex'; } 
+                else if (newHash === 'preview') { document.getElementById('codeEditorView').style.display = 'flex'; document.getElementById('livePreviewModal').style.display = 'flex'; }
                 
                 UI.hideLoading(); 
             }
@@ -463,29 +525,193 @@
             init: () => {
                 EditorEngine.init();
                 if (localStorage.getItem('ghToken')) {
-                    State.gh.owner = localStorage.getItem('ghOwner');
-                    State.gh.repo = localStorage.getItem('ghRepo');
-                    State.gh.token = localStorage.getItem('ghToken');
-                    document.getElementById('authScreen').style.display = 'none';
-                    CourseEngine.loadAll().then(() => Nav.initRouter());
-                } else {
-                    Nav.initRouter();
-                }
+                    State.gh.owner = localStorage.getItem('ghOwner'); State.gh.repo = localStorage.getItem('ghRepo'); State.gh.token = localStorage.getItem('ghToken');
+                    document.getElementById('authScreen').style.display = 'none'; CourseEngine.loadAll().then(() => Nav.initRouter());
+                } else { Nav.initRouter(); }
             },
             loginGH: () => {
-                State.gh.owner = document.getElementById('ghOwner').value.trim();
-                State.gh.repo = document.getElementById('ghRepo').value.trim();
-                State.gh.token = document.getElementById('ghToken').value.trim();
+                State.gh.owner = document.getElementById('ghOwner').value.trim(); State.gh.repo = document.getElementById('ghRepo').value.trim(); State.gh.token = document.getElementById('ghToken').value.trim();
                 if(!State.gh.token) return alert("Token Required!");
-                
-                localStorage.setItem('ghOwner', State.gh.owner);
-                localStorage.setItem('ghRepo', State.gh.repo);
-                localStorage.setItem('ghToken', State.gh.token);
-                
-                document.getElementById('authScreen').style.display = 'none';
-                CourseEngine.loadAll().then(() => Nav.initRouter());
+                localStorage.setItem('ghOwner', State.gh.owner); localStorage.setItem('ghRepo', State.gh.repo); localStorage.setItem('ghToken', State.gh.token);
+                document.getElementById('authScreen').style.display = 'none'; CourseEngine.loadAll().then(() => Nav.initRouter());
             },
             logoutGH: () => { localStorage.clear(); window.location.reload(); }
+        };
+
+        // ==========================================
+        // ★ ROBUST QUOTES & NOTICES ENGINE ★
+        // ==========================================
+        const QuotesEngine = {
+            load: async () => {
+                UI.showLoading("Loading Alerts...");
+                try {
+                    const dirData = await API.request('');
+                    let exactName = 'quotes.json';
+                    let qFile = dirData.find(f => f.name.toLowerCase() === 'quotes.json');
+                    
+                    if (qFile) {
+                        exactName = qFile.name;
+                        State.quotesFileName = exactName;
+                        const fileData = await API.request(exactName);
+                        State.quotesData = JSON.parse(Utils.b64Decode(fileData.content));
+                        State.quotesSha = fileData.sha;
+                    } else {
+                        State.quotesFileName = 'Quotes.json';
+                        State.quotesData = [];
+                        State.quotesSha = null;
+                    }
+                } catch(e) {
+                    console.error("Failed to load quotes:", e);
+                    State.quotesData = [];
+                    State.quotesSha = null;
+                }
+                QuotesEngine.render('all');
+                UI.switchView('viewQuotes', 'Alerts & Quotes', true);
+                UI.hideLoading();
+            },
+            
+            render: (filterStr) => {
+                document.getElementById('tab_quotes_all').classList.remove('active');
+                document.getElementById('tab_quotes_only').classList.remove('active');
+                document.getElementById('tab_notices_only').classList.remove('active');
+                
+                if(filterStr === 'all') document.getElementById('tab_quotes_all').classList.add('active');
+                else if(filterStr === 'quotes') document.getElementById('tab_quotes_only').classList.add('active');
+                else if(filterStr === 'notices') document.getElementById('tab_notices_only').classList.add('active');
+
+                const list = document.getElementById('quotesList');
+                list.innerHTML = '';
+                
+                if (!State.quotesData || State.quotesData.length === 0) {
+                    list.innerHTML = `<div class="text-center" style="padding: 40px 20px; color:var(--text-muted);">No entries found. Click + to add new alerts or quotes.</div>`;
+                    return;
+                }
+
+                let count = 0;
+                State.quotesData.forEach((item, idx) => {
+                    const isNotice = item.n === true;
+                    const isActive = item.active !== false; 
+                    
+                    if (filterStr === 'quotes' && isNotice) return;
+                    if (filterStr === 'notices' && !isNotice) return;
+
+                    let icon = isNotice ? 'fa-bullhorn' : 'fa-quote-left';
+                    let color = isNotice ? 'var(--warning)' : 'var(--info)';
+                    let badge = isNotice ? `<span class="status-badge" style="background:var(--warning); color:#000;">Notice</span>` : `<span class="status-badge" style="background:var(--info); color:white;">Quote</span>`;
+                    
+                    let toggleIcon = isActive ? 'fa-eye' : 'fa-eye-slash';
+                    let toggleColor = isActive ? 'var(--success)' : 'var(--text-muted)';
+                    let disabledWarning = !isActive ? `<span style="color:var(--danger); font-size:0.75rem; font-weight:700; margin-left:5px;">[OFF]</span>` : '';
+
+                    list.innerHTML += `
+                        <div class="list-item" style="border-left: 4px solid ${color}; opacity: ${isActive ? '1' : '0.65'};">
+                            <div class="list-item-content">
+                                <div class="list-title">
+                                    <i class="fas ${icon}" style="color:${color}; flex-shrink:0; margin-top:4px; font-size:1.1rem;"></i> 
+                                    <span style="font-weight:400; font-size:0.95rem;">${item.text}</span>
+                                </div>
+                                <div class="list-subtitle">
+                                    ${badge} ${disabledWarning} <span style="margin-left:4px;">- ${item.author || 'Unknown'}</span>
+                                </div>
+                            </div>
+                            <div class="list-actions flex-col">
+                                ${isNotice ? `<button class="icon-action" style="color:${toggleColor}; border:1px solid ${isActive?'rgba(16,185,129,0.2)':'rgba(255,255,255,0.1)'};" onclick="QuotesEngine.toggleNotice(${idx})" title="Toggle ON/OFF"><i class="fas ${toggleIcon}"></i></button>` : ''}
+                                <button class="icon-action edit" onclick="QuotesEngine.openModal(${idx})" title="Edit"><i class="fas fa-edit"></i></button>
+                                <button class="icon-action delete" style="color:var(--danger);" onclick="QuotesEngine.deleteEntry(${idx})" title="Delete"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                    count++;
+                });
+
+                if(count === 0) list.innerHTML = `<div class="text-center" style="padding: 40px 20px; color:var(--text-muted);">No entries in this filter.</div>`;
+            },
+
+            toggleStatusUI: () => {
+                const type = document.getElementById('quoteType').value;
+                document.getElementById('noticeStatusDiv').style.display = type === 'notice' ? 'flex' : 'none';
+            },
+
+            openModal: (idx) => {
+                State.editQuoteIndex = idx;
+                if (idx >= 0) {
+                    const item = State.quotesData[idx];
+                    document.getElementById('quoteModalTitle').innerText = "Edit Entry";
+                    document.getElementById('quoteType').value = item.n ? 'notice' : 'quote';
+                    document.getElementById('quoteText').value = item.text || '';
+                    document.getElementById('quoteAuthor').value = item.author || '';
+                    document.getElementById('noticeStatus').value = item.active !== false ? 'active' : 'inactive';
+                } else {
+                    document.getElementById('quoteModalTitle').innerText = "Add New Entry";
+                    document.getElementById('quoteType').value = 'quote';
+                    document.getElementById('quoteText').value = '';
+                    document.getElementById('quoteAuthor').value = '';
+                    document.getElementById('noticeStatus').value = 'active';
+                }
+                QuotesEngine.toggleStatusUI();
+                UI.openModal('quoteModal');
+            },
+
+            saveEntry: async () => {
+                const type = document.getElementById('quoteType').value;
+                const text = document.getElementById('quoteText').value.trim();
+                const author = document.getElementById('quoteAuthor').value.trim();
+                const status = document.getElementById('noticeStatus').value;
+
+                if (!text) return alert("Text cannot be empty!");
+
+                let newObj = { text: text, author: author };
+                if (type === 'notice') {
+                    newObj.n = true;
+                    if (status === 'inactive') newObj.active = false;
+                }
+
+                if (State.editQuoteIndex >= 0) { State.quotesData[State.editQuoteIndex] = newObj; } 
+                else { State.quotesData.unshift(newObj); }
+
+                UI.closeModal('quoteModal');
+                await QuotesEngine.saveToGithub("Saved entry");
+            },
+
+            deleteEntry: async (idx) => {
+                if(!confirm("Delete this entry permanently?")) return;
+                State.quotesData.splice(idx, 1);
+                await QuotesEngine.saveToGithub("Deleted entry");
+            },
+
+            toggleNotice: async (idx) => {
+                let item = State.quotesData[idx];
+                item.active = item.active !== false ? false : true; 
+                
+                const currentTab = document.querySelector('.category-tab.active').id.replace('tab_', '').replace('_only', '').replace('_all', 'all');
+                QuotesEngine.render(currentTab);
+                
+                await QuotesEngine.saveToGithub("Toggled notice status");
+            },
+
+            saveToGithub: async (msgText) => {
+                UI.showLoading("Saving to GitHub...");
+                try {
+                    let exactName = State.quotesFileName || 'Quotes.json';
+                    const res = await API.createOrUpdate(exactName, Utils.b64Encode(JSON.stringify(State.quotesData, null, 2)), msgText, State.quotesSha);
+                    State.quotesSha = res.content.sha;
+                    State.repoFiles = await API.request(''); // Update cache silently
+                    
+                    const currentTab = document.querySelector('.category-tab.active').id.replace('tab_', '').replace('_only', '').replace('_all', 'all');
+                    QuotesEngine.render(currentTab);
+                    
+                    UI.showToast("Saved Successfully!");
+                } catch(e) { alert("Failed to save. Check permissions."); }
+                UI.hideLoading();
+            },
+            
+            editCode: () => {
+                if(State.quotesFileName && State.quotesSha) {
+                    EditorEngine.open(State.quotesFileName, State.quotesSha, false);
+                } else {
+                    alert("File doesn't exist yet. Create a quote/notice first.");
+                }
+            }
         };
 
         // ==========================================
@@ -502,7 +728,10 @@
                     let found = false;
                     if(Array.isArray(State.repoFiles)) {
                         State.repoFiles.forEach(f => {
-                            if(f.type === 'file' && f.name.endsWith('.json') && !f.name.match(/[nq]\d+\.\d+\.json/) && f.name !== 'library.json' && f.name !== 'package.json') {
+                            const lowerName = f.name.toLowerCase();
+                            const isCoreFile = ['library.json', 'package.json', 'quotes.json'].includes(lowerName);
+                            
+                            if(f.type === 'file' && lowerName.endsWith('.json') && !lowerName.match(/[nq]\d+\.\d+\.json/) && !isCoreFile) {
                                 found = true;
                                 list.innerHTML += `
                                     <div class="list-item">
@@ -511,31 +740,26 @@
                                             <div class="list-subtitle">Tap to view chapters</div>
                                         </div>
                                         <div class="list-actions">
-                                            <button class="icon-action delete" onclick="CourseEngine.deleteCourse('${f.path}', '${f.sha}', event)"><i class="fas fa-trash"></i></button>
+                                            <button class="icon-action delete" onclick="CourseEngine.deleteCourse('${f.path}', '${f.sha}', event)"><i class="fas fa-trash" style="color:var(--danger);"></i></button>
                                         </div>
                                     </div>
                                 `;
                             }
                         });
                     }
-                    if(!found) list.innerHTML = `<div class="text-center" style="padding: 40px 20px; color:var(--text-muted);">No courses found. Start by creating one!</div>`;
+                    if(!found) list.innerHTML = `<div class="text-center" style="padding: 40px 20px; color:var(--text-muted);">No courses found. Click + to start!</div>`;
                 } catch(e) {
                     let msg = e.message || String(e);
                     if (msg.includes("Unauthorized") || msg.includes("401")) {
-                        alert("Your PAT token is invalid or expired.");
-                        App.logoutGH();
-                    } else if (msg.includes("404")) {
-                        alert("Repository not found. Ensure the repository name is correct.");
-                        App.logoutGH();
+                        alert("Your PAT token is invalid or expired."); App.logoutGH();
                     } else {
-                        alert(`Connection Error: ${msg}`);
+                        alert(`Network Error: ${msg}`);
                     }
                 } finally {
                     UI.hideLoading();
                 }
             },
 
-            // 🛑 FIXED LOGIC: DIRECT FETCH FOR library.json TO PREVENT HTTP 422
             createCourse: async () => {
                 const title = document.getElementById('newCourseTitle').value.trim();
                 const id = document.getElementById('newCourseId').value.trim().toLowerCase().replace(/\s+/g, '');
@@ -548,24 +772,18 @@
                     await API.createOrUpdate(`${id}.json`, Utils.b64Encode(JSON.stringify(courseJSON, null, 2)), `Created course ${title}`);
                     
                     try {
-                        let libObj = { courses: [] }; 
-                        let libSha = null;
-                        
-                        try {
+                        let libObj = { courses: [] }; let libSha = null;
+                        let existing = State.repoFiles.find(f => f.name === 'library.json');
+                        if(existing) {
                             const libData = await API.request('library.json');
                             libObj = JSON.parse(Utils.b64Decode(libData.content));
                             libSha = libData.sha;
-                        } catch(fetchErr) {
-                            // Valid if it doesn't exist yet
                         }
-                        
                         if(!libObj.courses) libObj.courses = [];
-                        if (!libObj.courses.find(c => c.id === id)) {
-                            libObj.courses.push({ id: id, title: title, category: "general", icon: "📚", badge: "New" });
-                        }
+                        libObj.courses.push({ id: id, title: title, category: "general", icon: "📚", badge: "New" });
                         
                         await API.createOrUpdate('library.json', Utils.b64Encode(JSON.stringify(libObj, null, 2)), `Added ${id}`, libSha);
-                    } catch(err) { console.error(err); alert("Course created, but failed to link to library.json"); }
+                    } catch(err) {}
                     
                     document.getElementById('newCourseTitle').value = '';
                     document.getElementById('newCourseId').value = '';
@@ -601,17 +819,14 @@
                     await API.deleteFile(path, sha, `Deleted course ${path}`);
                     
                     try {
-                        let libData;
-                        try { libData = await API.request('library.json'); } catch(e) { libData = null; }
-                        
-                        if(libData) {
+                        let existing = State.repoFiles.find(f => f.name === 'library.json');
+                        if(existing) {
+                            const libData = await API.request('library.json');
                             let libObj = JSON.parse(Utils.b64Decode(libData.content));
-                            if (libObj.courses) {
-                                libObj.courses = libObj.courses.filter(c => c.id !== path.split('.')[0]);
-                                await API.createOrUpdate('library.json', Utils.b64Encode(JSON.stringify(libObj, null, 2)), `Removed ${path}`, libData.sha);
-                            }
+                            libObj.courses = libObj.courses.filter(c => c.id !== path.split('.')[0]);
+                            await API.createOrUpdate('library.json', Utils.b64Encode(JSON.stringify(libObj, null, 2)), `Removed ${path}`, libData.sha);
                         }
-                    } catch(e){ console.error(e); }
+                    } catch(e){}
                     
                     CourseEngine.loadAll();
                     UI.showToast("Course Deleted!");
@@ -730,13 +945,13 @@
                             <div class="list-item" style="${borderStyle}">
                                 <div class="list-item-content" onclick="${clickAction}">
                                     <div class="list-title"><i class="fas ${icon}" style="color:${color};"></i> ${item.title}</div>
-                                    <div class="list-subtitle">${statusBadge} <span style="opacity:0.5;">•</span> ${item.file}</div>
+                                    <div class="list-subtitle">${statusBadge} <span style="margin-left:6px;">•</span> <span style="margin-left:6px;">${item.file}</span></div>
                                 </div>
                                 <div class="list-actions">
-                                    <button class="icon-action" style="color:${pubColor};" onclick="CourseEngine.togglePublish(${itemIdx})" title="Toggle Publish/Draft"><i class="fas ${pubIcon}"></i></button>
+                                    <button class="icon-action" style="color:${pubColor}; border: 1px solid ${isPub?'rgba(16,185,129,0.3)':'rgba(245,158,11,0.3)'};" onclick="CourseEngine.togglePublish(${itemIdx})" title="Toggle Publish/Draft"><i class="fas ${pubIcon}"></i></button>
                                     ${isEditable ? `<button class="icon-action code" onclick="${clickAction}"><i class="fas fa-edit"></i></button>` : `<button class="icon-action view" onclick="${viewLink}"><i class="fas fa-eye"></i></button>`}
                                     <button class="icon-action replace" onclick="FileManager.triggerReplaceViaFetch('${item.file}')"><i class="fas fa-sync-alt"></i></button>
-                                    <button class="icon-action delete" onclick="CourseEngine.deleteContent(${itemIdx}, '${item.file}')"><i class="fas fa-trash"></i></button>
+                                    <button class="icon-action delete" style="color:var(--danger);" onclick="CourseEngine.deleteContent(${itemIdx}, '${item.file}')"><i class="fas fa-trash"></i></button>
                                 </div>
                             </div>
                         `;
@@ -821,7 +1036,7 @@
                 const item = State.activeCourse.data.chapters[State.activeChapIndex].contents[idx];
                 item.status = item.status === 'published' ? 'draft' : 'published';
                 
-                UI.showLoading(item.status === 'published' ? "Publishing to App..." : "Moving to Drafts...");
+                UI.showLoading(item.status === 'published' ? "Publishing..." : "Moving to Drafts...");
                 try {
                     const res = await API.createOrUpdate(State.activeCourse.path, Utils.b64Encode(JSON.stringify(State.activeCourse.data, null, 2)), `Status update`, State.activeCourse.sha);
                     State.activeCourse.sha = res.content.sha;
@@ -898,6 +1113,12 @@
                 State.fmFolder = category;
                 const list = document.getElementById('fileManagerList');
                 
+                const uploader = document.getElementById('sysFileUploader');
+                if (category === 'images') uploader.setAttribute('accept', 'image/*');
+                else if (category === 'pdfs') uploader.setAttribute('accept', '.pdf');
+                else if (category === 'quizzes' || category === 'notes') uploader.setAttribute('accept', '.json');
+                else uploader.removeAttribute('accept');
+
                 let html = `
                     <div class="flex gap-2" style="margin-bottom:15px;">
                         <button class="btn btn-outline" style="flex:1;" onclick="document.getElementById('sysFileUploader').click()"><i class="fas fa-upload"></i> Upload</button>
@@ -906,11 +1127,19 @@
                 `;
 
                 let filtered = [];
-                if (category === 'images') filtered = State.repoFiles.filter(f => f.name.match(/\.(jpg|jpeg|png|gif|svg)$/i));
-                else if (category === 'pdfs') filtered = State.repoFiles.filter(f => f.name.endsWith('.pdf'));
-                else if (category === 'quizzes') filtered = State.repoFiles.filter(f => f.name.match(/q\d+\.\d+\.json$/));
-                else if (category === 'notes') filtered = State.repoFiles.filter(f => f.name.match(/n\d+\.\d+\.json$/));
-                else if (category === 'system') filtered = State.repoFiles.filter(f => f.name.match(/\.(html|css|js)$/) || ['library.json', 'package.json'].includes(f.name));
+                if (category === 'images') { filtered = State.repoFiles.filter(f => f.name.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i)); } 
+                else if (category === 'pdfs') { filtered = State.repoFiles.filter(f => f.name.match(/\.pdf$/i)); } 
+                else if (category === 'quizzes') { filtered = State.repoFiles.filter(f => f.name.match(/q\d+\.\d+\.json$/i) || f.name.toLowerCase().includes('quiz')); } 
+                else if (category === 'notes') { filtered = State.repoFiles.filter(f => f.name.match(/n\d+\.\d+\.json$/i) || f.name.toLowerCase().includes('note')); } 
+                else if (category === 'system') {
+                    filtered = State.repoFiles.filter(f => {
+                        let isImg = f.name.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i);
+                        let isPdf = f.name.match(/\.pdf$/i);
+                        let isQuiz = f.name.match(/q\d+\.\d+\.json$/i) || f.name.toLowerCase().includes('quiz');
+                        let isNote = f.name.match(/n\d+\.\d+\.json$/i) || f.name.toLowerCase().includes('note');
+                        return !isImg && !isPdf && !isQuiz && !isNote && !['quotes.json'].includes(f.name.toLowerCase());
+                    });
+                }
 
                 if(filtered.length === 0) {
                     list.innerHTML = html + `<div class="text-center" style="padding:20px; color:var(--text-muted);">No files found here.</div>`;
@@ -919,22 +1148,11 @@
                 }
 
                 filtered.forEach(f => {
-                    let ext = Utils.getExt(f.name);
-                    let icon = 'fa-file-code'; let color = 'var(--text-muted)';
-                    
-                    if(ext === 'html') { icon = 'fa-html5'; color = '#e34f26'; }
-                    else if(ext === 'css') { icon = 'fa-css3-alt'; color = '#264de4'; }
-                    else if(ext === 'js') { icon = 'fa-js-square'; color = '#f7df1e'; }
-                    else if(ext === 'json') { icon = 'fa-database'; color = 'var(--primary)'; }
-                    else if(ext === 'pdf') { icon = 'fa-file-pdf'; color = '#f43f5e'; }
-                    else if(['jpg','jpeg','png','gif','svg'].includes(ext)) { icon = 'fa-image'; color = '#10b981'; }
+                    let ext = Utils.getExt(f.name); let icon = 'fa-file-code'; let color = 'var(--text-muted)';
+                    if(ext === 'html') { icon = 'fa-html5'; color = '#e34f26'; } else if(ext === 'css') { icon = 'fa-css3-alt'; color = '#264de4'; } else if(ext === 'js') { icon = 'fa-js-square'; color = '#f7df1e'; } else if(ext === 'json') { icon = 'fa-database'; color = 'var(--primary)'; } else if(ext === 'pdf') { icon = 'fa-file-pdf'; color = '#f43f5e'; } else if(['jpg','jpeg','png','gif','svg','webp'].includes(ext)) { icon = 'fa-image'; color = '#10b981'; }
 
                     const isEditable = ['html','css','js','json'].includes(ext);
-                    
-                    let editAction = `EditorEngine.open('${f.path}', '${f.sha}')`;
-                    let viewRaw = `window.open('https://raw.githubusercontent.com/${State.gh.owner}/${State.gh.repo}/main/${f.path}', '_blank')`;
-                    let viewLive = `window.open('https://${State.gh.owner}.github.io/${State.gh.repo}/${f.path}', '_blank')`;
-                    
+                    let editAction = `EditorEngine.open('${f.path}', '${f.sha}')`; let viewRaw = `window.open('https://raw.githubusercontent.com/${State.gh.owner}/${State.gh.repo}/main/${f.path}', '_blank')`; let viewLive = `window.open('https://${State.gh.owner}.github.io/${State.gh.repo}/${f.path}', '_blank')`;
                     let primaryAction = isEditable ? editAction : (['html', 'pdf'].includes(ext) ? viewLive : viewRaw);
 
                     html += `
@@ -946,117 +1164,100 @@
                             <div class="list-actions">
                                 ${isEditable ? `<button class="icon-action code" onclick="${editAction}" title="Edit"><i class="fas fa-edit"></i></button>` : `<button class="icon-action view" onclick="${['html','pdf'].includes(ext) ? viewLive : viewRaw}" title="View"><i class="fas fa-eye"></i></button>`}
                                 <button class="icon-action replace" onclick="FileManager.triggerReplace('${f.path}', '${f.sha}')" title="Replace"><i class="fas fa-sync-alt"></i></button>
-                                <button class="icon-action delete" onclick="FileManager.deleteFile('${f.path}', '${f.sha}')" title="Delete"><i class="fas fa-trash"></i></button>
+                                <button class="icon-action delete" style="color:var(--danger);" onclick="FileManager.deleteFile('${f.path}', '${f.sha}')" title="Delete"><i class="fas fa-trash"></i></button>
                             </div>
                         </div>
                     `;
                 });
                 
-                list.innerHTML = html;
-                UI.switchView('viewFileManager', 'Folder: ' + category, true);
+                list.innerHTML = html; UI.switchView('viewFileManager', 'Folder: ' + category, true);
             },
 
             createFile: async () => {
-                const name = prompt("Enter filename (e.g. style.css):");
-                if(!name) return;
+                const namePrompt = prompt("Enter filename (e.g. style.css):"); if(!namePrompt) return;
+                let name = namePrompt.replace(/\s+/g, '_');
+                if (State.fmFolder === 'quizzes' && !name.toLowerCase().includes('quiz') && !name.match(/q\d+\.\d+\.json$/i)) name = 'quiz_' + name;
+                if (State.fmFolder === 'notes' && !name.toLowerCase().includes('note') && !name.match(/n\d+\.\d+\.json$/i)) name = 'note_' + name;
+
                 UI.showLoading("Creating file...");
                 try {
                     await API.createOrUpdate(name, Utils.b64Encode(""), `Created ${name}`);
-                    State.repoFiles = await API.request('');
-                    FileManager.renderFolder(State.fmFolder);
-                    UI.showToast("File Created!");
-                } catch(e) {
-                    alert("Failed to create file.");
-                } finally { UI.hideLoading(); }
+                    State.repoFiles = await API.request(''); FileManager.renderFolder(State.fmFolder); UI.showToast("File Created!");
+                } catch(e) { alert("Failed to create file."); UI.hideLoading(); }
             },
 
             deleteFile: async (path, sha) => {
-                if(!confirm(`Permanently delete '${path}'?`)) return;
-                UI.showLoading("Deleting...");
+                if(!confirm(`Permanently delete '${path}'?`)) return; UI.showLoading("Deleting...");
                 try {
                     await API.deleteFile(path, sha, `Deleted ${path}`);
-                    State.repoFiles = await API.request('');
-                    FileManager.renderFolder(State.fmFolder);
-                    UI.showToast("File Deleted!");
-                } catch(e) {
-                    alert("Delete failed.");
-                } finally { UI.hideLoading(); }
+                    State.repoFiles = await API.request(''); FileManager.renderFolder(State.fmFolder); UI.showToast("File Deleted!");
+                } catch(e) { alert("Delete failed."); UI.hideLoading(); }
             },
 
-            triggerReplace: (path, sha) => {
-                document.getElementById('sysReplacePath').value = path;
-                document.getElementById('sysReplaceSha').value = sha;
-                document.getElementById('sysReplaceUploader').click();
-            },
+            triggerReplace: (path, sha) => { document.getElementById('sysReplacePath').value = path; document.getElementById('sysReplaceSha').value = sha; document.getElementById('sysReplaceUploader').click(); },
 
             triggerReplaceViaFetch: async (path) => {
                 UI.showLoading("Fetching Details...");
                 try {
-                    let fileSha = '';
-                    let cached = State.repoFiles.find(f => f.name === path);
-                    if (cached) {
-                        fileSha = cached.sha;
-                    } else {
-                        const data = await API.request(path);
-                        fileSha = data.sha;
-                    }
-                    UI.hideLoading();
-                    FileManager.triggerReplace(path, fileSha);
-                } catch(e) {
-                    UI.hideLoading();
-                    alert("Error fetching file info for replacement.");
-                }
+                    let fileSha = ''; let cached = State.repoFiles.find(f => f.name === path);
+                    if (cached) { fileSha = cached.sha; } else { const data = await API.request(path); fileSha = data.sha; }
+                    UI.hideLoading(); FileManager.triggerReplace(path, fileSha);
+                } catch(e) { UI.hideLoading(); alert("Error fetching file info for replacement."); }
             }
         };
 
         // File Manager Upload Listeners
         document.getElementById('sysFileUploader').addEventListener('change', async (e) => {
-            let file = e.target.files[0]; if (!file) return;
-            let name = prompt("Save as filename:", file.name.replace(/\s+/g, '_'));
-            if(!name) return;
-            
-            UI.showLoading("Uploading...");
-            let reader = new FileReader();
-            reader.onload = async (event) => {
+            let files = e.target.files; if (!files || files.length === 0) return;
+            let isMultiple = files.length > 1;
+            if (isMultiple) { if (!confirm(`Upload ${files.length} files with their original names?`)) { document.getElementById('sysFileUploader').value = ''; return; } }
+
+            UI.showLoading(isMultiple ? `Uploading 1 of ${files.length}...` : "Uploading...");
+            let success = 0;
+
+            for (let i = 0; i < files.length; i++) {
+                let file = files[i]; let name = file.name.replace(/\s+/g, '_');
+                
+                if (State.fmFolder === 'quizzes' && !name.toLowerCase().includes('quiz') && !name.match(/q\d+\.\d+\.json$/i)) { name = 'quiz_' + name; } 
+                else if (State.fmFolder === 'notes' && !name.toLowerCase().includes('note') && !name.match(/n\d+\.\d+\.json$/i)) { name = 'note_' + name; }
+
+                if (!isMultiple) {
+                    let pName = prompt("Save as filename:", name);
+                    if (!pName) continue; name = pName;
+                } else { UI.showLoading(`Uploading ${i+1} of ${files.length}...\n(${name})`); }
+
                 try {
-                    await API.createOrUpdate(name, event.target.result.split(',')[1], `Uploaded ${name}`);
-                    State.repoFiles = await API.request('');
-                    FileManager.renderFolder(State.fmFolder);
-                    UI.showToast("Upload Successful!");
-                } catch(err) {
-                    alert("Upload failed.");
-                }
-                UI.hideLoading();
-                document.getElementById('sysFileUploader').value = ''; 
-            };
-            reader.readAsDataURL(file);
+                    const base64 = await new Promise((resolve, reject) => {
+                        let reader = new FileReader();
+                        reader.onload = ev => { let res = ev.target.result; resolve(res.includes(',') ? res.split(',')[1] : res); };
+                        reader.onerror = ev => reject(ev); reader.readAsDataURL(file);
+                    });
+                    
+                    let sha = null; let existing = State.repoFiles.find(f => f.name === name);
+                    if (existing) { if(isMultiple && !confirm(`File '${name}' already exists. Overwrite?`)) continue; sha = existing.sha; }
+                    await API.createOrUpdate(name, base64, `Uploaded ${name}`, sha); success++;
+                } catch(err) { console.error("Upload failed for " + name); }
+            }
+
+            if (success > 0) {
+                UI.showLoading("Refreshing...");
+                try { State.repoFiles = await API.request(''); if(State.fmFolder) FileManager.renderFolder(State.fmFolder); else FileManager.renderRoot(); UI.showToast(`${success} File(s) Uploaded!`); } catch(e) { alert("Files uploaded, but failed to refresh."); }
+            }
+            UI.hideLoading(); document.getElementById('sysFileUploader').value = ''; 
         });
 
         document.getElementById('sysReplaceUploader').addEventListener('change', async (e) => {
             let file = e.target.files[0]; if (!file) return;
-            const path = document.getElementById('sysReplacePath').value;
-            const sha = document.getElementById('sysReplaceSha').value;
-            
+            const path = document.getElementById('sysReplacePath').value; const sha = document.getElementById('sysReplaceSha').value;
             UI.showLoading("Replacing File...");
             let reader = new FileReader();
             reader.onload = async (event) => {
                 try {
-                    await API.createOrUpdate(path, event.target.result.split(',')[1], `Replaced ${path}`, sha);
-                    State.repoFiles = await API.request('');
-                    
-                    if(State.currentHash === 'contents') {
-                        CourseEngine.renderContents();
-                    } else {
-                        FileManager.renderFolder(State.fmFolder);
-                    }
-                    UI.showToast("File Replaced!");
-                } catch(err) {
-                    alert("Replace failed.");
-                }
-                UI.hideLoading();
-                document.getElementById('sysReplaceUploader').value = '';
-            };
-            reader.readAsDataURL(file);
+                    let base64 = event.target.result; base64 = base64.includes(',') ? base64.split(',')[1] : base64;
+                    await API.createOrUpdate(path, base64, `Replaced ${path}`, sha); State.repoFiles = await API.request('');
+                    if(State.currentHash === 'contents') { CourseEngine.renderContents(); } else { FileManager.renderFolder(State.fmFolder); } UI.showToast("File Replaced!");
+                } catch(err) { alert("Replace failed."); } UI.hideLoading(); document.getElementById('sysReplaceUploader').value = '';
+            }; reader.readAsDataURL(file);
         });
 
         // ==========================================
@@ -1066,61 +1267,35 @@
         const EditorEngine = {
             init: () => {
                 if (typeof ace !== 'undefined') {
-                    aceEditor = ace.edit("aceEditorContainer");
-                    aceEditor.setTheme("ace/theme/twilight");
-                    aceEditor.session.setMode("ace/mode/json");
+                    aceEditor = ace.edit("aceEditorContainer"); aceEditor.setTheme("ace/theme/twilight"); aceEditor.session.setMode("ace/mode/json");
                     aceEditor.setOptions({ fontSize: "14px", showLineNumbers: true, showGutter: true, wrap: true, useWorker: false, scrollPastEnd: 0.8 });
                 }
             },
-
             open: async (path, sha, reloadCourse = false) => {
                 if (path.endsWith('.pdf')) return alert("PDFs cannot be edited here. Use Replace button.");
                 UI.showLoading("Loading Editor...");
                 try {
                     let codeStr = "";
-                    if (!sha) {
-                        const fData = await API.request(path);
-                        sha = fData.sha;
-                        codeStr = Utils.b64Decode(fData.content);
-                    } else {
-                        const fData = await API.request(path);
-                        codeStr = Utils.b64Decode(fData.content);
-                    }
+                    if (!sha) { const fData = await API.request(path); sha = fData.sha; codeStr = Utils.b64Decode(fData.content); } 
+                    else { const fData = await API.request(path); codeStr = Utils.b64Decode(fData.content); }
                     
-                    document.getElementById('editPath').value = path;
-                    document.getElementById('editSha').value = sha;
-                    State.reloadCourseOnSave = reloadCourse;
-                    
-                    State.originalCode = codeStr; // Save state for auto-save diff
+                    document.getElementById('editPath').value = path; document.getElementById('editSha').value = sha; State.reloadCourseOnSave = reloadCourse;
+                    State.originalCode = codeStr; 
                     
                     if (aceEditor) {
                         let ext = Utils.getExt(path);
-                        if(ext === 'html') aceEditor.session.setMode("ace/mode/html");
-                        else if(ext === 'css') aceEditor.session.setMode("ace/mode/css");
-                        else if(ext === 'js') aceEditor.session.setMode("ace/mode/javascript");
-                        else aceEditor.session.setMode("ace/mode/json");
-                        
+                        if(ext === 'html') aceEditor.session.setMode("ace/mode/html"); else if(ext === 'css') aceEditor.session.setMode("ace/mode/css"); else if(ext === 'js') aceEditor.session.setMode("ace/mode/javascript"); else aceEditor.session.setMode("ace/mode/json");
                         aceEditor.setValue(codeStr, -1); 
                     }
 
-                    const tBtn = document.getElementById('editorModeToggle');
-                    const pBtn = document.getElementById('livePreviewBtn');
+                    const tBtn = document.getElementById('editorModeToggle'); const pBtn = document.getElementById('livePreviewBtn');
                     
-                    if (path.match(/q\d+\.\d+\.json$/)) {
-                        State.editorFileType = 'quiz'; tBtn.style.display = 'block'; pBtn.style.display = 'block';
-                        tBtn.innerHTML = '<i class="fas fa-eye"></i> Visual'; State.editorMode = 'visual'; VisualBuilder.syncToVisual();
-                    } else if (path.match(/n\d+\.\d+\.json$/)) {
-                        State.editorFileType = 'notes'; tBtn.style.display = 'block'; pBtn.style.display = 'block';
-                        tBtn.innerHTML = '<i class="fas fa-eye"></i> Visual'; State.editorMode = 'visual'; VisualBuilder.syncToVisual();
-                    } else {
-                        State.editorFileType = null; tBtn.style.display = 'none'; pBtn.style.display = 'none';
-                        State.editorMode = 'code'; EditorEngine.showCodeUI();
-                    }
+                    if (path.match(/q\d+\.\d+\.json$/)) { State.editorFileType = 'quiz'; tBtn.style.display = 'block'; pBtn.style.display = 'block'; tBtn.innerHTML = '<i class="fas fa-eye"></i> Visual'; State.editorMode = 'visual'; VisualBuilder.syncToVisual(); } 
+                    else if (path.match(/n\d+\.\d+\.json$/)) { State.editorFileType = 'notes'; tBtn.style.display = 'block'; pBtn.style.display = 'block'; tBtn.innerHTML = '<i class="fas fa-eye"></i> Visual'; State.editorMode = 'visual'; VisualBuilder.syncToVisual(); } 
+                    else { State.editorFileType = null; tBtn.style.display = 'none'; pBtn.style.display = 'none'; State.editorMode = 'code'; EditorEngine.showCodeUI(); }
                     
                     Nav.push('editor');
-                } catch(e) {
-                    alert(`Load Error. The file may be corrupt or empty.`);
-                } finally { UI.hideLoading(); }
+                } catch(e) { alert(`Load Error. The file may be corrupt or empty.`); } finally { UI.hideLoading(); }
             },
 
             triggerSearch: () => { if(State.editorMode === 'code' && aceEditor) aceEditor.execCommand("find"); },
@@ -1128,75 +1303,37 @@
             jumpToBottom: () => { if(aceEditor) { const ll = aceEditor.session.getLength(); aceEditor.navigateFileEnd(); aceEditor.scrollToLine(ll, true, true, ()=>{}); } },
             
             toggleMode: () => {
-                const tBtn = document.getElementById('editorModeToggle');
-                const pBtn = document.getElementById('livePreviewBtn');
-                if (State.editorMode === 'code') {
-                    if (!VisualBuilder.syncToVisual()) return; 
-                    State.editorMode = 'visual';
-                    tBtn.innerHTML = '<i class="fas fa-code"></i> Code';
-                    pBtn.style.display = 'block';
-                } else {
-                    VisualBuilder.syncToCode();
-                    State.editorMode = 'code';
-                    tBtn.innerHTML = '<i class="fas fa-eye"></i> Visual';
-                    pBtn.style.display = 'none';
-                    EditorEngine.showCodeUI();
-                }
+                const tBtn = document.getElementById('editorModeToggle'); const pBtn = document.getElementById('livePreviewBtn');
+                if (State.editorMode === 'code') { if (!VisualBuilder.syncToVisual()) return; State.editorMode = 'visual'; tBtn.innerHTML = '<i class="fas fa-code"></i> Code'; pBtn.style.display = 'block'; } 
+                else { VisualBuilder.syncToCode(); State.editorMode = 'code'; tBtn.innerHTML = '<i class="fas fa-eye"></i> Visual'; pBtn.style.display = 'none'; EditorEngine.showCodeUI(); }
             },
 
-            showCodeUI: () => {
-                document.getElementById('visualEditorContainer').style.display = 'none';
-                document.getElementById('aceEditorContainer').style.display = 'block';
-                document.getElementById('searchBtn').style.display = 'block';
-                document.getElementById('jumpButtons').style.display = 'flex';
-                if(aceEditor) aceEditor.resize();
-            },
-
-            showVisualUI: () => {
-                document.getElementById('aceEditorContainer').style.display = 'none';
-                document.getElementById('visualEditorContainer').style.display = 'block';
-                document.getElementById('searchBtn').style.display = 'none';
-                document.getElementById('jumpButtons').style.display = 'none';
-                if (window.MathJax) setTimeout(() => MathJax.typesetPromise(), 200);
-            },
+            showCodeUI: () => { document.getElementById('visualEditorContainer').style.display = 'none'; document.getElementById('aceEditorContainer').style.display = 'block'; document.getElementById('searchBtn').style.display = 'block'; document.getElementById('jumpButtons').style.display = 'flex'; if(aceEditor) aceEditor.resize(); },
+            showVisualUI: () => { document.getElementById('aceEditorContainer').style.display = 'none'; document.getElementById('visualEditorContainer').style.display = 'block'; document.getElementById('searchBtn').style.display = 'none'; document.getElementById('jumpButtons').style.display = 'none'; if (window.MathJax) setTimeout(() => MathJax.typesetPromise(), 200); },
 
             save: async (silent = false) => {
-                if (State.editorMode === 'visual') {
-                    VisualBuilder.syncToCode();
-                }
-                
+                if (State.editorMode === 'visual') { VisualBuilder.syncToCode(); }
                 const currentCode = aceEditor ? aceEditor.getValue() : '';
+                if (currentCode === State.originalCode) { if (!silent) UI.showToast("No changes detected."); return; }
                 
-                if (currentCode === State.originalCode) {
-                    if (!silent) UI.showToast("No changes detected.");
-                    return;
-                }
-                
-                if (!silent) UI.showLoading("Saving Changes...");
-                else UI.showToast("Auto-saving draft...");
-
-                const path = document.getElementById('editPath').value;
-                const sha = document.getElementById('editSha').value;
+                if (!silent) UI.showLoading("Saving..."); else UI.showToast("Auto-saving draft...");
+                const path = document.getElementById('editPath').value; const sha = document.getElementById('editSha').value;
                 
                 try {
                     if(path.endsWith('.json')) JSON.parse(currentCode); 
-                    
                     const res = await API.createOrUpdate(path, Utils.b64Encode(currentCode), `Admin edit: ${path}`, sha);
-                    document.getElementById('editSha').value = res.content.sha;
-                    State.originalCode = currentCode; 
+                    document.getElementById('editSha').value = res.content.sha; State.originalCode = currentCode; 
                     
-                    if(State.reloadCourseOnSave) {
-                        State.activeCourse.data = JSON.parse(currentCode);
-                        State.activeCourse.sha = res.content.sha;
-                        CourseEngine.renderChapters();
+                    if(State.reloadCourseOnSave) { State.activeCourse.data = JSON.parse(currentCode); State.activeCourse.sha = res.content.sha; CourseEngine.renderChapters(); }
+                    
+                    if(path.toLowerCase() === 'quotes.json') {
+                         State.quotesSha = res.content.sha;
+                         State.quotesData = JSON.parse(currentCode);
                     }
+
                     if(!silent) UI.showToast("Changes Saved!");
-                } catch(e) {
-                    if(!silent) alert("Save failed! Please check for JSON syntax errors.");
-                    else UI.showToast("Auto-save skipped: Syntax error!");
-                } finally {
-                    if(!silent) UI.hideLoading();
-                }
+                } catch(e) { if(!silent) alert("Save failed! Please check for JSON syntax errors."); else UI.showToast("Auto-save skipped: Syntax error!"); } 
+                finally { if(!silent) UI.hideLoading(); }
             }
         };
 
@@ -1206,74 +1343,40 @@
         const VisualBuilder = {
             syncToVisual: () => {
                 try {
-                    const val = aceEditor ? aceEditor.getValue() : '';
-                    State.visualData = val.trim() === "" ? (State.editorFileType === 'quiz' ? [] : {}) : JSON.parse(val);
-                    if (State.editorFileType === 'quiz') VisualBuilder.buildQuiz();
-                    else if (State.editorFileType === 'notes') VisualBuilder.buildNotes();
-                    EditorEngine.showVisualUI();
-                    return true;
-                } catch(e) {
-                    alert("Syntax errors found in JSON. You must fix them in Code View before switching to Visual Mode.");
-                    return false;
-                }
+                    const val = aceEditor ? aceEditor.getValue() : ''; State.visualData = val.trim() === "" ? (State.editorFileType === 'quiz' ? [] : {}) : JSON.parse(val);
+                    if (State.editorFileType === 'quiz') VisualBuilder.buildQuiz(); else if (State.editorFileType === 'notes') VisualBuilder.buildNotes();
+                    EditorEngine.showVisualUI(); return true;
+                } catch(e) { alert("Syntax errors found in JSON. Fix them in Code View before switching to Visual Mode."); return false; }
             },
-
             syncToCode: () => {
-                if (State.editorFileType === 'quiz') VisualBuilder.extractQuiz();
-                else if (State.editorFileType === 'notes') VisualBuilder.extractNotes();
+                if (State.editorFileType === 'quiz') VisualBuilder.extractQuiz(); else if (State.editorFileType === 'notes') VisualBuilder.extractNotes();
                 if(aceEditor) aceEditor.setValue(JSON.stringify(State.visualData, null, 2), -1);
             },
-
             liveMath: (inputId, prevId) => {
-                const val = document.getElementById(inputId).value;
-                const box = document.getElementById(prevId);
+                const val = document.getElementById(inputId).value; const box = document.getElementById(prevId);
                 if(!val.trim()) { box.innerHTML = '<span style="color:var(--text-muted); font-style:italic;">Preview...</span>'; return; }
-                box.innerHTML = val;
-                clearTimeout(State.mathTimeout);
-                State.mathTimeout = setTimeout(() => {
-                    if(window.MathJax) MathJax.typesetPromise([box]).catch(e => console.log(e));
-                }, 600);
+                box.innerHTML = val; clearTimeout(State.mathTimeout);
+                State.mathTimeout = setTimeout(() => { if(window.MathJax) MathJax.typesetPromise([box]).catch(e => console.log(e)); }, 600);
             },
-
             buildQuiz: () => {
-                const c = document.getElementById('visualContentArea');
-                c.innerHTML = `<h3 style="margin-bottom: 20px; color: var(--primary);"><i class="fas fa-brain"></i> Quiz Builder</h3>`;
-                
+                const c = document.getElementById('visualContentArea'); c.innerHTML = `<h3 style="margin-bottom: 20px; color: var(--primary);"><i class="fas fa-brain"></i> Quiz Builder</h3>`;
                 if(!Array.isArray(State.visualData)) State.visualData = [];
                 
                 State.visualData.forEach((q, i) => {
                     c.innerHTML += `
                         <div class="visual-card" id="qCard_${i}">
-                            <div class="flex justify-between items-center" style="margin-bottom:15px;">
-                                <h4>Question ${i+1}</h4>
-                                <button class="v-del-btn" onclick="VisualBuilder.deleteItem(${i})"><i class="fas fa-trash"></i></button>
-                            </div>
-                            
-                            <div class="flex justify-between items-center">
-                                <label class="v-label">Question Text</label>
-                                <button class="v-img-btn" onclick="MediaEngine.openUploader('vq_${i}')"><i class="fas fa-image"></i> Image</button>
-                            </div>
+                            <div class="flex justify-between items-center" style="margin-bottom:15px;"><h4>Question ${i+1}</h4><button class="v-del-btn" onclick="VisualBuilder.deleteItem(${i})"><i class="fas fa-trash"></i></button></div>
+                            <div class="flex justify-between items-center"><label class="v-label">Question Text</label><button class="v-img-btn" onclick="MediaEngine.openUploader('vq_${i}')"><i class="fas fa-image"></i> Image</button></div>
                             <textarea class="v-textarea" id="vq_${i}" oninput="VisualBuilder.liveMath('vq_${i}', 'vqp_${i}')">${q.question || ''}</textarea>
                             ${MediaEngine.renderInBlockImages(q.question, `vq_${i}`)}
                             <div class="v-preview-box" id="vqp_${i}">${q.question || '...'}</div>
-                            
                             <div class="flex gap-2">
                                 <div style="flex:1;"><label class="v-label">Opt A</label><input class="v-input" id="vo_${i}_0" value="${q.options?.[0] || ''}"><label class="v-label">Opt B</label><input class="v-input" id="vo_${i}_1" value="${q.options?.[1] || ''}"></div>
                                 <div style="flex:1;"><label class="v-label">Opt C</label><input class="v-input" id="vo_${i}_2" value="${q.options?.[2] || ''}"><label class="v-label">Opt D</label><input class="v-input" id="vo_${i}_3" value="${q.options?.[3] || ''}"></div>
                             </div>
-                            
                             <label class="v-label" style="margin-top:10px;">Correct Answer</label>
-                            <select class="v-select" id="vc_${i}">
-                                <option value="0" ${q.correctIndex===0?'selected':''}>Option A</option>
-                                <option value="1" ${q.correctIndex===1?'selected':''}>Option B</option>
-                                <option value="2" ${q.correctIndex===2?'selected':''}>Option C</option>
-                                <option value="3" ${q.correctIndex===3?'selected':''}>Option D</option>
-                            </select>
-
-                            <div class="flex justify-between items-center">
-                                <label class="v-label">Explanation</label>
-                                <button class="v-img-btn" onclick="MediaEngine.openUploader('ve_${i}')"><i class="fas fa-image"></i> Image</button>
-                            </div>
+                            <select class="v-select" id="vc_${i}"><option value="0" ${q.correctIndex===0?'selected':''}>Option A</option><option value="1" ${q.correctIndex===1?'selected':''}>Option B</option><option value="2" ${q.correctIndex===2?'selected':''}>Option C</option><option value="3" ${q.correctIndex===3?'selected':''}>Option D</option></select>
+                            <div class="flex justify-between items-center"><label class="v-label">Explanation</label><button class="v-img-btn" onclick="MediaEngine.openUploader('ve_${i}')"><i class="fas fa-image"></i> Image</button></div>
                             <textarea class="v-textarea" id="ve_${i}" oninput="VisualBuilder.liveMath('ve_${i}', 'vep_${i}')">${q.explanation || ''}</textarea>
                             ${MediaEngine.renderInBlockImages(q.explanation, `ve_${i}`)}
                             <div class="v-preview-box" id="vep_${i}">${q.explanation || '...'}</div>
@@ -1283,68 +1386,34 @@
                 c.innerHTML += `<button class="btn btn-outline" style="width:100%; border-style:dashed;" onclick="VisualBuilder.addQuizItem()"><i class="fas fa-plus"></i> Add Question</button>`;
                 if(window.MathJax) setTimeout(() => MathJax.typesetPromise(), 200);
             },
-
             extractQuiz: () => {
                 let n = [];
                 for (let i = 0; i < State.visualData.length; i++) {
                     if(!document.getElementById(`qCard_${i}`)) continue;
-                    n.push({
-                        question: document.getElementById(`vq_${i}`).value,
-                        options: [
-                            document.getElementById(`vo_${i}_0`).value,
-                            document.getElementById(`vo_${i}_1`).value,
-                            document.getElementById(`vo_${i}_2`).value,
-                            document.getElementById(`vo_${i}_3`).value
-                        ],
-                        correctIndex: parseInt(document.getElementById(`vc_${i}`).value),
-                        explanation: document.getElementById(`ve_${i}`).value
-                    });
-                }
-                State.visualData = n;
+                    n.push({ question: document.getElementById(`vq_${i}`).value, options: [ document.getElementById(`vo_${i}_0`).value, document.getElementById(`vo_${i}_1`).value, document.getElementById(`vo_${i}_2`).value, document.getElementById(`vo_${i}_3`).value ], correctIndex: parseInt(document.getElementById(`vc_${i}`).value), explanation: document.getElementById(`ve_${i}`).value });
+                } State.visualData = n;
             },
-
-            addQuizItem: () => {
-                VisualBuilder.extractQuiz();
-                State.visualData.push({ question: "", options: ["", "", "", ""], correctIndex: 0, explanation: "" });
-                VisualBuilder.buildQuiz();
-            },
-
+            addQuizItem: () => { VisualBuilder.extractQuiz(); State.visualData.push({ question: "", options: ["", "", "", ""], correctIndex: 0, explanation: "" }); VisualBuilder.buildQuiz(); },
             buildNotes: () => {
-                const c = document.getElementById('visualContentArea');
-                c.innerHTML = `<h3 style="margin-bottom: 20px; color: var(--info);"><i class="fas fa-book-open"></i> Notes Builder</h3>`;
-                
-                if(!State.visualData) State.visualData = {};
-                if(!State.visualData.blocks) State.visualData.blocks = [];
-                
+                const c = document.getElementById('visualContentArea'); c.innerHTML = `<h3 style="margin-bottom: 20px; color: var(--info);"><i class="fas fa-book-open"></i> Notes Builder</h3>`;
+                if(!State.visualData) State.visualData = {}; if(!State.visualData.blocks) State.visualData.blocks = [];
                 c.innerHTML += `
                     <div style="margin-bottom:25px; border-bottom:1px solid var(--border); padding-bottom:15px;">
-                        <label class="v-label">Main Title</label>
-                        <input class="v-input" id="vn_title" value="${State.visualData.title || ''}">
-                        <label class="v-label">Sub-Topic / Chapter</label>
-                        <input class="v-input" id="vn_topic" value="${State.visualData.topic || ''}">
-                    </div>
-                    <div id="blocksContainer"></div>
+                        <label class="v-label">Main Title</label><input class="v-input" id="vn_title" value="${State.visualData.title || ''}">
+                        <label class="v-label">Sub-Topic / Chapter</label><input class="v-input" id="vn_topic" value="${State.visualData.topic || ''}">
+                    </div><div id="blocksContainer"></div>
                 `;
-
                 let html = '';
                 State.visualData.blocks.forEach((b, i) => {
                     html += `
                         <div class="visual-card" id="bCard_${i}" style="padding: 15px;">
                             <div class="flex justify-between items-center" style="margin-bottom:10px;">
-                                <select class="v-select" id="bType_${i}" style="margin:0; width:150px;">
-                                    <option value="h1" ${b.type==='h1'?'selected':''}>Heading 1</option>
-                                    <option value="h2" ${b.type==='h2'?'selected':''}>Heading 2</option>
-                                    <option value="paragraph" ${b.type==='paragraph'?'selected':''}>Paragraph</option>
-                                    <option value="callout" ${b.type==='callout'?'selected':''}>Callout Box</option>
-                                </select>
+                                <select class="v-select" id="bType_${i}" style="margin:0; width:150px;"><option value="h1" ${b.type==='h1'?'selected':''}>Heading 1</option><option value="h2" ${b.type==='h2'?'selected':''}>Heading 2</option><option value="paragraph" ${b.type==='paragraph'?'selected':''}>Paragraph</option><option value="callout" ${b.type==='callout'?'selected':''}>Callout Box</option></select>
                                 <button class="v-del-btn" onclick="VisualBuilder.deleteItem(${i})" style="margin:0;"><i class="fas fa-trash"></i></button>
                             </div>
-                            
                             <div class="flex justify-between items-center" style="margin-bottom:5px;">
-                                <span style="font-size:0.8rem; color:var(--text-muted);">Block ${i+1}</span>
-                                <button class="v-img-btn" onclick="MediaEngine.openUploader('bContent_${i}')"><i class="fas fa-image"></i> Media</button>
+                                <span style="font-size:0.8rem; color:var(--text-muted);">Block ${i+1}</span><button class="v-img-btn" onclick="MediaEngine.openUploader('bContent_${i}')"><i class="fas fa-image"></i> Media</button>
                             </div>
-                            
                             <textarea class="v-textarea" id="bContent_${i}" style="margin-bottom:5px;" oninput="VisualBuilder.liveMath('bContent_${i}', 'bContentp_${i}')">${b.content || ''}</textarea>
                             ${MediaEngine.renderInBlockImages(b.content, `bContent_${i}`)}
                             <div class="v-preview-box" id="bContentp_${i}">${b.content || '...'}</div>
@@ -1355,39 +1424,20 @@
                 c.innerHTML += `<button class="btn btn-outline" style="width:100%; border-style:dashed;" onclick="VisualBuilder.addNoteBlock()"><i class="fas fa-plus"></i> Add Block</button>`;
                 if(window.MathJax) setTimeout(() => MathJax.typesetPromise(), 200);
             },
-
             extractNotes: () => {
                 let nb = [];
-                for (let i = 0; i < State.visualData.blocks.length; i++) {
+                for (let i = 0; i < State.visualData.length; i++) {
                     if(!document.getElementById(`bCard_${i}`)) continue;
-                    let t = document.getElementById(`bType_${i}`).value;
-                    let c = document.getElementById(`bContent_${i}`).value;
-                    let obj = { type: t, content: c };
-                    if (t === 'callout') { obj.style = "info"; obj.icon = "fas fa-info-circle"; }
-                    nb.push(obj);
+                    let t = document.getElementById(`bType_${i}`).value; let c = document.getElementById(`bContent_${i}`).value;
+                    let obj = { type: t, content: c }; if (t === 'callout') { obj.style = "info"; obj.icon = "fas fa-info-circle"; } nb.push(obj);
                 }
-                State.visualData.title = document.getElementById('vn_title').value;
-                State.visualData.topic = document.getElementById('vn_topic').value;
-                State.visualData.blocks = nb;
+                State.visualData.title = document.getElementById('vn_title').value; State.visualData.topic = document.getElementById('vn_topic').value; State.visualData.blocks = nb;
             },
-
-            addNoteBlock: () => {
-                VisualBuilder.extractNotes();
-                State.visualData.blocks.push({ type: "paragraph", content: "" });
-                VisualBuilder.buildNotes();
-            },
-
+            addNoteBlock: () => { VisualBuilder.extractNotes(); State.visualData.blocks.push({ type: "paragraph", content: "" }); VisualBuilder.buildNotes(); },
             deleteItem: (idx) => {
                 if(!confirm("Remove item?")) return;
-                if (State.editorFileType === 'quiz') {
-                    VisualBuilder.extractQuiz();
-                    State.visualData.splice(idx, 1);
-                    VisualBuilder.buildQuiz();
-                } else {
-                    VisualBuilder.extractNotes();
-                    State.visualData.blocks.splice(idx, 1);
-                    VisualBuilder.buildNotes();
-                }
+                if (State.editorFileType === 'quiz') { VisualBuilder.extractQuiz(); State.visualData.splice(idx, 1); VisualBuilder.buildQuiz(); } 
+                else { VisualBuilder.extractNotes(); State.visualData.blocks.splice(idx, 1); VisualBuilder.buildNotes(); }
             }
         };
 
@@ -1396,10 +1446,8 @@
         // ==========================================
         const MediaEngine = {
             renderInBlockImages: (text, targetId) => {
-                if(!text) return '';
-                const matches = [...new Set(text.match(/img_\d+\.(?:jpg|jpeg|png|gif|svg)/gi) || [])];
+                if(!text) return ''; const matches = [...new Set(text.match(/img_\d+\.(?:jpg|jpeg|png|gif|svg)/gi) || [])];
                 if(matches.length === 0) return '';
-                
                 let html = `<div class="inblock-media-row">`;
                 matches.forEach(img => {
                     let url = `https://raw.githubusercontent.com/${State.gh.owner}/${State.gh.repo}/main/${img}?t=${Date.now()}`;
@@ -1412,85 +1460,39 @@
                             </div>
                         </div>
                     `;
-                });
-                return html + `</div>`;
+                }); return html + `</div>`;
             },
-
             deleteImage: async (imgName, targetId) => {
-                if(!confirm(`Delete image permanently from GitHub?`)) return;
-                UI.showLoading("Deleting Media...");
+                if(!confirm(`Delete image permanently from GitHub?`)) return; UI.showLoading("Deleting Media...");
                 try {
-                    try {
-                        const fd = await API.request(imgName);
-                        await API.deleteFile(imgName, fd.sha, "Del Media");
-                    } catch(e) {}
-                    
-                    let tArea = document.getElementById(targetId);
-                    let v = tArea.value;
+                    try { const fd = await API.request(imgName); await API.deleteFile(imgName, fd.sha, "Del Media"); } catch(e) {}
+                    let tArea = document.getElementById(targetId); let v = tArea.value;
                     v = v.replace(new RegExp(`(?:<br>\\s*)?<img[^>]*src=["'][^"']*${imgName}[^"']*["'][^>]*>(?:\\s*<br>)?`, 'g'), '');
-                    v = v.replace(new RegExp(imgName, 'g'), ''); 
-                    tArea.value = v;
-                    
-                    if(State.editorFileType === 'quiz') { VisualBuilder.extractQuiz(); VisualBuilder.buildQuiz(); }
-                    else { VisualBuilder.extractNotes(); VisualBuilder.buildNotes(); }
-                    
+                    v = v.replace(new RegExp(imgName, 'g'), ''); tArea.value = v;
+                    if(State.editorFileType === 'quiz') { VisualBuilder.extractQuiz(); VisualBuilder.buildQuiz(); } else { VisualBuilder.extractNotes(); VisualBuilder.buildNotes(); }
                     UI.showToast("Media Deleted!");
-                } catch(e) {
-                    alert("Failed to delete.");
-                }
-                UI.hideLoading();
+                } catch(e) { alert("Failed to delete."); } UI.hideLoading();
             },
-
-            openUploader: (targetId) => {
-                document.getElementById('visualTargetId').value = targetId;
-                document.getElementById('visualImgUploader').click();
-            }
+            openUploader: (targetId) => { document.getElementById('visualTargetId').value = targetId; document.getElementById('visualImgUploader').click(); }
         };
 
         document.getElementById('visualImgUploader').addEventListener('change', async (e) => {
-            let f = e.target.files[0]; if (!f) return;
-            UI.showLoading("Uploading Media...");
-            
+            let f = e.target.files[0]; if (!f) return; UI.showLoading("Uploading Media...");
             let reader = new FileReader();
             reader.onload = async (event) => {
                 try {
-                    let b64 = event.target.result.split(',')[1];
-                    let ext = Utils.getExt(f.name);
-                    let nFile = `img_${Date.now()}.${ext}`;
-                    
+                    let b64 = event.target.result.split(',')[1]; let ext = Utils.getExt(f.name); let nFile = `img_${Date.now()}.${ext}`;
                     await API.createOrUpdate(nFile, b64, `Upload media`);
-                    
-                    let inst = document.getElementById('visualTargetId').value; 
-                    let imgUrl = `https://raw.githubusercontent.com/${State.gh.owner}/${State.gh.repo}/main/${nFile}?t=${Date.now()}`;
-                    
+                    let inst = document.getElementById('visualTargetId').value; let imgUrl = `https://raw.githubusercontent.com/${State.gh.owner}/${State.gh.repo}/main/${nFile}?t=${Date.now()}`;
                     if(inst.startsWith('INBLOCK_SWAP:')) {
-                        let p = inst.split(':');
-                        let tId = p[1];
-                        let oldImg = p[2];
-                        
-                        try {
-                            const od = await API.request(oldImg);
-                            await API.deleteFile(oldImg, od.sha, "Del old");
-                        } catch(err) {}
-                        
-                        let ta = document.getElementById(tId);
-                        ta.value = ta.value.replace(new RegExp(oldImg + '(\\?t=\\d+)?', 'g'), nFile + `?t=${Date.now()}`);
-                    } else {
-                        let ta = document.getElementById(inst);
-                        ta.value += ` <br><img src="${imgUrl}" style="max-width:100%; border-radius:8px;"> <br>`;
-                    }
-                    
-                    if(State.editorFileType === 'quiz') { VisualBuilder.extractQuiz(); VisualBuilder.buildQuiz(); }
-                    else { VisualBuilder.extractNotes(); VisualBuilder.buildNotes(); }
-                    
+                        let p = inst.split(':'); let tId = p[1]; let oldImg = p[2];
+                        try { const od = await API.request(oldImg); await API.deleteFile(oldImg, od.sha, "Del old"); } catch(err) {}
+                        let ta = document.getElementById(tId); ta.value = ta.value.replace(new RegExp(oldImg + '(\\?t=\\d+)?', 'g'), nFile + `?t=${Date.now()}`);
+                    } else { let ta = document.getElementById(inst); ta.value += ` <br><img src="${imgUrl}" style="max-width:100%; border-radius:8px;"> <br>`; }
+                    if(State.editorFileType === 'quiz') { VisualBuilder.extractQuiz(); VisualBuilder.buildQuiz(); } else { VisualBuilder.extractNotes(); VisualBuilder.buildNotes(); }
                     UI.showToast("Media Saved!");
-                } catch(err) {
-                    alert("Media upload error.");
-                }
-                UI.hideLoading();
-                document.getElementById('visualImgUploader').value = ''; 
-            };
-            reader.readAsDataURL(f);
+                } catch(err) { alert("Media upload error."); } UI.hideLoading(); document.getElementById('visualImgUploader').value = ''; 
+            }; reader.readAsDataURL(f);
         });
 
         // ==========================================
@@ -1498,20 +1500,14 @@
         // ==========================================
         const PreviewEngine = {
             open: () => {
-                if (State.editorFileType === 'quiz') VisualBuilder.extractQuiz();
-                else if (State.editorFileType === 'notes') VisualBuilder.extractNotes();
-                
-                const m = document.getElementById('livePreviewModal');
-                const c = document.getElementById('mockupContentArea');
-                let h = '';
-                
+                if (State.editorFileType === 'quiz') VisualBuilder.extractQuiz(); else if (State.editorFileType === 'notes') VisualBuilder.extractNotes();
+                const m = document.getElementById('livePreviewModal'); const c = document.getElementById('mockupContentArea'); let h = '';
                 if (State.editorFileType === 'quiz') {
                     h += `<div class="text-center" style="color:var(--primary); margin-bottom:20px; font-weight:600;"><i class="fas fa-brain"></i> Quiz UI</div>`;
                     State.visualData.forEach((q, i) => {
                         h += `<div style="margin-bottom:30px;"><strong>Q${i+1}.</strong> <div style="margin-bottom:15px; font-size:1.1rem; font-weight:600;">${q.question || ''}</div>`;
                         ['A','B','C','D'].forEach((lbl, oIdx) => {
-                            let ic = q.correctIndex === oIdx ? 'm-correct' : '';
-                            let check = q.correctIndex === oIdx ? '<i class="fas fa-check-circle" style="float:right;"></i>' : '';
+                            let ic = q.correctIndex === oIdx ? 'm-correct' : ''; let check = q.correctIndex === oIdx ? '<i class="fas fa-check-circle" style="float:right;"></i>' : '';
                             h += `<div class="m-option ${ic}"><strong>${lbl}.</strong> <div style="flex:1;">${q.options?.[oIdx]||''}</div> ${check}</div>`;
                         });
                         if(q.explanation) h += `<div class="m-callout" style="font-size:0.85rem;"><strong style="display:block; margin-bottom:5px;"><i class="fas fa-lightbulb"></i> Explanation</strong>${q.explanation}</div>`;
@@ -1521,25 +1517,16 @@
                     if(State.visualData.topic) h += `<div style="color:var(--primary); font-weight:700; text-transform:uppercase; font-size:0.8rem; margin-bottom:5px;">${State.visualData.topic}</div>`;
                     if(State.visualData.title) h += `<h1>${State.visualData.title}</h1>`;
                     (State.visualData.blocks || []).forEach(b => {
-                        if (b.type === 'h1') h += `<h1>${b.content}</h1>`;
-                        else if (b.type === 'h2') h += `<h2>${b.content}</h2>`;
-                        else if (b.type === 'paragraph') h += `<p style="margin-bottom:15px;">${b.content}</p>`;
-                        else if (b.type === 'callout') h += `<div class="m-callout"><strong><i class="fas fa-info-circle"></i> Info</strong><br>${b.content}</div>`;
+                        if (b.type === 'h1') h += `<h1>${b.content}</h1>`; else if (b.type === 'h2') h += `<h2>${b.content}</h2>`;
+                        else if (b.type === 'paragraph') h += `<p style="margin-bottom:15px;">${b.content}</p>`; else if (b.type === 'callout') h += `<div class="m-callout"><strong><i class="fas fa-info-circle"></i> Info</strong><br>${b.content}</div>`;
                     });
                 }
-                
-                c.innerHTML = h;
-                Nav.push('preview'); 
-                if(window.MathJax) MathJax.typesetPromise([c]).catch(e=>console.log(e));
-            },
-            close: () => {
-                window.history.back();
+                c.innerHTML = h; Nav.push('preview'); if(window.MathJax) MathJax.typesetPromise([c]).catch(e=>console.log(e));
             }
         };
 
         // BOOT THE APP
         window.onload = App.init;
-
     </script>
 </body>
 </html>
