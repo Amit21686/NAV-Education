@@ -7,6 +7,7 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     
@@ -34,15 +35,17 @@
         .brand h1 { font-size: 1.6rem; font-weight: 600; }
         .brand h1 span { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        .icon-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; cursor: pointer; color: var(--text); overflow: hidden; transition: 0.2s;}
+        .icon-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; cursor: pointer; color: var(--text); overflow: hidden; transition: 0.2s; backdrop-filter: blur(10px);}
         .icon-btn:active { transform: scale(0.95); border-color: var(--primary); }
 
-        .welcome-card { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--radius-xl); padding: 24px; color: white; margin-bottom: 20px; }
+        .welcome-card { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--radius-xl); padding: 24px; color: white; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(99,102,241,0.2);}
         .search-wrapper { position: relative; width: 100%; margin-top: 14px; }
         .search-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.7); }
-        .library-search-input { width: 100%; padding: 12px 16px 12px 44px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 40px; color: white; font-size: 0.9rem; backdrop-filter: blur(10px); outline: none;}
+        .library-search-input { width: 100%; padding: 12px 16px 12px 44px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 40px; color: white; font-size: 0.9rem; backdrop-filter: blur(10px); outline: none; transition: 0.3s;}
+        .library-search-input:focus { background: rgba(255,255,255,0.25); border-color: white;}
         .library-search-input::placeholder { color: rgba(255,255,255,0.7); }
         
+        /* Categories */
         .category-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 14px; scrollbar-width: none; }
         .category-tabs::-webkit-scrollbar { display: none; }
         .category-tab { padding: 8px 18px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 40px; font-size: 0.85rem; white-space: nowrap; cursor: pointer; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; transition: 0.2s; }
@@ -59,7 +62,7 @@
         .course-icon { width: 50px; height: 50px; background: rgba(99,102,241,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0;}
         .course-info { flex: 1; }
         .course-title { font-weight: 600; font-size: 1rem; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-        .course-badge { font-size: 0.6rem; padding: 2px 8px; border-radius: 20px; background: var(--primary); color: white; }
+        .course-badge { font-size: 0.6rem; padding: 2px 8px; border-radius: 20px; background: var(--primary); color: white; border: 1px solid rgba(255,255,255,0.1);}
         .course-badge.success { background: var(--success); }
         .course-meta { display: flex; gap: 12px; font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
         
@@ -71,6 +74,9 @@
         .course-tags { display: flex; gap: 6px; flex-wrap: wrap; }
         .course-tag { font-size: 0.6rem; padding: 2px 8px; background: var(--bg); border-radius: 20px; border: 1px solid var(--border); }
         .course-action { color: var(--primary); font-size: 0.8rem; display: flex; align-items: center; gap: 4px; font-weight: 500; }
+
+        /* Empty State */
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); background: var(--bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--border); }
 
         /* Magic Navigation */
         .nav-wrapper { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 350px; height: 70px; z-index: 1000; }
@@ -85,13 +91,18 @@
         .list.active a { opacity: 0; transform: translateY(-20px); }
         @media (max-width: 400px) { .nav-wrapper { width: 320px; } .circle { width: 55px; height: 55px; top: -10px; left: 2px; } .circle ion-icon { font-size: 1.5rem; } }
 
-        /* Overlays */
+        /* Overlays & Spinners */
         .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-card); backdrop-filter: blur(20px); color: var(--text); padding: 10px 20px; border-radius: 40px; font-size: 0.85rem; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; opacity: 0; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 30000; display: none; align-items: center; justify-content: center; }
         .loading-overlay.active { display: flex; }
         .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        body.light-theme .library-search-input { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); color: var(--text-light); }
+        body.light-theme .library-search-input:focus { border-color: var(--primary); }
+        body.light-theme .library-search-input::placeholder { color: rgba(0,0,0,0.5); }
+        body.light-theme .search-wrapper i { color: rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
@@ -100,11 +111,9 @@
     <div class="container">
         <header class="app-header">
             <div class="brand"><h1>NAV <span>Education</span></h1></div>
-            <div style="display: flex; gap: 8px;">
-                <div class="icon-btn" onclick="window.location.href='profile.html'">
-                    <img id="headerAvatar" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
-                    <span id="headerFallback"><i class="fas fa-user"></i></span>
-                </div>
+            <div class="icon-btn" onclick="window.location.href='profile.html'">
+                <img id="headerAvatar" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
+                <span id="headerFallback"><i class="fas fa-user"></i></span>
             </div>
         </header>
 
@@ -146,10 +155,12 @@
     <div id="toastContainer" class="toast"></div>
 
     <script>
-        // CONFIGURATION: Replace these with your actual GitHub details
+        // ==============================================================
+        // CORE CONFIGURATION - Ensure this matches your GitHub exactly
+        // ==============================================================
         const GITHUB_USERNAME = "AMITKUMAR-X7X"; 
         const GITHUB_REPO = "nav-files"; 
-        const BRANCH = "main"; // Or "master"
+        const BRANCH = "main"; // Or "master" based on your setup
 
         function showToast(msg) {
             const toast = document.getElementById('toastContainer');
@@ -158,7 +169,7 @@
             setTimeout(() => toast.classList.remove('show'), 2000);
         }
 
-        // ==================== THEME & AVATAR ====================
+        // ==================== THEME & PROFILE ====================
         function applyTheme() {
             if (localStorage.getItem('nav_darkMode') === 'false') document.body.classList.add('light-theme');
             const accent = localStorage.getItem('nav_accentColor');
@@ -178,69 +189,71 @@
             }
         }
 
-        // ==================== FETCH LIVE GITHUB DATA ====================
+        // ==================== DATA FETCHING ENGINE ====================
         async function loadLibraryData() {
-            let data = null;
-            let success = false;
+            // Direct fetching from raw.githubusercontent avoids all CORS and authentication blocks.
+            // The ?t=Date.now() query ensures we bypass caching to see real-time updates.
+            const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/${BRANCH}/library.json?t=${Date.now()}`;
             
-            // SMART FETCHER: It checks both 'main' and 'master' branches automatically
-            const branchesToTry = [BRANCH, "master", "main"];
-
-            for (let b of new Set(branchesToTry)) {
-                try {
-                    const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/${b}/library.json?t=${Date.now()}`;
-                    const response = await fetch(rawUrl);
-                    if (response.ok) {
-                        data = await response.json();
-                        success = true;
-                        break; 
-                    }
-                } catch(e) {
-                    console.log(`Checking branch ${b}...`);
+            try {
+                const response = await fetch(rawUrl);
+                
+                if (!response.ok) {
+                    throw new Error("File not found or private repository.");
                 }
-            }
-
-            // If fetched successfully and has courses
-            if (success && data && data.courses && data.courses.length > 0) {
-                renderCategories(data.courses);
-                renderLibrary(data);
-            } else {
-                // If the file doesn't exist, show empty state instead of error
-                renderEmptyState();
-                console.log("No courses found. Create one in the Admin portal.");
+                
+                const data = await response.json();
+                
+                // Validate if data is properly structured
+                if (!data || !data.courses || data.courses.length === 0) {
+                    renderEmptyState();
+                } else {
+                    renderCategories(data.courses);
+                    renderLibrary(data);
+                }
+            } catch(e) {
+                console.warn("Library Fetch Error (Safe to ignore if repo is new):", e);
+                renderEmptyState(); // Show clean empty state instead of crashing
+            } finally {
+                // Ensure spinner is removed
+                setTimeout(() => document.getElementById('loadingOverlay').classList.remove('active'), 300);
             }
         }
 
         function renderEmptyState() {
             const container = document.getElementById('coursesContainer');
             container.innerHTML = `
-                <div style="text-align: center; padding: 40px 20px; color: var(--text-muted); background: var(--bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--border);">
+                <div class="empty-state">
                     <i class="fas fa-box-open" style="font-size: 2.5rem; margin-bottom: 15px; opacity: 0.5;"></i>
-                    <p style="font-size: 0.9rem;">No courses available in your library yet.</p>
+                    <p style="font-size: 0.9rem;">Your library is currently empty. Courses published from the Admin Portal will appear here.</p>
                 </div>
             `;
             document.getElementById('courseCount').textContent = `0 courses`;
             
+            // Keep at least the 'All' tab visible
             const tabsContainer = document.getElementById('categoryTabs');
             tabsContainer.innerHTML = `<div class="category-tab active" data-category="all"><i class="fas fa-th-large"></i> All</div>`;
         }
 
+        // Build Tabs based on the categories found in library.json
         function renderCategories(courses) {
             const tabsContainer = document.getElementById('categoryTabs');
-            const categories = [...new Set(courses.map(c => c.category || 'general'))];
+            
+            // Extract unique categories safely
+            const categories = [...new Set(courses.map(c => (c.category ? c.category.toLowerCase() : 'general')))];
             
             let tabsHtml = `<div class="category-tab active" data-category="all" onclick="filterCategory('all', this)"><i class="fas fa-th-large"></i> All</div>`;
             
             categories.forEach(cat => {
                 let icon = "fa-folder";
-                let catLower = cat.toLowerCase();
-                if(catLower.includes('sci')) icon = "fa-flask";
-                else if(catLower.includes('math')) icon = "fa-square-root-alt";
-                else if(catLower.includes('hist')) icon = "fa-landmark";
-                else if(catLower.includes('lang') || catLower.includes('eng')) icon = "fa-language";
+                if(cat.includes('sci')) icon = "fa-flask";
+                else if(cat.includes('math')) icon = "fa-square-root-alt";
+                else if(cat.includes('hist')) icon = "fa-landmark";
+                else if(cat.includes('lang') || cat.includes('eng')) icon = "fa-language";
+                else if(cat.includes('design')) icon = "fa-paint-brush";
                 
                 let label = cat.charAt(0).toUpperCase() + cat.slice(1);
-                tabsHtml += `<div class="category-tab" data-category="${catLower}" onclick="filterCategory('${catLower}', this)"><i class="fas ${icon}"></i> ${label}</div>`;
+                tabsHtml += `<div class="category-tab" data-category="${cat}" onclick="filterCategory('${cat}', this)"><i class="fas ${icon}"></i> ${label}</div>`;
             });
             
             tabsContainer.innerHTML = tabsHtml;
@@ -250,6 +263,7 @@
             const container = document.getElementById('coursesContainer');
             container.innerHTML = '';
             
+            // Fetch user progress metrics
             const userProgressData = JSON.parse(localStorage.getItem('nav_course_progress')) || {};
 
             let count = 0;
@@ -262,9 +276,9 @@
 
                 const badgeHtml = course.badge ? `<span class="course-badge ${course.badgeClass || ''}">${course.badge}</span>` : '';
                 
+                // Safe fallbacks for missing data
                 const safeTags = course.tags || ["General"];
                 const tagsHtml = safeTags.map(tag => `<span class="course-tag">${tag}</span>`).join('');
-                
                 const lessons = course.lessons || "0";
                 const users = course.users || "0";
                 const category = (course.category || "general").toLowerCase();
@@ -295,7 +309,7 @@
             document.getElementById('courseCount').textContent = `${count} courses`;
         }
 
-        // Tab Filtering
+        // ==================== FILTERING LOGIC ====================
         window.filterCategory = function(category, element) {
             document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
             element.classList.add('active');
@@ -311,14 +325,18 @@
                 }
             });
             document.getElementById('courseCount').textContent = count + ' courses';
+            
+            // Clear search when switching tabs for UX consistency
+            const searchInput = document.getElementById('librarySearch');
+            if (searchInput) searchInput.value = '';
         }
 
-        // Live Search
         document.getElementById('librarySearch')?.addEventListener('input', function(e) {
             const term = e.target.value.toLowerCase();
             const courses = document.querySelectorAll('.course-card');
             let count = 0;
             
+            // Ensure search respects the currently active category tab
             const activeTabEl = document.querySelector('.category-tab.active');
             const activeTab = activeTabEl ? activeTabEl.dataset.category : 'all';
 
@@ -336,19 +354,35 @@
             document.getElementById('courseCount').textContent = count + ' courses';
         });
 
-        // Open Course Route
+        // ==================== ROUTING ====================
         window.openCourse = function(courseId) { 
             showToast(`Loading course...`);
             setTimeout(() => {
+                // Navigate to the Course Hub, passing the specific course ID as a URL query
                 window.location.href = `course.html?id=${courseId}`;
             }, 300);
         }
 
-        // Navigation Bar Logic
+        // Magic Navigation Logic
         const lists = document.querySelectorAll('.list');
+        const magicMover = document.getElementById('magicMover');
+        const navSvg = document.getElementById('navSvg');
+        const indicatorIcon = document.getElementById('indicatorIcon');
+        const slotWidth = 70;
+        
         lists.forEach(item => {
             item.addEventListener('click', function() {
+                const idx = parseInt(this.getAttribute('data-index'));
+                const icon = this.getAttribute('data-icon');
                 const page = this.getAttribute('data-page');
+                
+                lists.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                magicMover.style.transform = `translateX(${idx * slotWidth}px)`;
+                navSvg.style.transform = `translateX(${idx * slotWidth}px)`;
+                indicatorIcon.setAttribute('name', icon);
+                
                 if (page && page !== 'library.html') {
                     document.body.style.opacity = '0';
                     setTimeout(() => window.location.href = page, 300);
@@ -356,14 +390,12 @@
             });
         });
 
-        // App Boot
+        // ==================== APP INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('loadingOverlay').classList.add('active');
             applyTheme();
             loadUserAvatar();
-            loadLibraryData().then(() => {
-                setTimeout(() => document.getElementById('loadingOverlay').classList.remove('active'), 400);
-            });
+            loadLibraryData(); // Safe initialization
         });
     </script>
 </body>
