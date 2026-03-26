@@ -1,0 +1,15 @@
+{
+  "courses": [
+    {
+      "id": "physics",
+      "category": "science",
+      "icon": "⚛️",
+      "title": "Class 12 Physics",
+      "badge": "Popular",
+      "badgeClass": "",
+      "lessons": "12",
+      "users": "12.5k",
+      "tags": ["NCERT", "Board Exams"]
+    }
+  ]
+}
