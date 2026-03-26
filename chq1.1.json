@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "question": "How are you ",
+    "options": [
+      "Well",
+      "Fine ",
+      "Good",
+      "Great "
+    ],
+    "correctIndex": 2,
+    "explanation": ""
+  }
+]
