@@ -7,6 +7,7 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     
@@ -97,11 +98,6 @@
         .loading-overlay.active { display: flex; }
         .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        body.light-theme .library-search-input { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); color: var(--text-light); }
-        body.light-theme .library-search-input:focus { border-color: var(--primary); }
-        body.light-theme .library-search-input::placeholder { color: rgba(0,0,0,0.5); }
-        body.light-theme .search-wrapper i { color: rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
@@ -156,13 +152,6 @@
     <div id="toastContainer" class="toast"></div>
 
     <script>
-        // ==============================================================
-        // CORE CONFIGURATION - Ensure this matches your GitHub exactly
-        // ==============================================================
-        const GITHUB_USERNAME = "AMITKUMAR-X7X"; 
-        const GITHUB_REPO = "nav-files"; 
-        const BRANCH = "main"; // Or "master" based on your setup
-
         function showToast(msg) {
             const toast = document.getElementById('toastContainer');
             toast.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`;
@@ -190,16 +179,14 @@
             }
         }
 
-        // ==================== DATA FETCHING ENGINE ====================
+        // ==================== SIMPLE DIRECT FETCH ENGINE ====================
         async function loadLibraryData() {
-            // Exactly matching the simple fetch logic from search.html
-            const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/${BRANCH}/library.json?t=${Date.now()}`;
-            
             try {
-                const response = await fetch(rawUrl);
+                // Direct relative fetch for maximum reliability
+                const response = await fetch(`library.json?t=${Date.now()}`);
                 
                 if (!response.ok) {
-                    throw new Error("File not found");
+                    throw new Error("library.json not found");
                 }
                 
                 const data = await response.json();
@@ -234,6 +221,7 @@
 
         function renderCategories(courses) {
             const tabsContainer = document.getElementById('categoryTabs');
+            
             const categories = [...new Set(courses.map(c => (c.category ? c.category.toLowerCase() : 'general')))];
             
             let tabsHtml = `<div class="category-tab active" data-category="all" onclick="filterCategory('all', this)"><i class="fas fa-th-large"></i> All</div>`;
