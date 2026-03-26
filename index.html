@@ -342,6 +342,11 @@
     </div>
 
     <script>
+        // ==================== CONFIGURATION ====================
+        const GITHUB_USERNAME = "AMITKUMAR-X7X"; 
+        const GITHUB_REPO = "nav-files"; 
+        const BRANCH = "main";
+
         // ==================== APPWRITE & INITIALIZATION ====================
         const client = new Appwrite.Client();
         client.setEndpoint("https://sgp.cloud.appwrite.io/v1").setProject("nav-education");
@@ -373,20 +378,48 @@
         // ==================== AUTO CAROUSEL QUOTES / NOTICES ====================
         async function loadDynamicQuote() {
             const wrapper = document.getElementById('quotesWrapper');
+            let quotesArray = [];
+            let fetchSuccess = false;
 
             try {
-                const response = await fetch('Quotes.json');
-                if (!response.ok) throw new Error();
-                const quotesArray = await response.json();
+                // Smart Branch Fetching (Bypasses caching & CORS)
+                const branchesToTry = [BRANCH, "master", "main"];
+                for (let b of new Set(branchesToTry)) {
+                    try {
+                        const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/${b}/Quotes.json?t=${Date.now()}`;
+                        const response = await fetch(rawUrl, { cache: 'no-store' });
+                        if (response.ok) {
+                            quotesArray = await response.json();
+                            fetchSuccess = true;
+                            break;
+                        }
+                    } catch(e) {}
+                }
+
+                // Fallback to relative path if Raw URL fails
+                if (!fetchSuccess) {
+                    const relativeRes = await fetch(`Quotes.json?t=${Date.now()}`);
+                    if (relativeRes.ok) quotesArray = await relativeRes.json();
+                }
                 
                 if (quotesArray && quotesArray.length > 0) {
                     
-                    // 1. Get ALL notices
-                    const notices = quotesArray.filter(q => q.n === true);
+                    // 🛑 BUG FIXED: Filter out INACTIVE (OFF) notices/quotes here!
+                    const activeItemsData = quotesArray.filter(q => q.active !== false);
+
+                    // If everything is turned off, hide the whole section
+                    if (activeItemsData.length === 0) {
+                        wrapper.style.display = 'none';
+                        return;
+                    }
                     
-                    // 2. Get ONE random regular quote
-                    const regularQuotes = quotesArray.filter(q => !q.n);
+                    // 1. Get ALL active notices
+                    const notices = activeItemsData.filter(q => q.n === true);
+                    
+                    // 2. Get ONE random active regular quote
+                    const regularQuotes = activeItemsData.filter(q => !q.n);
                     let displayItems = [...notices];
+                    
                     if (regularQuotes.length > 0) {
                         const randomQuote = regularQuotes[Math.floor(Math.random() * regularQuotes.length)];
                         displayItems.push(randomQuote);
@@ -430,6 +463,7 @@
                     }
 
                     wrapper.innerHTML = html;
+                    wrapper.style.display = 'block'; // Make sure it's visible
 
                     // 4. Initialize Auto-Slider & Tap-to-Switch Logic
                     if (displayItems.length > 1) {
@@ -451,9 +485,9 @@
 
                         // Manual Tap to Switch instantly
                         document.querySelector('.carousel-container').addEventListener('click', () => {
-                            clearInterval(slideInterval); // stop current timer
-                            nextSlide(); // switch immediately
-                            slideInterval = setInterval(nextSlide, 4500); // restart timer
+                            clearInterval(slideInterval); 
+                            nextSlide(); 
+                            slideInterval = setInterval(nextSlide, 4500); 
                         });
                     }
                 }
@@ -576,10 +610,29 @@
 
         async function loadDynamicCourses(userProgress) {
             let libraryData = [];
+            let fetchSuccess = false;
+
             try {
-                const res = await fetch('library.json');
-                const data = await res.json();
-                libraryData = data.courses;
+                // Robust Fetching for library.json
+                const branchesToTry = [BRANCH, "master", "main"];
+                for (let b of new Set(branchesToTry)) {
+                    try {
+                        const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/${b}/library.json?t=${Date.now()}`;
+                        const res = await fetch(rawUrl, { cache: 'no-store' });
+                        if (res.ok) {
+                            const data = await res.json();
+                            libraryData = data.courses;
+                            fetchSuccess = true;
+                            break;
+                        }
+                    } catch(e) {}
+                }
+
+                if (!fetchSuccess) {
+                    const res = await fetch(`library.json?t=${Date.now()}`);
+                    const data = await res.json();
+                    libraryData = data.courses;
+                }
             } catch(e) {
                 libraryData = fallbackCourses;
             }
