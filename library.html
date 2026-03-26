@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
     
     <style>
         /* ===== RESET & VARIABLES ===== */
@@ -41,7 +40,7 @@
         .welcome-card { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--radius-xl); padding: 24px; color: white; margin-bottom: 20px; }
         .search-wrapper { position: relative; width: 100%; margin-top: 14px; }
         .search-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.7); }
-        .library-search-input { width: 100%; padding: 12px 16px 12px 44px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 40px; color: white; font-size: 0.9rem; backdrop-filter: blur(10px); }
+        .library-search-input { width: 100%; padding: 12px 16px 12px 44px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 40px; color: white; font-size: 0.9rem; backdrop-filter: blur(10px); outline: none;}
         .library-search-input::placeholder { color: rgba(255,255,255,0.7); }
         
         .category-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 14px; scrollbar-width: none; }
@@ -150,7 +149,7 @@
         // CONFIGURATION: Replace these with your actual GitHub details
         const GITHUB_USERNAME = "AMITKUMAR-X7X"; 
         const GITHUB_REPO = "nav-files"; 
-        const BRANCH = "main"; // Or master
+        const BRANCH = "main"; // Or "master"
 
         function showToast(msg) {
             const toast = document.getElementById('toastContainer');
@@ -181,26 +180,34 @@
 
         // ==================== FETCH LIVE GITHUB DATA ====================
         async function loadLibraryData() {
-            // Using raw.githubusercontent to bypass CORS and API limits completely
-            const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/${BRANCH}/library.json?t=${Date.now()}`;
+            let data = null;
+            let success = false;
             
-            try {
-                const response = await fetch(rawUrl);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                
-                const data = await response.json();
-                
-                // Extra check if file was empty
-                if (!data || !data.courses || data.courses.length === 0) {
-                    renderEmptyState();
-                } else {
-                    renderCategories(data.courses);
-                    renderLibrary(data);
+            // SMART FETCHER: It checks both 'main' and 'master' branches automatically
+            const branchesToTry = [BRANCH, "master", "main"];
+
+            for (let b of new Set(branchesToTry)) {
+                try {
+                    const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/${b}/library.json?t=${Date.now()}`;
+                    const response = await fetch(rawUrl);
+                    if (response.ok) {
+                        data = await response.json();
+                        success = true;
+                        break; 
+                    }
+                } catch(e) {
+                    console.log(`Checking branch ${b}...`);
                 }
-            } catch(e) {
-                console.error("Fetch Error:", e);
+            }
+
+            // If fetched successfully and has courses
+            if (success && data && data.courses && data.courses.length > 0) {
+                renderCategories(data.courses);
+                renderLibrary(data);
+            } else {
+                // If the file doesn't exist, show empty state instead of error
                 renderEmptyState();
-                showToast("Error loading library data.");
+                console.log("No courses found. Create one in the Admin portal.");
             }
         }
 
@@ -209,24 +216,22 @@
             container.innerHTML = `
                 <div style="text-align: center; padding: 40px 20px; color: var(--text-muted); background: var(--bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--border);">
                     <i class="fas fa-box-open" style="font-size: 2.5rem; margin-bottom: 15px; opacity: 0.5;"></i>
-                    <p>No courses found in your library yet.</p>
+                    <p style="font-size: 0.9rem;">No courses available in your library yet.</p>
                 </div>
             `;
             document.getElementById('courseCount').textContent = `0 courses`;
+            
+            const tabsContainer = document.getElementById('categoryTabs');
+            tabsContainer.innerHTML = `<div class="category-tab active" data-category="all"><i class="fas fa-th-large"></i> All</div>`;
         }
 
-        // Dynamically build category tabs based on JSON data
         function renderCategories(courses) {
             const tabsContainer = document.getElementById('categoryTabs');
-            
-            // Extract unique categories
             const categories = [...new Set(courses.map(c => c.category || 'general'))];
             
-            // Build HTML
             let tabsHtml = `<div class="category-tab active" data-category="all" onclick="filterCategory('all', this)"><i class="fas fa-th-large"></i> All</div>`;
             
             categories.forEach(cat => {
-                // Determine icon based on category name
                 let icon = "fa-folder";
                 let catLower = cat.toLowerCase();
                 if(catLower.includes('sci')) icon = "fa-flask";
@@ -234,9 +239,7 @@
                 else if(catLower.includes('hist')) icon = "fa-landmark";
                 else if(catLower.includes('lang') || catLower.includes('eng')) icon = "fa-language";
                 
-                // Capitalize first letter
                 let label = cat.charAt(0).toUpperCase() + cat.slice(1);
-                
                 tabsHtml += `<div class="category-tab" data-category="${catLower}" onclick="filterCategory('${catLower}', this)"><i class="fas ${icon}"></i> ${label}</div>`;
             });
             
@@ -259,11 +262,9 @@
 
                 const badgeHtml = course.badge ? `<span class="course-badge ${course.badgeClass || ''}">${course.badge}</span>` : '';
                 
-                // Safely handle tags array if it doesn't exist
                 const safeTags = course.tags || ["General"];
                 const tagsHtml = safeTags.map(tag => `<span class="course-tag">${tag}</span>`).join('');
                 
-                // Default stats if not provided
                 const lessons = course.lessons || "0";
                 const users = course.users || "0";
                 const category = (course.category || "general").toLowerCase();
@@ -318,9 +319,10 @@
             const courses = document.querySelectorAll('.course-card');
             let count = 0;
             
+            const activeTabEl = document.querySelector('.category-tab.active');
+            const activeTab = activeTabEl ? activeTabEl.dataset.category : 'all';
+
             courses.forEach(c => {
-                // If there's an active tab filter, respect it during search
-                const activeTab = document.querySelector('.category-tab.active').dataset.category;
                 const matchesCategory = (activeTab === 'all' || c.dataset.category === activeTab);
                 const matchesSearch = c.textContent.toLowerCase().includes(term);
                 
