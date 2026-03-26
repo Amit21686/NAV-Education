@@ -1,5 +1,10 @@
 {
   "title": "Chemistry",
   "description": "Learn concepts.",
-  "chapters": []
+  "chapters": [
+    {
+      "title": "Solution",
+      "contents": []
+    }
+  ]
 }
