@@ -1,3 +1,11 @@
 {
-  "courses": []
+  "courses": [
+    {
+      "id": "chemistry",
+      "title": "Chemistry",
+      "category": "general",
+      "icon": "📚",
+      "badge": "New"
+    }
+  ]
 }
