@@ -126,10 +126,6 @@
             <div style="width:1px; background:var(--border-dark); margin:4px 0; height:18px;"></div>
             <button class="font-btn" onclick="changeFontSize(1)" title="Increase Font">A+</button>
             <div style="width:1px; background:var(--border-dark); margin:4px 0; height:18px;"></div>
-            
-            <button class="font-btn" onclick="copyShareLink()" title="Share Note"><i class="fas fa-share-alt"></i></button>
-            <div style="width:1px; background:var(--border-dark); margin:4px 0; height:18px;"></div>
-            
             <button class="font-btn" onclick="exportSmartPDF()" title="Download PDF"><i class="fas fa-download"></i></button>
         </div>
     </header>
@@ -200,20 +196,6 @@
             const scrolled = (winScroll / height) * 100;
             document.getElementById("readingProgress").style.width = scrolled + "%";
         };
-
-        // NEW: Share Link Function
-        function copyShareLink() {
-            const shareUrl = window.location.href; 
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(shareUrl).then(() => {
-                    alert("✅ Direct link copied! You can now share this note.");
-                }).catch(err => {
-                    prompt("Copy this link to share:", shareUrl);
-                });
-            } else {
-                prompt("Copy this link to share:", shareUrl);
-            }
-        }
 
         // =========================================================================
         // 🔥 THE SMART PDF EXPORTER 🔥
