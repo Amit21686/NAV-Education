@@ -117,11 +117,11 @@
         .modal-overlay.active { display: flex; }
         .modal-card { background: var(--card); width: 100%; border-radius: 12px; padding: 20px; border: 1px solid var(--border); max-width: 400px; margin: 0 auto; }
         
-        #loadingOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; backdrop-filter: blur(5px); }
+        #loadingOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; backdrop-filter: blur(5px); text-align: center; }
         .spinner { width: 45px; height: 45px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--card); color: white; padding: 12px 24px; border-radius: 30px; font-size: 0.9rem; font-weight: 500; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; opacity: 0; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; gap: 8px; white-space: nowrap;}
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--card); color: white; padding: 12px 24px; border-radius: 30px; font-size: 0.9rem; font-weight: 500; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; opacity: 0; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; gap: 8px;}
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         
         .status-badge { font-size: 0.65rem; padding: 2px 8px; border-radius: 12px; font-weight: 600; text-transform: uppercase;}
@@ -260,7 +260,7 @@
     <input type="hidden" id="editSha">
     <input type="hidden" id="reloadCourseFlag">
     
-    <input type="file" id="sysFileUploader" style="display: none;">
+    <input type="file" id="sysFileUploader" multiple="multiple" style="display: none;">
     <input type="file" id="sysReplaceUploader" style="display: none;">
     <input type="hidden" id="sysReplacePath">
     <input type="hidden" id="sysReplaceSha">
@@ -270,7 +270,7 @@
 
     <script>
         // ==========================================
-        // 1. SECURE BASE64 ENCODER/DECODER
+        // 1. FAIL-SAFE ENCODING 
         // ==========================================
         const Utils = {
             b64Encode: (str) => {
@@ -336,7 +336,7 @@
                     }
                     
                     if (res.status === 401) throw new Error("Unauthorized");
-                    if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+                    if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
                     
                     if (method === 'DELETE') {
                         try { return await res.json(); } catch(e) { return {}; }
@@ -361,8 +361,13 @@
         // 3. UI CONTROLS 
         // ==========================================
         const UI = {
-            showLoading: (msg) => { document.getElementById('loadingText').textContent = msg; document.getElementById('loadingOverlay').style.display = 'flex'; },
-            hideLoading: () => { document.getElementById('loadingOverlay').style.display = 'none'; },
+            showLoading: (msg) => { 
+                document.getElementById('loadingText').innerText = msg; 
+                document.getElementById('loadingOverlay').style.display = 'flex'; 
+            },
+            hideLoading: () => { 
+                document.getElementById('loadingOverlay').style.display = 'none'; 
+            },
             showToast: (msg) => {
                 const t = document.getElementById('toastContainer');
                 clearTimeout(State.toastTimeout);
@@ -377,6 +382,7 @@
                 document.getElementById('backBtn').style.visibility = showBack ? 'visible' : 'hidden';
             },
             openModal: (id) => {
+                document.getElementById(id).classList.add('active');
                 Nav.push('modal_' + id); 
             },
             closeModal: (id) => {
@@ -408,21 +414,19 @@
                 Nav.handleRoute(); 
             },
             handleRoute: () => {
+                document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+                
                 let newHash = window.location.hash.replace('#', '') || 'home';
                 let oldHash = State.currentHash;
                 State.currentHash = newHash;
 
-                // Auto-save when leaving editor
                 if (oldHash === 'editor' && newHash !== 'editor' && newHash !== 'preview') {
-                    EditorEngine.save(true);
+                    EditorEngine.save(true); 
                 }
 
-                // Hide overlays
-                document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
                 if (newHash !== 'editor' && newHash !== 'preview') document.getElementById('codeEditorView').style.display = 'none';
                 if (newHash !== 'preview') document.getElementById('livePreviewModal').style.display = 'none';
                 
-                // Route to Modal
                 if (newHash.startsWith('modal_')) {
                     let modalId = newHash.replace('modal_', '');
                     let mEl = document.getElementById(modalId);
@@ -431,7 +435,6 @@
                     return; 
                 }
 
-                // Route to Views
                 if (newHash === 'home') {
                     UI.switchView('viewCourses', 'Courses', false);
                 } else if (newHash === 'chapters') {
@@ -455,7 +458,7 @@
                     document.getElementById('livePreviewModal').style.display = 'flex';
                 }
                 
-                UI.hideLoading(); // Prevent stuck screen
+                UI.hideLoading(); 
             }
         };
 
@@ -553,7 +556,7 @@
                         libObj.courses.push({ id: id, title: title, category: "general", icon: "📚", badge: "New" });
                         
                         await API.createOrUpdate('library.json', Utils.b64Encode(JSON.stringify(libObj, null, 2)), `Added ${id}`, libSha);
-                    } catch(err) { console.log("Library sync failed, skipping."); }
+                    } catch(err) {}
                     
                     document.getElementById('newCourseTitle').value = '';
                     document.getElementById('newCourseId').value = '';
@@ -562,8 +565,7 @@
                     UI.showToast("Course Created!");
                 } catch(e) {
                     alert("Error creating course.");
-                    UI.hideLoading();
-                }
+                } finally { UI.hideLoading(); }
             },
 
             deleteCourse: async (path, sha, event) => {
@@ -603,8 +605,7 @@
                     UI.showToast("Course Deleted!");
                 } catch(e) {
                     alert("Delete failed.");
-                    UI.hideLoading();
-                }
+                } finally { UI.hideLoading(); }
             },
 
             openCourse: async (path, sha) => {
@@ -617,8 +618,7 @@
                     Nav.push('chapters'); 
                 } catch(e) {
                     alert("Failed to parse course JSON. Check file encoding.");
-                    UI.hideLoading();
-                }
+                } finally { UI.hideLoading(); }
             },
 
             editCourseCode: () => {
@@ -636,11 +636,9 @@
                         try {
                             const res = await API.createOrUpdate('library.json', Utils.b64Encode(JSON.stringify({ courses: [] }, null, 2)), "Init library");
                             EditorEngine.open('library.json', res.content.sha, false);
-                        } catch(err){ UI.hideLoading(); }
-                    } else {
-                        UI.hideLoading();
+                        } catch(err){}
                     }
-                }
+                } finally { UI.hideLoading(); }
             },
 
             renderChapters: () => {
@@ -681,8 +679,7 @@
                     UI.showToast("Chapter Added!");
                 } catch(e) {
                     alert("Save failed.");
-                    UI.hideLoading();
-                }
+                } finally { UI.hideLoading(); }
             },
 
             openChapter: (index) => {
@@ -766,7 +763,8 @@
                             State.repoFiles = await API.request('');
                             CourseEngine.renderContents();
                             UI.showToast("PDF Uploaded as Draft!");
-                        } catch (err) { alert("Failed to upload PDF."); UI.hideLoading(); }
+                        } catch (err) { alert("Failed to upload PDF."); }
+                        finally { UI.hideLoading(); }
                     };
                     reader.readAsDataURL(pdfFile);
                     return;
@@ -802,8 +800,7 @@
                     UI.showToast("Content Created as Draft!");
                 } catch(e) {
                     alert("Creation failed.");
-                    UI.hideLoading();
-                }
+                } finally { UI.hideLoading(); }
             },
 
             togglePublish: async (idx) => {
@@ -819,8 +816,7 @@
                 } catch(e) {
                     item.status = item.status === 'published' ? 'draft' : 'published';
                     alert("Failed to update status.");
-                    UI.hideLoading();
-                }
+                } finally { UI.hideLoading(); }
             },
 
             deleteContent: async (idx, filename) => {
@@ -846,8 +842,7 @@
                     UI.showToast("Deleted Successfully!");
                 } catch(e) {
                     alert("Delete failed.");
-                    UI.hideLoading();
-                }
+                } finally { UI.hideLoading(); }
             }
         };
 
@@ -889,6 +884,13 @@
                 State.fmFolder = category;
                 const list = document.getElementById('fileManagerList');
                 
+                // 🛑 FIXED: Dynamic Multiple Accept Attribute 🛑
+                const uploader = document.getElementById('sysFileUploader');
+                if (category === 'images') uploader.setAttribute('accept', 'image/*');
+                else if (category === 'pdfs') uploader.setAttribute('accept', '.pdf');
+                else if (category === 'quizzes' || category === 'notes') uploader.setAttribute('accept', '.json');
+                else uploader.removeAttribute('accept'); // System can accept anything
+
                 let html = `
                     <div class="flex gap-2" style="margin-bottom:15px;">
                         <button class="btn btn-outline" style="flex:1;" onclick="document.getElementById('sysFileUploader').click()"><i class="fas fa-upload"></i> Upload</button>
@@ -897,11 +899,23 @@
                 `;
 
                 let filtered = [];
-                if (category === 'images') filtered = State.repoFiles.filter(f => f.name.match(/\.(jpg|jpeg|png|gif|svg)$/i));
-                else if (category === 'pdfs') filtered = State.repoFiles.filter(f => f.name.endsWith('.pdf'));
-                else if (category === 'quizzes') filtered = State.repoFiles.filter(f => f.name.match(/q\d+\.\d+\.json$/));
-                else if (category === 'notes') filtered = State.repoFiles.filter(f => f.name.match(/n\d+\.\d+\.json$/));
-                else if (category === 'system') filtered = State.repoFiles.filter(f => f.name.match(/\.(html|css|js)$/) || ['library.json', 'package.json'].includes(f.name));
+                if (category === 'images') {
+                    filtered = State.repoFiles.filter(f => f.name.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i));
+                } else if (category === 'pdfs') {
+                    filtered = State.repoFiles.filter(f => f.name.match(/\.pdf$/i));
+                } else if (category === 'quizzes') {
+                    filtered = State.repoFiles.filter(f => f.name.match(/q\d+\.\d+\.json$/i) || f.name.toLowerCase().includes('quiz'));
+                } else if (category === 'notes') {
+                    filtered = State.repoFiles.filter(f => f.name.match(/n\d+\.\d+\.json$/i) || f.name.toLowerCase().includes('note'));
+                } else if (category === 'system') {
+                    filtered = State.repoFiles.filter(f => {
+                        let isImg = f.name.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i);
+                        let isPdf = f.name.match(/\.pdf$/i);
+                        let isQuiz = f.name.match(/q\d+\.\d+\.json$/i) || f.name.toLowerCase().includes('quiz');
+                        let isNote = f.name.match(/n\d+\.\d+\.json$/i) || f.name.toLowerCase().includes('note');
+                        return !isImg && !isPdf && !isQuiz && !isNote;
+                    });
+                }
 
                 if(filtered.length === 0) {
                     list.innerHTML = html + `<div class="text-center" style="padding:20px; color:var(--text-muted);">No files found here.</div>`;
@@ -918,7 +932,7 @@
                     else if(ext === 'js') { icon = 'fa-js-square'; color = '#f7df1e'; }
                     else if(ext === 'json') { icon = 'fa-database'; color = 'var(--primary)'; }
                     else if(ext === 'pdf') { icon = 'fa-file-pdf'; color = '#f43f5e'; }
-                    else if(['jpg','jpeg','png','gif','svg'].includes(ext)) { icon = 'fa-image'; color = '#10b981'; }
+                    else if(['jpg','jpeg','png','gif','svg','webp'].includes(ext)) { icon = 'fa-image'; color = '#10b981'; }
 
                     const isEditable = ['html','css','js','json'].includes(ext);
                     
@@ -948,8 +962,15 @@
             },
 
             createFile: async () => {
-                const name = prompt("Enter filename (e.g. style.css):");
-                if(!name) return;
+                const namePrompt = prompt("Enter filename (e.g. style.css):");
+                if(!namePrompt) return;
+                
+                let name = namePrompt.replace(/\s+/g, '_');
+                
+                // 🛑 AUTO-PREFIX FIX FOR CREATED FILES
+                if (State.fmFolder === 'quizzes' && !name.toLowerCase().includes('quiz') && !name.match(/q\d+\.\d+\.json$/i)) name = 'quiz_' + name;
+                if (State.fmFolder === 'notes' && !name.toLowerCase().includes('note') && !name.match(/n\d+\.\d+\.json$/i)) name = 'note_' + name;
+
                 UI.showLoading("Creating file...");
                 try {
                     await API.createOrUpdate(name, Utils.b64Encode(""), `Created ${name}`);
@@ -958,8 +979,7 @@
                     UI.showToast("File Created!");
                 } catch(e) {
                     alert("Failed to create file.");
-                    UI.hideLoading();
-                }
+                } finally { UI.hideLoading(); }
             },
 
             deleteFile: async (path, sha) => {
@@ -972,8 +992,7 @@
                     UI.showToast("File Deleted!");
                 } catch(e) {
                     alert("Delete failed.");
-                    UI.hideLoading();
-                }
+                } finally { UI.hideLoading(); }
             },
 
             triggerReplace: (path, sha) => {
@@ -1002,27 +1021,80 @@
             }
         };
 
-        // File Manager Upload Listeners
+        // File Manager MULTIPLE Upload Listeners
         document.getElementById('sysFileUploader').addEventListener('change', async (e) => {
-            let file = e.target.files[0]; if (!file) return;
-            let name = prompt("Save as filename:", file.name.replace(/\s+/g, '_'));
-            if(!name) return;
+            let files = e.target.files; 
+            if (!files || files.length === 0) return;
             
-            UI.showLoading("Uploading...");
-            let reader = new FileReader();
-            reader.onload = async (event) => {
-                try {
-                    await API.createOrUpdate(name, event.target.result.split(',')[1], `Uploaded ${name}`);
-                    State.repoFiles = await API.request('');
-                    FileManager.renderFolder(State.fmFolder);
-                    UI.showToast("Upload Successful!");
-                } catch(err) {
-                    alert("Upload failed.");
+            let isMultiple = files.length > 1;
+            if (isMultiple) {
+                if (!confirm(`Upload ${files.length} files with their original names?`)) {
+                    document.getElementById('sysFileUploader').value = '';
+                    return;
                 }
-                UI.hideLoading();
-                document.getElementById('sysFileUploader').value = ''; 
-            };
-            reader.readAsDataURL(file);
+            }
+
+            UI.showLoading(isMultiple ? `Uploading 1 of ${files.length}...` : "Uploading...");
+            let success = 0;
+
+            for (let i = 0; i < files.length; i++) {
+                let file = files[i];
+                let name = file.name.replace(/\s+/g, '_');
+                
+                // 🛑 AUTO-PREFIX FIX FOR UPLOADED FILES
+                if (State.fmFolder === 'quizzes' && !name.toLowerCase().includes('quiz') && !name.match(/q\d+\.\d+\.json$/i)) {
+                    name = 'quiz_' + name;
+                } else if (State.fmFolder === 'notes' && !name.toLowerCase().includes('note') && !name.match(/n\d+\.\d+\.json$/i)) {
+                    name = 'note_' + name;
+                }
+
+                if (!isMultiple) {
+                    let pName = prompt("Save as filename:", name);
+                    if (!pName) continue;
+                    name = pName;
+                } else {
+                    UI.showLoading(`Uploading ${i+1} of ${files.length}...\n(${name})`);
+                }
+
+                try {
+                    const base64 = await new Promise((resolve, reject) => {
+                        let reader = new FileReader();
+                        reader.onload = ev => {
+                            let res = ev.target.result;
+                            resolve(res.includes(',') ? res.split(',')[1] : res);
+                        };
+                        reader.onerror = ev => reject(ev);
+                        reader.readAsDataURL(file);
+                    });
+                    
+                    let sha = null;
+                    let existing = State.repoFiles.find(f => f.name === name);
+                    if (existing) {
+                        if(isMultiple && !confirm(`File '${name}' already exists. Overwrite?`)) continue;
+                        sha = existing.sha;
+                    }
+
+                    await API.createOrUpdate(name, base64, `Uploaded ${name}`, sha);
+                    success++;
+                } catch(err) {
+                    console.error("Upload failed for " + name);
+                }
+            }
+
+            if (success > 0) {
+                UI.showLoading("Refreshing Directory...");
+                try {
+                    State.repoFiles = await API.request('');
+                    if(State.fmFolder) FileManager.renderFolder(State.fmFolder);
+                    else FileManager.renderRoot();
+                    UI.showToast(`${success} File(s) Uploaded!`);
+                } catch(e) {
+                    alert("Files uploaded, but failed to refresh directory.");
+                }
+            }
+            
+            UI.hideLoading();
+            document.getElementById('sysFileUploader').value = ''; 
         });
 
         document.getElementById('sysReplaceUploader').addEventListener('change', async (e) => {
@@ -1034,7 +1106,10 @@
             let reader = new FileReader();
             reader.onload = async (event) => {
                 try {
-                    await API.createOrUpdate(path, event.target.result.split(',')[1], `Replaced ${path}`, sha);
+                    let base64 = event.target.result;
+                    base64 = base64.includes(',') ? base64.split(',')[1] : base64;
+                    
+                    await API.createOrUpdate(path, base64, `Replaced ${path}`, sha);
                     State.repoFiles = await API.request('');
                     
                     if(State.currentHash === 'contents') {
@@ -1045,8 +1120,7 @@
                     UI.showToast("File Replaced!");
                 } catch(err) {
                     alert("Replace failed.");
-                }
-                UI.hideLoading();
+                } finally { UI.hideLoading(); }
                 document.getElementById('sysReplaceUploader').value = '';
             };
             reader.readAsDataURL(file);
@@ -1058,10 +1132,12 @@
         let aceEditor;
         const EditorEngine = {
             init: () => {
-                aceEditor = ace.edit("aceEditorContainer");
-                aceEditor.setTheme("ace/theme/twilight");
-                aceEditor.session.setMode("ace/mode/json");
-                aceEditor.setOptions({ fontSize: "14px", showLineNumbers: true, showGutter: true, wrap: true, useWorker: false, scrollPastEnd: 0.8 });
+                if (typeof ace !== 'undefined') {
+                    aceEditor = ace.edit("aceEditorContainer");
+                    aceEditor.setTheme("ace/theme/twilight");
+                    aceEditor.session.setMode("ace/mode/json");
+                    aceEditor.setOptions({ fontSize: "14px", showLineNumbers: true, showGutter: true, wrap: true, useWorker: false, scrollPastEnd: 0.8 });
+                }
             },
 
             open: async (path, sha, reloadCourse = false) => {
@@ -1082,15 +1158,17 @@
                     document.getElementById('editSha').value = sha;
                     State.reloadCourseOnSave = reloadCourse;
                     
-                    State.originalCode = codeStr; // Save state for auto-save diff
+                    State.originalCode = codeStr; 
                     
-                    let ext = Utils.getExt(path);
-                    if(ext === 'html') aceEditor.session.setMode("ace/mode/html");
-                    else if(ext === 'css') aceEditor.session.setMode("ace/mode/css");
-                    else if(ext === 'js') aceEditor.session.setMode("ace/mode/javascript");
-                    else aceEditor.session.setMode("ace/mode/json");
-                    
-                    aceEditor.setValue(codeStr, -1); 
+                    if (aceEditor) {
+                        let ext = Utils.getExt(path);
+                        if(ext === 'html') aceEditor.session.setMode("ace/mode/html");
+                        else if(ext === 'css') aceEditor.session.setMode("ace/mode/css");
+                        else if(ext === 'js') aceEditor.session.setMode("ace/mode/javascript");
+                        else aceEditor.session.setMode("ace/mode/json");
+                        
+                        aceEditor.setValue(codeStr, -1); 
+                    }
 
                     const tBtn = document.getElementById('editorModeToggle');
                     const pBtn = document.getElementById('livePreviewBtn');
@@ -1108,14 +1186,13 @@
                     
                     Nav.push('editor');
                 } catch(e) {
-                    UI.hideLoading();
-                    alert(`Load Error: ${e.message}. The file may be corrupt or empty.`);
-                }
+                    alert(`Load Error. The file may be corrupt or empty.`);
+                } finally { UI.hideLoading(); }
             },
 
-            triggerSearch: () => { if(State.editorMode === 'code') aceEditor.execCommand("find"); },
-            jumpToTop: () => { aceEditor.navigateFileStart(); aceEditor.scrollToLine(0, true, true, ()=>{}); },
-            jumpToBottom: () => { const ll = aceEditor.session.getLength(); aceEditor.navigateFileEnd(); aceEditor.scrollToLine(ll, true, true, ()=>{}); },
+            triggerSearch: () => { if(State.editorMode === 'code' && aceEditor) aceEditor.execCommand("find"); },
+            jumpToTop: () => { if(aceEditor) { aceEditor.navigateFileStart(); aceEditor.scrollToLine(0, true, true, ()=>{}); } },
+            jumpToBottom: () => { if(aceEditor) { const ll = aceEditor.session.getLength(); aceEditor.navigateFileEnd(); aceEditor.scrollToLine(ll, true, true, ()=>{}); } },
             
             toggleMode: () => {
                 const tBtn = document.getElementById('editorModeToggle');
@@ -1139,7 +1216,7 @@
                 document.getElementById('aceEditorContainer').style.display = 'block';
                 document.getElementById('searchBtn').style.display = 'block';
                 document.getElementById('jumpButtons').style.display = 'flex';
-                aceEditor.resize();
+                if(aceEditor) aceEditor.resize();
             },
 
             showVisualUI: () => {
@@ -1150,15 +1227,13 @@
                 if (window.MathJax) setTimeout(() => MathJax.typesetPromise(), 200);
             },
 
-            // Integrated Smart Auto-Save
             save: async (silent = false) => {
                 if (State.editorMode === 'visual') {
                     VisualBuilder.syncToCode();
                 }
                 
-                const currentCode = aceEditor.getValue();
+                const currentCode = aceEditor ? aceEditor.getValue() : '';
                 
-                // Diff Check - Stop useless API calls
                 if (currentCode === State.originalCode) {
                     if (!silent) UI.showToast("No changes detected.");
                     return;
@@ -1186,8 +1261,9 @@
                 } catch(e) {
                     if(!silent) alert("Save failed! Please check for JSON syntax errors.");
                     else UI.showToast("Auto-save skipped: Syntax error!");
+                } finally {
+                    if(!silent) UI.hideLoading();
                 }
-                if(!silent) UI.hideLoading();
             }
         };
 
@@ -1197,7 +1273,7 @@
         const VisualBuilder = {
             syncToVisual: () => {
                 try {
-                    const val = aceEditor.getValue();
+                    const val = aceEditor ? aceEditor.getValue() : '';
                     State.visualData = val.trim() === "" ? (State.editorFileType === 'quiz' ? [] : {}) : JSON.parse(val);
                     if (State.editorFileType === 'quiz') VisualBuilder.buildQuiz();
                     else if (State.editorFileType === 'notes') VisualBuilder.buildNotes();
@@ -1212,7 +1288,7 @@
             syncToCode: () => {
                 if (State.editorFileType === 'quiz') VisualBuilder.extractQuiz();
                 else if (State.editorFileType === 'notes') VisualBuilder.extractNotes();
-                aceEditor.setValue(JSON.stringify(State.visualData, null, 2), -1);
+                if(aceEditor) aceEditor.setValue(JSON.stringify(State.visualData, null, 2), -1);
             },
 
             liveMath: (inputId, prevId) => {
@@ -1428,8 +1504,7 @@
                     UI.showToast("Media Deleted!");
                 } catch(e) {
                     alert("Failed to delete.");
-                }
-                UI.hideLoading();
+                } finally { UI.hideLoading(); }
             },
 
             openUploader: (targetId) => {
@@ -1477,8 +1552,7 @@
                     UI.showToast("Media Saved!");
                 } catch(err) {
                     alert("Media upload error.");
-                }
-                UI.hideLoading();
+                } finally { UI.hideLoading(); }
                 document.getElementById('visualImgUploader').value = ''; 
             };
             reader.readAsDataURL(f);
