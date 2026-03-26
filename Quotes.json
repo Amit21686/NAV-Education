@@ -10,7 +10,7 @@
   {
     "text": "Scheduled server maintenance tonight at 11 PM. Quizzes might be unavailable.",
     "author": "Admin",
-    "n": false,
+    "n": true,
     "active": true
   },
   {
