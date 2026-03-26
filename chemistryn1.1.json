@@ -1,5 +1,10 @@
 {
   "title": "Summary Notes",
   "topic": "Solution",
-  "blocks": []
+  "blocks": [
+    {
+      "type": "h2",
+      "content": "How are you, all ☺️💗"
+    }
+  ]
 }
