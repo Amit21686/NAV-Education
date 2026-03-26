@@ -92,7 +92,7 @@
     "text": "Scheduled server maintenance tonight at 11 PM. Quizzes might be unavailable.",
     "author": "Admin",
     "n": true,
-    "active": false
+    "active": true
   },
   {
     "text": "New Physics Chapter 2 Notes have just been uploaded to the Library!",
