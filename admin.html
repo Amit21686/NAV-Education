@@ -36,9 +36,11 @@
         
         /* Utility Classes */
         .flex { display: flex; } 
+        .flex-col { display: flex; flex-direction: column; }
         .items-center { align-items: center; } 
         .justify-between { justify-content: space-between; }
         .text-center { text-align: center; }
+        .gap-2 { gap: 10px; }
         
         /* Smooth Buttons */
         .btn { 
@@ -514,7 +516,7 @@
                     } else { Nav.push('home'); }
                 } else if (newHash === 'filemanager') { FileManager.renderRoot(); } 
                 else if (newHash.startsWith('folder_')) { FileManager.renderFolder(newHash.replace('folder_', '')); } 
-                else if (newHash === 'editor') { document.getElementById('codeEditorView').style.display = 'flex'; } 
+                else if (newHash === 'editor') { document.getElementById('codeEditorView').style.display = 'flex'; if(aceEditor) aceEditor.resize(); } 
                 else if (newHash === 'preview') { document.getElementById('codeEditorView').style.display = 'flex'; document.getElementById('livePreviewModal').style.display = 'flex'; }
                 
                 UI.hideLoading(); 
@@ -575,9 +577,8 @@
                 document.getElementById('tab_quotes_only').classList.remove('active');
                 document.getElementById('tab_notices_only').classList.remove('active');
                 
-                if(filterStr === 'all') document.getElementById('tab_quotes_all').classList.add('active');
-                else if(filterStr === 'quotes') document.getElementById('tab_quotes_only').classList.add('active');
-                else if(filterStr === 'notices') document.getElementById('tab_notices_only').classList.add('active');
+                let tabId = filterStr === 'all' ? 'tab_quotes_all' : (filterStr === 'quotes' ? 'tab_quotes_only' : 'tab_notices_only');
+                document.getElementById(tabId).classList.add('active');
 
                 const list = document.getElementById('quotesList');
                 list.innerHTML = '';
@@ -683,7 +684,11 @@
                 let item = State.quotesData[idx];
                 item.active = item.active !== false ? false : true; 
                 
-                const currentTab = document.querySelector('.category-tab.active').id.replace('tab_', '').replace('_only', '').replace('_all', 'all');
+                const activeTabId = document.querySelector('.category-tab.active').id;
+                let currentTab = 'all';
+                if(activeTabId === 'tab_quotes_only') currentTab = 'quotes';
+                if(activeTabId === 'tab_notices_only') currentTab = 'notices';
+
                 QuotesEngine.render(currentTab);
                 
                 await QuotesEngine.saveToGithub("Toggled notice status");
@@ -697,7 +702,11 @@
                     State.quotesSha = res.content.sha;
                     State.repoFiles = await API.request(''); // Update cache silently
                     
-                    const currentTab = document.querySelector('.category-tab.active').id.replace('tab_', '').replace('_only', '').replace('_all', 'all');
+                    const activeTabId = document.querySelector('.category-tab.active').id;
+                    let currentTab = 'all';
+                    if(activeTabId === 'tab_quotes_only') currentTab = 'quotes';
+                    if(activeTabId === 'tab_notices_only') currentTab = 'notices';
+
                     QuotesEngine.render(currentTab);
                     
                     UI.showToast("Saved Successfully!");
@@ -977,8 +986,11 @@
                     let reader = new FileReader();
                     reader.onload = async (e) => {
                         try {
+                            let base64Data = e.target.result;
+                            base64Data = base64Data.includes(',') ? base64Data.split(',')[1] : base64Data;
+
                             const fname = `${prefix}p${chapNum}.${itemNum}.pdf`; 
-                            await API.createOrUpdate(fname, e.target.result.split(',')[1], `Uploaded PDF`);
+                            await API.createOrUpdate(fname, base64Data, `Uploaded PDF`);
                             
                             contentsArr.push({ title, file: fname, type, status: 'draft' });
                             State.activeCourse.data.chapters[State.activeChapIndex].contents = contentsArr;
@@ -1355,7 +1367,10 @@
             liveMath: (inputId, prevId) => {
                 const val = document.getElementById(inputId).value; const box = document.getElementById(prevId);
                 if(!val.trim()) { box.innerHTML = '<span style="color:var(--text-muted); font-style:italic;">Preview...</span>'; return; }
-                box.innerHTML = val; clearTimeout(State.mathTimeout);
+                
+                box.innerHTML = val.replace(/\n/g, '<br>');
+                
+                clearTimeout(State.mathTimeout);
                 State.mathTimeout = setTimeout(() => { if(window.MathJax) MathJax.typesetPromise([box]).catch(e => console.log(e)); }, 600);
             },
             buildQuiz: () => {
@@ -1369,7 +1384,7 @@
                             <div class="flex justify-between items-center"><label class="v-label">Question Text</label><button class="v-img-btn" onclick="MediaEngine.openUploader('vq_${i}')"><i class="fas fa-image"></i> Image</button></div>
                             <textarea class="v-textarea" id="vq_${i}" oninput="VisualBuilder.liveMath('vq_${i}', 'vqp_${i}')">${q.question || ''}</textarea>
                             ${MediaEngine.renderInBlockImages(q.question, `vq_${i}`)}
-                            <div class="v-preview-box" id="vqp_${i}">${q.question || '...'}</div>
+                            <div class="v-preview-box" id="vqp_${i}">${(q.question || '...').replace(/\n/g, '<br>')}</div>
                             <div class="flex gap-2">
                                 <div style="flex:1;"><label class="v-label">Opt A</label><input class="v-input" id="vo_${i}_0" value="${q.options?.[0] || ''}"><label class="v-label">Opt B</label><input class="v-input" id="vo_${i}_1" value="${q.options?.[1] || ''}"></div>
                                 <div style="flex:1;"><label class="v-label">Opt C</label><input class="v-input" id="vo_${i}_2" value="${q.options?.[2] || ''}"><label class="v-label">Opt D</label><input class="v-input" id="vo_${i}_3" value="${q.options?.[3] || ''}"></div>
@@ -1379,7 +1394,7 @@
                             <div class="flex justify-between items-center"><label class="v-label">Explanation</label><button class="v-img-btn" onclick="MediaEngine.openUploader('ve_${i}')"><i class="fas fa-image"></i> Image</button></div>
                             <textarea class="v-textarea" id="ve_${i}" oninput="VisualBuilder.liveMath('ve_${i}', 'vep_${i}')">${q.explanation || ''}</textarea>
                             ${MediaEngine.renderInBlockImages(q.explanation, `ve_${i}`)}
-                            <div class="v-preview-box" id="vep_${i}">${q.explanation || '...'}</div>
+                            <div class="v-preview-box" id="vep_${i}">${(q.explanation || '...').replace(/\n/g, '<br>')}</div>
                         </div>
                     `;
                 });
@@ -1416,7 +1431,7 @@
                             </div>
                             <textarea class="v-textarea" id="bContent_${i}" style="margin-bottom:5px;" oninput="VisualBuilder.liveMath('bContent_${i}', 'bContentp_${i}')">${b.content || ''}</textarea>
                             ${MediaEngine.renderInBlockImages(b.content, `bContent_${i}`)}
-                            <div class="v-preview-box" id="bContentp_${i}">${b.content || '...'}</div>
+                            <div class="v-preview-box" id="bContentp_${i}">${(b.content || '...').replace(/\n/g, '<br>')}</div>
                         </div>
                     `;
                 });
@@ -1426,7 +1441,7 @@
             },
             extractNotes: () => {
                 let nb = [];
-                for (let i = 0; i < State.visualData.length; i++) {
+                for (let i = 0; i < State.visualData.blocks.length; i++) {
                     if(!document.getElementById(`bCard_${i}`)) continue;
                     let t = document.getElementById(`bType_${i}`).value; let c = document.getElementById(`bContent_${i}`).value;
                     let obj = { type: t, content: c }; if (t === 'callout') { obj.style = "info"; obj.icon = "fas fa-info-circle"; } nb.push(obj);
@@ -1505,20 +1520,21 @@
                 if (State.editorFileType === 'quiz') {
                     h += `<div class="text-center" style="color:var(--primary); margin-bottom:20px; font-weight:600;"><i class="fas fa-brain"></i> Quiz UI</div>`;
                     State.visualData.forEach((q, i) => {
-                        h += `<div style="margin-bottom:30px;"><strong>Q${i+1}.</strong> <div style="margin-bottom:15px; font-size:1.1rem; font-weight:600;">${q.question || ''}</div>`;
+                        h += `<div style="margin-bottom:30px;"><strong>Q${i+1}.</strong> <div style="margin-bottom:15px; font-size:1.1rem; font-weight:600;">${(q.question || '').replace(/\n/g, '<br>')}</div>`;
                         ['A','B','C','D'].forEach((lbl, oIdx) => {
                             let ic = q.correctIndex === oIdx ? 'm-correct' : ''; let check = q.correctIndex === oIdx ? '<i class="fas fa-check-circle" style="float:right;"></i>' : '';
                             h += `<div class="m-option ${ic}"><strong>${lbl}.</strong> <div style="flex:1;">${q.options?.[oIdx]||''}</div> ${check}</div>`;
                         });
-                        if(q.explanation) h += `<div class="m-callout" style="font-size:0.85rem;"><strong style="display:block; margin-bottom:5px;"><i class="fas fa-lightbulb"></i> Explanation</strong>${q.explanation}</div>`;
+                        if(q.explanation) h += `<div class="m-callout" style="font-size:0.85rem;"><strong style="display:block; margin-bottom:5px;"><i class="fas fa-lightbulb"></i> Explanation</strong>${(q.explanation).replace(/\n/g, '<br>')}</div>`;
                         h += `</div><hr style="border-color:rgba(255,255,255,0.1); margin:20px 0;">`;
                     });
                 } else if (State.editorFileType === 'notes') {
                     if(State.visualData.topic) h += `<div style="color:var(--primary); font-weight:700; text-transform:uppercase; font-size:0.8rem; margin-bottom:5px;">${State.visualData.topic}</div>`;
                     if(State.visualData.title) h += `<h1>${State.visualData.title}</h1>`;
                     (State.visualData.blocks || []).forEach(b => {
-                        if (b.type === 'h1') h += `<h1>${b.content}</h1>`; else if (b.type === 'h2') h += `<h2>${b.content}</h2>`;
-                        else if (b.type === 'paragraph') h += `<p style="margin-bottom:15px;">${b.content}</p>`; else if (b.type === 'callout') h += `<div class="m-callout"><strong><i class="fas fa-info-circle"></i> Info</strong><br>${b.content}</div>`;
+                        let content = (b.content || '').replace(/\n/g, '<br>');
+                        if (b.type === 'h1') h += `<h1>${content}</h1>`; else if (b.type === 'h2') h += `<h2>${content}</h2>`;
+                        else if (b.type === 'paragraph') h += `<p style="margin-bottom:15px;">${content}</p>`; else if (b.type === 'callout') h += `<div class="m-callout"><strong><i class="fas fa-info-circle"></i> Info</strong><br>${content}</div>`;
                     });
                 }
                 c.innerHTML = h; Nav.push('preview'); if(window.MathJax) MathJax.typesetPromise([c]).catch(e=>console.log(e));
