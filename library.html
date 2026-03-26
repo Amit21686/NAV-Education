@@ -7,7 +7,6 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     
@@ -111,9 +110,11 @@
     <div class="container">
         <header class="app-header">
             <div class="brand"><h1>NAV <span>Education</span></h1></div>
-            <div class="icon-btn" onclick="window.location.href='profile.html'">
-                <img id="headerAvatar" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
-                <span id="headerFallback"><i class="fas fa-user"></i></span>
+            <div style="display: flex; gap: 8px;">
+                <div class="icon-btn" onclick="window.location.href='profile.html'">
+                    <img id="headerAvatar" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
+                    <span id="headerFallback"><i class="fas fa-user"></i></span>
+                </div>
             </div>
         </header>
 
@@ -191,20 +192,18 @@
 
         // ==================== DATA FETCHING ENGINE ====================
         async function loadLibraryData() {
-            // Direct fetching from raw.githubusercontent avoids all CORS and authentication blocks.
-            // The ?t=Date.now() query ensures we bypass caching to see real-time updates.
+            // Exactly matching the simple fetch logic from search.html
             const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/${BRANCH}/library.json?t=${Date.now()}`;
             
             try {
                 const response = await fetch(rawUrl);
                 
                 if (!response.ok) {
-                    throw new Error("File not found or private repository.");
+                    throw new Error("File not found");
                 }
                 
                 const data = await response.json();
                 
-                // Validate if data is properly structured
                 if (!data || !data.courses || data.courses.length === 0) {
                     renderEmptyState();
                 } else {
@@ -212,10 +211,9 @@
                     renderLibrary(data);
                 }
             } catch(e) {
-                console.warn("Library Fetch Error (Safe to ignore if repo is new):", e);
-                renderEmptyState(); // Show clean empty state instead of crashing
+                console.warn("Library Fetch Error:", e);
+                renderEmptyState();
             } finally {
-                // Ensure spinner is removed
                 setTimeout(() => document.getElementById('loadingOverlay').classList.remove('active'), 300);
             }
         }
@@ -230,16 +228,12 @@
             `;
             document.getElementById('courseCount').textContent = `0 courses`;
             
-            // Keep at least the 'All' tab visible
             const tabsContainer = document.getElementById('categoryTabs');
             tabsContainer.innerHTML = `<div class="category-tab active" data-category="all"><i class="fas fa-th-large"></i> All</div>`;
         }
 
-        // Build Tabs based on the categories found in library.json
         function renderCategories(courses) {
             const tabsContainer = document.getElementById('categoryTabs');
-            
-            // Extract unique categories safely
             const categories = [...new Set(courses.map(c => (c.category ? c.category.toLowerCase() : 'general')))];
             
             let tabsHtml = `<div class="category-tab active" data-category="all" onclick="filterCategory('all', this)"><i class="fas fa-th-large"></i> All</div>`;
@@ -263,7 +257,6 @@
             const container = document.getElementById('coursesContainer');
             container.innerHTML = '';
             
-            // Fetch user progress metrics
             const userProgressData = JSON.parse(localStorage.getItem('nav_course_progress')) || {};
 
             let count = 0;
@@ -276,7 +269,6 @@
 
                 const badgeHtml = course.badge ? `<span class="course-badge ${course.badgeClass || ''}">${course.badge}</span>` : '';
                 
-                // Safe fallbacks for missing data
                 const safeTags = course.tags || ["General"];
                 const tagsHtml = safeTags.map(tag => `<span class="course-tag">${tag}</span>`).join('');
                 const lessons = course.lessons || "0";
@@ -326,7 +318,6 @@
             });
             document.getElementById('courseCount').textContent = count + ' courses';
             
-            // Clear search when switching tabs for UX consistency
             const searchInput = document.getElementById('librarySearch');
             if (searchInput) searchInput.value = '';
         }
@@ -336,7 +327,6 @@
             const courses = document.querySelectorAll('.course-card');
             let count = 0;
             
-            // Ensure search respects the currently active category tab
             const activeTabEl = document.querySelector('.category-tab.active');
             const activeTab = activeTabEl ? activeTabEl.dataset.category : 'all';
 
@@ -358,7 +348,6 @@
         window.openCourse = function(courseId) { 
             showToast(`Loading course...`);
             setTimeout(() => {
-                // Navigate to the Course Hub, passing the specific course ID as a URL query
                 window.location.href = `course.html?id=${courseId}`;
             }, 300);
         }
@@ -395,7 +384,7 @@
             document.getElementById('loadingOverlay').classList.add('active');
             applyTheme();
             loadUserAvatar();
-            loadLibraryData(); // Safe initialization
+            loadLibraryData(); 
         });
     </script>
 </body>
