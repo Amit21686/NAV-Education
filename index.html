@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>NAV Education - Home</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
+    
+    <style>
+        /* ===== RESET & VARIABLES ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary: #6366f1; --primary-dark: #4f52e0; --secondary: #8b5cf6; --accent: #f43f5e;
+            --bg: #020617; --bg-card: rgba(30, 41, 59, 0.8); --bg-card-hover: rgba(51, 65, 85, 0.8);
+            --border: rgba(255, 255, 255, 0.08); --text: #f1f5f9; --text-muted: #94a3b8;
+            --success: #10b981; --error: #f43f5e; --warning: #f59e0b;
+            --space-xs: 4px; --space-sm: 8px; --space-md: 14px; --space-lg: 20px; --space-xl: 24px;
+            --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px; --radius-full: 9999px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3); --shadow-md: 0 4px 12px rgba(0,0,0,0.4); --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+        }
+        body.light-theme {
+            --bg: #f8fafc; --bg-card: #ffffff; --bg-card-hover: #f1f5f9;
+            --border: #e2e8f0; --text: #0f172a; --text-muted: #475569;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05); --shadow-md: 0 4px 12px rgba(0,0,0,0.08); --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; width: 100%; transition: background-color 0.3s ease, color 0.3s ease; position: relative; }
+        body::before { content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 70% 30%, rgba(99, 102, 241, 0.12) 0%, rgba(139, 92, 246, 0.08) 30%, transparent 70%); animation: rotateBg 40s linear infinite; pointer-events: none; z-index: 0; }
+        @keyframes rotateBg { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .container { max-width: 100%; width: 100%; margin: 0 auto; padding: var(--space-md); padding-bottom: 110px; position: relative; z-index: 1; }
+        h1 { font-size: 1.6rem; font-weight: 600; } h2 { font-size: 1.4rem; font-weight: 600; } h3 { font-size: 1.1rem; font-weight: 500; }
+        .flex { display: flex; align-items: center; } .flex-between { display: flex; align-items: center; justify-content: space-between; }
+
+        /* Header & Menus */
+        .app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-lg); }
+        .brand h1 span { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .icon-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--bg-card); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; cursor: pointer; transition: all 0.2s ease; position: relative; color: var(--text); overflow: hidden; }
+        .icon-btn:active { transform: scale(0.95); border-color: var(--primary); }
+        
+        .profile-menu { position: fixed; top: 70px; right: var(--space-md); background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-sm); min-width: 200px; z-index: 9999; display: none; box-shadow: var(--shadow-lg); }
+        .profile-menu.active { display: block; }
+        .profile-menu-header { padding: var(--space-sm) var(--space-md); border-bottom: 1px solid var(--border); }
+        .profile-menu-name { font-weight: 600; font-size: 0.95rem; }
+        .profile-menu-email { font-size: 0.7rem; color: var(--text-muted); }
+        .profile-menu-item { display: flex; align-items: center; gap: var(--space-sm); padding: 10px 12px; color: var(--text); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s; font-size: 0.9rem; }
+        .profile-menu-item:hover { background: var(--bg-card-hover); color: var(--primary); }
+        .profile-menu-divider { height: 1px; background: var(--border); margin: 5px 0; }
+
+        /* Cards & Widgets */
+        .welcome-card { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--radius-xl); padding: var(--space-xl) var(--space-lg); color: white; margin-bottom: var(--space-lg); width: 100%; }
+        .streak-badge { background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 4px 12px; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+        
+        .banner-card { width: 100%; margin: var(--space-md) 0; border-radius: var(--radius-lg); overflow: hidden; cursor: pointer; border: 2px solid rgba(255,255,255,0.1); transition: all 0.2s; }
+        .banner-card:active { transform: scale(0.98); }
+        .banner-image { width: 100%; height: auto; display: block; }
+
+        .progress-wrapper { margin-top: var(--space-md); }
+        .progress-header { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem; opacity: 0.9; }
+        .progress-bar-bg { background: rgba(255,255,255,0.2); height: 8px; border-radius: var(--radius-full); overflow: hidden; }
+        .progress-fill { height: 100%; background: white; width: 0%; transition: width 0.6s ease; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); margin: var(--space-lg) 0; }
+        .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-md); text-align: center; backdrop-filter: blur(10px); transition: all 0.2s; cursor: pointer; }
+        .stat-card:active { transform: scale(0.97); }
+        .stat-value { font-size: 1.2rem; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+
+        /* ===== AUTO-PLAY CAROUSEL QUOTES/NOTICES ===== */
+        #quotesWrapper { margin: 15px 0; }
+        
+        .carousel-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .carousel-track {
+            display: flex;
+            width: 100%;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        
+        .carousel-slide {
+            min-width: 100%;
+            flex: 0 0 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .motivation-quote { 
+            background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1)); 
+            border-left: 4px solid var(--primary); 
+            padding: 15px; 
+            border-radius: 12px; 
+            height: 100%; 
+        }
+
+        .motivation-quote.notice-active { 
+            background: linear-gradient(135deg, rgba(244,63,94,0.1), rgba(245,158,11,0.1)); 
+            border-left: 4px solid var(--error); 
+        }
+
+        .notice-badge { 
+            display: inline-flex; align-items: center; gap: 4px; background: var(--error); color: white; 
+            font-size: 0.65rem; font-weight: 700; padding: 4px 8px; border-radius: 20px; 
+            margin-bottom: 8px; letter-spacing: 0.5px; animation: pulseBadge 2s infinite; 
+        }
+        @keyframes pulseBadge { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* Carousel Navigation Dots */
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .indicator-dot {
+            width: 6px; height: 6px; border-radius: 50%; 
+            background: rgba(255,255,255,0.2); transition: all 0.3s; 
+        }
+        body.light-theme .indicator-dot { background: rgba(0,0,0,0.1); }
+        .indicator-dot.active { background: var(--primary); width: 14px; border-radius: 10px; }
+
+
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin: var(--space-lg) 0 var(--space-sm); }
+        .section-header h3 { display: flex; align-items: center; gap: 6px; font-size: 1rem; }
+        .view-all { color: var(--primary); font-size: 0.8rem; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+
+        .course-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-md); margin-bottom: var(--space-sm); display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s; position: relative; }
+        .course-card:active { transform: scale(0.99); }
+        .course-left { display: flex; align-items: center; gap: var(--space-sm); flex: 1; }
+        .course-icon { font-size: 1.8rem; min-width: 40px; text-align: center; }
+        .course-title { font-weight: 500; font-size: 0.95rem; margin-bottom: 2px; }
+        .course-meta { font-size: 0.7rem; color: var(--text-muted); }
+        .course-right { display: flex; align-items: center; gap: 6px; font-weight: 500; font-size: 0.9rem; color: var(--primary); }
+
+        .continue-card { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--radius-lg); padding: var(--space-lg); color: white; display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-lg); cursor: pointer; }
+        .continue-left { display: flex; align-items: center; gap: var(--space-md); }
+        .continue-icon { width: 44px; height: 44px; background: rgba(255,255,255,0.2); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+        .continue-play { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+        .chips-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: var(--space-md); }
+        .chip { padding: 8px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-full); font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s; }
+        .chip:active { background: var(--primary); color: white; transform: scale(0.95); }
+
+        .activity-feed { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-md); margin-bottom: var(--space-lg); }
+        .activity-item { display: flex; align-items: center; justify-content: space-between; padding: var(--space-sm) 0; border-bottom: 1px solid var(--border); }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-left { display: flex; align-items: center; gap: var(--space-sm); }
+        .activity-icon { width: 32px; height: 32px; background: var(--bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .activity-points { color: var(--success); font-weight: 600; font-size: 0.8rem; }
+        .empty-activity { text-align: center; font-size: 0.85rem; color: var(--text-muted); padding: 10px 0; }
+
+        .challenge-card { background: linear-gradient(135deg, #f59e0b, #f97316); border-radius: var(--radius-lg); padding: var(--space-lg); color: white; margin-bottom: var(--space-lg); }
+        .challenge-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-sm); }
+        .challenge-badge { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: var(--radius-full); font-size: 0.7rem; }
+        .challenge-reward { display: flex; align-items: center; gap: var(--space-sm); margin: var(--space-sm) 0; padding: var(--space-sm); background: rgba(255,255,255,0.1); border-radius: var(--radius-md); }
+
+        /* Magic Nav */
+        .nav-wrapper { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 350px; height: 70px; z-index: 1000; }
+        .magic-mover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 10; }
+        .circle { position: absolute; top: -12px; left: 5px; width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; border: 4px solid var(--bg); display: flex; justify-content: center; align-items: center; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.5); transition: all 0.3s ease; }
+        .circle ion-icon { font-size: 1.8rem; color: white; }
+        .nav-pill-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 35px; overflow: hidden; z-index: 5; }
+        .nav-bg-svg { position: absolute; top: 0; left: -465px; width: 1000px; height: 70px; fill: var(--bg-card); transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .navigation-items { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; z-index: 20; }
+        .list { list-style: none; flex: 1; height: 70px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        .list a { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; font-size: 1.4rem; color: var(--text-muted); transition: all 0.3s ease; }
+        .list.active a { opacity: 0; transform: translateY(-20px); }
+        @media (max-width: 380px) { .nav-wrapper { width: 320px; } .circle { width: 55px; height: 55px; top: -10px; left: 2px; } .circle ion-icon { font-size: 1.5rem; } }
+
+        /* Toasts & Modals & Loading */
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-card); backdrop-filter: blur(20px); color: var(--text); padding: 10px 20px; border-radius: 40px; font-size: 0.85rem; border: 1px solid var(--border); box-shadow: var(--shadow-lg); z-index: 10000; opacity: 0; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); z-index: 20000; align-items: center; justify-content: center; padding: var(--space-md); }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--bg-card); border-radius: var(--radius-xl); padding: var(--space-xl); max-width: 320px; width: 100%; text-align: center; border: 1px solid var(--border); }
+        .modal-actions { display: flex; gap: var(--space-sm); margin-top: var(--space-lg); }
+        .modal-btn { flex: 1; padding: 12px; border-radius: var(--radius-md); border: none; font-family: inherit; font-size: 0.9rem; font-weight: 500; cursor: pointer; }
+        .modal-btn.cancel { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .modal-btn.confirm { background: var(--error); color: white; }
+        .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 30000; display: none; align-items: center; justify-content: center; }
+        .loading-overlay.active { display: flex; }
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    </style>
+</head>
+<body>
+    <div id="loadingOverlay" class="loading-overlay"><div class="spinner"></div></div>
+
+    <div class="container">
+        <header class="app-header">
+            <div class="brand">
+                <h1>NAV <span>Education</span></h1>
+            </div>
+            <div class="flex" style="gap: 8px;">
+                <div class="icon-btn" id="notificationBtn" onclick="showToast('No new notifications', 'info')">
+                    <i class="far fa-bell"></i>
+                </div>
+                <div class="icon-btn" id="profileBtn">
+                    <img id="headerAvatar" src="" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:none;">
+                    <span id="headerFallback"><i class="fas fa-user"></i></span>
+                </div>
+            </div>
+        </header>
+
+        <div id="profileMenu" class="profile-menu">
+            <div class="profile-menu-header">
+                <div class="profile-menu-name" id="menuUserName">Student</div>
+                <div class="profile-menu-email" id="menuUserEmail">Loading...</div>
+            </div>
+            <div class="profile-menu-item" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i> View Profile</div>
+            <div class="profile-menu-item" onclick="window.location.href='settings.html'"><i class="fas fa-cog"></i> Settings</div>
+            <div class="profile-menu-divider"></div>
+            <div class="profile-menu-item" onclick="showToast('Learning stats coming soon!', 'info')"><i class="fas fa-chart-line"></i> Learning Stats</div>
+            <div class="profile-menu-item" onclick="showToast('Achievements coming soon!', 'info')"><i class="fas fa-trophy"></i> Achievements</div>
+            <div class="profile-menu-divider"></div>
+            <div class="profile-menu-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
+        </div>
+
+        <section class="welcome-card">
+            <div class="flex-between">
+                <h2 id="welcomeText">Welcome Back 👋</h2>
+                <div class="streak-badge"><i class="fas fa-fire" style="color: #fca5a5;"></i> <span id="streakCount">0</span> day</div>
+            </div>
+            <p style="color:rgba(255,255,255,0.8);" id="welcomeMessage">Keep learning consistently!</p>
+
+            <div class="banner-card" onclick="showToast('Welcome to NAV Education! 🎓', 'success')">
+                <img src="https://raw.githubusercontent.com/Amit21686/NAV_Education/refs/heads/main/images/NAV%20Education%20banner.png" alt="Banner" class="banner-image">
+            </div>
+
+            <div class="progress-wrapper">
+                <div class="progress-header">
+                    <span>Today's Study Goal</span>
+                    <span id="progressLabel">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill" id="mainProgress" style="width:0%"></div>
+                </div>
+                <div class="flex-between" style="margin-top: 8px;">
+                    <span style="font-size:0.7rem;"><i class="far fa-clock"></i> <span id="todayTime">0 sec</span> learned</span>
+                    <span style="font-size:0.7rem;"><i class="fas fa-bullseye"></i> Goal: <span id="dailyGoal">4</span> hrs</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="stats-grid">
+            <div class="stat-card" onclick="window.location.href='library.html'">
+                <div class="stat-value" id="coursesEnrolled">0</div>
+                <div class="stat-label">Enrolled</div>
+            </div>
+            <div class="stat-card" onclick="showToast('Total time tracked actively learning', 'info')">
+                <div class="stat-value" id="timeLearned" style="font-size: 1.1rem;">0 sec</div>
+                <div class="stat-label">Study Time</div>
+            </div>
+            <div class="stat-card" onclick="showToast('Total badges earned', 'info')">
+                <div class="stat-value" id="achievementsCount">0</div>
+                <div class="stat-label">Badges</div>
+            </div>
+        </div>
+
+        <div id="quotesWrapper"></div>
+
+        <div class="section-header">
+            <h3><i class="fas fa-book-open" style="color:var(--primary);"></i> Your Active Courses</h3>
+            <a href="library.html" class="view-all">Library <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div id="dynamicCoursesContainer"></div>
+
+        <div class="section-header">
+            <h3><i class="fas fa-play-circle" style="color:var(--primary);"></i> Continue Learning</h3>
+        </div>
+
+        <div id="continueContainer"></div>
+
+        <div class="section-header">
+            <h3><i class="fas fa-star" style="color:var(--primary);"></i> Quick Search</h3>
+        </div>
+
+        <div class="chips-container">
+            <span class="chip" onclick="window.location.href='search.html'"><i class="fas fa-flask"></i> Physics</span>
+            <span class="chip" onclick="window.location.href='search.html'"><i class="fas fa-square-root-alt"></i> Math</span>
+            <span class="chip" onclick="window.location.href='search.html'"><i class="fas fa-file-pdf"></i> Notes</span>
+            <span class="chip" onclick="window.location.href='search.html'"><i class="fas fa-brain"></i> Quizzes</span>
+        </div>
+
+        <div class="section-header">
+            <h3><i class="fas fa-rss" style="color:var(--primary);"></i> Recent Activity</h3>
+        </div>
+
+        <div class="activity-feed" id="activityFeedContainer"></div>
+
+        <div class="challenge-card" onclick="showToast('Keep pushing your limits!', 'success')">
+            <div class="challenge-header">
+                <span class="challenge-badge">DAILY TARGET</span>
+                <i class="fas fa-gem"></i>
+            </div>
+            <h4>Complete 1 Assessment</h4>
+            <div class="challenge-reward"><i class="fas fa-star"></i> 50 XP + Streak Boost</div>
+            <div class="progress-bar-bg" style="background:rgba(255,255,255,0.2);">
+                <div class="progress-fill" id="dailyChallengeBar" style="width:0%; background:white;"></div>
+            </div>
+            <div style="font-size:0.7rem; text-align:right; margin-top:5px;" id="dailyChallengeText">0/1 done</div>
+        </div>
+
+        <div style="height:20px;"></div>
+    </div>
+
+    <div class="nav-wrapper">
+        <div class="magic-mover" id="magicMover"><div class="circle"><ion-icon id="indicatorIcon" name="home-outline"></ion-icon></div></div>
+        <div class="nav-pill-bg"><svg class="nav-bg-svg" id="navSvg" viewBox="0 0 1000 70"><path d="M0,0 L450,0 C470,0 475,35 500,35 C525,35 530,0 550,0 L1000,0 L1000,70 L0,70 Z" fill="currentColor"></path></svg></div>
+        <ul class="navigation-items">
+            <li class="list active" data-index="0" data-icon="home-outline" data-page="index.html"><a><ion-icon name="home-outline"></ion-icon></a></li>
+            <li class="list" data-index="1" data-icon="search-outline" data-page="search.html"><a><ion-icon name="search-outline"></ion-icon></a></li>
+            <li class="list" data-index="2" data-icon="library-outline" data-page="library.html"><a><ion-icon name="library-outline"></ion-icon></a></li>
+            <li class="list" data-index="3" data-icon="settings-outline" data-page="settings.html"><a><ion-icon name="settings-outline"></ion-icon></a></li>
+            <li class="list" data-index="4" data-icon="person-outline" data-page="profile.html"><a><ion-icon name="person-outline"></ion-icon></a></li>
+        </ul>
+    </div>
+
+    <div id="toastContainer" class="toast"></div>
+
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <i class="fas fa-exclamation-triangle" style="font-size:2.5rem; color:var(--error); margin-bottom:15px;"></i>
+            <h3 id="modalTitle">Confirm</h3>
+            <p id="modalMessage" style="color:var(--text-muted); margin-bottom:20px;">Are you sure?</p>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="hideModal()">Cancel</button>
+                <button class="modal-btn confirm" id="modalConfirmBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== APPWRITE & INITIALIZATION ====================
+        const client = new Appwrite.Client();
+        client.setEndpoint("https://sgp.cloud.appwrite.io/v1").setProject("nav-education");
+        const account = new Appwrite.Account(client);
+
+        let loadingOverlay = document.getElementById('loadingOverlay');
+        let toastTimeout;
+
+        const fallbackCourses = [
+            { id: "physics", title: "Class 12 Physics", icon: "⚛️" },
+            { id: "chemistry", title: "Organic Chemistry", icon: "🧪" },
+            { id: "math", title: "Calculus Mastery", icon: "📐" }
+        ];
+
+        // ==================== TIME FORMATTER ====================
+        function formatTimeDisplay(ms) {
+            if (!ms || ms < 1000) return "0 sec";
+            
+            let totalSeconds = Math.floor(ms / 1000);
+            if (totalSeconds < 60) return `${totalSeconds} sec`;
+            
+            let totalMinutes = Math.floor(totalSeconds / 60);
+            if (totalMinutes < 60) return `${totalMinutes} min`;
+            
+            let hours = (totalMinutes / 60).toFixed(1);
+            return `${hours} hr`;
+        }
+
+        // ==================== AUTO CAROUSEL QUOTES / NOTICES ====================
+        async function loadDynamicQuote() {
+            const wrapper = document.getElementById('quotesWrapper');
+
+            try {
+                const response = await fetch('Quotes.json');
+                if (!response.ok) throw new Error();
+                const quotesArray = await response.json();
+                
+                if (quotesArray && quotesArray.length > 0) {
+                    
+                    // 1. Get ALL notices
+                    const notices = quotesArray.filter(q => q.n === true);
+                    
+                    // 2. Get ONE random regular quote
+                    const regularQuotes = quotesArray.filter(q => !q.n);
+                    let displayItems = [...notices];
+                    if (regularQuotes.length > 0) {
+                        const randomQuote = regularQuotes[Math.floor(Math.random() * regularQuotes.length)];
+                        displayItems.push(randomQuote);
+                    }
+
+                    // 3. Build the Carousel HTML
+                    let html = `<div class="carousel-container"><div class="carousel-track" id="quotesTrack">`;
+                    
+                    displayItems.forEach(item => {
+                        if (item.n) {
+                            html += `
+                                <div class="carousel-slide">
+                                    <div class="motivation-quote notice-active">
+                                        <div style="font-size: 0.9rem;">
+                                            <div class="notice-badge"><i class="fas fa-bell"></i> NOTICE</div><br>
+                                            ${item.text}
+                                        </div>
+                                        <div style="text-align:right; color:var(--error); font-size: 0.8rem; margin-top: 5px; font-weight: 500;">- ${item.author || 'Admin'}</div>
+                                    </div>
+                                </div>`;
+                        } else {
+                            html += `
+                                <div class="carousel-slide">
+                                    <div class="motivation-quote">
+                                        <div style="font-style:italic; font-size: 0.9rem;">"${item.text}"</div>
+                                        <div style="text-align:right; color:var(--primary); font-size: 0.8rem; margin-top: 5px; font-weight: 500;">- ${item.author || 'NAV Education'}</div>
+                                    </div>
+                                </div>`;
+                        }
+                    });
+                    
+                    html += `</div></div>`;
+
+                    // Add indicators if more than 1 item
+                    if (displayItems.length > 1) {
+                        html += `<div class="carousel-indicators">`;
+                        displayItems.forEach((_, i) => {
+                            html += `<div class="indicator-dot ${i === 0 ? 'active' : ''}"></div>`;
+                        });
+                        html += `</div>`;
+                    }
+
+                    wrapper.innerHTML = html;
+
+                    // 4. Initialize Auto-Slider & Tap-to-Switch Logic
+                    if (displayItems.length > 1) {
+                        let currentSlide = 0;
+                        const track = document.getElementById('quotesTrack');
+                        const dots = document.querySelectorAll('.indicator-dot');
+                        const totalSlides = displayItems.length;
+
+                        function nextSlide() {
+                            currentSlide = (currentSlide + 1) % totalSlides;
+                            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+                            dots.forEach((dot, index) => {
+                                dot.classList.toggle('active', index === currentSlide);
+                            });
+                        }
+
+                        // Auto Play
+                        let slideInterval = setInterval(nextSlide, 4500);
+
+                        // Manual Tap to Switch instantly
+                        document.querySelector('.carousel-container').addEventListener('click', () => {
+                            clearInterval(slideInterval); // stop current timer
+                            nextSlide(); // switch immediately
+                            slideInterval = setInterval(nextSlide, 4500); // restart timer
+                        });
+                    }
+                }
+            } catch (e) {
+                console.log("Could not load Quotes.json, using fallback.");
+                wrapper.innerHTML = `
+                    <div class="motivation-quote">
+                        <div style="font-style:italic; font-size: 0.9rem;">"The expert in anything was once a beginner."</div>
+                        <div style="text-align:right; color:var(--primary); font-size: 0.8rem; margin-top: 5px; font-weight: 500;">- NAV Education</div>
+                    </div>
+                `;
+            }
+        }
+
+        // ==================== THEME & UTILS ====================
+        function applyTheme() {
+            const darkMode = localStorage.getItem('nav_darkMode');
+            if (darkMode === null) document.body.classList.remove('light-theme');
+            else darkMode === 'true' ? document.body.classList.remove('light-theme') : document.body.classList.add('light-theme');
+            const accent = localStorage.getItem('nav_accentColor');
+            if (accent) document.documentElement.style.setProperty('--primary', accent);
+        }
+
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'nav_darkMode' || e.key === 'nav_accentColor') applyTheme();
+        });
+        window.addEventListener('settingsUpdated', () => applyTheme());
+
+        function showToast(message, type = 'info', duration = 2500) {
+            const toast = document.getElementById('toastContainer');
+            if (!toast) return;
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="${type === 'success' ? 'fas fa-check-circle' : type === 'error' ? 'fas fa-exclamation-circle' : 'fas fa-info-circle'}"></i> ${message}`;
+            toast.classList.add('show');
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), duration);
+        }
+
+        // ==================== UI INTERACTION ====================
+        document.getElementById('profileBtn')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('profileMenu').classList.toggle('active');
+        });
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('profileMenu');
+            const btn = document.getElementById('profileBtn');
+            if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // ==================== GENUINE DATA LOGIC ====================
+        async function buildGenuineDashboard() {
+            const userName = localStorage.getItem('nav_userName') || 'Student';
+            const userEmail = localStorage.getItem('nav_userEmail') || '';
+            const avatarUrl = localStorage.getItem('nav_profileAvatar');
+            
+            document.getElementById('welcomeText').innerHTML = `Welcome Back, ${userName.split(' ')[0]} 👋`;
+            document.getElementById('menuUserName').textContent = userName;
+            document.getElementById('menuUserEmail').textContent = userEmail;
+            
+            if (avatarUrl) {
+                document.getElementById('headerAvatar').src = avatarUrl;
+                document.getElementById('headerAvatar').style.display = 'block';
+                document.getElementById('headerFallback').style.display = 'none';
+            }
+
+            calculateStreak();
+
+            const goalHours = parseFloat(localStorage.getItem('nav_studyHours')) || 4;
+            const goalMs = goalHours * 3600000;
+            
+            const todayDateString = new Date().toDateString();
+            const storedTodayDate = localStorage.getItem('nav_todayDate');
+            
+            if (storedTodayDate !== todayDateString) {
+                localStorage.setItem('nav_today_ms', '0');
+                localStorage.setItem('nav_todayDate', todayDateString);
+            }
+
+            const todayMs = parseInt(localStorage.getItem('nav_today_ms')) || 0;
+            const totalMs = parseInt(localStorage.getItem('nav_total_ms')) || 0;
+            
+            document.getElementById('dailyGoal').textContent = goalHours;
+            document.getElementById('todayTime').textContent = formatTimeDisplay(todayMs);
+            document.getElementById('timeLearned').textContent = formatTimeDisplay(totalMs);
+            
+            const progressPercent = Math.min(Math.round((todayMs / goalMs) * 100), 100);
+            document.getElementById('mainProgress').style.width = `${progressPercent}%`;
+            document.getElementById('progressLabel').textContent = `${progressPercent}%`;
+
+            const userProgress = JSON.parse(localStorage.getItem('nav_course_progress')) || {};
+            const enrolledCount = Object.keys(userProgress).length;
+            
+            document.getElementById('coursesEnrolled').textContent = enrolledCount;
+            document.getElementById('achievementsCount').textContent = Math.floor(enrolledCount * 1.5); 
+
+            await loadDynamicCourses(userProgress);
+            renderActivityFeed();
+            renderDailyChallenge();
+        }
+
+        function calculateStreak() {
+            const today = new Date().toDateString();
+            const yesterdayDate = new Date();
+            yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+            const yesterday = yesterdayDate.toDateString();
+
+            let lastVisit = localStorage.getItem('nav_lastVisit');
+            let streak = parseInt(localStorage.getItem('nav_streak')) || 0;
+
+            if (lastVisit !== today) {
+                if (lastVisit === yesterday) { streak += 1; } 
+                else { streak = 1; }
+                localStorage.setItem('nav_lastVisit', today);
+                localStorage.setItem('nav_streak', streak);
+            }
+            document.getElementById('streakCount').textContent = streak;
+        }
+
+        async function loadDynamicCourses(userProgress) {
+            let libraryData = [];
+            try {
+                const res = await fetch('library.json');
+                const data = await res.json();
+                libraryData = data.courses;
+            } catch(e) {
+                libraryData = fallbackCourses;
+            }
+
+            const container = document.getElementById('dynamicCoursesContainer');
+            container.innerHTML = '';
+            
+            let coursesRendered = 0;
+            let lastAccessedCourse = null;
+
+            libraryData.forEach(course => {
+                if (userProgress[course.id] !== undefined) {
+                    coursesRendered++;
+                    lastAccessedCourse = { ...course, progress: userProgress[course.id] };
+
+                    const html = `
+                        <div class="course-card" onclick="window.location.href='course.html?id=${course.id}'">
+                            <div class="course-left">
+                                <span class="course-icon">${course.icon}</span>
+                                <div class="course-info">
+                                    <div class="course-title">${course.title}</div>
+                                    <div class="course-meta">In Progress</div>
+                                </div>
+                            </div>
+                            <div class="course-right">${userProgress[course.id]}% <i class="fas fa-chevron-right"></i></div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', html);
+                }
+            });
+
+            if (coursesRendered === 0) {
+                container.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">You haven't started any courses yet. Visit the Library to begin!</p>`;
+                document.getElementById('continueContainer').innerHTML = `
+                    <div class="continue-card" onclick="window.location.href='library.html'">
+                        <div class="continue-left">
+                            <div class="continue-icon"><i class="fas fa-search"></i></div>
+                            <div>
+                                <h4>Explore Library</h4>
+                                <div style="font-size:0.7rem;">Find your first course</div>
+                            </div>
+                        </div>
+                        <div class="continue-play"><i class="fas fa-arrow-right"></i></div>
+                    </div>`;
+            } else if (lastAccessedCourse) {
+                document.getElementById('continueContainer').innerHTML = `
+                    <div class="continue-card" onclick="window.location.href='course.html?id=${lastAccessedCourse.id}'">
+                        <div class="continue-left">
+                            <div class="continue-icon">${lastAccessedCourse.icon}</div>
+                            <div>
+                                <h4>${lastAccessedCourse.title}</h4>
+                                <div style="font-size:0.7rem;">Pick up where you left off</div>
+                            </div>
+                        </div>
+                        <div class="continue-play"><i class="fas fa-play"></i></div>
+                    </div>`;
+            }
+        }
+
+        window.logActivity = function(text, points, icon = "📝") {
+            let feed = JSON.parse(localStorage.getItem('nav_activity_feed')) || [];
+            feed.unshift({ text, points, icon, time: new Date().toISOString() });
+            if(feed.length > 5) feed.pop(); 
+            localStorage.setItem('nav_activity_feed', JSON.stringify(feed));
+        }
+
+        function renderActivityFeed() {
+            const feed = JSON.parse(localStorage.getItem('nav_activity_feed')) || [];
+            const container = document.getElementById('activityFeedContainer');
+            
+            if (feed.length === 0) {
+                container.innerHTML = '<div class="empty-activity">No recent activity. Start learning!</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            feed.slice(0, 3).forEach(act => {
+                const actDate = new Date(act.time);
+                const isToday = actDate.toDateString() === new Date().toDateString();
+                const timeStr = isToday ? 'Today' : 'Recently';
+
+                const html = `
+                    <div class="activity-item">
+                        <div class="activity-left">
+                            <div class="activity-icon">${act.icon}</div>
+                            <div>
+                                <span style="font-weight:500; font-size:0.9rem;">${act.text}</span><br>
+                                <span style="font-size:0.7rem; color:var(--text-muted);">${timeStr}</span>
+                            </div>
+                        </div>
+                        <span class="activity-points">+${act.points} XP</span>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function renderDailyChallenge() {
+            const lastQuizDate = localStorage.getItem('nav_lastQuizDate');
+            const today = new Date().toDateString();
+            
+            if (lastQuizDate === today) {
+                document.getElementById('dailyChallengeBar').style.width = '100%';
+                document.getElementById('dailyChallengeText').textContent = '1/1 completed! 🎉';
+            } else {
+                document.getElementById('dailyChallengeBar').style.width = '0%';
+                document.getElementById('dailyChallengeText').textContent = '0/1 done';
+            }
+        }
+
+        // ==================== MODAL & LOGOUT ====================
+        function showModal(title, message, callback) {
+            const modal = document.getElementById('confirmModal');
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('modalConfirmBtn').onclick = () => { hideModal(); if (callback) callback(); };
+            modal.classList.add('active');
+        }
+        function hideModal() { document.getElementById('confirmModal').classList.remove('active'); }
+
+        async function logout() {
+            showModal('Logout', 'Are you sure you want to exit?', async () => {
+                try { await account.deleteSession('current'); } catch (e) {} 
+                finally {
+                    localStorage.clear();
+                    showToast('Logged out successfully', 'success');
+                    setTimeout(() => window.location.href = 'auth.html', 1000);
+                }
+            });
+        }
+
+        // ==================== MAGIC NAVIGATION ====================
+        const list = document.querySelectorAll('.list');
+        const magicMover = document.getElementById('magicMover');
+        const navSvg = document.getElementById('navSvg');
+        const indicatorIcon = document.getElementById('indicatorIcon');
+        const slotWidth = 70;
+
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        list.forEach((item) => {
+            const page = item.getAttribute('data-page');
+            if (page === currentPage) {
+                const index = parseInt(item.getAttribute('data-index'));
+                const iconName = item.getAttribute('data-icon');
+                item.classList.add('active');
+                magicMover.style.transform = `translateX(${index * slotWidth}px)`;
+                navSvg.style.transform = `translateX(${index * slotWidth}px)`;
+                indicatorIcon.setAttribute('name', iconName);
+            }
+        });
+
+        list.forEach((item) => {
+            item.addEventListener('click', function() {
+                const index = parseInt(this.getAttribute('data-index'));
+                const iconName = this.getAttribute('data-icon');
+                const page = this.getAttribute('data-page');
+                
+                list.forEach(el => el.classList.remove('active'));
+                this.classList.add('active');
+                
+                magicMover.style.transform = `translateX(${index * slotWidth}px)`;
+                navSvg.style.transform = `translateX(${index * slotWidth}px)`;
+                indicatorIcon.setAttribute('name', iconName);
+                
+                if (page && page !== currentPage) {
+                    document.body.style.opacity = '0';
+                    document.body.style.transition = 'opacity 0.3s';
+                    setTimeout(() => window.location.href = page, 300);
+                }
+            });
+        });
+
+        // ==================== STARTUP ====================
+        document.addEventListener('DOMContentLoaded', async () => {
+            loadingOverlay?.classList.add('active');
+            applyTheme();
+            
+            try { await account.get(); } catch (e) { /* continue offline */ }
+            await buildGenuineDashboard();
+            await loadDynamicQuote(); // Load the quotes or notices
+
+            setTimeout(() => loadingOverlay?.classList.remove('active'), 400);
+        });
+
+    </script>
+</body>
+</html>
