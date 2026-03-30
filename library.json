@@ -6,6 +6,13 @@
       "category": "general",
       "icon": "📚",
       "badge": "New"
+    },
+    {
+      "id": "3rd",
+      "title": "STD 3rd",
+      "category": "general",
+      "icon": "📚",
+      "badge": "New"
     }
   ]
 }
