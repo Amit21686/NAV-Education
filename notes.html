@@ -49,16 +49,22 @@
 
         .doc-title { font-size: 2.2rem; font-weight: 700; margin-bottom: 5px; line-height: 1.2; background: linear-gradient(135deg, #fff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         body.light-theme .doc-title { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .doc-topic { color: var(--primary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 30px; display: inline-block; padding: 4px 12px; background: rgba(99,102,241,0.1); border-radius: 20px;}
+        
+        /* Main UI Topic Badge */
+        .doc-topic { 
+            color: var(--primary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; 
+            margin-bottom: 15px; display: inline-block; width: fit-content; padding: 6px 14px; 
+            background: rgba(99,102,241,0.1); border-radius: 20px;
+        }
 
         /* ===== NOTES RENDERER STYLES ===== */
         .notes-content { font-size: var(--base-font-size); line-height: 1.7; color: rgba(255,255,255,0.9); }
         body.light-theme .notes-content { color: rgba(0,0,0,0.8); }
 
-        .notes-content h1 { font-size: 1.8em; margin: 1.5em 0 0.5em; font-weight: 700; color: var(--text-dark); border-bottom: 1px solid var(--border-dark); padding-bottom: 8px;}
+        .notes-content h1 { font-size: 1.8em; margin: 1.5em 0 0.5em; font-weight: 700; color: var(--text-dark); }
         .notes-content h2 { font-size: 1.5em; margin: 1.2em 0 0.5em; font-weight: 600; color: var(--text-dark); }
         .notes-content h3 { font-size: 1.2em; margin: 1em 0 0.5em; font-weight: 600; color: var(--text-dark); }
-        body.light-theme .notes-content h1, body.light-theme .notes-content h2, body.light-theme .notes-content h3 { color: var(--text-light); border-color: var(--border-light); }
+        body.light-theme .notes-content h1, body.light-theme .notes-content h2, body.light-theme .notes-content h3 { color: var(--text-light); }
         
         .notes-content p { margin-bottom: 1.2em; }
         .notes-content b, .notes-content strong { font-weight: 600; color: var(--primary); }
@@ -113,31 +119,27 @@
             display: block !important; 
             background: #000000; 
             width: 1600px; 
-            /* By NOT using css page-break, html2canvas renders a perfectly solid image
-               that jsPDF chops perfectly without inserting blank overflow pages. */
         }
 
-        /* 1. Strict Page Container - Exactly 1600x900 to match aspect ratio perfectly */
+        /* 1. Strict Page Container */
         .pdf-page {
             width: 1600px;
             height: 900px; 
             position: relative;
-            background: #000000;
+            background: #000000; /* Replaced by JS Base Layer Gradient later */
             overflow: hidden; 
             box-sizing: border-box;
             margin: 0; padding: 0;
         }
 
-        /* 2. Strict Content Box (Mathematically shielded from the Logo corner) */
+        /* 2. Strict Content Box (Shielded from Logo) */
         .pdf-page-content {
             position: absolute;
             top: 40px;
             bottom: 40px;
             left: 60px;
-            /* Gives the top-right logo 180px of permanent breathing room */
-            right: 180px; 
-            
-            overflow: hidden; /* Tells our JS when a group has exceeded the page */
+            right: 180px; /* Logo Safe Zone */
+            overflow: hidden; 
             color: #f8fafc; 
             font-size: 26px; 
             line-height: 1.6;
@@ -150,14 +152,12 @@
             margin-bottom: 25px;
             transition: all 0.2s;
         }
-        /* When active, squeezes the group to ~80% size to make it fit on the current page */
         .pdf-group.shrink-fit { font-size: 20px !important; margin-bottom: 12px !important; }
         .pdf-group.shrink-fit h1 { margin: 0.6em 0 0.2em !important; }
         .pdf-group.shrink-fit h2 { margin: 0.5em 0 0.2em !important; }
         .pdf-group.shrink-fit .callout { padding: 12px 16px !important; margin: 0.8em 0 !important; }
         .pdf-group.shrink-fit .table-wrapper { margin: 0.8em 0 !important; }
 
-        /* Fallback extreme squeeze */
         .pdf-group.extreme-shrink-fit { font-size: 16px !important; margin-bottom: 8px !important; }
         .pdf-group.extreme-shrink-fit h1 { margin: 0.4em 0 0.1em !important; }
         .pdf-group.extreme-shrink-fit h2 { margin: 0.3em 0 0.1em !important; }
@@ -168,9 +168,23 @@
         .pdf-page-content b, .pdf-page-content strong { color: #818cf8 !important; }
         .pdf-page-content .highlight { background: #1e3a8a !important; color: #bfdbfe !important; border: 1px solid #3b82f6 !important; padding: 2px 8px; border-radius: 6px;}
         .pdf-page-content .doc-title { color: #ffffff !important; font-size: 3.5rem !important; margin-bottom: 0px !important; }
-        .pdf-page-content .doc-topic { background: #1e293b !important; color: #93c5fd !important; border: 1px solid #3b82f6 !important; margin-bottom: 15px !important; display: inline-block; padding: 4px 12px; border-radius: 20px;}
         
-        .pdf-page-content h1 { font-size: 1.7em !important; margin: 1em 0 0.4em !important; color: #ffffff !important; border-bottom: 2px solid #334155 !important; padding-bottom: 5px; }
+        /* Auto-fit Topic Box */
+        .pdf-page-content .doc-topic { 
+            background: #1e293b !important; 
+            color: #93c5fd !important; 
+            border: 1px solid #3b82f6 !important; 
+            margin-bottom: 15px !important; 
+            display: inline-block !important; 
+            width: fit-content !important; 
+            padding: 6px 18px !important; 
+            border-radius: 20px !important;
+            font-size: 18px !important;
+            font-weight: 600 !important;
+        }
+        
+        /* Removed line border under headings */
+        .pdf-page-content h1 { font-size: 1.8em !important; margin: 0.5em 0 0.4em !important; color: #ffffff !important; border: none !important; }
         .pdf-page-content h2 { font-size: 1.4em !important; margin: 0.8em 0 0.3em !important; color: #ffffff !important; }
         .pdf-page-content h3 { font-size: 1.2em !important; margin: 0.6em 0 0.2em !important; color: #ffffff !important; }
         
@@ -224,7 +238,6 @@
         <div id="notesHeader" style="display: none;">
             <div class="doc-topic" id="docTopic">Topic</div>
             <h1 class="doc-title" id="docTitle">Title</h1>
-            <div style="height: 1px; background: var(--border-dark); margin: 15px 0 20px;"></div>
         </div>
 
         <article class="notes-content" id="notesContent">
@@ -246,7 +259,7 @@
     <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" defer></script>
 
     <script>
-        let cachedNoteData = null; // Global store for PDF regeneration
+        let cachedNoteData = null; 
 
         const safetyTimeout = setTimeout(() => {
             const overlay = document.getElementById('loadingOverlay');
@@ -288,7 +301,6 @@
             document.getElementById("readingProgress").style.width = scrolled + "%";
         };
 
-        // Helper: Generates raw HTML for a block
         function createBlockHTML(block) {
             switch (block.type) {
                 case 'h1': return `<h1>${block.content}</h1>`;
@@ -312,9 +324,6 @@
             }
         }
 
-        // =========================================================================
-        // 🔥 TRUE DOM PAGINATION ENGINE: Zero clipping, intelligent shrinking 🔥
-        // =========================================================================
         async function exportSmartPDF() {
             if (typeof html2pdf === 'undefined') {
                 alert("PDF Generator is still loading. Please wait a few seconds.");
@@ -326,7 +335,6 @@
             const loadText = document.getElementById('loadingText');
             overlay.classList.add('active');
             
-            // 1. Hide normal UI and activate PDF Mode
             document.body.classList.add('pdf-printing');
             document.getElementById('mainContainer').style.display = 'none';
             document.querySelector('.app-header').style.display = 'none';
@@ -335,7 +343,6 @@
             const pdfWrapper = document.getElementById('pdfContentWrapper');
             pdfWrapper.innerHTML = '';
 
-            // 2. Fetch Logo
             loadText.textContent = "Fetching Watermark Logo...";
             const logoObj = await new Promise((resolve) => {
                 const img = new Image();
@@ -352,7 +359,6 @@
                 img.src = 'https://raw.githubusercontent.com/Amit21686/NAV-Education/main/logo.png';
             });
 
-            // 3. Create an invisible measuring board to render MathJax and size elements
             loadText.textContent = "Building Smart Pages...";
             const measureBoard = document.createElement('div');
             measureBoard.className = 'pdf-page-content';
@@ -363,9 +369,8 @@
             measureBoard.style.height = 'auto';
             document.body.appendChild(measureBoard);
 
-            // 4. Inject Grouped HTML into the measure board
             let rawHTML = `<div class="pdf-group">
-                <div class="doc-topic">${cachedNoteData.topic || ''}</div>
+                ${cachedNoteData.topic ? `<div class="doc-topic">${cachedNoteData.topic}</div>` : ''}
                 <h1 class="doc-title">${cachedNoteData.title || ''}</h1>
             </div>`;
             
@@ -376,7 +381,6 @@
                 
                 groupHTML += createBlockHTML(blocks[i]);
                 
-                // 🔥 SMART GROUPING: If this is a heading, bind it to the next paragraph/list!
                 if (isHeading && i + 1 < blocks.length && !['h1', 'h2', 'h3'].includes(blocks[i+1].type)) {
                     i++;
                     groupHTML += createBlockHTML(blocks[i]);
@@ -386,11 +390,9 @@
             }
             measureBoard.innerHTML = rawHTML;
 
-            // 5. Force MathJax to render EVERYTHING while it's hidden
             loadText.textContent = "Typesetting Equations...";
             await MathJax.typesetPromise([measureBoard]);
 
-            // White-out the MathJax SVGs to pop against black
             const svgs = measureBoard.querySelectorAll('mjx-container svg');
             svgs.forEach(svg => {
                 const rect = svg.getBoundingClientRect(); 
@@ -404,9 +406,8 @@
                 }
             });
 
-            // 6. THE PAGINATION & SHRINK ALGORITHM
             loadText.textContent = "Packing Pages...";
-            const MAX_HEIGHT = 820; // Exact pixel limit inside the pdf-page-content box
+            const MAX_HEIGHT = 820; 
             
             function createNewPage() {
                 const p = document.createElement('div');
@@ -418,31 +419,23 @@
 
             let currentContentArea = createNewPage();
             
-            // Loop through the grouped blocks and pack them
             while (measureBoard.firstChild) {
                 let group = measureBoard.firstChild;
                 currentContentArea.appendChild(group);
                 
-                // Did adding this block cause the page to overflow?
                 if (currentContentArea.scrollHeight > MAX_HEIGHT) {
-                    
-                    // First Attempt: Shrink it to make it fit
                     group.classList.add('shrink-fit');
                     
                     if (currentContentArea.scrollHeight > MAX_HEIGHT) {
-                        // Second Attempt: It still overflows!
                         group.classList.remove('shrink-fit');
                         
-                        // If it's the ONLY item on the page, force it to extreme shrink
                         if (currentContentArea.children.length === 1) {
                             group.classList.add('extreme-shrink-fit');
                         } else {
-                            // Move it to a brand new page
                             currentContentArea.removeChild(group);
                             currentContentArea = createNewPage();
                             currentContentArea.appendChild(group);
                             
-                            // If it somehow overflows the NEW page, shrink it there
                             if (currentContentArea.scrollHeight > MAX_HEIGHT) {
                                 group.classList.add('shrink-fit');
                                 if (currentContentArea.scrollHeight > MAX_HEIGHT) {
@@ -455,15 +448,13 @@
                 }
             }
 
-            // Clean up the measuring board
             document.body.removeChild(measureBoard);
 
-            // 7. Fire up HTML2PDF on our flawlessly paginated wrapper
             loadText.textContent = "Generating Document...";
             const docTitle = cachedNoteData.title || 'NAV_Notes';
 
             const opt = {
-                margin:       0, // Zero margin. We bypass html2pdf's engine entirely.
+                margin:       0, 
                 filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_presentation.pdf`,
                 image:        { type: 'jpeg', quality: 1.0 },
                 html2canvas:  { 
@@ -475,7 +466,6 @@
                     windowWidth: 1600,
                     backgroundColor: '#000000' 
                 }, 
-                // We use EXACT pixel bounds. jsPDF automatically slices our stacked 1600x900 blocks.
                 jsPDF:        { unit: 'px', format: [1600, 900], orientation: 'landscape', hotfixes: ["px_scaling"] }
             };
 
@@ -485,12 +475,11 @@
                     for (let i = 1; i <= totalPages; i++) {
                         pdf.setPage(i);
                         
-                        // Stamp Logo natively onto the PDF via jsPDF coordinates
                         if (logoObj && logoObj.b64) {
-                            const logoWidth = 90; // Pixels
+                            const logoWidth = 90; 
                             const logoHeight = logoWidth * logoObj.ratio;
-                            const xPos = 1600 - logoWidth - 30; // 30px from right edge
-                            const yPos = 30; // 30px from top
+                            const xPos = 1600 - logoWidth - 30; 
+                            const yPos = 30; 
                             pdf.addImage(logoObj.b64, 'PNG', xPos, yPos, logoWidth, logoHeight);
                         }
                     }
@@ -499,7 +488,6 @@
                 console.error("PDF Error:", e);
                 alert("Failed to generate PDF: " + e.message);
             } finally {
-                // Restore Web View
                 pdfWrapper.innerHTML = '';
                 document.body.classList.remove('pdf-printing');
                 document.getElementById('mainContainer').style.display = 'block';
@@ -525,7 +513,7 @@
                     throw new Error("Format Mismatch! The file loaded but does NOT contain the required 'blocks' array.");
                 }
 
-                cachedNoteData = data; // Save for PDF generation
+                cachedNoteData = data; 
                 renderDocument(data);
 
             } catch(error) {
