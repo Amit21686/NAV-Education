@@ -87,17 +87,6 @@
         body.light-theme .notes-content th { background: rgba(99,102,241,0.1); }
         body.light-theme .notes-content td { border-color: var(--border-light); }
 
-        /* 🔥 CSS Page Break Protection for MathJax 🔥 */
-        .notes-content mjx-container { page-break-inside: avoid !important; break-inside: avoid !important; }
-        .notes-content mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; padding: 10px 0; margin: 1em 0; text-align: center; }
-        .notes-content mjx-container svg { max-width: 100%; height: auto; }
-
-        .pdf-block {
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-            margin-bottom: 2px; /* Tight gap to fit more items */
-        }
-
         .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 30000; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 15px; color: white;}
         .loading-overlay.active { display: flex; }
         .spinner { width: 40px; height: 40px; border: 3px solid var(--border-dark); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -106,7 +95,9 @@
         .error-card { background: rgba(244, 63, 94, 0.1); border: 1px solid var(--error); border-radius: var(--radius-md); padding: 30px 20px; text-align: center; margin-top: 20px; }
         .raw-data-box { text-align: left; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; font-size: 0.75rem; overflow-x: auto; margin-top: 15px; color: #a5b4fc; font-family: monospace; border: 1px solid var(--border-dark);}
         
-        /* 🔥 PDF CAPTURE OVERRIDES: SOLID BLACK & HIGH DENSITY 🔥 */
+        /* ==========================================================
+           🔥 PDF CAPTURE OVERRIDES: BLACK BACKGROUND & BORDERS 🔥 
+           ========================================================== */
         body.pdf-printing { 
             overflow: visible !important; 
             margin: 0 !important;
@@ -120,7 +111,9 @@
             min-width: 1600px !important;
             background: #000000 !important; /* Pure solid black */
             color: #ffffff !important; 
-            padding: 40px 60px !important; /* Tight margins to pack content */
+            
+            /* Give it 60px padding on edges, and 120px on the right so text avoids the logo natively */
+            padding: 40px 120px 40px 60px !important; 
             box-sizing: border-box !important;
             margin: 0 !important;
         }
@@ -132,18 +125,63 @@
         }
         
         /* Dense text styling for maximum fit */
-        .pdf-capture-mode .notes-content { color: #f8fafc !important; font-size: 24px !important; line-height: 1.5 !important; }
-        .pdf-capture-mode .notes-content h1 { font-size: 1.7em !important; margin: 1em 0 0.4em !important; color: #ffffff !important; border-color: rgba(255,255,255,0.2) !important; page-break-after: avoid !important; break-after: avoid !important;}
-        .pdf-capture-mode .notes-content h2 { font-size: 1.4em !important; margin: 0.8em 0 0.3em !important; color: #ffffff !important; page-break-after: avoid !important; break-after: avoid !important;}
-        .pdf-capture-mode .notes-content h3 { font-size: 1.2em !important; margin: 0.6em 0 0.2em !important; color: #ffffff !important; page-break-after: avoid !important; break-after: avoid !important;}
-        .pdf-capture-mode .notes-content p { margin-bottom: 0.8em !important; }
-        
-        .pdf-capture-mode .callout { background: rgba(255,255,255,0.08) !important; border-color: rgba(255,255,255,0.15) !important; color: #ffffff !important; padding: 12px 16px !important; margin: 1em 0 !important; }
+        .pdf-capture-mode .notes-content { color: #f8fafc !important; font-size: 24px !important; line-height: 1.6 !important; }
         .pdf-capture-mode .doc-title { background: none !important; -webkit-text-fill-color: #ffffff !important; color: #ffffff !important; font-size: 3rem !important; margin-bottom: 0px !important; }
         .pdf-capture-mode .doc-topic { background: rgba(255,255,255,0.1) !important; color: #a5b4fc !important; border-color: transparent !important; margin-bottom: 15px !important;}
-        .pdf-capture-mode .table-wrapper { border-color: rgba(255,255,255,0.2) !important; margin: 1em 0 !important;}
-        .pdf-capture-mode th { background: rgba(255,255,255,0.1) !important; color: #ffffff !important; border-color: rgba(255,255,255,0.2) !important; padding: 10px !important;}
-        .pdf-capture-mode td { border-color: rgba(255,255,255,0.2) !important; color: #f1f5f9 !important; padding: 10px !important;}
+        
+        /* 🔥 BORDER FIX: Solid, Opaque Hex Colors so they don't vanish in PDF 🔥 */
+        .pdf-capture-mode .callout { 
+            background: #1e293b !important; /* Solid Slate 800 */
+            border: 2px solid #64748b !important; /* Thick Solid Slate 500 */
+            color: #ffffff !important; 
+            padding: 16px 20px !important; 
+            margin: 1.2em 0 !important; 
+            border-radius: 12px !important;
+        }
+        .pdf-capture-mode .table-wrapper { 
+            border: 2px solid #64748b !important; /* Thick Solid Slate 500 */
+            margin: 1.5em 0 !important;
+            border-radius: 12px !important;
+            background: #000000 !important;
+        }
+        .pdf-capture-mode th { 
+            background: #334155 !important; /* Solid Slate 700 */
+            color: #ffffff !important; 
+            border: 1px solid #475569 !important; /* Solid Border */
+            padding: 14px !important;
+        }
+        .pdf-capture-mode td { 
+            border: 1px solid #475569 !important; /* Solid Border */
+            color: #f1f5f9 !important; 
+            padding: 14px !important;
+        }
+
+        /* 🔥 CUTTING FIX: We apply "avoid break" strictly to atomic elements 🔥 */
+        .pdf-capture-mode .notes-content h1, 
+        .pdf-capture-mode .notes-content h2, 
+        .pdf-capture-mode .notes-content h3, 
+        .pdf-capture-mode .notes-content p, 
+        .pdf-capture-mode .notes-content li, 
+        .pdf-capture-mode .callout, 
+        .pdf-capture-mode .table-wrapper, 
+        .pdf-capture-mode .notes-image-wrapper,
+        .pdf-capture-mode mjx-container[display="true"] {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            display: block !important;
+            margin-bottom: 0.8em !important;
+        }
+        
+        /* Glue headings to their paragraphs */
+        .pdf-capture-mode .notes-content h1, 
+        .pdf-capture-mode .notes-content h2, 
+        .pdf-capture-mode .notes-content h3 {
+            page-break-after: avoid !important; 
+            break-after: avoid !important;
+            margin-bottom: 0.3em !important;
+            color: #ffffff !important; 
+            border-color: #334155 !important;
+        }
     </style>
 </head>
 <body>
@@ -168,10 +206,10 @@
 
     <div id="pdfContentWrapper">
         <div class="container" id="mainContainer">
-            <div id="notesHeader" style="display: none;" class="pdf-block">
+            <div id="notesHeader" style="display: none;">
                 <div class="doc-topic" id="docTopic">Topic</div>
                 <h1 class="doc-title" id="docTitle">Title</h1>
-                <div style="height: 1px; background: var(--border-dark); margin: 15px 0 20px;"></div>
+                <div style="height: 1px; background: #334155; margin: 15px 0 20px;"></div>
             </div>
 
             <article class="notes-content" id="notesContent">
@@ -296,10 +334,10 @@
             const docTitle = document.getElementById('docTitle').textContent || 'NAV_Notes';
 
             const opt = {
-                // Zero margins inside jsPDF so we maximize the edge-to-edge space.
                 margin:       0, 
                 filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_presentation.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
+                // Max quality JPEG output
+                image:        { type: 'jpeg', quality: 1.0 },
                 html2canvas:  { 
                     scale: 2, 
                     useCORS: true, 
@@ -310,7 +348,8 @@
                     backgroundColor: '#000000' 
                 }, 
                 jsPDF:        { unit: 'in', format: [16, 9], orientation: 'landscape' },
-                pagebreak:    { mode: ['css', 'legacy'], avoid: ['.pdf-block', 'mjx-container'] }
+                // Use strict CSS pagebreak mode (relies entirely on our new CSS classes)
+                pagebreak:    { mode: ['css', 'legacy'] }
             };
 
             try {
@@ -331,7 +370,7 @@
 
                         // Stamp Logo in absolute top right corner to avoid wasting space
                         if (logoObj && logoObj.b64) {
-                            const logoWidth = 1.0; // Slightly smaller to be unobtrusive
+                            const logoWidth = 1.0; 
                             const logoHeight = logoWidth * logoObj.ratio;
                             const xPos = 16 - logoWidth - 0.2; 
                             const yPos = 0.2; 
@@ -437,7 +476,8 @@
                         element = `<div class="table-wrapper"><table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
                         break;
                 }
-                content.insertAdjacentHTML('beforeend', `<div class="pdf-block">${element}</div>`);
+                // NO MORE PDF-BLOCK WRAPPER. Elements are inserted directly to fix slicing bugs.
+                content.insertAdjacentHTML('beforeend', element);
             });
 
             setTimeout(() => {
