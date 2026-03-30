@@ -1,10 +1,194 @@
 {
-  "title": "Summary Notes",
-  "topic": "Solution",
+  "title": "Comprehensive Chemistry Guide",
+  "topic": "Chapter: Solutions (Class 12)",
   "blocks": [
     {
+      "type": "h1",
+      "content": "Introduction to Solutions"
+    },
+    {
       "type": "paragraph",
-      "content": ""
+      "content": "A <b>solution</b> is a <span class=\"highlight\">homogeneous mixture</span> of two or more components. The component present in larger amount is called <b>solvent</b> and the one in smaller amount is called <b>solute</b>."
+    },
+    {
+      "type": "h2",
+      "content": "Types of Solutions"
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "<b>Gaseous Solution:</b> Gas in gas (e.g., air)",
+        "<b>Liquid Solution:</b> Solid/liquid/gas in liquid (e.g., salt in water)",
+        "<b>Solid Solution:</b> Solid in solid (e.g., alloys like brass)"
+      ]
+    },
+    {
+      "type": "h2",
+      "content": "Concentration of Solutions"
+    },
+    {
+      "type": "paragraph",
+      "content": "Different ways to express concentration:"
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "<b>Mass %:</b> $(\\frac{mass\\ of\\ solute}{mass\\ of\\ solution}) \\times 100$",
+        "<b>Mole Fraction:</b> $X_A = \\frac{n_A}{n_A + n_B}$",
+        "<b>Molarity (M):</b> $M = \\frac{n}{V(L)}$",
+        "<b>Molality (m):</b> $m = \\frac{n}{mass\\ of\\ solvent\\ (kg)}$",
+        "<b>ppm:</b> Parts per million for very dilute solutions"
+      ]
+    },
+    {
+      "type": "h2",
+      "content": "Solubility"
+    },
+    {
+      "type": "paragraph",
+      "content": "<b>Solubility</b> is the maximum amount of solute that dissolves in a given amount of solvent at a given temperature."
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "Depends on nature of solute and solvent",
+        "Temperature affects solubility",
+        "Pressure affects gas solubility"
+      ]
+    },
+    {
+      "type": "h2",
+      "content": "Henry's Law"
+    },
+    {
+      "type": "paragraph",
+      "content": "Henry’s law states that the solubility of a gas in a liquid is directly proportional to the partial pressure of the gas."
+    },
+    {
+      "type": "paragraph",
+      "content": "$p = k_H \\cdot x$"
+    },
+    {
+      "type": "h3",
+      "content": "Applications of Henry’s Law"
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "Carbonated drinks (CO₂ dissolved under pressure)",
+        "Scuba diving (avoid bends)",
+        "High altitude breathing problems"
+      ]
+    },
+    {
+      "type": "h2",
+      "content": "Raoult’s Law"
+    },
+    {
+      "type": "paragraph",
+      "content": "The partial vapor pressure of each component is directly proportional to its mole fraction."
+    },
+    {
+      "type": "paragraph",
+      "content": "$p_A = p_A^0 \\cdot x_A$"
+    },
+    {
+      "type": "h3",
+      "content": "Ideal vs Non-Ideal Solutions"
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "<b>Ideal Solution:</b> Obeys Raoult’s law, no heat change",
+        "<b>Non-Ideal Solution:</b> Shows deviation (positive or negative)"
+      ]
+    },
+    {
+      "type": "h2",
+      "content": "Colligative Properties"
+    },
+    {
+      "type": "paragraph",
+      "content": "These properties depend only on number of solute particles, not their nature."
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "<b>Relative Lowering of Vapor Pressure:</b> $\\frac{\\Delta p}{p^0} = x_B$",
+        "<b>Elevation in Boiling Point:</b> $\\Delta T_b = K_b \\cdot m$",
+        "<b>Depression in Freezing Point:</b> $\\Delta T_f = K_f \\cdot m$",
+        "<b>Osmotic Pressure:</b> $\\Pi = CRT$"
+      ]
+    },
+    {
+      "type": "h2",
+      "content": "Abnormal Molar Mass"
+    },
+    {
+      "type": "paragraph",
+      "content": "Due to <b>association</b> or <b>dissociation</b> of solute particles, observed molar mass differs."
+    },
+    {
+      "type": "paragraph",
+      "content": "Van’t Hoff factor: $i = \\frac{observed\\ value}{normal\\ value}$"
+    },
+    {
+      "type": "h2",
+      "content": "Van’t Hoff Factor"
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "i > 1 → Dissociation (e.g., NaCl)",
+        "i < 1 → Association (e.g., acetic acid)",
+        "i = 1 → No change"
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "warning",
+      "icon": "fas fa-exclamation-triangle",
+      "title": "Important for NEET",
+      "content": "Focus on formulas of colligative properties and Van’t Hoff factor. Numerical questions are very common from this chapter."
+    },
+    {
+      "type": "table",
+      "headers": [
+        "Property",
+        "Formula",
+        "Depends On"
+      ],
+      "rows": [
+        [
+          "Boiling Point Elevation",
+          "$\\Delta T_b = K_b m$",
+          "Molality"
+        ],
+        [
+          "Freezing Point Depression",
+          "$\\Delta T_f = K_f m$",
+          "Molality"
+        ],
+        [
+          "Osmotic Pressure",
+          "$\\Pi = CRT$",
+          "Concentration"
+        ]
+      ]
+    },
+    {
+      "type": "callout",
+      "style": "success",
+      "icon": "fas fa-check-circle",
+      "title": "Quick Revision Trick",
+      "content": "Remember: <b>‘Colligative = Count of particles’</b> → Only number matters, not nature."
     }
   ]
 }
