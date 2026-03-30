@@ -49,22 +49,16 @@
 
         .doc-title { font-size: 2.2rem; font-weight: 700; margin-bottom: 5px; line-height: 1.2; background: linear-gradient(135deg, #fff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         body.light-theme .doc-title { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        /* Main UI Topic Badge */
-        .doc-topic { 
-            color: var(--primary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; 
-            margin-bottom: 15px; display: inline-block; width: fit-content; padding: 6px 14px; 
-            background: rgba(99,102,241,0.1); border-radius: 20px;
-        }
+        .doc-topic { color: var(--primary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 30px; display: inline-block; padding: 4px 12px; background: rgba(99,102,241,0.1); border-radius: 20px;}
 
         /* ===== NOTES RENDERER STYLES ===== */
         .notes-content { font-size: var(--base-font-size); line-height: 1.7; color: rgba(255,255,255,0.9); }
         body.light-theme .notes-content { color: rgba(0,0,0,0.8); }
 
-        .notes-content h1 { font-size: 1.8em; margin: 1.5em 0 0.5em; font-weight: 700; color: var(--text-dark); }
+        .notes-content h1 { font-size: 1.8em; margin: 1.5em 0 0.5em; font-weight: 700; color: var(--text-dark); border-bottom: 1px solid var(--border-dark); padding-bottom: 8px;}
         .notes-content h2 { font-size: 1.5em; margin: 1.2em 0 0.5em; font-weight: 600; color: var(--text-dark); }
         .notes-content h3 { font-size: 1.2em; margin: 1em 0 0.5em; font-weight: 600; color: var(--text-dark); }
-        body.light-theme .notes-content h1, body.light-theme .notes-content h2, body.light-theme .notes-content h3 { color: var(--text-light); }
+        body.light-theme .notes-content h1, body.light-theme .notes-content h2, body.light-theme .notes-content h3 { color: var(--text-light); border-color: var(--border-light); }
         
         .notes-content p { margin-bottom: 1.2em; }
         .notes-content b, .notes-content strong { font-weight: 600; color: var(--primary); }
@@ -75,17 +69,17 @@
         .notes-content ul, .notes-content ol { margin-bottom: 1.5em; padding-left: 1.5em; }
         .notes-content li { margin-bottom: 0.5em; }
 
-        .notes-image-wrapper { margin: 2em 0; text-align: center;}
+        .notes-image-wrapper { margin: 2em 0; text-align: center; page-break-inside: avoid; break-inside: avoid;}
         .notes-content img { max-width: 100%; height: auto; border-radius: var(--radius-md); border: 1px solid var(--border-dark); }
         body.light-theme .notes-content img { border-color: var(--border-light); }
 
-        .callout { padding: 18px 20px; border-radius: var(--radius-md); margin: 1.5em 0; display: flex; gap: 15px; background: var(--card-dark); border: 1px solid var(--border-dark); }
+        .callout { padding: 18px 20px; border-radius: var(--radius-md); margin: 1.5em 0; display: flex; gap: 15px; background: var(--card-dark); border: 1px solid var(--border-dark); page-break-inside: avoid; break-inside: avoid;}
         body.light-theme .callout { background: var(--card-light); border-color: var(--border-light); }
         .callout-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; color: var(--info);}
         .callout-content { flex: 1; }
         .callout-title { font-weight: 600; font-size: 1.05em; margin-bottom: 4px; display: block;}
         
-        .table-wrapper { width: 100%; overflow-x: auto; margin: 2em 0; border-radius: var(--radius-md); border: 1px solid var(--border-dark); }
+        .table-wrapper { width: 100%; overflow-x: auto; margin: 2em 0; border-radius: var(--radius-md); border: 1px solid var(--border-dark); page-break-inside: avoid; break-inside: avoid;}
         body.light-theme .table-wrapper { border-color: var(--border-light); }
         .notes-content table { width: 100%; border-collapse: collapse; min-width: 500px; text-align: left; }
         .notes-content th { background: rgba(99,102,241,0.15); padding: 14px 16px; font-weight: 600; color: var(--primary); font-size: 0.95em; }
@@ -93,6 +87,8 @@
         body.light-theme .notes-content th { background: rgba(99,102,241,0.1); }
         body.light-theme .notes-content td { border-color: var(--border-light); }
 
+        /* 🔥 CSS Page Break Protection for MathJax 🔥 */
+        .notes-content mjx-container { page-break-inside: avoid !important; break-inside: avoid !important; }
         .notes-content mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; padding: 10px 0; margin: 1em 0; text-align: center; }
         .notes-content mjx-container svg { max-width: 100%; height: auto; }
 
@@ -104,114 +100,14 @@
         .error-card { background: rgba(244, 63, 94, 0.1); border: 1px solid var(--error); border-radius: var(--radius-md); padding: 30px 20px; text-align: center; margin-top: 20px; }
         .raw-data-box { text-align: left; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; font-size: 0.75rem; overflow-x: auto; margin-top: 15px; color: #a5b4fc; font-family: monospace; border: 1px solid var(--border-dark);}
         
-        /* ==========================================================
-           🔥 SMART DOM PAGINATION ENGINE: STRICT 16:9 CONTAINERS 🔥 
-           ========================================================== */
-        body.pdf-printing { 
-            overflow: visible !important; 
-            margin: 0 !important;
-            padding: 0 !important;
-            background: #000000 !important; 
-        }
-        
-        #pdfContentWrapper { display: none; }
-        .pdf-printing #pdfContentWrapper { 
-            display: block !important; 
-            background: #000000; 
-            width: 1600px; 
-        }
-
-        /* 1. Strict Page Container */
-        .pdf-page {
-            width: 1600px;
-            height: 900px; 
-            position: relative;
-            background: #000000; /* Replaced by JS Base Layer Gradient later */
-            overflow: hidden; 
-            box-sizing: border-box;
-            margin: 0; padding: 0;
-        }
-
-        /* 2. Strict Content Box (Shielded from Logo) */
-        .pdf-page-content {
-            position: absolute;
-            top: 40px;
-            bottom: 40px;
-            left: 60px;
-            right: 180px; /* Logo Safe Zone */
-            overflow: hidden; 
-            color: #f8fafc; 
-            font-size: 26px; 
-            line-height: 1.6;
-        }
-
-        /* 3. The Shrink-Fit Engine */
-        .pdf-group {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 25px;
-            transition: all 0.2s;
-        }
-        .pdf-group.shrink-fit { font-size: 20px !important; margin-bottom: 12px !important; }
-        .pdf-group.shrink-fit h1 { margin: 0.6em 0 0.2em !important; }
-        .pdf-group.shrink-fit h2 { margin: 0.5em 0 0.2em !important; }
-        .pdf-group.shrink-fit .callout { padding: 12px 16px !important; margin: 0.8em 0 !important; }
-        .pdf-group.shrink-fit .table-wrapper { margin: 0.8em 0 !important; }
-
-        .pdf-group.extreme-shrink-fit { font-size: 16px !important; margin-bottom: 8px !important; }
-        .pdf-group.extreme-shrink-fit h1 { margin: 0.4em 0 0.1em !important; }
-        .pdf-group.extreme-shrink-fit h2 { margin: 0.3em 0 0.1em !important; }
-        .pdf-group.extreme-shrink-fit .callout { padding: 8px 12px !important; margin: 0.5em 0 !important; }
-        .pdf-group.extreme-shrink-fit .table-wrapper { margin: 0.5em 0 !important; }
-
-        /* 4. High Contrast Colors & Borders */
-        .pdf-page-content b, .pdf-page-content strong { color: #818cf8 !important; }
-        .pdf-page-content .highlight { background: #1e3a8a !important; color: #bfdbfe !important; border: 1px solid #3b82f6 !important; padding: 2px 8px; border-radius: 6px;}
-        .pdf-page-content .doc-title { color: #ffffff !important; font-size: 3.5rem !important; margin-bottom: 0px !important; }
-        
-        /* Auto-fit Topic Box */
-        .pdf-page-content .doc-topic { 
-            background: #1e293b !important; 
-            color: #93c5fd !important; 
-            border: 1px solid #3b82f6 !important; 
-            margin-bottom: 15px !important; 
-            display: inline-block !important; 
-            width: fit-content !important; 
-            padding: 6px 18px !important; 
-            border-radius: 20px !important;
-            font-size: 18px !important;
-            font-weight: 600 !important;
-        }
-        
-        /* Removed line border under headings */
-        .pdf-page-content h1 { font-size: 1.8em !important; margin: 0.5em 0 0.4em !important; color: #ffffff !important; border: none !important; }
-        .pdf-page-content h2 { font-size: 1.4em !important; margin: 0.8em 0 0.3em !important; color: #ffffff !important; }
-        .pdf-page-content h3 { font-size: 1.2em !important; margin: 0.6em 0 0.2em !important; color: #ffffff !important; }
-        
-        .pdf-page-content .callout { 
-            background: #0f172a !important; 
-            border: 3px solid #475569 !important; 
-            color: #ffffff !important; 
-            padding: 16px 20px !important; 
-            margin: 1.2em 0 !important; 
-            border-radius: 12px !important;
-            display: flex; gap: 15px;
-        }
-        .pdf-page-content .callout-icon { color: #60a5fa !important; font-size: 1.4rem; flex-shrink: 0;}
-        .pdf-page-content .callout-title { font-weight: 600; font-size: 1.05em; margin-bottom: 4px; display: block;}
-        
-        .pdf-page-content .table-wrapper { 
-            border: 3px solid #475569 !important; 
-            margin: 1.5em 0 !important;
-            border-radius: 12px !important;
-            background: #000000 !important;
-            overflow: hidden;
-        }
-        .pdf-page-content table { width: 100%; border-collapse: collapse; text-align: left; }
-        .pdf-page-content th { background: #1e293b !important; color: #93c5fd !important; border: 2px solid #475569 !important; padding: 14px !important; }
-        .pdf-page-content td { border: 2px solid #475569 !important; color: #f8fafc !important; padding: 14px !important; }
-        .pdf-page-content ul, .pdf-page-content ol { padding-left: 1.5em; margin-bottom: 0.5em;}
-        .pdf-page-content li { margin-bottom: 0.5em; }
+        /* 🔥 PDF CAPTURE OVERRIDES 🔥 */
+        .pdf-capture-mode { background: #ffffff !important; color: #000000 !important; }
+        .pdf-capture-mode .notes-content { color: #000000 !important; }
+        .pdf-capture-mode .callout { background: #f8fafc !important; border-color: #e2e8f0 !important; color: #000000 !important;}
+        .pdf-capture-mode .doc-title { -webkit-text-fill-color: black !important; color: black !important; }
+        .pdf-capture-mode .table-wrapper { border-color: #ccc !important; }
+        .pdf-capture-mode th { background: #f1f5f9 !important; color: black !important; border-color: #ccc !important; }
+        .pdf-capture-mode td { border-color: #ccc !important; color: black !important; }
     </style>
 </head>
 <body>
@@ -234,21 +130,23 @@
         </div>
     </header>
 
-    <div class="container" id="mainContainer">
-        <div id="notesHeader" style="display: none;">
-            <div class="doc-topic" id="docTopic">Topic</div>
-            <h1 class="doc-title" id="docTitle">Title</h1>
-        </div>
+    <div id="pdfContentWrapper">
+        <div class="container" id="mainContainer">
+            <div id="notesHeader" style="display: none;">
+                <div class="doc-topic" id="docTopic">Topic</div>
+                <h1 class="doc-title" id="docTitle">Title</h1>
+                <div style="height: 1px; background: var(--border-dark); margin: 20px 0 30px;"></div>
+            </div>
 
-        <article class="notes-content" id="notesContent">
-        </article>
+            <article class="notes-content" id="notesContent">
+            </article>
+        </div>
     </div>
-    
-    <div id="pdfContentWrapper"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
     
     <script>
+        // Disable Screen Reader text so it doesn't overlap the math!
         window.MathJax = {
             options: { enableMenu: false, menuOptions: { settings: { assistiveMml: false } } },
             tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], packages: {'[+]': ['mhchem']} },
@@ -259,8 +157,6 @@
     <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" defer></script>
 
     <script>
-        let cachedNoteData = null; 
-
         const safetyTimeout = setTimeout(() => {
             const overlay = document.getElementById('loadingOverlay');
             if (overlay.classList.contains('active')) {
@@ -301,198 +197,79 @@
             document.getElementById("readingProgress").style.width = scrolled + "%";
         };
 
-        function createBlockHTML(block) {
-            switch (block.type) {
-                case 'h1': return `<h1>${block.content}</h1>`;
-                case 'h2': return `<h2>${block.content}</h2>`;
-                case 'h3': return `<h3>${block.content}</h3>`;
-                case 'paragraph': return `<p>${block.content}</p>`;
-                case 'image': return `<div class="notes-image-wrapper"><img src="${block.url}">${block.caption ? `<div class="image-caption">${block.caption}</div>` : ''}</div>`;
-                case 'list':
-                    const listTag = block.ordered ? 'ol' : 'ul';
-                    const listItems = block.items.map(item => `<li>${item}</li>`).join('');
-                    return `<${listTag}>${listItems}</${listTag}>`;
-                case 'callout':
-                    const styleClass = block.style || 'info';
-                    const icon = block.icon || 'fas fa-info-circle';
-                    return `<div class="callout ${styleClass}"><div class="callout-icon"><i class="${icon}"></i></div><div class="callout-content">${block.title ? `<span class="callout-title">${block.title}</span>` : ''}${block.content}</div></div>`;
-                case 'table':
-                    const ths = block.headers.map(h => `<th>${h}</th>`).join('');
-                    const trs = block.rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
-                    return `<div class="table-wrapper"><table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
-                default: return '';
-            }
-        }
-
+        // =========================================================================
+        // 🔥 THE SMART PDF EXPORTER 🔥
+        // Uses standard html2pdf pagination, but pre-converts SVGs to strict pixels
+        // =========================================================================
         async function exportSmartPDF() {
             if (typeof html2pdf === 'undefined') {
                 alert("PDF Generator is still loading. Please wait a few seconds.");
                 return;
             }
-            if (!cachedNoteData) return alert("Note data is corrupted.");
 
             const overlay = document.getElementById('loadingOverlay');
             const loadText = document.getElementById('loadingText');
             overlay.classList.add('active');
-            
-            document.body.classList.add('pdf-printing');
-            document.getElementById('mainContainer').style.display = 'none';
-            document.querySelector('.app-header').style.display = 'none';
+            loadText.textContent = "Processing Math for PDF...";
+
+            window.scrollTo(0, 0);
+            const element = document.getElementById('pdfContentWrapper');
+            element.classList.add('pdf-capture-mode');
             document.getElementById('readingProgress').style.display = 'none';
-            
-            const pdfWrapper = document.getElementById('pdfContentWrapper');
-            pdfWrapper.innerHTML = '';
 
-            loadText.textContent = "Fetching Watermark Logo...";
-            const logoObj = await new Promise((resolve) => {
-                const img = new Image();
-                img.crossOrigin = 'Anonymous';
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0);
-                    resolve({ b64: canvas.toDataURL('image/png'), ratio: img.height / img.width });
-                };
-                img.onerror = () => resolve(null);
-                img.src = 'https://raw.githubusercontent.com/Amit21686/NAV-Education/main/logo.png';
-            });
-
-            loadText.textContent = "Building Smart Pages...";
-            const measureBoard = document.createElement('div');
-            measureBoard.className = 'pdf-page-content';
-            measureBoard.style.position = 'absolute';
-            measureBoard.style.visibility = 'hidden';
-            measureBoard.style.top = '-9999px';
-            measureBoard.style.left = '0';
-            measureBoard.style.height = 'auto';
-            document.body.appendChild(measureBoard);
-
-            let rawHTML = `<div class="pdf-group">
-                ${cachedNoteData.topic ? `<div class="doc-topic">${cachedNoteData.topic}</div>` : ''}
-                <h1 class="doc-title">${cachedNoteData.title || ''}</h1>
-            </div>`;
-            
-            const blocks = cachedNoteData.blocks || [];
-            for (let i = 0; i < blocks.length; i++) {
-                let groupHTML = `<div class="pdf-group">`;
-                let isHeading = ['h1', 'h2', 'h3'].includes(blocks[i].type);
-                
-                groupHTML += createBlockHTML(blocks[i]);
-                
-                if (isHeading && i + 1 < blocks.length && !['h1', 'h2', 'h3'].includes(blocks[i+1].type)) {
-                    i++;
-                    groupHTML += createBlockHTML(blocks[i]);
-                }
-                groupHTML += `</div>`;
-                rawHTML += groupHTML;
-            }
-            measureBoard.innerHTML = rawHTML;
-
-            loadText.textContent = "Typesetting Equations...";
-            await MathJax.typesetPromise([measureBoard]);
-
-            const svgs = measureBoard.querySelectorAll('mjx-container svg');
+            // 🔥 PIXEL-LOCK SVGS 🔥
+            // This prevents html2canvas from "squishing" the MathJax equations
+            const svgs = element.querySelectorAll('mjx-container svg');
             svgs.forEach(svg => {
-                const rect = svg.getBoundingClientRect(); 
-                if(rect.width > 0) {
+                try {
+                    const rect = svg.getBoundingClientRect(); // Get exact physical pixels on screen
+                    
+                    // Backup original values so we can restore them later
+                    svg.setAttribute('data-orig-width', svg.getAttribute('width'));
+                    svg.setAttribute('data-orig-height', svg.getAttribute('height'));
+                    
+                    // Force strict pixel dimensions
                     svg.setAttribute('width', rect.width + 'px');
                     svg.setAttribute('height', rect.height + 'px');
                     svg.style.width = rect.width + 'px';
                     svg.style.height = rect.height + 'px';
-                    svg.setAttribute('fill', '#ffffff');
-                    svg.style.color = '#ffffff';
-                }
+                    
+                    // Force path color to solid black for print
+                    svg.setAttribute('fill', '#000000');
+                    svg.style.color = '#000000';
+                } catch(e) {}
             });
 
-            loadText.textContent = "Packing Pages...";
-            const MAX_HEIGHT = 820; 
-            
-            function createNewPage() {
-                const p = document.createElement('div');
-                p.className = 'pdf-page';
-                p.innerHTML = `<div class="pdf-page-content"></div>`;
-                pdfWrapper.appendChild(p);
-                return p.querySelector('.pdf-page-content');
-            }
-
-            let currentContentArea = createNewPage();
-            
-            while (measureBoard.firstChild) {
-                let group = measureBoard.firstChild;
-                currentContentArea.appendChild(group);
-                
-                if (currentContentArea.scrollHeight > MAX_HEIGHT) {
-                    group.classList.add('shrink-fit');
-                    
-                    if (currentContentArea.scrollHeight > MAX_HEIGHT) {
-                        group.classList.remove('shrink-fit');
-                        
-                        if (currentContentArea.children.length === 1) {
-                            group.classList.add('extreme-shrink-fit');
-                        } else {
-                            currentContentArea.removeChild(group);
-                            currentContentArea = createNewPage();
-                            currentContentArea.appendChild(group);
-                            
-                            if (currentContentArea.scrollHeight > MAX_HEIGHT) {
-                                group.classList.add('shrink-fit');
-                                if (currentContentArea.scrollHeight > MAX_HEIGHT) {
-                                    group.classList.remove('shrink-fit');
-                                    group.classList.add('extreme-shrink-fit');
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            document.body.removeChild(measureBoard);
-
-            loadText.textContent = "Generating Document...";
-            const docTitle = cachedNoteData.title || 'NAV_Notes';
+            await new Promise(r => setTimeout(r, 200));
+            loadText.textContent = "Generating PDF Document...";
+            const docTitle = document.getElementById('docTitle').textContent || 'NAV_Notes';
 
             const opt = {
-                margin:       0, 
-                filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_presentation.pdf`,
-                image:        { type: 'jpeg', quality: 1.0 },
-                html2canvas:  { 
-                    scale: 2, 
-                    useCORS: true, 
-                    scrollY: 0, 
-                    scrollX: 0, 
-                    width: 1600, 
-                    windowWidth: 1600,
-                    backgroundColor: '#000000' 
-                }, 
-                jsPDF:        { unit: 'px', format: [1600, 900], orientation: 'landscape', hotfixes: ["px_scaling"] }
+                margin:       [15, 15, 15, 15],
+                filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['css', 'legacy'] } // Prevents slicing across pages
             };
 
             try {
-                await html2pdf().set(opt).from(pdfWrapper).toPdf().get('pdf').then(function (pdf) {
-                    const totalPages = pdf.internal.getNumberOfPages();
-                    for (let i = 1; i <= totalPages; i++) {
-                        pdf.setPage(i);
-                        
-                        if (logoObj && logoObj.b64) {
-                            const logoWidth = 90; 
-                            const logoHeight = logoWidth * logoObj.ratio;
-                            const xPos = 1600 - logoWidth - 30; 
-                            const yPos = 30; 
-                            pdf.addImage(logoObj.b64, 'PNG', xPos, yPos, logoWidth, logoHeight);
-                        }
-                    }
-                }).save();
+                await html2pdf().set(opt).from(element).save();
             } catch(e) {
                 console.error("PDF Error:", e);
                 alert("Failed to generate PDF: " + e.message);
             } finally {
-                pdfWrapper.innerHTML = '';
-                document.body.classList.remove('pdf-printing');
-                document.getElementById('mainContainer').style.display = 'block';
-                document.querySelector('.app-header').style.display = 'flex';
+                // Restore original SVG flexibility
+                svgs.forEach(svg => {
+                    svg.setAttribute('width', svg.getAttribute('data-orig-width'));
+                    svg.setAttribute('height', svg.getAttribute('data-orig-height'));
+                    svg.style.width = '';
+                    svg.style.height = '';
+                });
+
+                element.classList.remove('pdf-capture-mode');
                 document.getElementById('readingProgress').style.display = 'block';
+                loadText.textContent = "Loading Notes...";
                 overlay.classList.remove('active');
             }
         }
@@ -510,10 +287,15 @@
                 const data = await response.json();
                 
                 if (!data || !data.blocks || !Array.isArray(data.blocks)) {
-                    throw new Error("Format Mismatch! The file loaded but does NOT contain the required 'blocks' array.");
+                    const rawData = JSON.stringify(data, null, 2).substring(0, 500) + '\n...';
+                    throw new Error(`
+                        <b>Format Mismatch!</b><br>
+                        The file <i>${file}</i> loaded successfully, but it does NOT contain the required "blocks" array.<br><br>
+                        <b>Here is exactly what the app fetched:</b>
+                        <div class="raw-data-box">${rawData}</div>
+                    `);
                 }
 
-                cachedNoteData = data; 
                 renderDocument(data);
 
             } catch(error) {
@@ -525,6 +307,7 @@
                         <div style="color:var(--text-dark); font-size: 0.95rem; line-height: 1.5; text-align: left;">${error.message}</div>
                     </div>
                 `;
+            } finally {
                 clearTimeout(safetyTimeout);
                 document.getElementById('loadingOverlay').classList.remove('active');
             }
@@ -544,18 +327,37 @@
             content.innerHTML = '';
 
             data.blocks.forEach(block => {
-                content.insertAdjacentHTML('beforeend', createBlockHTML(block));
+                let element = '';
+                switch (block.type) {
+                    case 'h1': element = `<h1>${block.content}</h1>`; break;
+                    case 'h2': element = `<h2>${block.content}</h2>`; break;
+                    case 'h3': element = `<h3>${block.content}</h3>`; break;
+                    case 'paragraph': element = `<p>${block.content}</p>`; break;
+                    case 'image': 
+                        element = `<div class="notes-image-wrapper"><img src="${block.url}" alt="${block.caption || 'Note Image'}">${block.caption ? `<div class="image-caption">${block.caption}</div>` : ''}</div>`;
+                        break;
+                    case 'list':
+                        const listTag = block.ordered ? 'ol' : 'ul';
+                        const listItems = block.items.map(item => `<li>${item}</li>`).join('');
+                        element = `<${listTag}>${listItems}</${listTag}>`;
+                        break;
+                    case 'callout':
+                        const styleClass = block.style || 'info';
+                        const icon = block.icon || 'fas fa-info-circle';
+                        element = `<div class="callout ${styleClass}"><div class="callout-icon"><i class="${icon}"></i></div><div class="callout-content">${block.title ? `<span class="callout-title">${block.title}</span>` : ''}${block.content}</div></div>`;
+                        break;
+                    case 'table':
+                        const ths = block.headers.map(h => `<th>${h}</th>`).join('');
+                        const trs = block.rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
+                        element = `<div class="table-wrapper"><table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
+                        break;
+                }
+                content.insertAdjacentHTML('beforeend', element);
             });
 
             setTimeout(() => {
                 if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-                    MathJax.typesetPromise([document.getElementById('notesContent')]).then(() => {
-                        clearTimeout(safetyTimeout);
-                        document.getElementById('loadingOverlay').classList.remove('active');
-                    });
-                } else {
-                    clearTimeout(safetyTimeout);
-                    document.getElementById('loadingOverlay').classList.remove('active');
+                    MathJax.typesetPromise([document.getElementById('notesContent')]);
                 }
             }, 150);
         }
