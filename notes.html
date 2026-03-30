@@ -102,25 +102,33 @@
         
         /* 🔥 PDF CAPTURE OVERRIDES (SMART BOARD 16:9) 🔥 */
         body.pdf-printing { 
-            overflow: visible !important; /* Prevents mobile screens from cutting off the right side */
-            width: 1920px !important; 
-            min-width: 1920px !important;
+            overflow: visible !important; 
+            width: 1600px !important; 
+            min-width: 1600px !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
-        .pdf-capture-mode { 
-            width: 1920px !important; 
+        #pdfContentWrapper.pdf-capture-mode { 
+            position: absolute !important; 
+            top: 0 !important; 
+            left: 0 !important;
+            width: 1600px !important; 
+            max-width: 1600px !important;
             background: #ffffff !important; 
             color: #000000 !important; 
-        }
-        .pdf-capture-mode .container { 
-            width: 1920px !important; 
-            max-width: 1920px !important; 
-            margin: 0 auto !important; 
-            padding: 80px 200px !important; /* Handles the centering safely */
+            padding: 60px 100px !important; /* This strictly handles centering and margins */
             box-sizing: border-box !important;
+            z-index: 99999 !important;
+        }
+        #pdfContentWrapper.pdf-capture-mode .container { 
+            width: 100% !important; 
+            max-width: 100% !important; /* Overrides the 800px limit */
+            margin: 0 !important; /* Destroys the auto margin causing the left shift! */
+            padding: 0 !important; 
         }
         .pdf-capture-mode .notes-content { color: #000000 !important; font-size: 24px !important; line-height: 1.8 !important; }
         .pdf-capture-mode .callout { background: #f8fafc !important; border-color: #e2e8f0 !important; color: #000000 !important;}
-        .pdf-capture-mode .doc-title { -webkit-text-fill-color: black !important; color: black !important; font-size: 3.5rem !important; }
+        .pdf-capture-mode .doc-title { background: none !important; -webkit-text-fill-color: black !important; color: black !important; font-size: 3.5rem !important; }
         .pdf-capture-mode .table-wrapper { border-color: #ccc !important; }
         .pdf-capture-mode th { background: #f1f5f9 !important; color: black !important; border-color: #ccc !important; }
         .pdf-capture-mode td { border-color: #ccc !important; color: black !important; }
@@ -215,7 +223,7 @@
 
         // =========================================================================
         // 🔥 THE SMART PDF EXPORTER 🔥
-        // Optimized for 16:9 Smart Board Panels (Landscape)
+        // Fully Locked to 1600px width for perfect 16:9 alignment
         // =========================================================================
         async function exportSmartPDF() {
             if (typeof html2pdf === 'undefined') {
@@ -231,29 +239,25 @@
             window.scrollTo(0, 0);
             const element = document.getElementById('pdfContentWrapper');
             
-            // 🔥 Add classes to unlock mobile viewport limits
+            // 🔥 Add classes to unlock mobile viewport limits and enforce 1600px width
             document.body.classList.add('pdf-printing');
             element.classList.add('pdf-capture-mode');
             document.getElementById('readingProgress').style.display = 'none';
 
             // 🔥 PIXEL-LOCK SVGS 🔥
-            // This prevents html2canvas from "squishing" the MathJax equations
             const svgs = element.querySelectorAll('mjx-container svg');
             svgs.forEach(svg => {
                 try {
-                    const rect = svg.getBoundingClientRect(); // Get exact physical pixels on screen
+                    const rect = svg.getBoundingClientRect(); 
                     
-                    // Backup original values so we can restore them later
                     svg.setAttribute('data-orig-width', svg.getAttribute('width'));
                     svg.setAttribute('data-orig-height', svg.getAttribute('height'));
                     
-                    // Force strict pixel dimensions
                     svg.setAttribute('width', rect.width + 'px');
                     svg.setAttribute('height', rect.height + 'px');
                     svg.style.width = rect.width + 'px';
                     svg.style.height = rect.height + 'px';
                     
-                    // Force path color to solid black for print
                     svg.setAttribute('fill', '#000000');
                     svg.style.color = '#000000';
                 } catch(e) {}
@@ -264,13 +268,13 @@
             const docTitle = document.getElementById('docTitle').textContent || 'NAV_Notes';
 
             const opt = {
-                margin:       0, // Set to 0. Centering is now safely handled by CSS padding.
+                margin:       0, // Zero margin from PDF engine, we handle it natively via CSS padding
                 filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_presentation.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                // Added scrollX: 0 and width: 1920 to prevent physical scrolling offsets
-                html2canvas:  { scale: 2, useCORS: true, scrollY: 0, scrollX: 0, width: 1920, windowWidth: 1920 }, 
+                // Lock the canvas strictly to the exact 1600px width defined in the CSS
+                html2canvas:  { scale: 2, useCORS: true, scrollY: 0, scrollX: 0, windowWidth: 1600 }, 
                 jsPDF:        { unit: 'in', format: [16, 9], orientation: 'landscape' },
-                // Protects your content from being sliced in half across pages
+                // Protect elements from slicing
                 pagebreak:    { mode: ['css', 'legacy'], avoid: ['h1', 'h2', 'h3', 'p', 'li', '.callout', '.table-wrapper', '.notes-image-wrapper', 'mjx-container'] }
             };
 
@@ -280,7 +284,7 @@
                 console.error("PDF Error:", e);
                 alert("Failed to generate PDF: " + e.message);
             } finally {
-                // Restore original SVG flexibility
+                // Restore original UI state
                 svgs.forEach(svg => {
                     svg.setAttribute('width', svg.getAttribute('data-orig-width'));
                     svg.setAttribute('height', svg.getAttribute('data-orig-height'));
