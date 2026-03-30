@@ -101,9 +101,22 @@
         .raw-data-box { text-align: left; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; font-size: 0.75rem; overflow-x: auto; margin-top: 15px; color: #a5b4fc; font-family: monospace; border: 1px solid var(--border-dark);}
         
         /* 🔥 PDF CAPTURE OVERRIDES (SMART BOARD 16:9) 🔥 */
-        .pdf-capture-mode { background: #ffffff !important; color: #000000 !important; }
-        .pdf-capture-mode .container { max-width: 1600px !important; padding: 40px 80px !important; } /* Widen container for 16:9 screens */
-        .pdf-capture-mode .notes-content { color: #000000 !important; font-size: 22px !important; line-height: 1.8 !important; } /* Bump up font size for readability on board */
+        .pdf-capture-mode { 
+            position: absolute !important; 
+            top: 0 !important; 
+            left: 0 !important;
+            width: 1920px !important; 
+            background: #ffffff !important; 
+            color: #000000 !important; 
+        }
+        .pdf-capture-mode .container { 
+            width: 1920px !important; 
+            max-width: 1920px !important; 
+            margin: 0 !important; 
+            padding: 60px 200px !important; 
+            box-sizing: border-box !important;
+        }
+        .pdf-capture-mode .notes-content { color: #000000 !important; font-size: 24px !important; line-height: 1.8 !important; }
         .pdf-capture-mode .callout { background: #f8fafc !important; border-color: #e2e8f0 !important; color: #000000 !important;}
         .pdf-capture-mode .doc-title { -webkit-text-fill-color: black !important; color: black !important; font-size: 3.5rem !important; }
         .pdf-capture-mode .table-wrapper { border-color: #ccc !important; }
@@ -246,14 +259,14 @@
             const docTitle = document.getElementById('docTitle').textContent || 'NAV_Notes';
 
             const opt = {
-                margin:       [0.4, 0.4, 0.4, 0.4], // 0.4 inches margin
+                margin:       0, // Set to 0. Centering is now safely handled by CSS padding.
                 filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_presentation.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                // windowWidth: 1920 forces html2canvas to render a 1080p width layout even if downloaded from mobile!
-                html2canvas:  { scale: 2, useCORS: true, scrollY: 0, windowWidth: 1920 }, 
-                // Format: [16, 9] perfectly maps to a 16:9 widescreen ratio
+                // Added scrollX: 0 and width: 1920 to prevent physical scrolling offsets
+                html2canvas:  { scale: 2, useCORS: true, scrollY: 0, scrollX: 0, width: 1920, windowWidth: 1920 }, 
                 jsPDF:        { unit: 'in', format: [16, 9], orientation: 'landscape' },
-                pagebreak:    { mode: ['css', 'legacy'] } // Prevents slicing across pages
+                // Protects your content from being sliced in half across pages
+                pagebreak:    { mode: ['css', 'legacy'], avoid: ['h1', 'h2', 'h3', 'p', 'li', '.callout', '.table-wrapper', '.notes-image-wrapper', 'mjx-container'] }
             };
 
             try {
