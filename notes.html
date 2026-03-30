@@ -103,32 +103,27 @@
         /* 🔥 PDF CAPTURE OVERRIDES (SMART BOARD 16:9) 🔥 */
         body.pdf-printing { 
             overflow: visible !important; 
-            width: 1600px !important; 
-            min-width: 1600px !important;
-            margin: 0 !important;
-            padding: 0 !important;
         }
         #pdfContentWrapper.pdf-capture-mode { 
-            position: absolute !important; 
-            top: 0 !important; 
-            left: 0 !important;
+            position: relative !important; /* Fixed: Not absolute anymore, preventing 0 height bugs! */
+            display: block !important;
             width: 1600px !important; 
-            max-width: 1600px !important;
+            min-width: 1600px !important;
             background: #ffffff !important; 
             color: #000000 !important; 
-            padding: 60px 100px !important; /* This strictly handles centering and margins */
+            padding: 80px 120px !important; /* Strict internal centering */
             box-sizing: border-box !important;
-            z-index: 99999 !important;
+            margin: 0 !important;
         }
         #pdfContentWrapper.pdf-capture-mode .container { 
             width: 100% !important; 
-            max-width: 100% !important; /* Overrides the 800px limit */
-            margin: 0 !important; /* Destroys the auto margin causing the left shift! */
+            max-width: 100% !important; /* Overrides mobile boundaries */
+            margin: 0 !important; /* Fixes left-shift alignment bugs */
             padding: 0 !important; 
         }
-        .pdf-capture-mode .notes-content { color: #000000 !important; font-size: 24px !important; line-height: 1.8 !important; }
+        .pdf-capture-mode .notes-content { color: #000000 !important; font-size: 26px !important; line-height: 1.8 !important; }
         .pdf-capture-mode .callout { background: #f8fafc !important; border-color: #e2e8f0 !important; color: #000000 !important;}
-        .pdf-capture-mode .doc-title { background: none !important; -webkit-text-fill-color: black !important; color: black !important; font-size: 3.5rem !important; }
+        .pdf-capture-mode .doc-title { background: none !important; -webkit-text-fill-color: black !important; color: black !important; font-size: 3.8rem !important; }
         .pdf-capture-mode .table-wrapper { border-color: #ccc !important; }
         .pdf-capture-mode th { background: #f1f5f9 !important; color: black !important; border-color: #ccc !important; }
         .pdf-capture-mode td { border-color: #ccc !important; color: black !important; }
@@ -234,36 +229,35 @@
             const overlay = document.getElementById('loadingOverlay');
             const loadText = document.getElementById('loadingText');
             overlay.classList.add('active');
-            loadText.textContent = "Processing Math for PDF...";
+            loadText.textContent = "Preparing Layout...";
 
             window.scrollTo(0, 0);
             const element = document.getElementById('pdfContentWrapper');
             
-            // 🔥 Add classes to unlock mobile viewport limits and enforce 1600px width
+            // 1. Force the layout into desktop/1600px mode
             document.body.classList.add('pdf-printing');
             element.classList.add('pdf-capture-mode');
             document.getElementById('readingProgress').style.display = 'none';
 
-            // 🔥 PIXEL-LOCK SVGS 🔥
+            // 2. Wait for the browser to finish reflowing the DOM at 1600px width
+            await new Promise(r => setTimeout(r, 400));
+
+            loadText.textContent = "Processing Math for PDF...";
+
+            // 3. Lock SVGs so html2canvas doesn't crush them
             const svgs = element.querySelectorAll('mjx-container svg');
             svgs.forEach(svg => {
                 try {
                     const rect = svg.getBoundingClientRect(); 
-                    
-                    svg.setAttribute('data-orig-width', svg.getAttribute('width'));
-                    svg.setAttribute('data-orig-height', svg.getAttribute('height'));
-                    
-                    svg.setAttribute('width', rect.width + 'px');
-                    svg.setAttribute('height', rect.height + 'px');
-                    svg.style.width = rect.width + 'px';
-                    svg.style.height = rect.height + 'px';
-                    
-                    svg.setAttribute('fill', '#000000');
-                    svg.style.color = '#000000';
+                    if(rect.width > 0) {
+                        svg.setAttribute('data-orig-width', svg.getAttribute('width') || '');
+                        svg.setAttribute('data-orig-height', svg.getAttribute('height') || '');
+                        svg.style.width = rect.width + 'px';
+                        svg.style.height = rect.height + 'px';
+                    }
                 } catch(e) {}
             });
 
-            await new Promise(r => setTimeout(r, 200));
             loadText.textContent = "Generating Presentation PDF...";
             const docTitle = document.getElementById('docTitle').textContent || 'NAV_Notes';
 
@@ -272,7 +266,7 @@
                 filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_presentation.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
                 // Lock the canvas strictly to the exact 1600px width defined in the CSS
-                html2canvas:  { scale: 2, useCORS: true, scrollY: 0, scrollX: 0, windowWidth: 1600 }, 
+                html2canvas:  { scale: 2, useCORS: true, scrollY: 0, windowWidth: 1600 }, 
                 jsPDF:        { unit: 'in', format: [16, 9], orientation: 'landscape' },
                 // Protect elements from slicing
                 pagebreak:    { mode: ['css', 'legacy'], avoid: ['h1', 'h2', 'h3', 'p', 'li', '.callout', '.table-wrapper', '.notes-image-wrapper', 'mjx-container'] }
@@ -286,16 +280,15 @@
             } finally {
                 // Restore original UI state
                 svgs.forEach(svg => {
-                    svg.setAttribute('width', svg.getAttribute('data-orig-width'));
-                    svg.setAttribute('height', svg.getAttribute('data-orig-height'));
-                    svg.style.width = '';
-                    svg.style.height = '';
+                    if (svg.hasAttribute('data-orig-width')) {
+                        svg.style.width = svg.getAttribute('data-orig-width');
+                        svg.style.height = svg.getAttribute('data-orig-height');
+                    }
                 });
 
                 document.body.classList.remove('pdf-printing');
                 element.classList.remove('pdf-capture-mode');
                 document.getElementById('readingProgress').style.display = 'block';
-                loadText.textContent = "Loading Notes...";
                 overlay.classList.remove('active');
             }
         }
