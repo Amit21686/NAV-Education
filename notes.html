@@ -100,11 +100,12 @@
         .error-card { background: rgba(244, 63, 94, 0.1); border: 1px solid var(--error); border-radius: var(--radius-md); padding: 30px 20px; text-align: center; margin-top: 20px; }
         .raw-data-box { text-align: left; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; font-size: 0.75rem; overflow-x: auto; margin-top: 15px; color: #a5b4fc; font-family: monospace; border: 1px solid var(--border-dark);}
         
-        /* 🔥 PDF CAPTURE OVERRIDES 🔥 */
+        /* 🔥 PDF CAPTURE OVERRIDES (SMART BOARD 16:9) 🔥 */
         .pdf-capture-mode { background: #ffffff !important; color: #000000 !important; }
-        .pdf-capture-mode .notes-content { color: #000000 !important; }
+        .pdf-capture-mode .container { max-width: 1600px !important; padding: 40px 80px !important; } /* Widen container for 16:9 screens */
+        .pdf-capture-mode .notes-content { color: #000000 !important; font-size: 22px !important; line-height: 1.8 !important; } /* Bump up font size for readability on board */
         .pdf-capture-mode .callout { background: #f8fafc !important; border-color: #e2e8f0 !important; color: #000000 !important;}
-        .pdf-capture-mode .doc-title { -webkit-text-fill-color: black !important; color: black !important; }
+        .pdf-capture-mode .doc-title { -webkit-text-fill-color: black !important; color: black !important; font-size: 3.5rem !important; }
         .pdf-capture-mode .table-wrapper { border-color: #ccc !important; }
         .pdf-capture-mode th { background: #f1f5f9 !important; color: black !important; border-color: #ccc !important; }
         .pdf-capture-mode td { border-color: #ccc !important; color: black !important; }
@@ -199,7 +200,7 @@
 
         // =========================================================================
         // 🔥 THE SMART PDF EXPORTER 🔥
-        // Uses standard html2pdf pagination, but pre-converts SVGs to strict pixels
+        // Optimized for 16:9 Smart Board Panels (Landscape)
         // =========================================================================
         async function exportSmartPDF() {
             if (typeof html2pdf === 'undefined') {
@@ -241,15 +242,17 @@
             });
 
             await new Promise(r => setTimeout(r, 200));
-            loadText.textContent = "Generating PDF Document...";
+            loadText.textContent = "Generating Presentation PDF...";
             const docTitle = document.getElementById('docTitle').textContent || 'NAV_Notes';
 
             const opt = {
-                margin:       [15, 15, 15, 15],
-                filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`,
+                margin:       [0.4, 0.4, 0.4, 0.4], // 0.4 inches margin
+                filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_presentation.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                // windowWidth: 1920 forces html2canvas to render a 1080p width layout even if downloaded from mobile!
+                html2canvas:  { scale: 2, useCORS: true, scrollY: 0, windowWidth: 1920 }, 
+                // Format: [16, 9] perfectly maps to a 16:9 widescreen ratio
+                jsPDF:        { unit: 'in', format: [16, 9], orientation: 'landscape' },
                 pagebreak:    { mode: ['css', 'legacy'] } // Prevents slicing across pages
             };
 
