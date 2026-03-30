@@ -105,20 +105,20 @@
             overflow: visible !important; 
         }
         #pdfContentWrapper.pdf-capture-mode { 
-            position: relative !important; /* Fixed: Not absolute anymore, preventing 0 height bugs! */
+            position: relative !important;
             display: block !important;
             width: 1600px !important; 
             min-width: 1600px !important;
             background: #ffffff !important; 
             color: #000000 !important; 
-            padding: 80px 120px !important; /* Strict internal centering */
+            padding: 80px 120px !important;
             box-sizing: border-box !important;
             margin: 0 !important;
         }
         #pdfContentWrapper.pdf-capture-mode .container { 
             width: 100% !important; 
-            max-width: 100% !important; /* Overrides mobile boundaries */
-            margin: 0 !important; /* Fixes left-shift alignment bugs */
+            max-width: 100% !important; 
+            margin: 0 !important; 
             padding: 0 !important; 
         }
         .pdf-capture-mode .notes-content { color: #000000 !important; font-size: 26px !important; line-height: 1.8 !important; }
@@ -217,8 +217,7 @@
         };
 
         // =========================================================================
-        // 🔥 THE SMART PDF EXPORTER 🔥
-        // Fully Locked to 1600px width for perfect 16:9 alignment
+        // 🔥 THE SMART PDF EXPORTER WITH REPEATING LOGO 🔥
         // =========================================================================
         async function exportSmartPDF() {
             if (typeof html2pdf === 'undefined') {
@@ -229,22 +228,35 @@
             const overlay = document.getElementById('loadingOverlay');
             const loadText = document.getElementById('loadingText');
             overlay.classList.add('active');
-            loadText.textContent = "Preparing Layout...";
+            
+            // 1. Fetch and process the logo into a Base64 string for the PDF engine
+            loadText.textContent = "Fetching Watermark Logo...";
+            const logoObj = await new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = 'Anonymous';
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    resolve({ b64: canvas.toDataURL('image/png'), ratio: img.height / img.width });
+                };
+                img.onerror = () => resolve(null);
+                img.src = 'https://raw.githubusercontent.com/Amit21686/NAV-Education/main/logo.png';
+            });
 
+            loadText.textContent = "Preparing Layout...";
             window.scrollTo(0, 0);
             const element = document.getElementById('pdfContentWrapper');
             
-            // 1. Force the layout into desktop/1600px mode
             document.body.classList.add('pdf-printing');
             element.classList.add('pdf-capture-mode');
             document.getElementById('readingProgress').style.display = 'none';
 
-            // 2. Wait for the browser to finish reflowing the DOM at 1600px width
             await new Promise(r => setTimeout(r, 400));
 
             loadText.textContent = "Processing Math for PDF...";
-
-            // 3. Lock SVGs so html2canvas doesn't crush them
             const svgs = element.querySelectorAll('mjx-container svg');
             svgs.forEach(svg => {
                 try {
@@ -262,18 +274,32 @@
             const docTitle = document.getElementById('docTitle').textContent || 'NAV_Notes';
 
             const opt = {
-                margin:       0, // Zero margin from PDF engine, we handle it natively via CSS padding
+                margin:       0, 
                 filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_presentation.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                // Lock the canvas strictly to the exact 1600px width defined in the CSS
-                html2canvas:  { scale: 2, useCORS: true, scrollY: 0, windowWidth: 1600 }, 
+                html2canvas:  { scale: 2, useCORS: true, scrollY: 0, scrollX: 0, windowWidth: 1600 }, 
                 jsPDF:        { unit: 'in', format: [16, 9], orientation: 'landscape' },
-                // Protect elements from slicing
                 pagebreak:    { mode: ['css', 'legacy'], avoid: ['h1', 'h2', 'h3', 'p', 'li', '.callout', '.table-wrapper', '.notes-image-wrapper', 'mjx-container'] }
             };
 
             try {
-                await html2pdf().set(opt).from(element).save();
+                // Intercept the PDF engine right before saving to loop over every page and stamp the logo
+                await html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+                    if (logoObj && logoObj.b64) {
+                        const totalPages = pdf.internal.getNumberOfPages();
+                        const logoWidth = 1.3; // Logo width in inches
+                        const logoHeight = logoWidth * logoObj.ratio;
+                        
+                        // X and Y positions in inches on a 16x9 inch page
+                        const xPos = 16 - logoWidth - 0.4; // Top Right edge
+                        const yPos = 0.3; // Top offset
+                        
+                        for (let i = 1; i <= totalPages; i++) {
+                            pdf.setPage(i);
+                            pdf.addImage(logoObj.b64, 'PNG', xPos, yPos, logoWidth, logoHeight);
+                        }
+                    }
+                }).save();
             } catch(e) {
                 console.error("PDF Error:", e);
                 alert("Failed to generate PDF: " + e.message);
