@@ -87,6 +87,11 @@
         body.light-theme .notes-content th { background: rgba(99,102,241,0.1); }
         body.light-theme .notes-content td { border-color: var(--border-light); }
 
+        /* 🔥 CSS Page Break Protection for MathJax 🔥 */
+        .notes-content mjx-container { page-break-inside: avoid !important; break-inside: avoid !important; }
+        .notes-content mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; padding: 10px 0; margin: 1em 0; text-align: center; }
+        .notes-content mjx-container svg { max-width: 100%; height: auto; }
+
         .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 30000; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 15px; color: white;}
         .loading-overlay.active { display: flex; }
         .spinner { width: 40px; height: 40px; border: 3px solid var(--border-dark); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -96,7 +101,7 @@
         .raw-data-box { text-align: left; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; font-size: 0.75rem; overflow-x: auto; margin-top: 15px; color: #a5b4fc; font-family: monospace; border: 1px solid var(--border-dark);}
         
         /* ==========================================================
-           🔥 PDF CAPTURE OVERRIDES: BLACK BACKGROUND & BORDERS 🔥 
+           🔥 PDF CAPTURE OVERRIDES: HIGH CONTRAST ON PURE BLACK 🔥 
            ========================================================== */
         body.pdf-printing { 
             overflow: visible !important; 
@@ -112,8 +117,8 @@
             background: #000000 !important; /* Pure solid black */
             color: #ffffff !important; 
             
-            /* Give it 60px padding on edges, and 120px on the right so text avoids the logo natively */
-            padding: 40px 120px 40px 60px !important; 
+            /* Logo Safe Zone: Right padding increased so text avoids the top-right logo natively */
+            padding: 40px 140px 40px 60px !important; 
             box-sizing: border-box !important;
             margin: 0 !important;
         }
@@ -124,39 +129,86 @@
             padding: 0 !important; 
         }
         
-        /* Dense text styling for maximum fit */
-        .pdf-capture-mode .notes-content { color: #f8fafc !important; font-size: 24px !important; line-height: 1.6 !important; }
-        .pdf-capture-mode .doc-title { background: none !important; -webkit-text-fill-color: #ffffff !important; color: #ffffff !important; font-size: 3rem !important; margin-bottom: 0px !important; }
-        .pdf-capture-mode .doc-topic { background: rgba(255,255,255,0.1) !important; color: #a5b4fc !important; border-color: transparent !important; margin-bottom: 15px !important;}
+        /* 🔥 1. FORCE HIGH CONTRAST TEXT COLORS 🔥 */
+        .pdf-capture-mode .notes-content,
+        .pdf-capture-mode .notes-content p,
+        .pdf-capture-mode .notes-content li,
+        .pdf-capture-mode .callout-content { 
+            color: #f8fafc !important; /* Ultra-bright gray-white for maximum readability */
+            font-size: 26px !important; 
+            line-height: 1.7 !important; 
+        }
         
-        /* 🔥 BORDER FIX: Solid, Opaque Hex Colors so they don't vanish in PDF 🔥 */
+        /* Highlight words & bold text in bright neon blue to pop on black */
+        .pdf-capture-mode .notes-content b, 
+        .pdf-capture-mode .notes-content strong { 
+            color: #818cf8 !important; 
+        }
+        .pdf-capture-mode .notes-content .highlight {
+            background: #1e3a8a !important; 
+            color: #bfdbfe !important; 
+            border: 1px solid #3b82f6 !important;
+        }
+
+        /* Headings */
+        .pdf-capture-mode .doc-title { 
+            background: none !important; 
+            -webkit-text-fill-color: #ffffff !important; 
+            color: #ffffff !important; 
+            font-size: 3.5rem !important; 
+            margin-bottom: 0px !important; 
+        }
+        .pdf-capture-mode .doc-topic { 
+            background: #1e293b !important; 
+            color: #93c5fd !important; 
+            border: 1px solid #3b82f6 !important; 
+            margin-bottom: 15px !important;
+        }
+        .pdf-capture-mode .notes-content h1 { 
+            font-size: 1.7em !important; margin: 1em 0 0.4em !important; 
+            color: #ffffff !important; border-bottom: 2px solid #334155 !important; 
+        }
+        .pdf-capture-mode .notes-content h2 { 
+            font-size: 1.4em !important; margin: 0.8em 0 0.3em !important; 
+            color: #ffffff !important; 
+        }
+        .pdf-capture-mode .notes-content h3 { 
+            font-size: 1.2em !important; margin: 0.6em 0 0.2em !important; 
+            color: #ffffff !important; 
+        }
+
+        /* 🔥 2. THICK, BRIGHT BORDERS FOR CALLOUTS & TABLES 🔥 */
         .pdf-capture-mode .callout { 
-            background: #1e293b !important; /* Solid Slate 800 */
-            border: 2px solid #64748b !important; /* Thick Solid Slate 500 */
+            background: #0f172a !important; /* Very dark slate */
+            border: 3px solid #475569 !important; /* Thick bright slate border */
             color: #ffffff !important; 
             padding: 16px 20px !important; 
             margin: 1.2em 0 !important; 
             border-radius: 12px !important;
         }
+        .pdf-capture-mode .callout-icon { 
+            color: #60a5fa !important; /* Neon Blue Info Icon */
+        }
+        
         .pdf-capture-mode .table-wrapper { 
-            border: 2px solid #64748b !important; /* Thick Solid Slate 500 */
+            border: 3px solid #475569 !important; 
             margin: 1.5em 0 !important;
             border-radius: 12px !important;
             background: #000000 !important;
         }
         .pdf-capture-mode th { 
-            background: #334155 !important; /* Solid Slate 700 */
-            color: #ffffff !important; 
-            border: 1px solid #475569 !important; /* Solid Border */
+            background: #1e293b !important; 
+            color: #93c5fd !important; /* Bright blue headers */
+            border: 2px solid #475569 !important; 
             padding: 14px !important;
         }
         .pdf-capture-mode td { 
-            border: 1px solid #475569 !important; /* Solid Border */
-            color: #f1f5f9 !important; 
+            border: 2px solid #475569 !important; 
+            color: #f8fafc !important; 
             padding: 14px !important;
         }
 
-        /* 🔥 CUTTING FIX: We apply "avoid break" strictly to atomic elements 🔥 */
+        /* 🔥 3. ATOMIC PAGE BREAK PREVENTION 🔥 */
         .pdf-capture-mode .notes-content h1, 
         .pdf-capture-mode .notes-content h2, 
         .pdf-capture-mode .notes-content h3, 
@@ -172,15 +224,13 @@
             margin-bottom: 0.8em !important;
         }
         
-        /* Glue headings to their paragraphs */
+        /* Glue headings down to their paragraphs */
         .pdf-capture-mode .notes-content h1, 
         .pdf-capture-mode .notes-content h2, 
         .pdf-capture-mode .notes-content h3 {
             page-break-after: avoid !important; 
             break-after: avoid !important;
             margin-bottom: 0.3em !important;
-            color: #ffffff !important; 
-            border-color: #334155 !important;
         }
     </style>
 </head>
@@ -334,9 +384,9 @@
             const docTitle = document.getElementById('docTitle').textContent || 'NAV_Notes';
 
             const opt = {
+                // Zero margins inside jsPDF so we maximize the edge-to-edge space.
                 margin:       0, 
                 filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_presentation.pdf`,
-                // Max quality JPEG output
                 image:        { type: 'jpeg', quality: 1.0 },
                 html2canvas:  { 
                     scale: 2, 
@@ -348,7 +398,7 @@
                     backgroundColor: '#000000' 
                 }, 
                 jsPDF:        { unit: 'in', format: [16, 9], orientation: 'landscape' },
-                // Use strict CSS pagebreak mode (relies entirely on our new CSS classes)
+                // Use strict CSS pagebreak mode
                 pagebreak:    { mode: ['css', 'legacy'] }
             };
 
@@ -476,7 +526,7 @@
                         element = `<div class="table-wrapper"><table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
                         break;
                 }
-                // NO MORE PDF-BLOCK WRAPPER. Elements are inserted directly to fix slicing bugs.
+                // Elements are inserted natively so the engine can calculate atomic page breaks 
                 content.insertAdjacentHTML('beforeend', element);
             });
 
