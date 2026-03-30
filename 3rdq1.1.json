@@ -1,1 +1,164 @@
-[]
+[
+  {
+    "question": "‘Freight cars’ means...",
+    "options": ["wagons that carry goods","wagons that carry passengers","wagons that carry letters","empty wagons"],
+    "correctIndex": 0,
+    "explanation": "Freight cars carry goods."
+  },
+  {
+    "question": "What do the trains carry?",
+    "options": ["parcels","passengers","passengers and mail","mail"],
+    "correctIndex": 2,
+    "explanation": "Trains carry passengers and mail."
+  },
+  {
+    "question": "‘Dawn’ means...",
+    "options": ["day","night","early evening","early morning"],
+    "correctIndex": 3,
+    "explanation": "Dawn means early morning."
+  },
+  {
+    "question": "The Puppy was going to...",
+    "options": ["jump and hop","get some bread","roll and play","get some hay"],
+    "correctIndex": 2,
+    "explanation": "The puppy was going to roll and play."
+  },
+  {
+    "question": "Which word rhymes with 'walking'?",
+    "options": ["went","village","talking","hay"],
+    "correctIndex": 2,
+    "explanation": "Talking rhymes with walking."
+  },
+  {
+    "question": "The Horse was going to...",
+    "options": ["get some hay","get some bread","roll and play","get some water"],
+    "correctIndex": 0,
+    "explanation": "Horse eats hay."
+  },
+  {
+    "question": "Who brings letters?",
+    "options": ["policeman","washerman","postman","superman"],
+    "correctIndex": 2,
+    "explanation": "Postman brings letters."
+  },
+  {
+    "question": "The postman never brings a letter for...",
+    "options": ["the child’s sister","mother and father","the child","the child’s friend"],
+    "correctIndex": 2,
+    "explanation": "The child does not receive letters."
+  },
+  {
+    "question": "They don’t allow the boy to do many things because...",
+    "options": ["he is careless","he does not understand","he is not small enough","he is not big enough"],
+    "correctIndex": 3,
+    "explanation": "He is not big enough."
+  },
+  {
+    "question": "The boy will wait till he is...",
+    "options": ["given a chance","grown-up","ready","small"],
+    "correctIndex": 1,
+    "explanation": "He will wait till he is grown-up."
+  },
+  {
+    "question": "The boy will show that...",
+    "options": ["if he tries, he can do many things","if he tries, he can grow up","he is small enough","he is big enough"],
+    "correctIndex": 0,
+    "explanation": "He will prove he can do things."
+  },
+  {
+    "question": "What does the monkey do?",
+    "options": ["leaps and dances","swings by his tail","wiggles all around","walks on padded paws"],
+    "correctIndex": 1,
+    "explanation": "Monkey swings by tail."
+  },
+  {
+    "question": "Boys and girls can...",
+    "options": ["leap and dance","walk on padded paws","spread their wings and sail","crawl up the wall"],
+    "correctIndex": 0,
+    "explanation": "They can leap and dance."
+  },
+  {
+    "question": "Which word rhymes with 'fun'?",
+    "options": ["paws","dance","run","wall"],
+    "correctIndex": 2,
+    "explanation": "Run rhymes with fun."
+  },
+  {
+    "question": "Who comes on a bicycle?",
+    "options": ["newspaper boy","vegetable man","milkman","children"],
+    "correctIndex": 0,
+    "explanation": "Newspaper boy uses bicycle."
+  },
+  {
+    "question": "Everything is quiet because...",
+    "options": ["it is hot","it is raining","it is night","it is early morning"],
+    "correctIndex": 3,
+    "explanation": "Morning is quiet."
+  },
+  {
+    "question": "What does the road call the crow?",
+    "options": ["wise bird","foolish bird","good bird","stupid bird"],
+    "correctIndex": 1,
+    "explanation": "Crow is called foolish bird."
+  },
+  {
+    "question": "Where did the mother tiger and her cub live?",
+    "options": ["near a river","near a forest","near a mountain","near a sea"],
+    "correctIndex": 0,
+    "explanation": "They lived near a river."
+  },
+  {
+    "question": "If the moon was bright, the mother tiger...",
+    "options": ["hunted for fowl","lay down and waited for dawn","hunted for fish","lay down and waited for deer"],
+    "correctIndex": 1,
+    "explanation": "She waited for dawn."
+  },
+  {
+    "question": "When the mother tiger roared loudly, the bigger tiger...",
+    "options": ["went away","caught the tiger cub","roared loudly","stood there"],
+    "correctIndex": 0,
+    "explanation": "It went away."
+  },
+  {
+    "question": "The baby thinks that the pebbles are...",
+    "options": ["real toys","real balls","real chocolates","real food"],
+    "correctIndex": 3,
+    "explanation": "Baby thinks they are food."
+  },
+  {
+    "question": "When the brother calls ‘Father’, the baby thinks...",
+    "options": ["brother is angry","brother is right","father is near","father is away"],
+    "correctIndex": 2,
+    "explanation": "Baby thinks father is near."
+  },
+  {
+    "question": "Why does the washerman bring donkeys?",
+    "options": ["to wash clothes","to carry clean clothes","to carry dirty clothes","to hold classes"],
+    "correctIndex": 2,
+    "explanation": "Donkeys carry dirty clothes."
+  },
+  {
+    "question": "What went up the hill?",
+    "options": ["a path","a street","a road","a rail line"],
+    "correctIndex": 0,
+    "explanation": "A path went up the hill."
+  },
+  {
+    "question": "Meena was carrying... on her back.",
+    "options": ["a small boy","a small girl","a small bag","a small puppy"],
+    "correctIndex": 0,
+    "explanation": "She carried a small boy."
+  },
+  {
+    "question": "A camel can store food in its...",
+    "options": ["stomach","legs","hump","lips"],
+    "correctIndex": 2,
+    "explanation": "Camel stores fat in hump."
+  },
+  {
+    "question": "The camel can eat thorns because it has...",
+    "options": ["a hump","padded feet","thick feet","a thick tongue"],
+    "correctIndex": 3,
+    "explanation": "Thick tongue helps eating thorns."
+  }
+]
