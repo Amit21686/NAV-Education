@@ -69,17 +69,17 @@
         .notes-content ul, .notes-content ol { margin-bottom: 1.5em; padding-left: 1.5em; }
         .notes-content li { margin-bottom: 0.5em; }
 
-        .notes-image-wrapper { margin: 2em 0; text-align: center; page-break-inside: avoid; break-inside: avoid;}
+        .notes-image-wrapper { margin: 2em 0; text-align: center;}
         .notes-content img { max-width: 100%; height: auto; border-radius: var(--radius-md); border: 1px solid var(--border-dark); }
         body.light-theme .notes-content img { border-color: var(--border-light); }
 
-        .callout { padding: 18px 20px; border-radius: var(--radius-md); margin: 1.5em 0; display: flex; gap: 15px; background: var(--card-dark); border: 1px solid var(--border-dark); page-break-inside: avoid; break-inside: avoid;}
+        .callout { padding: 18px 20px; border-radius: var(--radius-md); margin: 1.5em 0; display: flex; gap: 15px; background: var(--card-dark); border: 1px solid var(--border-dark); }
         body.light-theme .callout { background: var(--card-light); border-color: var(--border-light); }
         .callout-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; color: var(--info);}
         .callout-content { flex: 1; }
         .callout-title { font-weight: 600; font-size: 1.05em; margin-bottom: 4px; display: block;}
         
-        .table-wrapper { width: 100%; overflow-x: auto; margin: 2em 0; border-radius: var(--radius-md); border: 1px solid var(--border-dark); page-break-inside: avoid; break-inside: avoid;}
+        .table-wrapper { width: 100%; overflow-x: auto; margin: 2em 0; border-radius: var(--radius-md); border: 1px solid var(--border-dark); }
         body.light-theme .table-wrapper { border-color: var(--border-light); }
         .notes-content table { width: 100%; border-collapse: collapse; min-width: 500px; text-align: left; }
         .notes-content th { background: rgba(99,102,241,0.15); padding: 14px 16px; font-weight: 600; color: var(--primary); font-size: 0.95em; }
@@ -87,8 +87,6 @@
         body.light-theme .notes-content th { background: rgba(99,102,241,0.1); }
         body.light-theme .notes-content td { border-color: var(--border-light); }
 
-        /* 🔥 CSS Page Break Protection for MathJax 🔥 */
-        .notes-content mjx-container { page-break-inside: avoid !important; break-inside: avoid !important; }
         .notes-content mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; padding: 10px 0; margin: 1em 0; text-align: center; }
         .notes-content mjx-container svg { max-width: 100%; height: auto; }
 
@@ -101,7 +99,7 @@
         .raw-data-box { text-align: left; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; font-size: 0.75rem; overflow-x: auto; margin-top: 15px; color: #a5b4fc; font-family: monospace; border: 1px solid var(--border-dark);}
         
         /* ==========================================================
-           🔥 PDF CAPTURE OVERRIDES: HIGH CONTRAST ON PURE BLACK 🔥 
+           🔥 TRUE PAGINATION & HIGH CONTRAST PDF ENGINE 🔥 
            ========================================================== */
         body.pdf-printing { 
             overflow: visible !important; 
@@ -109,129 +107,81 @@
             padding: 0 !important;
             background: #000000 !important; 
         }
-        #pdfContentWrapper.pdf-capture-mode { 
-            position: relative !important;
-            display: block !important;
-            width: 1600px !important; 
-            min-width: 1600px !important;
-            background: #000000 !important; /* Pure solid black */
-            color: #ffffff !important; 
-            
-            /* Logo Safe Zone: Right padding increased so text avoids the top-right logo natively */
-            padding: 40px 140px 40px 60px !important; 
-            box-sizing: border-box !important;
-            margin: 0 !important;
-        }
-        #pdfContentWrapper.pdf-capture-mode .container { 
-            width: 100% !important; 
-            max-width: 100% !important; 
-            margin: 0 !important; 
-            padding: 0 !important; 
-        }
         
-        /* 🔥 1. FORCE HIGH CONTRAST TEXT COLORS 🔥 */
-        .pdf-capture-mode .notes-content,
-        .pdf-capture-mode .notes-content p,
-        .pdf-capture-mode .notes-content li,
-        .pdf-capture-mode .callout-content { 
-            color: #f8fafc !important; /* Ultra-bright gray-white for maximum readability */
-            font-size: 26px !important; 
-            line-height: 1.7 !important; 
-        }
-        
-        /* Highlight words & bold text in bright neon blue to pop on black */
-        .pdf-capture-mode .notes-content b, 
-        .pdf-capture-mode .notes-content strong { 
-            color: #818cf8 !important; 
-        }
-        .pdf-capture-mode .notes-content .highlight {
-            background: #1e3a8a !important; 
-            color: #bfdbfe !important; 
-            border: 1px solid #3b82f6 !important;
+        #pdfContentWrapper { display: none; }
+        .pdf-printing #pdfContentWrapper { 
+            display: block !important; 
+            background: #000000; 
+            width: 1600px; 
         }
 
-        /* Headings */
-        .pdf-capture-mode .doc-title { 
-            background: none !important; 
-            -webkit-text-fill-color: #ffffff !important; 
-            color: #ffffff !important; 
-            font-size: 3.5rem !important; 
-            margin-bottom: 0px !important; 
-        }
-        .pdf-capture-mode .doc-topic { 
-            background: #1e293b !important; 
-            color: #93c5fd !important; 
-            border: 1px solid #3b82f6 !important; 
-            margin-bottom: 15px !important;
-        }
-        .pdf-capture-mode .notes-content h1 { 
-            font-size: 1.7em !important; margin: 1em 0 0.4em !important; 
-            color: #ffffff !important; border-bottom: 2px solid #334155 !important; 
-        }
-        .pdf-capture-mode .notes-content h2 { 
-            font-size: 1.4em !important; margin: 0.8em 0 0.3em !important; 
-            color: #ffffff !important; 
-        }
-        .pdf-capture-mode .notes-content h3 { 
-            font-size: 1.2em !important; margin: 0.6em 0 0.2em !important; 
-            color: #ffffff !important; 
+        /* 1. Strict Page Container */
+        .pdf-page {
+            width: 1600px;
+            height: 900px; /* EXACTLY 16:9 Aspect Ratio */
+            position: relative;
+            background: #000000;
+            page-break-after: always;
+            overflow: hidden; /* Prevents absolutely any bleeding */
         }
 
-        /* 🔥 2. THICK, BRIGHT BORDERS FOR CALLOUTS & TABLES 🔥 */
-        .pdf-capture-mode .callout { 
-            background: #0f172a !important; /* Very dark slate */
-            border: 3px solid #475569 !important; /* Thick bright slate border */
+        /* 2. Absolute Logo Positioning */
+        .pdf-logo {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            width: 120px;
+            height: auto;
+            z-index: 100;
+        }
+
+        /* 3. Strict Content Box (It mathematically CANNOT touch the logo) */
+        .pdf-page-content {
+            position: absolute;
+            top: 40px;
+            bottom: 40px;
+            left: 60px;
+            right: 180px; /* Reserves 180px of empty space on the right for the logo! */
+            overflow: hidden; /* Tells our JS when a block has exceeded the page */
+            color: #f8fafc; 
+            font-size: 26px; 
+            line-height: 1.6;
+        }
+
+        /* 4. High Contrast Colors & Borders */
+        .pdf-page-content b, .pdf-page-content strong { color: #818cf8 !important; }
+        .pdf-page-content .highlight { background: #1e3a8a !important; color: #bfdbfe !important; border: 1px solid #3b82f6 !important; }
+        .pdf-page-content .doc-title { color: #ffffff !important; font-size: 3.5rem !important; margin-bottom: 0px !important; }
+        .pdf-page-content .doc-topic { background: #1e293b !important; color: #93c5fd !important; border: 1px solid #3b82f6 !important; margin-bottom: 15px !important; display: inline-block; padding: 4px 12px; border-radius: 20px;}
+        .pdf-page-content h1 { font-size: 1.7em !important; margin: 1em 0 0.4em !important; color: #ffffff !important; border-bottom: 2px solid #334155 !important; padding-bottom: 5px; }
+        .pdf-page-content h2 { font-size: 1.4em !important; margin: 0.8em 0 0.3em !important; color: #ffffff !important; }
+        .pdf-page-content h3 { font-size: 1.2em !important; margin: 0.6em 0 0.2em !important; color: #ffffff !important; }
+        
+        .pdf-page-content .block-item { margin-bottom: 0.8em; }
+        
+        .pdf-page-content .callout { 
+            background: #0f172a !important; 
+            border: 3px solid #475569 !important; 
             color: #ffffff !important; 
             padding: 16px 20px !important; 
             margin: 1.2em 0 !important; 
             border-radius: 12px !important;
+            display: flex; gap: 15px;
         }
-        .pdf-capture-mode .callout-icon { 
-            color: #60a5fa !important; /* Neon Blue Info Icon */
-        }
+        .pdf-page-content .callout-icon { color: #60a5fa !important; font-size: 1.4rem; flex-shrink: 0;}
+        .pdf-page-content .callout-title { font-weight: 600; font-size: 1.05em; margin-bottom: 4px; display: block;}
         
-        .pdf-capture-mode .table-wrapper { 
+        .pdf-page-content .table-wrapper { 
             border: 3px solid #475569 !important; 
             margin: 1.5em 0 !important;
             border-radius: 12px !important;
             background: #000000 !important;
+            overflow: hidden;
         }
-        .pdf-capture-mode th { 
-            background: #1e293b !important; 
-            color: #93c5fd !important; /* Bright blue headers */
-            border: 2px solid #475569 !important; 
-            padding: 14px !important;
-        }
-        .pdf-capture-mode td { 
-            border: 2px solid #475569 !important; 
-            color: #f8fafc !important; 
-            padding: 14px !important;
-        }
-
-        /* 🔥 3. ATOMIC PAGE BREAK PREVENTION 🔥 */
-        .pdf-capture-mode .notes-content h1, 
-        .pdf-capture-mode .notes-content h2, 
-        .pdf-capture-mode .notes-content h3, 
-        .pdf-capture-mode .notes-content p, 
-        .pdf-capture-mode .notes-content li, 
-        .pdf-capture-mode .callout, 
-        .pdf-capture-mode .table-wrapper, 
-        .pdf-capture-mode .notes-image-wrapper,
-        .pdf-capture-mode mjx-container[display="true"] {
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-            display: block !important;
-            margin-bottom: 0.8em !important;
-        }
-        
-        /* Glue headings down to their paragraphs */
-        .pdf-capture-mode .notes-content h1, 
-        .pdf-capture-mode .notes-content h2, 
-        .pdf-capture-mode .notes-content h3 {
-            page-break-after: avoid !important; 
-            break-after: avoid !important;
-            margin-bottom: 0.3em !important;
-        }
+        .pdf-page-content table { width: 100%; border-collapse: collapse; text-align: left; }
+        .pdf-page-content th { background: #1e293b !important; color: #93c5fd !important; border: 2px solid #475569 !important; padding: 14px !important; }
+        .pdf-page-content td { border: 2px solid #475569 !important; color: #f8fafc !important; padding: 14px !important; }
+        .pdf-page-content ul, .pdf-page-content ol { padding-left: 1.5em; margin-bottom: 1.5em;}
     </style>
 </head>
 <body>
@@ -254,18 +204,18 @@
         </div>
     </header>
 
-    <div id="pdfContentWrapper">
-        <div class="container" id="mainContainer">
-            <div id="notesHeader" style="display: none;">
-                <div class="doc-topic" id="docTopic">Topic</div>
-                <h1 class="doc-title" id="docTitle">Title</h1>
-                <div style="height: 1px; background: #334155; margin: 15px 0 20px;"></div>
-            </div>
-
-            <article class="notes-content" id="notesContent">
-            </article>
+    <div class="container" id="mainContainer">
+        <div id="notesHeader" style="display: none;">
+            <div class="doc-topic" id="docTopic">Topic</div>
+            <h1 class="doc-title" id="docTitle">Title</h1>
+            <div style="height: 1px; background: var(--border-dark); margin: 15px 0 20px;"></div>
         </div>
+
+        <article class="notes-content" id="notesContent">
+        </article>
     </div>
+    
+    <div id="pdfContentWrapper"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
     
@@ -280,6 +230,8 @@
     <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" defer></script>
 
     <script>
+        let cachedNoteData = null; // Store for PDF regeneration
+
         const safetyTimeout = setTimeout(() => {
             const overlay = document.getElementById('loadingOverlay');
             if (overlay.classList.contains('active')) {
@@ -320,72 +272,139 @@
             document.getElementById("readingProgress").style.width = scrolled + "%";
         };
 
+        // Helper: Generates raw HTML for a block
+        function createBlockHTML(block) {
+            switch (block.type) {
+                case 'h1': return `<h1>${block.content}</h1>`;
+                case 'h2': return `<h2>${block.content}</h2>`;
+                case 'h3': return `<h3>${block.content}</h3>`;
+                case 'paragraph': return `<p>${block.content}</p>`;
+                case 'image': return `<div class="notes-image-wrapper"><img src="${block.url}">${block.caption ? `<div class="image-caption">${block.caption}</div>` : ''}</div>`;
+                case 'list':
+                    const listTag = block.ordered ? 'ol' : 'ul';
+                    const listItems = block.items.map(item => `<li>${item}</li>`).join('');
+                    return `<${listTag}>${listItems}</${listTag}>`;
+                case 'callout':
+                    const styleClass = block.style || 'info';
+                    const icon = block.icon || 'fas fa-info-circle';
+                    return `<div class="callout ${styleClass}"><div class="callout-icon"><i class="${icon}"></i></div><div class="callout-content">${block.title ? `<span class="callout-title">${block.title}</span>` : ''}${block.content}</div></div>`;
+                case 'table':
+                    const ths = block.headers.map(h => `<th>${h}</th>`).join('');
+                    const trs = block.rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
+                    return `<div class="table-wrapper"><table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
+                default: return '';
+            }
+        }
+
         // =========================================================================
-        // 🔥 HIGH DENSITY BLACK PDF GENERATOR 🔥
+        // 🔥 TRUE DOM PAGINATION ENGINE 🔥
+        // Mathematically places blocks into 1600x900 pages. NO CLIPPING.
         // =========================================================================
         async function exportSmartPDF() {
             if (typeof html2pdf === 'undefined') {
                 alert("PDF Generator is still loading. Please wait a few seconds.");
                 return;
             }
+            if (!cachedNoteData) return alert("Note data is corrupted.");
 
             const overlay = document.getElementById('loadingOverlay');
             const loadText = document.getElementById('loadingText');
             overlay.classList.add('active');
             
-            loadText.textContent = "Fetching Watermark Logo...";
-            const logoObj = await new Promise((resolve) => {
-                const img = new Image();
-                img.crossOrigin = 'Anonymous';
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0);
-                    resolve({ b64: canvas.toDataURL('image/png'), ratio: img.height / img.width });
-                };
-                img.onerror = () => resolve(null);
-                img.src = 'https://raw.githubusercontent.com/Amit21686/NAV-Education/main/logo.png';
-            });
-
-            loadText.textContent = "Preparing Layout...";
-            window.scrollTo(0, 0);
-            const element = document.getElementById('pdfContentWrapper');
-            
+            // 1. Hide normal UI and activate PDF Mode
             document.body.classList.add('pdf-printing');
-            element.classList.add('pdf-capture-mode');
+            document.getElementById('mainContainer').style.display = 'none';
+            document.querySelector('.app-header').style.display = 'none';
             document.getElementById('readingProgress').style.display = 'none';
+            
+            const pdfWrapper = document.getElementById('pdfContentWrapper');
+            pdfWrapper.innerHTML = '';
 
-            await new Promise(r => setTimeout(r, 400));
+            loadText.textContent = "Building Smart Pages...";
 
-            loadText.textContent = "Processing Math for PDF...";
-            const svgs = element.querySelectorAll('mjx-container svg');
+            // 2. Create an invisible measuring board to render MathJax and size elements
+            const measureBoard = document.createElement('div');
+            measureBoard.className = 'pdf-page-content';
+            measureBoard.style.position = 'absolute';
+            measureBoard.style.visibility = 'hidden';
+            measureBoard.style.top = '-9999px';
+            measureBoard.style.left = '0';
+            measureBoard.style.height = 'auto';
+            document.body.appendChild(measureBoard);
+
+            // 3. Inject all HTML into the measure board
+            let rawHTML = `<div class="block-item" style="margin-bottom:40px;">
+                <div class="doc-topic">${cachedNoteData.topic || ''}</div>
+                <h1 class="doc-title">${cachedNoteData.title || ''}</h1>
+            </div>`;
+            
+            cachedNoteData.blocks.forEach(block => {
+                rawHTML += `<div class="block-item">${createBlockHTML(block)}</div>`;
+            });
+            measureBoard.innerHTML = rawHTML;
+
+            // 4. Force MathJax to render EVERYTHING while it's hidden
+            loadText.textContent = "Typesetting Equations...";
+            await MathJax.typesetPromise([measureBoard]);
+
+            // 5. White-out the MathJax SVGs to pop against black
+            const svgs = measureBoard.querySelectorAll('mjx-container svg');
             svgs.forEach(svg => {
-                try {
-                    const rect = svg.getBoundingClientRect(); 
-                    if(rect.width > 0) {
-                        svg.setAttribute('data-orig-width', svg.getAttribute('width') || '');
-                        svg.setAttribute('data-orig-height', svg.getAttribute('height') || '');
-                        svg.setAttribute('data-orig-fill', svg.getAttribute('fill') || '');
-                        
-                        svg.setAttribute('width', rect.width + 'px');
-                        svg.setAttribute('height', rect.height + 'px');
-                        svg.style.width = rect.width + 'px';
-                        svg.style.height = rect.height + 'px';
-                        
-                        svg.setAttribute('fill', '#ffffff');
-                        svg.style.color = '#ffffff';
-                    }
-                } catch(e) {}
+                const rect = svg.getBoundingClientRect(); 
+                if(rect.width > 0) {
+                    svg.setAttribute('width', rect.width + 'px');
+                    svg.setAttribute('height', rect.height + 'px');
+                    svg.style.width = rect.width + 'px';
+                    svg.style.height = rect.height + 'px';
+                    svg.setAttribute('fill', '#ffffff');
+                    svg.style.color = '#ffffff';
+                }
             });
 
-            loadText.textContent = "Generating Presentation PDF...";
-            const docTitle = document.getElementById('docTitle').textContent || 'NAV_Notes';
+            // 6. THE PAGINATION ALGORITHM
+            loadText.textContent = "Packing Pages...";
+            const MAX_HEIGHT = 820; // 900px total height - 40px top - 40px bottom
+            
+            function createNewPage() {
+                const p = document.createElement('div');
+                p.className = 'pdf-page';
+                p.innerHTML = `
+                    <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/logo.png" class="pdf-logo" crossorigin="anonymous">
+                    <div class="pdf-page-content"></div>
+                `;
+                pdfWrapper.appendChild(p);
+                return p.querySelector('.pdf-page-content');
+            }
+
+            let currentContentArea = createNewPage();
+            
+            // We loop through the measuring board. Node moves automatically on appendChild!
+            while (measureBoard.firstChild) {
+                let block = measureBoard.firstChild;
+                currentContentArea.appendChild(block);
+                
+                // Did adding this block cause the page to exceed 820px?
+                if (currentContentArea.scrollHeight > MAX_HEIGHT) {
+                    // Remove it from the current full page
+                    currentContentArea.removeChild(block);
+                    
+                    // Create a new fresh page
+                    currentContentArea = createNewPage();
+                    
+                    // Put the block at the top of the new page
+                    currentContentArea.appendChild(block);
+                }
+            }
+
+            // Clean up the measuring board
+            document.body.removeChild(measureBoard);
+
+            // 7. Fire up HTML2PDF on our flawlessly paginated wrapper
+            loadText.textContent = "Generating Document...";
+            const docTitle = cachedNoteData.title || 'NAV_Notes';
 
             const opt = {
-                // Zero margins inside jsPDF so we maximize the edge-to-edge space.
-                margin:       0, 
+                margin:       0, // Zero margin. Our HTML exactly matches the 1600x900 output.
                 filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_presentation.pdf`,
                 image:        { type: 'jpeg', quality: 1.0 },
                 html2canvas:  { 
@@ -397,54 +416,21 @@
                     windowWidth: 1600,
                     backgroundColor: '#000000' 
                 }, 
-                jsPDF:        { unit: 'in', format: [16, 9], orientation: 'landscape' },
-                // Use strict CSS pagebreak mode
-                pagebreak:    { mode: ['css', 'legacy'] }
+                // We rely entirely on the exact pixel mapping. No css breaking needed.
+                jsPDF:        { unit: 'px', format: [1600, 900], orientation: 'landscape', hotfixes: ["px_scaling"] }
             };
 
             try {
-                await html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
-                    const totalPages = pdf.internal.getNumberOfPages();
-                    
-                    for (let i = 1; i <= totalPages; i++) {
-                        pdf.setPage(i);
-                        
-                        // Fill any page break gaps with solid black natively
-                        let startLen = pdf.internal.pages[i].length;
-                        pdf.setFillColor(0, 0, 0); 
-                        pdf.rect(0, 0, 16, 9, 'F');
-                        let endLen = pdf.internal.pages[i].length;
-                        
-                        let bgCommands = pdf.internal.pages[i].splice(startLen, endLen - startLen);
-                        pdf.internal.pages[i].splice(1, 0, ...bgCommands);
-
-                        // Stamp Logo in absolute top right corner to avoid wasting space
-                        if (logoObj && logoObj.b64) {
-                            const logoWidth = 1.0; 
-                            const logoHeight = logoWidth * logoObj.ratio;
-                            const xPos = 16 - logoWidth - 0.2; 
-                            const yPos = 0.2; 
-                            pdf.addImage(logoObj.b64, 'PNG', xPos, yPos, logoWidth, logoHeight);
-                        }
-                    }
-                }).save();
+                await html2pdf().set(opt).from(pdfWrapper).save();
             } catch(e) {
                 console.error("PDF Error:", e);
                 alert("Failed to generate PDF: " + e.message);
             } finally {
-                svgs.forEach(svg => {
-                    if (svg.hasAttribute('data-orig-width')) {
-                        svg.style.width = svg.getAttribute('data-orig-width');
-                        svg.style.height = svg.getAttribute('data-orig-height');
-                        
-                        const origFill = svg.getAttribute('data-orig-fill');
-                        if (origFill) svg.setAttribute('fill', origFill); else svg.removeAttribute('fill');
-                        svg.style.color = '';
-                    }
-                });
-
+                // Restore Web View
+                pdfWrapper.innerHTML = '';
                 document.body.classList.remove('pdf-printing');
-                element.classList.remove('pdf-capture-mode');
+                document.getElementById('mainContainer').style.display = 'block';
+                document.querySelector('.app-header').style.display = 'flex';
                 document.getElementById('readingProgress').style.display = 'block';
                 overlay.classList.remove('active');
             }
@@ -463,13 +449,10 @@
                 const data = await response.json();
                 
                 if (!data || !data.blocks || !Array.isArray(data.blocks)) {
-                    const rawData = JSON.stringify(data, null, 2).substring(0, 500) + '\n...';
-                    throw new Error(`
-                        <b>Format Mismatch!</b><br>
-                        The file <i>${file}</i> loaded successfully, but it does NOT contain the required "blocks" array.
-                    `);
+                    throw new Error("Format Mismatch! The file loaded but does NOT contain the required 'blocks' array.");
                 }
 
+                cachedNoteData = data; // Save for PDF generation
                 renderDocument(data);
 
             } catch(error) {
@@ -481,7 +464,6 @@
                         <div style="color:var(--text-dark); font-size: 0.95rem; line-height: 1.5; text-align: left;">${error.message}</div>
                     </div>
                 `;
-            } finally {
                 clearTimeout(safetyTimeout);
                 document.getElementById('loadingOverlay').classList.remove('active');
             }
@@ -501,38 +483,18 @@
             content.innerHTML = '';
 
             data.blocks.forEach(block => {
-                let element = '';
-                switch (block.type) {
-                    case 'h1': element = `<h1>${block.content}</h1>`; break;
-                    case 'h2': element = `<h2>${block.content}</h2>`; break;
-                    case 'h3': element = `<h3>${block.content}</h3>`; break;
-                    case 'paragraph': element = `<p>${block.content}</p>`; break;
-                    case 'image': 
-                        element = `<div class="notes-image-wrapper"><img src="${block.url}" alt="${block.caption || 'Note Image'}">${block.caption ? `<div class="image-caption">${block.caption}</div>` : ''}</div>`;
-                        break;
-                    case 'list':
-                        const listTag = block.ordered ? 'ol' : 'ul';
-                        const listItems = block.items.map(item => `<li>${item}</li>`).join('');
-                        element = `<${listTag}>${listItems}</${listTag}>`;
-                        break;
-                    case 'callout':
-                        const styleClass = block.style || 'info';
-                        const icon = block.icon || 'fas fa-info-circle';
-                        element = `<div class="callout ${styleClass}"><div class="callout-icon"><i class="${icon}"></i></div><div class="callout-content">${block.title ? `<span class="callout-title">${block.title}</span>` : ''}${block.content}</div></div>`;
-                        break;
-                    case 'table':
-                        const ths = block.headers.map(h => `<th>${h}</th>`).join('');
-                        const trs = block.rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
-                        element = `<div class="table-wrapper"><table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
-                        break;
-                }
-                // Elements are inserted natively so the engine can calculate atomic page breaks 
-                content.insertAdjacentHTML('beforeend', element);
+                content.insertAdjacentHTML('beforeend', createBlockHTML(block));
             });
 
             setTimeout(() => {
                 if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-                    MathJax.typesetPromise([document.getElementById('notesContent')]);
+                    MathJax.typesetPromise([document.getElementById('notesContent')]).then(() => {
+                        clearTimeout(safetyTimeout);
+                        document.getElementById('loadingOverlay').classList.remove('active');
+                    });
+                } else {
+                    clearTimeout(safetyTimeout);
+                    document.getElementById('loadingOverlay').classList.remove('active');
                 }
             }, 150);
         }
