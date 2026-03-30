@@ -101,10 +101,12 @@
         .raw-data-box { text-align: left; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; font-size: 0.75rem; overflow-x: auto; margin-top: 15px; color: #a5b4fc; font-family: monospace; border: 1px solid var(--border-dark);}
         
         /* 🔥 PDF CAPTURE OVERRIDES (SMART BOARD 16:9) 🔥 */
+        body.pdf-printing { 
+            overflow: visible !important; /* Prevents mobile screens from cutting off the right side */
+            width: 1920px !important; 
+            min-width: 1920px !important;
+        }
         .pdf-capture-mode { 
-            position: absolute !important; 
-            top: 0 !important; 
-            left: 0 !important;
             width: 1920px !important; 
             background: #ffffff !important; 
             color: #000000 !important; 
@@ -112,8 +114,8 @@
         .pdf-capture-mode .container { 
             width: 1920px !important; 
             max-width: 1920px !important; 
-            margin: 0 !important; 
-            padding: 60px 200px !important; 
+            margin: 0 auto !important; 
+            padding: 80px 200px !important; /* Handles the centering safely */
             box-sizing: border-box !important;
         }
         .pdf-capture-mode .notes-content { color: #000000 !important; font-size: 24px !important; line-height: 1.8 !important; }
@@ -228,6 +230,9 @@
 
             window.scrollTo(0, 0);
             const element = document.getElementById('pdfContentWrapper');
+            
+            // 🔥 Add classes to unlock mobile viewport limits
+            document.body.classList.add('pdf-printing');
             element.classList.add('pdf-capture-mode');
             document.getElementById('readingProgress').style.display = 'none';
 
@@ -283,6 +288,7 @@
                     svg.style.height = '';
                 });
 
+                document.body.classList.remove('pdf-printing');
                 element.classList.remove('pdf-capture-mode');
                 document.getElementById('readingProgress').style.display = 'block';
                 loadText.textContent = "Loading Notes...";
