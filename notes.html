@@ -100,7 +100,7 @@
         .error-card { background: rgba(244, 63, 94, 0.1); border: 1px solid var(--error); border-radius: var(--radius-md); padding: 30px 20px; text-align: center; margin-top: 20px; }
         .raw-data-box { text-align: left; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; font-size: 0.75rem; overflow-x: auto; margin-top: 15px; color: #a5b4fc; font-family: monospace; border: 1px solid var(--border-dark);}
         
-        /* 🔥 PDF CAPTURE OVERRIDES (SMART BOARD 16:9) 🔥 */
+        /* 🔥 PDF CAPTURE OVERRIDES: STYLISH BLUE GRADIENT 🔥 */
         body.pdf-printing { 
             overflow: visible !important; 
         }
@@ -109,8 +109,13 @@
             display: block !important;
             width: 1600px !important; 
             min-width: 1600px !important;
-            background: #ffffff !important; 
-            color: #000000 !important; 
+            
+            /* Magic Tiling: Repeats exactly every 900px to match the 16:9 page height */
+            background: linear-gradient(135deg, #020617 0%, #1e1b4b 50%, #0f172a 100%) !important;
+            background-size: 1600px 900px !important;
+            background-repeat: repeat-y !important;
+            
+            color: #ffffff !important; 
             padding: 80px 120px !important;
             box-sizing: border-box !important;
             margin: 0 !important;
@@ -121,12 +126,16 @@
             margin: 0 !important; 
             padding: 0 !important; 
         }
-        .pdf-capture-mode .notes-content { color: #000000 !important; font-size: 26px !important; line-height: 1.8 !important; }
-        .pdf-capture-mode .callout { background: #f8fafc !important; border-color: #e2e8f0 !important; color: #000000 !important;}
-        .pdf-capture-mode .doc-title { background: none !important; -webkit-text-fill-color: black !important; color: black !important; font-size: 3.8rem !important; }
-        .pdf-capture-mode .table-wrapper { border-color: #ccc !important; }
-        .pdf-capture-mode th { background: #f1f5f9 !important; color: black !important; border-color: #ccc !important; }
-        .pdf-capture-mode td { border-color: #ccc !important; color: black !important; }
+        
+        /* Force text colors to white/bright for dark blue background readability */
+        .pdf-capture-mode .notes-content { color: #f8fafc !important; font-size: 26px !important; line-height: 1.8 !important; }
+        .pdf-capture-mode .notes-content h1, .pdf-capture-mode .notes-content h2, .pdf-capture-mode .notes-content h3 { color: #ffffff !important; border-color: rgba(255,255,255,0.2) !important; }
+        .pdf-capture-mode .callout { background: rgba(255,255,255,0.05) !important; border-color: rgba(255,255,255,0.15) !important; color: #ffffff !important;}
+        .pdf-capture-mode .doc-title { background: none !important; -webkit-text-fill-color: #ffffff !important; color: #ffffff !important; font-size: 3.8rem !important; text-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .pdf-capture-mode .doc-topic { background: rgba(255,255,255,0.1) !important; color: #a5b4fc !important; border-color: transparent !important;}
+        .pdf-capture-mode .table-wrapper { border-color: rgba(255,255,255,0.2) !important; }
+        .pdf-capture-mode th { background: rgba(255,255,255,0.1) !important; color: #ffffff !important; border-color: rgba(255,255,255,0.2) !important; }
+        .pdf-capture-mode td { border-color: rgba(255,255,255,0.2) !important; color: #f1f5f9 !important; }
     </style>
 </head>
 <body>
@@ -217,7 +226,7 @@
         };
 
         // =========================================================================
-        // 🔥 THE SMART PDF EXPORTER WITH REPEATING LOGO 🔥
+        // 🔥 THE SMART PDF EXPORTER WITH REPEATING LOGO & BLUE GRADIENT 🔥
         // =========================================================================
         async function exportSmartPDF() {
             if (typeof html2pdf === 'undefined') {
@@ -262,10 +271,19 @@
                 try {
                     const rect = svg.getBoundingClientRect(); 
                     if(rect.width > 0) {
+                        // Save original fill and dimensions
                         svg.setAttribute('data-orig-width', svg.getAttribute('width') || '');
                         svg.setAttribute('data-orig-height', svg.getAttribute('height') || '');
+                        svg.setAttribute('data-orig-fill', svg.getAttribute('fill') || '');
+                        
+                        // Force precise pixels and WHITE math rendering to contrast the blue
+                        svg.setAttribute('width', rect.width + 'px');
+                        svg.setAttribute('height', rect.height + 'px');
                         svg.style.width = rect.width + 'px';
                         svg.style.height = rect.height + 'px';
+                        
+                        svg.setAttribute('fill', '#ffffff');
+                        svg.style.color = '#ffffff';
                     }
                 } catch(e) {}
             });
@@ -309,6 +327,10 @@
                     if (svg.hasAttribute('data-orig-width')) {
                         svg.style.width = svg.getAttribute('data-orig-width');
                         svg.style.height = svg.getAttribute('data-orig-height');
+                        
+                        const origFill = svg.getAttribute('data-orig-fill');
+                        if (origFill) svg.setAttribute('fill', origFill); else svg.removeAttribute('fill');
+                        svg.style.color = '';
                     }
                 });
 
