@@ -8,7 +8,7 @@
     },
     {
       "type": "paragraph",
-      "content": "A <b>solution</b> is a <span class=\"highlight\">homogeneous mixture</span> of two or more components. The component present in larger amount is called <b>solvent</b> and the one in smaller amount is called <b>solute</b>."
+      "content": "A <b><font color=\"#00ff00\">solution</font></b> is a <span class=\"highlight\"><font color=\"#00ffff\">homogeneous</font> mixture</span> of two or more components. The component present in larger amount is called <b>solvent</b> and the one in smaller amount is called <b>solute</b>."
     },
     {
       "type": "h2",
