@@ -127,7 +127,7 @@
     },
     {
       "type": "callout",
-      "style": "info",
+      "style": "success",
       "icon": "fas fa-info-circle",
       "title": "",
       "content": "Remember: <b>‘Colligative = Count of particles’</b> → Only number matters, not nature."
