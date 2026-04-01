@@ -4,7 +4,7 @@
   "blocks": [
     {
       "type": "h1",
-      "content": "Happy <i>h<span style=\"font-weight: normal;\">appy <font color=\"#ff00ff\">ho</font></span></i>"
+      "content": "Happy <i>h<span style=\"font-weight: normal;\">appy <font color=\"#ff00ff\">ho<img src=\"https://raw.githubusercontent.com/Amit21686/NAV-Education/main/img_1775014081212.jpg?t=1775014082948\" style=\"max-width:100%; border-radius:8px; display:block; margin:10px 0; cursor:pointer;\"></font></span></i>"
     }
   ]
 }
