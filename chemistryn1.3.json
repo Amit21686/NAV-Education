@@ -5,6 +5,10 @@
     {
       "type": "h1",
       "content": "<ol><li>Hhj</li><li>Hmmm</li><li>Jjjm. </li></ol>"
+    },
+    {
+      "type": "expression",
+      "content": "$$W = Fd\\cos\\theta$$"
     }
   ]
 }
