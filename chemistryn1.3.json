@@ -4,7 +4,7 @@
   "blocks": [
     {
       "type": "h1",
-      "content": "<ol><li>Hhj</li><li>Hmmm</li><li>Jjjm. </li></ol>"
+      "content": "<span style=\"font-size: 1.8em;\">Hhj</span><br><span style=\"font-size: 1.8em;\">Hmmm</span><br><span style=\"font-size: 1.8em;\">Jjjm. </span>"
     },
     {
       "type": "expression",
