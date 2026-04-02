@@ -16,12 +16,6 @@
           "file": "chemistryq1.2.json",
           "type": "quiz",
           "status": "draft"
-        },
-        {
-          "title": "Amit",
-          "file": "chemistryn1.3.json",
-          "type": "notes",
-          "status": "draft"
         }
       ]
     }
