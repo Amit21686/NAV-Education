@@ -1,5 +1,10 @@
 {
   "title": "<font color=\"#00ff00\">H</font><font color=\"#00ff00\">ello</font> 👋 🤗",
   "topic": "<font color=\"#ff00ff\">Amit</font>",
-  "blocks": []
+  "blocks": [
+    {
+      "type": "expression",
+      "content": "\n"
+    }
+  ]
 }
