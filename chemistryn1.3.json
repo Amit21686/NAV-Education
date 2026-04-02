@@ -1,10 +1,5 @@
 {
-  "title": "<font color=\"#00ff00\">Hello</font> 👋 🤗",
+  "title": "<font color=\"#00ff00\">H</font><font color=\"#00ff00\">ello</font> 👋 🤗",
   "topic": "<font color=\"#ff00ff\">Amit</font>",
-  "blocks": [
-    {
-      "type": "h2",
-      "content": "<span style=\"font-family: &quot;Courier New&quot;, monospace; font-size: xx-large;\">Hi hello.</span>"
-    }
-  ]
+  "blocks": []
 }
