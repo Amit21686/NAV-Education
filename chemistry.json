@@ -4,14 +4,7 @@
   "chapters": [
     {
       "title": "Solution",
-      "contents": [
-        {
-          "title": "Maths",
-          "file": "chemistryq1.2.json",
-          "type": "quiz",
-          "status": "draft"
-        }
-      ]
+      "contents": []
     }
   ]
 }
