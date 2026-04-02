@@ -1,10 +1,10 @@
 {
-  "title": "Hello 👋 🤗",
+  "title": "<font color=\"#00ff00\">Hello</font> 👋 🤗",
   "topic": "<br>",
   "blocks": [
     {
       "type": "h1",
-      "content": "<span style=\"font-size: 51.84px;\">Whats your name ?</span><br><span style=\"font-size: 1.8em;\"><img src=\"https://raw.githubusercontent.com/Amit21686/NAV-Education/main/img_1775015628146.jpg?t=1775015630610\" style=\"max-width: 100%; width: 25%; border-radius: 8px; display: block; margin: 10px 0px 10px auto; cursor: pointer;\"></span>"
+      "content": "<span style=\"font-size: 51.84px;\"><span style=\"background-color: rgb(99, 102, 241);\">Whats</span> your name ?</span></h1><h1><span style=\"font-size: 1.8em;\"><img src=\"https://raw.githubusercontent.com/Amit21686/NAV-Education/main/img_1775015628146.jpg?t=1775015630610\" style=\"max-width: 100%; width: 25%; border-radius: 8px; display: block; margin: 10px auto; cursor: pointer;\"></span>"
     }
   ]
 }
