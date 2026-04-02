@@ -6,12 +6,6 @@
       "title": "Solution",
       "contents": [
         {
-          "title": "Summary Notes",
-          "file": "chemistryn1.1.json",
-          "type": "notes",
-          "status": "published"
-        },
-        {
           "title": "Maths",
           "file": "chemistryq1.2.json",
           "type": "quiz",
