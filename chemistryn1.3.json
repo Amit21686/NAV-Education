@@ -17,8 +17,8 @@
       "y": "-5.63351px",
       "w": "94.0262px",
       "h": "70.5864px",
-      "z": "31",
-      "content": "<span style=\"color: rgb(255, 0, 0); background-color: rgb(255, 255, 0); font-family: Courier; font-size: x-large;\">Ghjj</span>"
+      "z": "32",
+      "content": "<span style=\"color: rgb(255, 0, 0); background-color: rgb(255, 255, 0); font-family: Courier; font-size: x-large;\">$$F = ma $$&nbsp;</span>"
     },
     {
       "type": "paragraph",
@@ -26,7 +26,7 @@
       "y": "110px",
       "w": "300px",
       "h": "auto",
-      "z": "18",
+      "z": "19",
       "content": "<br>"
     }
   ]
