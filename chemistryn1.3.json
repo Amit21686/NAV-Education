@@ -15,10 +15,10 @@
       "type": "h1",
       "x": "96.6047px",
       "y": "-5.63351px",
-      "w": "407.605px",
-      "h": "159.537px",
-      "z": "45",
-      "content": "<span style=\"color: rgb(255, 0, 0); background-color: rgb(255, 255, 0); font-family: Courier; font-size: x-large;\">$$F = ma $$&nbsp;</span>"
+      "w": "59.423px",
+      "h": "248.385px",
+      "z": "55",
+      "content": ""
     },
     {
       "type": "paragraph",
@@ -35,7 +35,7 @@
       "y": "-0.727745px",
       "w": "273.33px",
       "h": "194.398px",
-      "z": "18",
+      "z": "19",
       "content": "$$\\frac{1}{v} + \\frac{1}{u} = \\frac{1}{f}$$&nbsp;<br>"
     }
   ]
