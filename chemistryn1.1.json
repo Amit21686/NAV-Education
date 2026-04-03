@@ -78,8 +78,8 @@
       "y": "33px",
       "w": "400px",
       "h": "auto",
-      "z": "14",
-      "style": "font-family: Bookman; font-size: 12px; ",
+      "z": "15",
+      "style": "font-family: Bookman; font-size: 12px; font-weight: bold;",
       "content": "<br>"
     }
   ]
