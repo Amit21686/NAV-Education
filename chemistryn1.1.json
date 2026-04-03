@@ -4,13 +4,13 @@
   "blocks": [
     {
       "type": "paragraph",
-      "x": "20px",
-      "y": "50px",
+      "x": "1px",
+      "y": "2px",
       "w": "300px",
       "h": "auto",
-      "z": "10",
+      "z": "15",
       "style": "font-family: Times New Roman; color: #ff0000; ",
-      "content": "<br>"
+      "content": "<span style=\"font-style: italic;\">What's your name how are you</span>"
     }
   ]
 }
