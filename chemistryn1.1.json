@@ -34,18 +34,18 @@
     },
     {
       "type": "table",
-      "x": "10.5px",
-      "y": "73.5px",
+      "x": "44px",
+      "y": "270px",
       "w": "400px",
       "h": "auto",
-      "z": "18",
+      "z": "22",
       "style": "font-size: 10px; ",
       "content": {
         "rows": 5,
         "cols": 3,
         "data": [
           [
-            "",
+            "<div><br></div>",
             "",
             ""
           ],
@@ -78,7 +78,7 @@
       "y": "6.5px",
       "w": "300px",
       "h": "300px",
-      "z": "17",
+      "z": "18",
       "style": "",
       "content": "https://raw.githubusercontent.com/Amit21686/NAV-Education/main/img_1775194897745.jpg?t=1775194899218"
     }
