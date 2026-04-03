@@ -16,9 +16,9 @@
       "type": "paragraph",
       "x": "285.5px",
       "y": "673px",
-      "w": "102.5px",
+      "w": "77px",
       "h": "auto",
-      "z": "38",
+      "z": "39",
       "style": "font-family: Palatino; font-size: 10px; color: rgb(232, 196, 130); background-color: rgb(255, 255, 255);",
       "content": "<span style=\"font-weight: bold; font-style: italic; text-decoration-line: underline;\">Hello</span>"
     },
