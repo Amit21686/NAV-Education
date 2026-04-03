@@ -23,46 +23,6 @@
       "content": "<span style=\"font-weight: bold; font-style: italic; text-decoration-line: underline;\">Hello</span>"
     },
     {
-      "type": "table",
-      "x": "150.477px",
-      "y": "899.199px",
-      "w": "325px",
-      "h": "374.5px",
-      "z": "47",
-      "style": "font-size: 10px; ",
-      "content": {
-        "rows": 5,
-        "cols": 3,
-        "data": [
-          [
-            "<div><br></div>",
-            "<br>",
-            ""
-          ],
-          [
-            "",
-            "",
-            ""
-          ],
-          [
-            "",
-            "",
-            ""
-          ],
-          [
-            "",
-            "",
-            ""
-          ],
-          [
-            "",
-            "",
-            ""
-          ]
-        ]
-      }
-    },
-    {
       "type": "image",
       "x": "163.922px",
       "y": "907.336px",
@@ -80,7 +40,7 @@
       "h": "auto",
       "z": "53",
       "style": "text-decoration: none; font-weight: normal; font-style: italic; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255); font-family: ",
-      "content": "             Gujarat of India </h2><div>            $$ \\frac{1}{v} + \\frac{1}{u} = \\frac{1}{f} $$&nbsp;</div><div>          </div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\">"
+      "content": "             Gujarat of India </h2><div>            $$ \\frac{1}{v} + \\frac{1}{u} = \\frac{1}{f} $$&nbsp;</div><div>          </div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 3)\" ontouchstart=\"CanvasInteraction.startResize(event, 3)\">"
     },
     {
       "type": "image",
