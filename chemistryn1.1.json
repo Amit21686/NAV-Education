@@ -29,8 +29,8 @@
       "w": "70.5px",
       "h": "40px",
       "z": "42",
-      "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; font-size: 10px; ",
-      "content": "$$ E=mc^2 $$"
+      "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; font-size: 10px; ",
+      "content": "$$ F = ma $$"
     }
   ]
 }
