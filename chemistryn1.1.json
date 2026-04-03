@@ -14,11 +14,11 @@
     },
     {
       "type": "paragraph",
-      "x": "20px",
-      "y": "50px",
+      "x": "230px",
+      "y": "66px",
       "w": "300px",
       "h": "auto",
-      "z": "11",
+      "z": "13",
       "style": "font-family: Palatino; color: #ff0000; font-weight: bold; font-style: italic; ",
       "content": "<br>"
     }
