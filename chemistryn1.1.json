@@ -18,8 +18,8 @@
       "y": "18.5px",
       "w": "266.5px",
       "h": "auto",
-      "z": "35",
-      "style": "font-family: Impact; font-size: 28px;",
+      "z": "36",
+      "style": "font-family: \"Times New Roman\"; font-size: 28px;",
       "content": "<span style=\"color: rgb(0, 255, 0); background-color: rgb(255, 255, 0); text-decoration-line: underline;\">अमित</span>"
     },
     {
@@ -29,7 +29,7 @@
       "w": "127px",
       "h": "85.5px",
       "z": "29",
-      "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); font-family: Bookman; font-size: 20px; color: #00ff00; font-weight: bold; text-decoration: underline; ",
+      "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); font-family: Bookman; font-size: 20px; color: #00ff00; font-weight: bold; text-decoration: underline; ",
       "content": "$$ E=mc^2 $$"
     },
     {
@@ -39,7 +39,7 @@
       "w": "117px",
       "h": "72px",
       "z": "17",
-      "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); font-family: Bookman; font-size: 14px; color: #00ff00; font-weight: bold; text-decoration: underline; ",
+      "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); font-family: Bookman; font-size: 14px; color: #00ff00; font-weight: bold; text-decoration: underline; ",
       "content": "$$ E=mc^2 $$"
     },
     {
@@ -49,7 +49,7 @@
       "w": "136px",
       "h": "68px",
       "z": "19",
-      "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); font-family: Bookman; font-size: 10px; color: #00ff00; font-weight: bold; text-decoration: underline; ",
+      "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); font-family: Bookman; font-size: 10px; color: #00ff00; font-weight: bold; text-decoration: underline; ",
       "content": "$$ E=mc^2 $$"
     }
   ]
