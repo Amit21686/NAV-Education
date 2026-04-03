@@ -3,16 +3,6 @@
   "topic": "Solution",
   "blocks": [
     {
-      "type": "paragraph",
-      "x": "58.5px",
-      "y": "225px",
-      "w": "380px",
-      "h": "auto",
-      "z": "36",
-      "style": "font-family: Times New Roman; color: #ff0000; ",
-      "content": "<span style=\"font-style: italic;\">What's <span style=\"background-color: rgb(255, 255, 0);\">your name how</span> are you$$f = ma $$&nbsp;</span>"
-    },
-    {
       "type": "image",
       "x": "4.5px",
       "y": "69.5px",
