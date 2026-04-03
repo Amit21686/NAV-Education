@@ -19,7 +19,7 @@
       "w": "77px",
       "h": "auto",
       "z": "40",
-      "style": "font-family: Verdana; font-size: 64px; color: rgb(232, 196, 130); background-color: rgb(255, 255, 255);",
+      "style": "font-family: Verdana; font-size: 72px; color: rgb(232, 196, 130); background-color: rgb(255, 255, 255);",
       "content": "<span style=\"font-weight: bold; font-style: italic; text-decoration-line: underline;\">Hello</span>"
     },
     {
@@ -28,7 +28,7 @@
       "y": "5.5px",
       "w": "155.5px",
       "h": "40px",
-      "z": "54",
+      "z": "55",
       "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; font-size: 10px; ",
       "content": "$$ F = ma $$"
     },
