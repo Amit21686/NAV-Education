@@ -18,9 +18,9 @@
       "y": "50px",
       "w": "266.5px",
       "h": "auto",
-      "z": "24",
+      "z": "25",
       "style": "font-family: Impact; font-size: 36px;",
-      "content": "<span style=\"color: rgb(0, 255, 0);\">अमित</span>"
+      "content": "<span style=\"color: rgb(0, 255, 0); background-color: rgb(255, 255, 0);\">अमित</span>"
     }
   ]
 }
