@@ -25,10 +25,10 @@
     {
       "type": "expression",
       "x": "0px",
-      "y": "0px",
+      "y": "9px",
       "w": "70.5px",
       "h": "40px",
-      "z": "29",
+      "z": "30",
       "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; font-size: 10px; ",
       "content": "$$ E=mc^2 $$"
     }
