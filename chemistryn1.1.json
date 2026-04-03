@@ -54,11 +54,11 @@
     },
     {
       "type": "h1",
-      "x": "20px",
-      "y": "50px",
+      "x": "13.5px",
+      "y": "117px",
       "w": "500px",
       "h": "auto",
-      "z": "15",
+      "z": "17",
       "style": "font-family: Palatino; font-size: 24px; ",
       "content": "<br>"
     }
