@@ -79,7 +79,7 @@
       "w": "263px",
       "h": "auto",
       "z": "23",
-      "style": "font-family: \"Times New Roman\"; font-size: 16px; font-weight: normal; font-style: italic; color: rgb(255, 255, 0); background-color: rgb(255, 0, 255);",
+      "style": "font-family: \"Times New Roman\"; font-size: 16px; font-weight: normal; font-style: italic; color: rgb(255, 255, 0); background-color: rgb(255, 0, 255); text-decoration: underline;",
       "content": "Gujarat of India "
     }
   ]
