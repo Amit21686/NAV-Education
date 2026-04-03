@@ -24,11 +24,11 @@
     },
     {
       "type": "expression",
-      "x": "134px",
-      "y": "114.5px",
+      "x": "0px",
+      "y": "7px",
       "w": "70.5px",
       "h": "40px",
-      "z": "26",
+      "z": "27",
       "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; font-size: 10px; ",
       "content": "$$ E=mc^2 $$"
     }
