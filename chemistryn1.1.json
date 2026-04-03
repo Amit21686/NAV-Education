@@ -1,15 +1,5 @@
 {
   "title": "Amit",
   "topic": "Solution",
-  "blocks": [
-    {
-      "type": "h1",
-      "x": "49.5px",
-      "y": "84.5px",
-      "w": "500px",
-      "h": "auto",
-      "z": "20",
-      "content": "<br>"
-    }
-  ]
+  "blocks": []
 }
