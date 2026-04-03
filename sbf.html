@@ -68,12 +68,12 @@
             -webkit-overflow-scrolling: touch;
             z-index: 1;
             padding: 20px;
-            touch-action: pan-x pan-y; /* Important for custom pinch zoom */
+            touch-action: pan-x pan-y; 
         }
 
         .canvas-scale-wrapper {
             transform-origin: top left;
-            transition: transform 0.1s linear; /* Faster response for pinch zoom */
+            transition: transform 0.1s linear; 
             margin: 0 auto;
             position: relative;
         }
@@ -87,16 +87,15 @@
             position: relative;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
             overflow: hidden;
+            z-index: 1;
         }
 
         /* 1:1 CSS MATCH WITH ADMIN PORTAL */
         .canvas-element {
             position: absolute;
-            border: 1px dashed transparent;
             min-height: 40px;
             min-width: 50px;
             box-sizing: border-box;
-            user-select: none;
             display: flex;
             flex-direction: column;
         }
@@ -113,7 +112,6 @@
             overflow: visible; 
         }
 
-        /* Enforce inheritance so safeStyles propagate to headers perfectly */
         .notes-content-editable h1, .notes-content-editable h2 { 
             color: inherit; 
             font-family: inherit; 
@@ -163,7 +161,7 @@
             <div style="width:1px; background:var(--border-dark); margin:4px 0; height:18px;"></div>
             <button class="font-btn" onclick="changeZoom(0.1)" title="Zoom In"><i class="fas fa-search-plus"></i></button>
             <div style="width:1px; background:var(--border-dark); margin:4px 0; height:18px;"></div>
-            <button class="font-btn" onclick="exportContinuousPDF()" title="Download PDF"><i class="fas fa-download" style="color: var(--success);"></i></button>
+            <button class="font-btn" onclick="exportSmartBoardPDF()" title="Download PDF"><i class="fas fa-download" style="color: var(--success);"></i></button>
         </div>
     </header>
 
@@ -226,16 +224,13 @@
             }
         }
 
-        // ==========================================
         // PINCH-TO-ZOOM MULTI-TOUCH PHYSICS ENGINE
-        // ==========================================
         const viewport = document.getElementById('mainViewport');
         let initialDistance = null;
         let initialZoom = 1;
 
         viewport.addEventListener('touchstart', (e) => {
             if (e.touches.length === 2) {
-                // Calculate hypotenuse distance between two fingers
                 initialDistance = Math.hypot(
                     e.touches[0].pageX - e.touches[1].pageX,
                     e.touches[0].pageY - e.touches[1].pageY
@@ -246,7 +241,7 @@
 
         viewport.addEventListener('touchmove', (e) => {
             if (e.touches.length === 2 && initialDistance) {
-                e.preventDefault(); // Stop native browser zoom
+                e.preventDefault(); 
                 const currentDistance = Math.hypot(
                     e.touches[0].pageX - e.touches[1].pageX,
                     e.touches[0].pageY - e.touches[1].pageY
@@ -315,17 +310,16 @@
                 let w = b.w || '300px'; let h = b.h || 'auto';
                 let x = b.x || '20px'; let y = b.y || (i * 100 + 20) + 'px'; 
                 
-                // EXPLICIT Z-INDEX PARSING FIX
-                let z = parseInt(b.z);
-                if (isNaN(z)) z = i + 10; // Fallback guarantees elements layer correctly if missing
+                // Strict Layer / Z-Index Parsing
+                let z = parseInt(b.z, 10);
+                if (isNaN(z) || z == null) z = i + 10; 
 
-                // SAFE HTML ESCAPE FIX: Protects against quotes in font families breaking HTML tags
+                // Safe HTML Escape
                 let safeStyles = (b.style || '').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 
                 let innerHTML = '';
                 let fillClass = (b.type === 'table' || b.type === 'image' || b.type === 'expression') ? 'fill-space' : '';
 
-                // 1:1 HTML Structure matching Admin Portal's extraction
                 if (b.type === 'image') {
                     innerHTML = `<div class="notes-content-editable ${fillClass}"><img src="${b.content || ''}" style="width:100%;height:100%;"></div>`;
                 } else if (b.type === 'expression') {
@@ -350,7 +344,8 @@
                     innerHTML = `<div class="notes-content-editable" style="${safeStyles}"><${tag}>${wrapMath(b.content || '<br>')}</${tag}></div>`;
                 }
 
-                let elHtml = `<div class="canvas-element" style="left:${x}; top:${y}; width:${w}; height:${h}; z-index:${z} !important;">
+                // Explicit z-index assignment
+                let elHtml = `<div class="canvas-element" style="left:${x}; top:${y}; width:${w}; height:${h}; z-index:${z};">
                                 ${innerHTML}
                               </div>`;
                 board.insertAdjacentHTML('beforeend', elHtml);
@@ -385,7 +380,7 @@
             }, 200);
         }
 
-        async function exportContinuousPDF() {
+        async function exportSmartBoardPDF() {
             if (typeof html2pdf === 'undefined') {
                 alert("PDF Engine loading. Try again in a moment.");
                 return;
@@ -395,8 +390,22 @@
             const overlay = document.getElementById('loadingOverlay');
             const loadText = document.getElementById('loadingText');
             overlay.classList.add('active');
-            loadText.textContent = "Taking High-Res Snapshot...";
             
+            // Fetch Logo for Watermark
+            loadText.textContent = "Fetching Watermark Logo...";
+            const logoObj = await new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = 'Anonymous';
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width; canvas.height = img.height;
+                    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0);
+                    resolve({ b64: canvas.toDataURL('image/png'), ratio: img.height / img.width });
+                };
+                img.onerror = () => resolve(null);
+                img.src = 'https://raw.githubusercontent.com/Amit21686/NAV-Education/main/logo.png';
+            });
+
             document.body.classList.add('pdf-printing');
             document.querySelector('.app-header').style.display = 'none';
             
@@ -405,11 +414,12 @@
             const board = document.getElementById('canvasBoard');
             const docTitle = cachedNoteData.title || 'NAV_Board';
             
-            const finalHeight = board.scrollHeight;
+            loadText.textContent = "Generating 16:9 Smart Board PDF...";
 
+            // 1200x675 forces 16:9 Landscape pages, cutting perfectly for smart panels
             const opt = {
                 margin:       0, 
-                filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_board.pdf`,
+                filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_smartboard.pdf`,
                 image:        { type: 'jpeg', quality: 1.0 },
                 html2canvas:  { 
                     scale: 2, 
@@ -417,15 +427,25 @@
                     scrollY: 0, 
                     scrollX: 0, 
                     width: BOARD_WIDTH,
-                    height: finalHeight,
                     windowWidth: BOARD_WIDTH,
                     backgroundColor: '#020617' 
                 }, 
-                jsPDF: { unit: 'px', format: [BOARD_WIDTH, finalHeight], orientation: 'portrait', hotfixes: ["px_scaling"] }
+                jsPDF: { unit: 'px', format: [1200, 675], orientation: 'landscape', hotfixes: ["px_scaling"] }
             };
 
             try {
-                await html2pdf().set(opt).from(board).save();
+                await html2pdf().set(opt).from(board).toPdf().get('pdf').then(function(pdf) {
+                    const totalPages = pdf.internal.getNumberOfPages();
+                    for (let i = 1; i <= totalPages; i++) {
+                        pdf.setPage(i);
+                        // Inject Logo into top right of every smartboard slide
+                        if (logoObj && logoObj.b64) {
+                            const logoWidth = 110;
+                            const logoHeight = logoWidth * logoObj.ratio;
+                            pdf.addImage(logoObj.b64, 'PNG', 1200 - logoWidth - 30, 25, logoWidth, logoHeight);
+                        }
+                    }
+                }).save();
             } catch(e) {
                 console.error("PDF Error:", e);
                 alert("Failed to generate PDF. Memory might be full.");
