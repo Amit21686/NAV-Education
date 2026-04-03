@@ -3,11 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Notes | NAV Education</title>
+    <title>Canvas Viewer | NAV Education</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&family=Montserrat:wght@400;700&family=Dancing+Script:wght@400;700&family=Great+Vibes&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+            svg: { fontCache: 'none' },
+            startup: { typeset: false }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
     <style>
         /* ===== RESET & VARIABLES ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -17,259 +26,145 @@
             --bg-dark: #020617; --bg-light: #f8fafc;
             --card-dark: rgba(30, 41, 59, 0.8); --card-light: rgba(255, 255, 255, 0.9);
             --text-dark: #f1f5f9; --text-light: #0f172a;
-            --muted-dark: #94a3b8; --muted-light: #64748b;
             --border-dark: rgba(255, 255, 255, 0.08); --border-light: rgba(0, 0, 0, 0.08);
-            --success: #10b981; --error: #f43f5e; --warning: #f59e0b; --info: #3b82f6;
-            --radius-md: 12px; --radius-lg: 20px;
-            --base-font-size: 16px; 
+            --radius-md: 12px;
         }
 
-        body { font-family: 'Poppins', sans-serif; background: var(--bg-dark); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
+        body { 
+            font-family: 'Poppins', sans-serif; background: var(--bg-dark); color: var(--text-dark); 
+            height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column;
+            transition: background 0.3s, color 0.3s; 
+        }
         body.light-theme { background: var(--bg-light); color: var(--text-light); }
 
-        body::before { content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 70% 30%, rgba(99,102,241,0.12) 0%, transparent 70%); animation: rotateBg 40s linear infinite; pointer-events: none; z-index: 0; }
-        @keyframes rotateBg { to { transform: rotate(360deg); } }
-
-        #readingProgress { position: fixed; top: 0; left: 0; height: 4px; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; z-index: 9999; transition: width 0.1s; }
-
-        .app-header { position: sticky; top: 0; background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(20px); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; z-index: 1000; border-bottom: 1px solid var(--border-dark); }
+        .app-header { 
+            background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(20px); padding: 15px 20px; 
+            display: flex; align-items: center; justify-content: space-between; z-index: 1000; 
+            border-bottom: 1px solid var(--border-dark); flex-shrink: 0;
+        }
         body.light-theme .app-header { background: rgba(248, 250, 252, 0.85); border-color: var(--border-light); }
         
         .icon-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--card-dark); border: 1px solid var(--border-dark); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-dark); transition: 0.2s; }
         body.light-theme .icon-btn { background: var(--card-light); border-color: var(--border-light); color: var(--text-light); }
+        .icon-btn:active { transform: scale(0.9); }
 
         .header-title { font-weight: 600; font-size: 1.1rem; text-align: center; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 15px; }
 
         .font-controls { display: flex; gap: 8px; align-items: center; background: var(--card-dark); border: 1px solid var(--border-dark); border-radius: 30px; padding: 4px 8px; }
         body.light-theme .font-controls { background: var(--card-light); border-color: var(--border-light); }
-        .font-btn { background: transparent; border: none; color: var(--text-dark); cursor: pointer; font-size: 1rem; font-family: 'Poppins'; font-weight: 600; padding: 2px 6px; transition: 0.2s;}
+        .font-btn { background: transparent; border: none; color: var(--text-dark); cursor: pointer; font-size: 1rem; font-family: 'Poppins'; font-weight: 600; padding: 4px 8px; transition: 0.2s;}
         body.light-theme .font-btn { color: var(--text-light); }
+        .font-btn:active { transform: scale(0.85); }
 
-        .container { max-width: 800px; margin: 0 auto; padding: 30px 20px 80px; position: relative; z-index: 1; }
-
-        .doc-title { font-size: 2.2rem; font-weight: 700; margin-bottom: 5px; line-height: 1.2; background: linear-gradient(135deg, #fff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        body.light-theme .doc-title { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        /* Main UI Topic Badge */
-        .doc-topic { 
-            color: var(--primary); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; 
-            margin-bottom: 15px; display: inline-block; width: fit-content; padding: 6px 14px; 
-            background: rgba(99,102,241,0.1); border-radius: 20px;
+        /* ===== CANVAS VIEWER AREA ===== */
+        .canvas-viewport {
+            flex: 1;
+            width: 100%;
+            overflow: auto; /* Allows panning around the large canvas */
+            background: #0f172a;
+            position: relative;
+            padding: 20px;
+            /* Smooth scrolling */
+            -webkit-overflow-scrolling: touch;
         }
-
-        /* ===== NOTES RENDERER STYLES ===== */
-        .notes-content { font-size: var(--base-font-size); line-height: 1.7; color: rgba(255,255,255,0.9); }
-        body.light-theme .notes-content { color: rgba(0,0,0,0.8); }
-
-        .notes-content h1 { font-size: 1.8em; margin: 1.5em 0 0.5em; font-weight: 700; color: var(--text-dark); }
-        .notes-content h2 { font-size: 1.5em; margin: 1.2em 0 0.5em; font-weight: 600; color: var(--text-dark); }
-        .notes-content h3 { font-size: 1.2em; margin: 1em 0 0.5em; font-weight: 600; color: var(--text-dark); }
-        body.light-theme .notes-content h1, body.light-theme .notes-content h2, body.light-theme .notes-content h3 { color: var(--text-light); }
         
-        .notes-content p { margin-bottom: 1.2em; }
-        .notes-content b, .notes-content strong { font-weight: 600; color: var(--primary); }
-        .notes-content i, .notes-content em { font-style: italic; }
-        .notes-content .highlight { background: rgba(99,102,241,0.2); padding: 2px 6px; border-radius: 4px; font-weight: 500; color: #a5b4fc; }
-        body.light-theme .notes-content .highlight { background: rgba(99,102,241,0.15); color: var(--primary-dark); }
+        .canvas-board {
+            width: 1200px; /* Exact match to admin portal width */
+            min-height: 1000px;
+            background: var(--bg-dark);
+            position: relative;
+            margin: 0 auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            overflow: hidden;
+            transform-origin: top center;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth zoom */
+        }
+        body.light-theme .canvas-board { background: var(--bg-light); box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
 
-        .notes-content ul, .notes-content ol { margin-bottom: 1.5em; padding-left: 1.5em; }
-        .notes-content li { margin-bottom: 0.5em; }
+        .canvas-element {
+            position: absolute;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            color: rgba(255,255,255,0.95);
+            font-size: 16px; 
+            line-height: 1.5;
+            white-space: pre-wrap; 
+            word-wrap: break-word; 
+        }
+        body.light-theme .canvas-element { color: rgba(0,0,0,0.9); }
 
-        .notes-image-wrapper { margin: 2em 0; text-align: center;}
-        .notes-content img { max-width: 100%; height: auto; border-radius: var(--radius-md); border: 1px solid var(--border-dark); }
-        body.light-theme .notes-content img { border-color: var(--border-light); }
-
-        .callout { padding: 18px 20px; border-radius: var(--radius-md); margin: 1.5em 0; display: flex; gap: 15px; background: var(--card-dark); border: 1px solid var(--border-dark); }
-        body.light-theme .callout { background: var(--card-light); border-color: var(--border-light); }
-        .callout-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; color: var(--info);}
-        .callout-content { flex: 1; }
-        .callout-title { font-weight: 600; font-size: 1.05em; margin-bottom: 4px; display: block;}
+        .canvas-element h1 { font-size: 2.2em; font-weight: 700; margin: 0; }
+        .canvas-element h2 { font-size: 1.8em; font-weight: 600; margin: 0; }
+        .canvas-element p { margin: 0; }
         
-        .table-wrapper { width: 100%; overflow-x: auto; margin: 2em 0; border-radius: var(--radius-md); border: 1px solid var(--border-dark); }
-        body.light-theme .table-wrapper { border-color: var(--border-light); }
-        .notes-content table { width: 100%; border-collapse: collapse; min-width: 500px; text-align: left; }
-        .notes-content th { background: rgba(99,102,241,0.15); padding: 14px 16px; font-weight: 600; color: var(--primary); font-size: 0.95em; }
-        .notes-content td { padding: 12px 16px; border-top: 1px solid var(--border-dark); font-size: 0.9em; }
-        body.light-theme .notes-content th { background: rgba(99,102,241,0.1); }
-        body.light-theme .notes-content td { border-color: var(--border-light); }
+        .canvas-element img { width: 100%; height: 100%; display: block; border-radius: 8px; object-fit: contain; }
 
-        .notes-content mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; padding: 10px 0; margin: 1em 0; text-align: center; }
-        .notes-content mjx-container svg { max-width: 100%; height: auto; }
+        /* Draggable Table Styles - Viewer Mirror */
+        .tb-grid { display: grid; flex: 1; width: 100%; height: 100%; min-height: 60px; border: 1px solid var(--border-dark); border-radius: 4px; box-sizing: border-box;}
+        body.light-theme .tb-grid { border-color: var(--border-light); }
+        .tb-cell { border: 1px solid var(--border-dark); padding: 8px; outline: none; background: rgba(0,0,0,0.2); min-width: 20px;}
+        body.light-theme .tb-cell { border-color: var(--border-light); background: rgba(255,255,255,0.5); color: var(--text-light); }
+        .tb-header { background: rgba(99,102,241,0.15); color: var(--primary); font-weight: 600; }
+
+        .math-wrapper { display: inline-block; vertical-align: middle; }
 
         .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 30000; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 15px; color: white;}
         .loading-overlay.active { display: flex; }
         .spinner { width: 40px; height: 40px; border: 3px solid var(--border-dark); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        .error-card { background: rgba(244, 63, 94, 0.1); border: 1px solid var(--error); border-radius: var(--radius-md); padding: 30px 20px; text-align: center; margin-top: 20px; }
-        .raw-data-box { text-align: left; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; font-size: 0.75rem; overflow-x: auto; margin-top: 15px; color: #a5b4fc; font-family: monospace; border: 1px solid var(--border-dark);}
-        
-        /* ==========================================================
-           🔥 SMART DOM PAGINATION ENGINE: STRICT 16:9 CONTAINERS 🔥 
-           ========================================================== */
-        body.pdf-printing { 
-            overflow: visible !important; 
-            margin: 0 !important;
-            padding: 0 !important;
-            background: #000000 !important; 
-        }
-        
-        #pdfContentWrapper { display: none; }
-        .pdf-printing #pdfContentWrapper { 
-            display: block !important; 
-            background: #000000; 
-            width: 1600px; 
-        }
+        .error-card { background: rgba(244, 63, 94, 0.1); border: 1px solid var(--danger); border-radius: var(--radius-md); padding: 30px 20px; text-align: center; margin: 40px auto; max-width: 400px; color: var(--text-dark);}
 
-        /* 1. Strict Page Container */
-        .pdf-page {
-            width: 1600px;
-            height: 900px; 
-            position: relative;
-            background: #000000; /* Replaced by JS Base Layer Gradient later */
-            overflow: hidden; 
-            box-sizing: border-box;
-            margin: 0; padding: 0;
-        }
-
-        /* 2. Strict Content Box (Shielded from Logo) */
-        .pdf-page-content {
-            position: absolute;
-            top: 40px;
-            bottom: 40px;
-            left: 60px;
-            right: 180px; /* Logo Safe Zone */
-            overflow: hidden; 
-            color: #f8fafc; 
-            font-size: 26px; 
-            line-height: 1.6;
-        }
-
-        /* 3. The Shrink-Fit Engine */
-        .pdf-group {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 25px;
-            transition: all 0.2s;
-        }
-        .pdf-group.shrink-fit { font-size: 20px !important; margin-bottom: 12px !important; }
-        .pdf-group.shrink-fit h1 { margin: 0.6em 0 0.2em !important; }
-        .pdf-group.shrink-fit h2 { margin: 0.5em 0 0.2em !important; }
-        .pdf-group.shrink-fit .callout { padding: 12px 16px !important; margin: 0.8em 0 !important; }
-        .pdf-group.shrink-fit .table-wrapper { margin: 0.8em 0 !important; }
-
-        .pdf-group.extreme-shrink-fit { font-size: 16px !important; margin-bottom: 8px !important; }
-        .pdf-group.extreme-shrink-fit h1 { margin: 0.4em 0 0.1em !important; }
-        .pdf-group.extreme-shrink-fit h2 { margin: 0.3em 0 0.1em !important; }
-        .pdf-group.extreme-shrink-fit .callout { padding: 8px 12px !important; margin: 0.5em 0 !important; }
-        .pdf-group.extreme-shrink-fit .table-wrapper { margin: 0.5em 0 !important; }
-
-        /* 4. High Contrast Colors & Borders */
-        .pdf-page-content b, .pdf-page-content strong { color: #818cf8 !important; }
-        .pdf-page-content .highlight { background: #1e3a8a !important; color: #bfdbfe !important; border: 1px solid #3b82f6 !important; padding: 2px 8px; border-radius: 6px;}
-        .pdf-page-content .doc-title { color: #ffffff !important; font-size: 3.5rem !important; margin-bottom: 0px !important; }
-        
-        /* Auto-fit Topic Box */
-        .pdf-page-content .doc-topic { 
-            background: #1e293b !important; 
-            color: #93c5fd !important; 
-            border: 1px solid #3b82f6 !important; 
-            margin-bottom: 15px !important; 
-            display: inline-block !important; 
-            width: fit-content !important; 
-            padding: 6px 18px !important; 
-            border-radius: 20px !important;
-            font-size: 18px !important;
-            font-weight: 600 !important;
-        }
-        
-        /* Removed line border under headings */
-        .pdf-page-content h1 { font-size: 1.8em !important; margin: 0.5em 0 0.4em !important; color: #ffffff !important; border: none !important; }
-        .pdf-page-content h2 { font-size: 1.4em !important; margin: 0.8em 0 0.3em !important; color: #ffffff !important; }
-        .pdf-page-content h3 { font-size: 1.2em !important; margin: 0.6em 0 0.2em !important; color: #ffffff !important; }
-        
-        .pdf-page-content .callout { 
-            background: #0f172a !important; 
-            border: 3px solid #475569 !important; 
-            color: #ffffff !important; 
-            padding: 16px 20px !important; 
-            margin: 1.2em 0 !important; 
-            border-radius: 12px !important;
-            display: flex; gap: 15px;
-        }
-        .pdf-page-content .callout-icon { color: #60a5fa !important; font-size: 1.4rem; flex-shrink: 0;}
-        .pdf-page-content .callout-title { font-weight: 600; font-size: 1.05em; margin-bottom: 4px; display: block;}
-        
-        .pdf-page-content .table-wrapper { 
-            border: 3px solid #475569 !important; 
-            margin: 1.5em 0 !important;
-            border-radius: 12px !important;
-            background: #000000 !important;
-            overflow: hidden;
-        }
-        .pdf-page-content table { width: 100%; border-collapse: collapse; text-align: left; }
-        .pdf-page-content th { background: #1e293b !important; color: #93c5fd !important; border: 2px solid #475569 !important; padding: 14px !important; }
-        .pdf-page-content td { border: 2px solid #475569 !important; color: #f8fafc !important; padding: 14px !important; }
-        .pdf-page-content ul, .pdf-page-content ol { padding-left: 1.5em; margin-bottom: 0.5em;}
-        .pdf-page-content li { margin-bottom: 0.5em; }
+        /* PDF Printing Override */
+        body.pdf-printing .canvas-viewport { overflow: visible; padding: 0; background: none;}
+        body.pdf-printing .canvas-board { transform: scale(1) !important; box-shadow: none; margin: 0; }
     </style>
 </head>
 <body>
-    <div id="readingProgress"></div>
 
     <div id="loadingOverlay" class="loading-overlay active">
         <div class="spinner"></div>
-        <div id="loadingText" style="font-weight: 500;">Fetching Notes...</div>
+        <div id="loadingText" style="font-weight: 500;">Rendering Canvas...</div>
     </div>
 
     <header class="app-header">
         <div class="icon-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
-        <div class="header-title" id="headerTitle">Study Notes</div>
+        <div class="header-title" id="headerTitle">Board View</div>
         <div class="font-controls">
-            <button class="font-btn" onclick="changeFontSize(-1)" title="Decrease Font">A-</button>
+            <button class="font-btn" onclick="changeZoom(-0.1)" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
             <div style="width:1px; background:var(--border-dark); margin:4px 0; height:18px;"></div>
-            <button class="font-btn" onclick="changeFontSize(1)" title="Increase Font">A+</button>
+            <button class="font-btn" onclick="changeZoom(0.1)" title="Zoom In"><i class="fas fa-search-plus"></i></button>
             <div style="width:1px; background:var(--border-dark); margin:4px 0; height:18px;"></div>
-            <button class="font-btn" onclick="exportSmartPDF()" title="Download PDF"><i class="fas fa-download"></i></button>
+            <button class="font-btn" onclick="exportCanvasPDF()" title="Download PDF"><i class="fas fa-download"></i></button>
         </div>
     </header>
 
-    <div class="container" id="mainContainer">
-        <div id="notesHeader" style="display: none;">
-            <div class="doc-topic" id="docTopic">Topic</div>
-            <h1 class="doc-title" id="docTitle">Title</h1>
-        </div>
-
-        <article class="notes-content" id="notesContent">
-        </article>
+    <div class="canvas-viewport" id="mainViewport">
+        <div class="canvas-board" id="canvasBoard">
+            </div>
     </div>
-    
-    <div id="pdfContentWrapper"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
     
     <script>
-        window.MathJax = {
-            options: { enableMenu: false, menuOptions: { settings: { assistiveMml: false } } },
-            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], packages: {'[+]': ['mhchem']} },
-            loader: {load: ['[tex]/mhchem']},
-            svg: { fontCache: 'none' } 
-        };
-    </script>
-    <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" defer></script>
-
-    <script>
         let cachedNoteData = null; 
+        let currentZoom = 1;
+
+        // Auto-scale down slightly on mobile to fit the 1200px board better initially
+        if (window.innerWidth < 800) {
+            currentZoom = window.innerWidth / 1250; 
+        }
 
         const safetyTimeout = setTimeout(() => {
             const overlay = document.getElementById('loadingOverlay');
             if (overlay.classList.contains('active')) {
                 overlay.classList.remove('active');
-                document.getElementById('notesContent').innerHTML = `
+                document.getElementById('canvasBoard').innerHTML = `
                     <div class="error-card">
                         <i class="fas fa-wifi" style="font-size:3rem; color:var(--warning); margin-bottom:15px;"></i>
                         <h3 style="color:var(--warning); margin-bottom:10px;">Connection Timeout</h3>
-                        <div style="color:var(--text-dark); font-size: 0.95rem; line-height: 1.5;">The server took too long to respond.</div>
+                        <div style="font-size: 0.95rem; line-height: 1.5;">The server took too long to respond.</div>
                     </div>
                 `;
             }
@@ -286,218 +181,23 @@
 
         function goBack() { window.history.length > 1 ? window.history.back() : window.location.href = 'library.html'; }
 
-        let currentFontMultiplier = 1;
-        function changeFontSize(direction) {
-            if (direction > 0 && currentFontMultiplier < 1.5) currentFontMultiplier += 0.1;
-            if (direction < 0 && currentFontMultiplier > 0.8) currentFontMultiplier -= 0.1;
-            try { localStorage.setItem('nav_fontSizeMultiplier', currentFontMultiplier); } catch(e){}
-            document.documentElement.style.setProperty('--base-font-size', `${16 * currentFontMultiplier}px`);
+        function changeZoom(amount) {
+            currentZoom += amount;
+            if(currentZoom < 0.2) currentZoom = 0.2;
+            if(currentZoom > 3.0) currentZoom = 3.0;
+            
+            document.getElementById('canvasBoard').style.transform = `scale(${currentZoom})`;
         }
 
-        window.onscroll = function() {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.getElementById("readingProgress").style.width = scrolled + "%";
-        };
-
-        function createBlockHTML(block) {
-            switch (block.type) {
-                case 'h1': return `<h1>${block.content}</h1>`;
-                case 'h2': return `<h2>${block.content}</h2>`;
-                case 'h3': return `<h3>${block.content}</h3>`;
-                case 'paragraph': return `<p>${block.content}</p>`;
-                case 'image': return `<div class="notes-image-wrapper"><img src="${block.url}">${block.caption ? `<div class="image-caption">${block.caption}</div>` : ''}</div>`;
-                case 'list':
-                    const listTag = block.ordered ? 'ol' : 'ul';
-                    const listItems = block.items.map(item => `<li>${item}</li>`).join('');
-                    return `<${listTag}>${listItems}</${listTag}>`;
-                case 'callout':
-                    const styleClass = block.style || 'info';
-                    const icon = block.icon || 'fas fa-info-circle';
-                    return `<div class="callout ${styleClass}"><div class="callout-icon"><i class="${icon}"></i></div><div class="callout-content">${block.title ? `<span class="callout-title">${block.title}</span>` : ''}${block.content}</div></div>`;
-                case 'table':
-                    const ths = block.headers.map(h => `<th>${h}</th>`).join('');
-                    const trs = block.rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
-                    return `<div class="table-wrapper"><table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
-                default: return '';
-            }
+        function wrapMath(html) {
+            if(!html) return '';
+            // Safely parse out the raw math inside the $$ or \( blocks for viewing
+            let res = String(html).replace(/\$\$(.*?)\$\$/g, (m) => `<span class="math-wrapper">${m}</span>`);
+            res = res.replace(/\\\((.*?)\\\)/g, (m) => `<span class="math-wrapper">${m}</span>`);
+            return res;
         }
 
-        async function exportSmartPDF() {
-            if (typeof html2pdf === 'undefined') {
-                alert("PDF Generator is still loading. Please wait a few seconds.");
-                return;
-            }
-            if (!cachedNoteData) return alert("Note data is corrupted.");
-
-            const overlay = document.getElementById('loadingOverlay');
-            const loadText = document.getElementById('loadingText');
-            overlay.classList.add('active');
-            
-            document.body.classList.add('pdf-printing');
-            document.getElementById('mainContainer').style.display = 'none';
-            document.querySelector('.app-header').style.display = 'none';
-            document.getElementById('readingProgress').style.display = 'none';
-            
-            const pdfWrapper = document.getElementById('pdfContentWrapper');
-            pdfWrapper.innerHTML = '';
-
-            loadText.textContent = "Fetching Watermark Logo...";
-            const logoObj = await new Promise((resolve) => {
-                const img = new Image();
-                img.crossOrigin = 'Anonymous';
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0);
-                    resolve({ b64: canvas.toDataURL('image/png'), ratio: img.height / img.width });
-                };
-                img.onerror = () => resolve(null);
-                img.src = 'https://raw.githubusercontent.com/Amit21686/NAV-Education/main/logo.png';
-            });
-
-            loadText.textContent = "Building Smart Pages...";
-            const measureBoard = document.createElement('div');
-            measureBoard.className = 'pdf-page-content';
-            measureBoard.style.position = 'absolute';
-            measureBoard.style.visibility = 'hidden';
-            measureBoard.style.top = '-9999px';
-            measureBoard.style.left = '0';
-            measureBoard.style.height = 'auto';
-            document.body.appendChild(measureBoard);
-
-            let rawHTML = `<div class="pdf-group">
-                ${cachedNoteData.topic ? `<div class="doc-topic">${cachedNoteData.topic}</div>` : ''}
-                <h1 class="doc-title">${cachedNoteData.title || ''}</h1>
-            </div>`;
-            
-            const blocks = cachedNoteData.blocks || [];
-            for (let i = 0; i < blocks.length; i++) {
-                let groupHTML = `<div class="pdf-group">`;
-                let isHeading = ['h1', 'h2', 'h3'].includes(blocks[i].type);
-                
-                groupHTML += createBlockHTML(blocks[i]);
-                
-                if (isHeading && i + 1 < blocks.length && !['h1', 'h2', 'h3'].includes(blocks[i+1].type)) {
-                    i++;
-                    groupHTML += createBlockHTML(blocks[i]);
-                }
-                groupHTML += `</div>`;
-                rawHTML += groupHTML;
-            }
-            measureBoard.innerHTML = rawHTML;
-
-            loadText.textContent = "Typesetting Equations...";
-            await MathJax.typesetPromise([measureBoard]);
-
-            const svgs = measureBoard.querySelectorAll('mjx-container svg');
-            svgs.forEach(svg => {
-                const rect = svg.getBoundingClientRect(); 
-                if(rect.width > 0) {
-                    svg.setAttribute('width', rect.width + 'px');
-                    svg.setAttribute('height', rect.height + 'px');
-                    svg.style.width = rect.width + 'px';
-                    svg.style.height = rect.height + 'px';
-                    svg.setAttribute('fill', '#ffffff');
-                    svg.style.color = '#ffffff';
-                }
-            });
-
-            loadText.textContent = "Packing Pages...";
-            const MAX_HEIGHT = 820; 
-            
-            function createNewPage() {
-                const p = document.createElement('div');
-                p.className = 'pdf-page';
-                p.innerHTML = `<div class="pdf-page-content"></div>`;
-                pdfWrapper.appendChild(p);
-                return p.querySelector('.pdf-page-content');
-            }
-
-            let currentContentArea = createNewPage();
-            
-            while (measureBoard.firstChild) {
-                let group = measureBoard.firstChild;
-                currentContentArea.appendChild(group);
-                
-                if (currentContentArea.scrollHeight > MAX_HEIGHT) {
-                    group.classList.add('shrink-fit');
-                    
-                    if (currentContentArea.scrollHeight > MAX_HEIGHT) {
-                        group.classList.remove('shrink-fit');
-                        
-                        if (currentContentArea.children.length === 1) {
-                            group.classList.add('extreme-shrink-fit');
-                        } else {
-                            currentContentArea.removeChild(group);
-                            currentContentArea = createNewPage();
-                            currentContentArea.appendChild(group);
-                            
-                            if (currentContentArea.scrollHeight > MAX_HEIGHT) {
-                                group.classList.add('shrink-fit');
-                                if (currentContentArea.scrollHeight > MAX_HEIGHT) {
-                                    group.classList.remove('shrink-fit');
-                                    group.classList.add('extreme-shrink-fit');
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            document.body.removeChild(measureBoard);
-
-            loadText.textContent = "Generating Document...";
-            const docTitle = cachedNoteData.title || 'NAV_Notes';
-
-            const opt = {
-                margin:       0, 
-                filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_presentation.pdf`,
-                image:        { type: 'jpeg', quality: 1.0 },
-                html2canvas:  { 
-                    scale: 2, 
-                    useCORS: true, 
-                    scrollY: 0, 
-                    scrollX: 0, 
-                    width: 1600, 
-                    windowWidth: 1600,
-                    backgroundColor: '#000000' 
-                }, 
-                jsPDF:        { unit: 'px', format: [1600, 900], orientation: 'landscape', hotfixes: ["px_scaling"] }
-            };
-
-            try {
-                await html2pdf().set(opt).from(pdfWrapper).toPdf().get('pdf').then(function (pdf) {
-                    const totalPages = pdf.internal.getNumberOfPages();
-                    for (let i = 1; i <= totalPages; i++) {
-                        pdf.setPage(i);
-                        
-                        if (logoObj && logoObj.b64) {
-                            const logoWidth = 90; 
-                            const logoHeight = logoWidth * logoObj.ratio;
-                            const xPos = 1600 - logoWidth - 30; 
-                            const yPos = 30; 
-                            pdf.addImage(logoObj.b64, 'PNG', xPos, yPos, logoWidth, logoHeight);
-                        }
-                    }
-                }).save();
-            } catch(e) {
-                console.error("PDF Error:", e);
-                alert("Failed to generate PDF: " + e.message);
-            } finally {
-                pdfWrapper.innerHTML = '';
-                document.body.classList.remove('pdf-printing');
-                document.getElementById('mainContainer').style.display = 'block';
-                document.querySelector('.app-header').style.display = 'flex';
-                document.getElementById('readingProgress').style.display = 'block';
-                overlay.classList.remove('active');
-            }
-        }
-
-        async function loadNotes() {
+        async function loadCanvasData() {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
                 const file = urlParams.get('file');
@@ -509,20 +209,20 @@
                 
                 const data = await response.json();
                 
+                // Flexible check: accepts Canvas format blocks
                 if (!data || !data.blocks || !Array.isArray(data.blocks)) {
                     throw new Error("Format Mismatch! The file loaded but does NOT contain the required 'blocks' array.");
                 }
 
                 cachedNoteData = data; 
-                renderDocument(data);
+                renderCanvas(data);
 
             } catch(error) {
-                document.getElementById('notesHeader').style.display = 'none';
-                document.getElementById('notesContent').innerHTML = `
+                document.getElementById('canvasBoard').innerHTML = `
                     <div class="error-card">
-                        <i class="fas fa-exclamation-triangle" style="font-size:3rem; color:var(--error); margin-bottom:15px;"></i>
-                        <h3 style="color:var(--error); margin-bottom:10px;">Diagnostic Error</h3>
-                        <div style="color:var(--text-dark); font-size: 0.95rem; line-height: 1.5; text-align: left;">${error.message}</div>
+                        <i class="fas fa-exclamation-triangle" style="font-size:3rem; color:var(--danger); margin-bottom:15px;"></i>
+                        <h3 style="color:var(--danger); margin-bottom:10px;">Diagnostic Error</h3>
+                        <div style="font-size: 0.95rem; line-height: 1.5; text-align: left;">${error.message}</div>
                     </div>
                 `;
                 clearTimeout(safetyTimeout);
@@ -530,26 +230,73 @@
             }
         }
 
-        function renderDocument(data) {
+        function renderCanvas(data) {
             if (data.title) {
                 document.getElementById('headerTitle').textContent = data.title;
-                document.getElementById('docTitle').textContent = data.title;
-                document.getElementById('notesHeader').style.display = 'block';
-            }
-            if (data.topic) {
-                document.getElementById('docTopic').textContent = data.topic;
             }
 
-            const content = document.getElementById('notesContent');
-            content.innerHTML = '';
+            const board = document.getElementById('canvasBoard');
+            board.innerHTML = '';
+            
+            let maxBottomEdge = 1000; // Minimum board height
 
-            data.blocks.forEach(block => {
-                content.insertAdjacentHTML('beforeend', createBlockHTML(block));
+            data.blocks.forEach((b, i) => {
+                if(!b) return;
+
+                let w = b.w || '300px'; let h = b.h || 'auto';
+                let x = b.x || '20px'; let y = b.y || (i * 100 + 20) + 'px'; let z = b.z || 10;
+                let cStyles = b.style || '';
+
+                let innerHTML = '';
+                let fillClass = (b.type === 'table' || b.type === 'image' || b.type === 'expression') ? 'height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;' : '';
+
+                if (b.type === 'image') {
+                    innerHTML = `<div style="width:100%; height:100%;"><img src="${b.content || ''}" style="width:100%; height:100%; object-fit:contain; border-radius: 8px; display: block;"></div>`;
+                } else if (b.type === 'expression') {
+                    // Stripped border and bg for clean view mode
+                    innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; ${cStyles}">
+                                    <div class="math-render-target">${wrapMath(b.content || '')}</div>
+                                 </div>`;
+                } else if (b.type === 'table') {
+                    let rows = (b.content && typeof b.content === 'object' && b.content.rows) ? b.content.rows : 3; 
+                    let cols = (b.content && typeof b.content === 'object' && b.content.cols) ? b.content.cols : 3;
+                    innerHTML = `<div style="width:100%; height:100%; ${cStyles}">
+                                    <div class="tb-grid" style="grid-template-columns: repeat(${cols}, 1fr);">`;
+                    for(let r=0; r<rows; r++) {
+                        for(let c=0; c<cols; c++) {
+                            let val = (b.content && typeof b.content === 'object' && b.content.data && b.content.data[r]) ? (b.content.data[r][c] || '') : '';
+                            let isHeader = r===0 ? 'tb-header' : '';
+                            innerHTML += `<div class="tb-cell ${isHeader}">${wrapMath(val)}</div>`;
+                        }
+                    }
+                    innerHTML += `</div></div>`;
+                } else {
+                    let tag = b.type === 'h1' ? 'h1' : (b.type === 'h2' ? 'h2' : 'div');
+                    innerHTML = `<div style="${cStyles}"><${tag}>${wrapMath(b.content || '')}</${tag}></div>`;
+                }
+
+                let elHtml = `<div class="canvas-element" style="left:${x}; top:${y}; width:${w}; height:${h}; z-index:${z}; ${fillClass}">
+                                ${innerHTML}
+                              </div>`;
+                board.insertAdjacentHTML('beforeend', elHtml);
+
+                // Track the lowest element to dynamically set the canvas board height
+                let yVal = parseInt(y.replace('px','')) || 0;
+                let hVal = parseInt(h.replace('px','')) || 200; // Estimated height for 'auto'
+                if (yVal + hVal > maxBottomEdge) {
+                    maxBottomEdge = yVal + hVal;
+                }
             });
+
+            // Add padding to the bottom of the board so nothing is cut off
+            board.style.minHeight = (maxBottomEdge + 200) + 'px';
+
+            // Apply initial zoom transform
+            board.style.transform = `scale(${currentZoom})`;
 
             setTimeout(() => {
                 if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-                    MathJax.typesetPromise([document.getElementById('notesContent')]).then(() => {
+                    MathJax.typesetPromise([board]).then(() => {
                         clearTimeout(safetyTimeout);
                         document.getElementById('loadingOverlay').classList.remove('active');
                     });
@@ -557,10 +304,64 @@
                     clearTimeout(safetyTimeout);
                     document.getElementById('loadingOverlay').classList.remove('active');
                 }
-            }, 150);
+            }, 200);
         }
 
-        window.onload = loadNotes;
+        async function exportCanvasPDF() {
+            if (typeof html2pdf === 'undefined') {
+                alert("PDF Generator is still loading. Please wait a few seconds.");
+                return;
+            }
+            if (!cachedNoteData) return alert("Canvas data is corrupted.");
+
+            const overlay = document.getElementById('loadingOverlay');
+            const loadText = document.getElementById('loadingText');
+            overlay.classList.add('active');
+            
+            document.body.classList.add('pdf-printing');
+            document.querySelector('.app-header').style.display = 'none';
+            
+            // Reset zoom to 1 for perfect 1:1 PDF scaling
+            const originalZoom = currentZoom;
+            const board = document.getElementById('canvasBoard');
+            board.style.transform = `scale(1)`;
+            
+            loadText.textContent = "Taking High-Res Snapshot...";
+            const docTitle = cachedNoteData.title || 'NAV_Board';
+
+            // We use a continuous portrait PDF fitted perfectly to the 1200px board width
+            const opt = {
+                margin:       0, 
+                filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_board.pdf`,
+                image:        { type: 'jpeg', quality: 1.0 },
+                html2canvas:  { 
+                    scale: 2, 
+                    useCORS: true, 
+                    scrollY: 0, 
+                    scrollX: 0, 
+                    width: 1200, 
+                    windowWidth: 1200,
+                    backgroundColor: getComputedStyle(document.body).getPropertyValue('--bg-dark').trim()
+                }, 
+                jsPDF:        { unit: 'px', format: [1200, 1600], orientation: 'portrait', hotfixes: ["px_scaling"] }
+            };
+
+            try {
+                await html2pdf().set(opt).from(board).save();
+            } catch(e) {
+                console.error("PDF Error:", e);
+                alert("Failed to generate PDF: " + e.message);
+            } finally {
+                document.body.classList.remove('pdf-printing');
+                document.querySelector('.app-header').style.display = 'flex';
+                // Restore zoom
+                currentZoom = originalZoom;
+                board.style.transform = `scale(${currentZoom})`;
+                overlay.classList.remove('active');
+            }
+        }
+
+        window.onload = loadCanvasData;
     </script>
 </body>
 </html>
