@@ -24,11 +24,11 @@
     },
     {
       "type": "expression",
-      "x": "32px",
-      "y": "31.5px",
+      "x": "0px",
+      "y": "28px",
       "w": "194.5px",
       "h": "117px",
-      "z": "25",
+      "z": "26",
       "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); font-family: Bookman; font-size: 20px; color: #00ff00; font-weight: bold; text-decoration: underline; ",
       "content": "$$ E=mc^2 $$"
     }
