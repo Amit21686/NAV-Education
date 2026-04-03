@@ -3,6 +3,16 @@
   "topic": "Solution",
   "blocks": [
     {
+      "type": "image",
+      "x": "166.5px",
+      "y": "207px",
+      "w": "275px",
+      "h": "172.5px",
+      "z": "24",
+      "style": "",
+      "content": "https://raw.githubusercontent.com/Amit21686/NAV-Education/main/img_1775181589486.jpg?t=1775181591751"
+    },
+    {
       "type": "paragraph",
       "x": "20px",
       "y": "50px",
