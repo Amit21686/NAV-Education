@@ -1,39 +1,5 @@
 {
   "title": "Amit",
   "topic": "Solution",
-  "blocks": [
-    {
-      "type": "table",
-      "x": "189.5px",
-      "y": "0px",
-      "w": "279.5px",
-      "h": "40px",
-      "z": "27",
-      "style": "",
-      "content": {
-        "rows": 3,
-        "cols": 4,
-        "data": [
-          [
-            "<span style=\"font-style: italic;\">Hi hello </span><div><span style=\"font-style: italic;\"><br></span></div>",
-            "<br>",
-            "",
-            ""
-          ],
-          [
-            "",
-            "",
-            "",
-            ""
-          ],
-          [
-            "",
-            "",
-            "",
-            ""
-          ]
-        ]
-      }
-    }
-  ]
+  "blocks": []
 }
