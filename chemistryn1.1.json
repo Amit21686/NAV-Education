@@ -18,8 +18,8 @@
       "y": "50px",
       "w": "300px",
       "h": "auto",
-      "z": "11",
-      "style": "font-family: Georgia; ",
+      "z": "12",
+      "style": "font-family: Georgia; font-size: 28px;",
       "content": "<br>"
     }
   ]
