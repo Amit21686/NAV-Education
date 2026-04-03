@@ -13,16 +13,6 @@
       "content": "https://raw.githubusercontent.com/Amit21686/NAV-Education/main/img_1775181589486.jpg?t=1775181591751"
     },
     {
-      "type": "expression",
-      "x": "135.5px",
-      "y": "0px",
-      "w": "160px",
-      "h": "118px",
-      "z": "26",
-      "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; background: rgba(99,102,241,0.05); border: 1px dashed var(--primary); font-family: Bookman; font-size: 10px; color: #00ff00; font-weight: bold; text-decoration: underline; ",
-      "content": "$$ E=mc^2 $$"
-    },
-    {
       "type": "paragraph",
       "x": "322px",
       "y": "608px",
