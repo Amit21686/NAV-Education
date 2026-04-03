@@ -23,22 +23,12 @@
       "content": "<span style=\"font-weight: bold; font-style: italic; text-decoration-line: underline;\">Hello</span>"
     },
     {
-      "type": "expression",
-      "x": "0px",
-      "y": "5.5px",
-      "w": "155.5px",
-      "h": "40px",
-      "z": "54",
-      "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; font-size: 10px; ",
-      "content": "$$ F = ma $$"
-    },
-    {
       "type": "table",
       "x": "170px",
       "y": "638px",
       "w": "325px",
       "h": "374.5px",
-      "z": "46",
+      "z": "50",
       "style": "font-size: 10px; ",
       "content": {
         "rows": 5,
@@ -46,7 +36,7 @@
         "data": [
           [
             "<div><br></div>",
-            "",
+            "<br>",
             ""
           ],
           [
