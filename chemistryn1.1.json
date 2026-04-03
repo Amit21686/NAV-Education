@@ -29,7 +29,7 @@
       "w": "155.5px",
       "h": "40px",
       "z": "52",
-      "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; font-size: 10px; ",
+      "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; font-size: 10px; ",
       "content": "$$ F = ma $$"
     },
     {
@@ -71,6 +71,16 @@
           ]
         ]
       }
+    },
+    {
+      "type": "image",
+      "x": "93px",
+      "y": "102px",
+      "w": "300px",
+      "h": "300px",
+      "z": "14",
+      "style": "",
+      "content": "https://raw.githubusercontent.com/Amit21686/NAV-Education/main/img_1775194897745.jpg?t=1775194899218"
     }
   ]
 }
