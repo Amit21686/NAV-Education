@@ -73,9 +73,10 @@
 
         .canvas-scale-wrapper {
             transform-origin: top left;
-            transition: transform 0.1s linear; 
+            transition: none; /* Removed transition for ultra-smooth native pinch physics */
             margin: 0 auto;
             position: relative;
+            will-change: transform;
         }
         
         .canvas-board {
@@ -98,6 +99,8 @@
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
+            /* Creates isolated stacking context for layers to work flawlessly */
+            transform: translateZ(0); 
         }
 
         .fill-space { height: 100% !important; display: flex; flex-direction: column; justify-content: center; align-items: center;}
@@ -105,23 +108,29 @@
         .notes-content-editable { 
             flex: 1;
             width: 100%; height: auto; min-height: 100%;
-            padding: 8px; /* CRITICAL: Matches editor offset padding */
+            padding: 8px; 
             color: rgba(255,255,255,0.95);
             font-size: 16px; line-height: 1.5;
             white-space: pre-wrap; word-wrap: break-word; 
             overflow: visible; 
         }
 
-        .notes-content-editable h1, .notes-content-editable h2 { 
-            color: inherit; 
-            font-family: inherit; 
-        }
-
+        .notes-content-editable h1, .notes-content-editable h2 { color: inherit; font-family: inherit; }
         .notes-content-editable h1 { font-size: 2.2em; font-weight: 700; margin: 0; }
         .notes-content-editable h2 { font-size: 1.8em; font-weight: 600; margin: 0; }
         .notes-content-editable p { margin: 0; }
         
-        .notes-content-editable img { width: 100%; height: 100%; display: block; border-radius: 8px; pointer-events: none; object-fit: contain;}
+        /* PERFECT IMAGE RATIO FIX */
+        .notes-content-editable img { 
+            max-width: 100%; 
+            max-height: 100%; 
+            width: auto !important; 
+            height: auto !important; 
+            display: block; 
+            margin: auto;
+            border-radius: 8px; 
+            pointer-events: none; 
+        }
 
         .tb-grid { display: grid; flex: 1; width: 100%; height: 100%; min-height: 60px; border: 1px solid var(--border-dark); border-radius: 4px; box-sizing: border-box;}
         .tb-cell { border: 1px solid var(--border-dark); padding: 8px; color: white; outline: none; background: rgba(0,0,0,0.2); min-width: 20px;}
@@ -157,9 +166,9 @@
         <div class="icon-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
         <div class="header-title" id="headerTitle">Board View</div>
         <div class="font-controls">
-            <button class="font-btn" onclick="changeZoom(-0.1)" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
+            <button class="font-btn" onclick="zoomBtn(-0.15)" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
             <div style="width:1px; background:var(--border-dark); margin:4px 0; height:18px;"></div>
-            <button class="font-btn" onclick="changeZoom(0.1)" title="Zoom In"><i class="fas fa-search-plus"></i></button>
+            <button class="font-btn" onclick="zoomBtn(0.15)" title="Zoom In"><i class="fas fa-search-plus"></i></button>
             <div style="width:1px; background:var(--border-dark); margin:4px 0; height:18px;"></div>
             <button class="font-btn" onclick="exportSmartBoardPDF()" title="Download PDF"><i class="fas fa-download" style="color: var(--success);"></i></button>
         </div>
@@ -195,7 +204,19 @@
 
         function goBack() { window.history.length > 1 ? window.history.back() : window.location.href = 'library.html'; }
 
-        function changeZoom(amount, absoluteVal = null) {
+        // ==========================================
+        // SMART MIDPOINT ZOOM ENGINE
+        // ==========================================
+        function zoomBtn(amount) {
+            const vp = document.getElementById('mainViewport');
+            const rect = vp.getBoundingClientRect();
+            // Simulate pinch from exact center of screen
+            changeZoom(amount, null, rect.left + rect.width/2, rect.top + rect.height/2);
+        }
+
+        function changeZoom(amount, absoluteVal = null, originX = null, originY = null) {
+            let oldZoom = currentZoom;
+            
             if (absoluteVal !== null) {
                 currentZoom = absoluteVal;
             } else {
@@ -207,7 +228,20 @@
             
             const wrapper = document.getElementById('canvasScaleWrapper');
             const board = document.getElementById('canvasBoard');
+            const viewport = document.getElementById('mainViewport');
             
+            // Adjust scroll physics before transforming to lock midpoint
+            if (originX !== null && originY !== null) {
+                let rect = wrapper.getBoundingClientRect();
+                let relX = originX - rect.left;
+                let relY = originY - rect.top;
+                
+                let scaleRatio = currentZoom / oldZoom;
+                
+                viewport.scrollLeft += relX * scaleRatio - relX;
+                viewport.scrollTop += relY * scaleRatio - relY;
+            }
+
             wrapper.style.transform = `scale(${currentZoom})`;
             
             const newWidth = BOARD_WIDTH * currentZoom;
@@ -216,7 +250,7 @@
             wrapper.style.width = `${newWidth}px`;
             wrapper.style.height = `${newHeight}px`;
 
-            const vpWidth = document.getElementById('mainViewport').clientWidth - 40; 
+            const vpWidth = viewport.clientWidth - 40; 
             if (newWidth < vpWidth) {
                 wrapper.style.marginLeft = `${(vpWidth - newWidth) / 2}px`;
             } else {
@@ -224,10 +258,13 @@
             }
         }
 
+        // ==========================================
         // PINCH-TO-ZOOM MULTI-TOUCH PHYSICS ENGINE
+        // ==========================================
         const viewport = document.getElementById('mainViewport');
         let initialDistance = null;
         let initialZoom = 1;
+        let pinchCenter = {x: 0, y: 0};
 
         viewport.addEventListener('touchstart', (e) => {
             if (e.touches.length === 2) {
@@ -236,6 +273,10 @@
                     e.touches[0].pageY - e.touches[1].pageY
                 );
                 initialZoom = currentZoom;
+                pinchCenter = {
+                    x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+                    y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+                };
             }
         }, { passive: false });
 
@@ -247,7 +288,7 @@
                     e.touches[0].pageY - e.touches[1].pageY
                 );
                 const scaleFactor = currentDistance / initialDistance;
-                changeZoom(0, initialZoom * scaleFactor);
+                changeZoom(0, initialZoom * scaleFactor, pinchCenter.x, pinchCenter.y);
             }
         }, { passive: false });
 
@@ -314,14 +355,13 @@
                 let z = parseInt(b.z, 10);
                 if (isNaN(z) || z == null) z = i + 10; 
 
-                // Safe HTML Escape
                 let safeStyles = (b.style || '').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 
                 let innerHTML = '';
                 let fillClass = (b.type === 'table' || b.type === 'image' || b.type === 'expression') ? 'fill-space' : '';
 
                 if (b.type === 'image') {
-                    innerHTML = `<div class="notes-content-editable ${fillClass}"><img src="${b.content || ''}" style="width:100%;height:100%;"></div>`;
+                    innerHTML = `<div class="notes-content-editable ${fillClass}"><img src="${b.content || ''}"></div>`;
                 } else if (b.type === 'expression') {
                     innerHTML = `<div class="notes-content-editable ${fillClass}" style="display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; ${safeStyles}">
                                     <div class="math-render-target">${wrapMath(b.content || '')}</div>
@@ -344,7 +384,7 @@
                     innerHTML = `<div class="notes-content-editable" style="${safeStyles}"><${tag}>${wrapMath(b.content || '<br>')}</${tag}></div>`;
                 }
 
-                // Explicit z-index assignment
+                // Explicit z-index assignment directly on inline style
                 let elHtml = `<div class="canvas-element" style="left:${x}; top:${y}; width:${w}; height:${h}; z-index:${z};">
                                 ${innerHTML}
                               </div>`;
@@ -364,13 +404,14 @@
             if (vpWidth < BOARD_WIDTH) {
                 initialScale = vpWidth / BOARD_WIDTH;
             }
-            changeZoom(0, initialScale);
+            changeZoom(0, initialScale); // Fit to screen width
 
             setTimeout(() => {
                 if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
                     MathJax.typesetPromise([board]).then(() => {
                         clearTimeout(safetyTimeout);
                         document.getElementById('loadingOverlay').classList.remove('active');
+                        // Refresh physical wrapper height based on actual rendered math
                         changeZoom(0, currentZoom); 
                     });
                 } else {
@@ -391,7 +432,6 @@
             const loadText = document.getElementById('loadingText');
             overlay.classList.add('active');
             
-            // Fetch Logo for Watermark
             loadText.textContent = "Fetching Watermark Logo...";
             const logoObj = await new Promise((resolve) => {
                 const img = new Image();
@@ -409,14 +449,23 @@
             document.body.classList.add('pdf-printing');
             document.querySelector('.app-header').style.display = 'none';
             
+            // MATHJAX SVG PDF FIX: Force absolute pixel sizes on SVGs before taking snapshot
+            const board = document.getElementById('canvasBoard');
+            const svgs = board.querySelectorAll('mjx-container svg');
+            svgs.forEach(svg => {
+                const rect = svg.getBoundingClientRect();
+                if(rect.width > 0 && rect.height > 0) {
+                    svg.setAttribute('width', rect.width + 'px');
+                    svg.setAttribute('height', rect.height + 'px');
+                }
+            });
+
             await new Promise(r => setTimeout(r, 200));
 
-            const board = document.getElementById('canvasBoard');
             const docTitle = cachedNoteData.title || 'NAV_Board';
             
             loadText.textContent = "Generating 16:9 Smart Board PDF...";
 
-            // 1200x675 forces 16:9 Landscape pages, cutting perfectly for smart panels
             const opt = {
                 margin:       0, 
                 filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_smartboard.pdf`,
@@ -438,7 +487,6 @@
                     const totalPages = pdf.internal.getNumberOfPages();
                     for (let i = 1; i <= totalPages; i++) {
                         pdf.setPage(i);
-                        // Inject Logo into top right of every smartboard slide
                         if (logoObj && logoObj.b64) {
                             const logoWidth = 110;
                             const logoHeight = logoWidth * logoObj.ratio;
@@ -450,6 +498,9 @@
                 console.error("PDF Error:", e);
                 alert("Failed to generate PDF. Memory might be full.");
             } finally {
+                // Remove inline SVG sizes to restore responsive layout
+                svgs.forEach(svg => { svg.removeAttribute('width'); svg.removeAttribute('height'); });
+                
                 document.body.classList.remove('pdf-printing');
                 document.querySelector('.app-header').style.display = 'flex';
                 changeZoom(0, currentZoom); 
