@@ -80,12 +80,12 @@
       "h": "auto",
       "z": "55",
       "style": "text-decoration: none; font-weight: normal; font-style: italic; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);",
-      "content": "          Gujarat of India </h2><div>            $$\\frac{1}{v} + \\frac{1}{u} = \\frac{1}{f}$$&nbsp;</div><div>          </div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\">"
+      "content": "          Gujarat of India </h2><div>            $$\\frac{1}{v} + \\frac{1}{u} = \\frac{1}{f}$$&nbsp;</div><div>          </div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\">"
     },
     {
       "type": "image",
-      "x": "143.346px",
-      "y": "287.5px",
+      "x": "205.708px",
+      "y": "0px",
       "w": "201.038px",
       "h": "208.231px",
       "z": "24",
