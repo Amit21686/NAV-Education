@@ -25,10 +25,10 @@
     {
       "type": "expression",
       "x": "0px",
-      "y": "0px",
+      "y": "7.5px",
       "w": "155.5px",
       "h": "40px",
-      "z": "50",
+      "z": "51",
       "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; font-size: 10px; ",
       "content": "$$ F = ma $$"
     }
