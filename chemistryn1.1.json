@@ -4,11 +4,11 @@
   "blocks": [
     {
       "type": "image",
-      "x": "437px",
-      "y": "354.5px",
+      "x": "562.222px",
+      "y": "39.5834px",
       "w": "362.5px",
       "h": "174.5px",
-      "z": "39",
+      "z": "41",
       "style": "",
       "content": "https://raw.githubusercontent.com/Amit21686/NAV-Education/main/img_1775181589486.jpg?t=1775181591751"
     },
@@ -80,7 +80,7 @@
       "h": "auto",
       "z": "45",
       "style": "text-decoration: none; font-weight: normal; font-style: italic; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);",
-      "content": "Gujarat of India </h2><div>            $$\\frac{1}{v} + \\frac{1}{u} = \\frac{1}{f}$$&nbsp;</div><div>          </div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\">"
+      "content": "Gujarat of India </h2><div>            $$\\frac{1}{v} + \\frac{1}{u} = \\frac{1}{f}$$&nbsp;</div><div>          </div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\">"
     },
     {
       "type": "image",
