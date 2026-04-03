@@ -79,7 +79,7 @@
       "w": "400px",
       "h": "auto",
       "z": "16",
-      "style": "font-family: \"Comic Sans MS\"; font-size: 12px; font-weight: normal; font-style: italic; color: rgb(255, 255, 0); background-color: rgb(255, 255, 255);",
+      "style": "font-family: \"Comic Sans MS\"; font-size: 12px; font-weight: normal; font-style: italic; color: rgb(255, 255, 0); background-color: rgb(255, 0, 255);",
       "content": "Gujarat "
     }
   ]
