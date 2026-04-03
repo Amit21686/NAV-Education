@@ -78,8 +78,8 @@
       "y": "20.5px",
       "w": "263px",
       "h": "auto",
-      "z": "29",
-      "style": "text-decoration: none;",
+      "z": "30",
+      "style": "text-decoration: none; font-weight: bold;",
       "content": "Gujarat of India </h2><div>                    F = ma&nbsp;"
     }
   ]
