@@ -68,12 +68,11 @@
             -webkit-overflow-scrolling: touch;
             z-index: 1;
             padding: 20px;
-            touch-action: pan-x pan-y; 
+            touch-action: none; /* Block native gestures to allow custom pinch zoom to override perfectly */
         }
 
         .canvas-scale-wrapper {
             transform-origin: top left;
-            transition: none; /* Removed transition for ultra-smooth native pinch physics */
             margin: 0 auto;
             position: relative;
             will-change: transform;
@@ -99,7 +98,6 @@
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            /* Creates isolated stacking context for layers to work flawlessly */
             transform: translateZ(0); 
         }
 
@@ -113,6 +111,7 @@
             font-size: 16px; line-height: 1.5;
             white-space: pre-wrap; word-wrap: break-word; 
             overflow: visible; 
+            position: relative;
         }
 
         .notes-content-editable h1, .notes-content-editable h2 { color: inherit; font-family: inherit; }
@@ -120,14 +119,14 @@
         .notes-content-editable h2 { font-size: 1.8em; font-weight: 600; margin: 0; }
         .notes-content-editable p { margin: 0; }
         
-        /* PERFECT IMAGE RATIO FIX */
+        /* HTML2CANVAS SAFE IMAGE RATIOS */
         .notes-content-editable img { 
             max-width: 100%; 
             max-height: 100%; 
             width: auto !important; 
             height: auto !important; 
             display: block; 
-            margin: auto;
+            margin: 0 auto;
             border-radius: 8px; 
             pointer-events: none; 
         }
@@ -170,7 +169,7 @@
             <div style="width:1px; background:var(--border-dark); margin:4px 0; height:18px;"></div>
             <button class="font-btn" onclick="zoomBtn(0.15)" title="Zoom In"><i class="fas fa-search-plus"></i></button>
             <div style="width:1px; background:var(--border-dark); margin:4px 0; height:18px;"></div>
-            <button class="font-btn" onclick="exportSmartBoardPDF()" title="Download PDF"><i class="fas fa-download" style="color: var(--success);"></i></button>
+            <button class="font-btn" onclick="exportSmartBoardPDF()" title="Download HD PDF"><i class="fas fa-download" style="color: var(--success);"></i></button>
         </div>
     </header>
 
@@ -210,7 +209,6 @@
         function zoomBtn(amount) {
             const vp = document.getElementById('mainViewport');
             const rect = vp.getBoundingClientRect();
-            // Simulate pinch from exact center of screen
             changeZoom(amount, null, rect.left + rect.width/2, rect.top + rect.height/2);
         }
 
@@ -229,17 +227,20 @@
             const wrapper = document.getElementById('canvasScaleWrapper');
             const board = document.getElementById('canvasBoard');
             const viewport = document.getElementById('mainViewport');
-            
-            // Adjust scroll physics before transforming to lock midpoint
-            if (originX !== null && originY !== null) {
-                let rect = wrapper.getBoundingClientRect();
-                let relX = originX - rect.left;
-                let relY = originY - rect.top;
+
+            // Exact Mathematical Pinch-To-Zoom Translation
+            if (originX !== null && originY !== null && oldZoom !== currentZoom) {
+                const rect = viewport.getBoundingClientRect();
+                
+                // Position of finger inside the content area (including what is currently scrolled away)
+                let contentX = viewport.scrollLeft + (originX - rect.left);
+                let contentY = viewport.scrollTop + (originY - rect.top);
                 
                 let scaleRatio = currentZoom / oldZoom;
                 
-                viewport.scrollLeft += relX * scaleRatio - relX;
-                viewport.scrollTop += relY * scaleRatio - relY;
+                // Adjust scroll position to pin the content beneath the finger
+                viewport.scrollLeft = (contentX * scaleRatio) - (originX - rect.left);
+                viewport.scrollTop = (contentY * scaleRatio) - (originY - rect.top);
             }
 
             wrapper.style.transform = `scale(${currentZoom})`;
@@ -265,9 +266,12 @@
         let initialDistance = null;
         let initialZoom = 1;
         let pinchCenter = {x: 0, y: 0};
+        let isPanning = false;
+        let lastPanPos = {x: 0, y: 0};
 
         viewport.addEventListener('touchstart', (e) => {
             if (e.touches.length === 2) {
+                isPanning = false;
                 initialDistance = Math.hypot(
                     e.touches[0].pageX - e.touches[1].pageX,
                     e.touches[0].pageY - e.touches[1].pageY
@@ -277,24 +281,38 @@
                     x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
                     y: (e.touches[0].clientY + e.touches[1].clientY) / 2
                 };
+            } else if (e.touches.length === 1) {
+                isPanning = true;
+                lastPanPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
             }
         }, { passive: false });
 
         viewport.addEventListener('touchmove', (e) => {
+            e.preventDefault(); // Block all native browser bouncing/zooming
+
             if (e.touches.length === 2 && initialDistance) {
-                e.preventDefault(); 
                 const currentDistance = Math.hypot(
                     e.touches[0].pageX - e.touches[1].pageX,
                     e.touches[0].pageY - e.touches[1].pageY
                 );
                 const scaleFactor = currentDistance / initialDistance;
                 changeZoom(0, initialZoom * scaleFactor, pinchCenter.x, pinchCenter.y);
+            } else if (e.touches.length === 1 && isPanning) {
+                // Emulate native pan since we blocked default actions
+                const deltaX = e.touches[0].clientX - lastPanPos.x;
+                const deltaY = e.touches[0].clientY - lastPanPos.y;
+                viewport.scrollLeft -= deltaX;
+                viewport.scrollTop -= deltaY;
+                lastPanPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
             }
         }, { passive: false });
 
         viewport.addEventListener('touchend', (e) => {
             if (e.touches.length < 2) {
                 initialDistance = null;
+            }
+            if (e.touches.length === 0) {
+                isPanning = false;
             }
         });
 
@@ -351,7 +369,6 @@
                 let w = b.w || '300px'; let h = b.h || 'auto';
                 let x = b.x || '20px'; let y = b.y || (i * 100 + 20) + 'px'; 
                 
-                // Strict Layer / Z-Index Parsing
                 let z = parseInt(b.z, 10);
                 if (isNaN(z) || z == null) z = i + 10; 
 
@@ -384,7 +401,6 @@
                     innerHTML = `<div class="notes-content-editable" style="${safeStyles}"><${tag}>${wrapMath(b.content || '<br>')}</${tag}></div>`;
                 }
 
-                // Explicit z-index assignment directly on inline style
                 let elHtml = `<div class="canvas-element" style="left:${x}; top:${y}; width:${w}; height:${h}; z-index:${z};">
                                 ${innerHTML}
                               </div>`;
@@ -404,14 +420,13 @@
             if (vpWidth < BOARD_WIDTH) {
                 initialScale = vpWidth / BOARD_WIDTH;
             }
-            changeZoom(0, initialScale); // Fit to screen width
+            changeZoom(0, initialScale);
 
             setTimeout(() => {
                 if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
                     MathJax.typesetPromise([board]).then(() => {
                         clearTimeout(safetyTimeout);
                         document.getElementById('loadingOverlay').classList.remove('active');
-                        // Refresh physical wrapper height based on actual rendered math
                         changeZoom(0, currentZoom); 
                     });
                 } else {
@@ -421,6 +436,9 @@
             }, 200);
         }
 
+        // ==========================================
+        // HD PDF & SVG RASTERIZATION ENGINE
+        // ==========================================
         async function exportSmartBoardPDF() {
             if (typeof html2pdf === 'undefined') {
                 alert("PDF Engine loading. Try again in a moment.");
@@ -449,37 +467,87 @@
             document.body.classList.add('pdf-printing');
             document.querySelector('.app-header').style.display = 'none';
             
-            // MATHJAX SVG PDF FIX: Force absolute pixel sizes on SVGs before taking snapshot
+            loadText.textContent = "Converting Math to High-Res Pixels...";
             const board = document.getElementById('canvasBoard');
             const svgs = board.querySelectorAll('mjx-container svg');
-            svgs.forEach(svg => {
-                const rect = svg.getBoundingClientRect();
-                if(rect.width > 0 && rect.height > 0) {
-                    svg.setAttribute('width', rect.width + 'px');
-                    svg.setAttribute('height', rect.height + 'px');
-                }
-            });
+            const mathReplacements = [];
 
-            await new Promise(r => setTimeout(r, 200));
+            // Convert all MathJax SVGs to crisp base64 PNGs to avoid PDF distortion
+            for (let svg of svgs) {
+                try {
+                    const rect = svg.getBoundingClientRect();
+                    if (rect.width === 0 || rect.height === 0) continue;
+                    
+                    const clone = svg.cloneNode(true);
+                    clone.setAttribute('width', rect.width + 'px');
+                    clone.setAttribute('height', rect.height + 'px');
+                    if (!clone.getAttribute('xmlns')) clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                    
+                    // Force text to render solid white for the dark PDF background
+                    clone.style.color = '#ffffff';
+                    const paths = clone.querySelectorAll('path, rect');
+                    paths.forEach(p => { 
+                        if(p.getAttribute('fill') === 'currentColor') p.setAttribute('fill', '#ffffff');
+                        else if(!p.getAttribute('fill')) p.setAttribute('fill', '#ffffff');
+                    });
+
+                    const svgData = new XMLSerializer().serializeToString(clone);
+                    const svg64 = btoa(unescape(encodeURIComponent(svgData)));
+                    const image64 = 'data:image/svg+xml;base64,' + svg64;
+
+                    const canvas = document.createElement('canvas');
+                    const scale = 3; // 3x Resolution Multiplier
+                    canvas.width = rect.width * scale;
+                    canvas.height = rect.height * scale;
+                    const ctx = canvas.getContext('2d');
+                    ctx.scale(scale, scale);
+
+                    const img = new Image();
+                    await new Promise((resolve) => {
+                        img.onload = () => { ctx.drawImage(img, 0, 0); resolve(); };
+                        img.onerror = () => resolve(); 
+                        img.src = image64;
+                    });
+
+                    const imgTag = document.createElement('img');
+                    imgTag.src = canvas.toDataURL('image/png');
+                    imgTag.style.width = rect.width + 'px';
+                    imgTag.style.height = rect.height + 'px';
+                    imgTag.style.display = 'inline-block';
+                    imgTag.style.verticalAlign = 'middle';
+                    
+                    const parent = svg.parentNode;
+                    mathReplacements.push({ parent, oldChild: svg, newChild: imgTag });
+                    parent.replaceChild(imgTag, svg);
+                } catch(err) {
+                    console.warn("SVG Conversion skipped", err);
+                }
+            }
+
+            await new Promise(r => setTimeout(r, 300)); 
 
             const docTitle = cachedNoteData.title || 'NAV_Board';
             
-            loadText.textContent = "Generating 16:9 Smart Board PDF...";
+            loadText.textContent = "Generating HD Smart Board PDF...";
+            const finalHeight = board.scrollHeight;
 
+            // Upped the Html2Canvas scale to 3 for massive improvement in visual clarity
             const opt = {
                 margin:       0, 
                 filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_smartboard.pdf`,
                 image:        { type: 'jpeg', quality: 1.0 },
                 html2canvas:  { 
-                    scale: 2, 
+                    scale: 3, 
                     useCORS: true, 
                     scrollY: 0, 
                     scrollX: 0, 
                     width: BOARD_WIDTH,
+                    height: finalHeight,
                     windowWidth: BOARD_WIDTH,
-                    backgroundColor: '#020617' 
+                    backgroundColor: '#020617',
+                    logging: false
                 }, 
-                jsPDF: { unit: 'px', format: [1200, 675], orientation: 'landscape', hotfixes: ["px_scaling"] }
+                jsPDF: { unit: 'px', format: [BOARD_WIDTH, finalHeight], orientation: 'portrait', hotfixes: ["px_scaling"] }
             };
 
             try {
@@ -498,8 +566,12 @@
                 console.error("PDF Error:", e);
                 alert("Failed to generate PDF. Memory might be full.");
             } finally {
-                // Remove inline SVG sizes to restore responsive layout
-                svgs.forEach(svg => { svg.removeAttribute('width'); svg.removeAttribute('height'); });
+                // Restore original vector MathJax elements so the document remains editable/scalable
+                for (let r of mathReplacements) {
+                    if (r.parent.contains(r.newChild)) {
+                        r.parent.replaceChild(r.oldChild, r.newChild);
+                    }
+                }
                 
                 document.body.classList.remove('pdf-printing');
                 document.querySelector('.app-header').style.display = 'flex';
