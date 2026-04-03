@@ -74,11 +74,11 @@
     },
     {
       "type": "image",
-      "x": "24.5px",
-      "y": "6.5px",
+      "x": "36px",
+      "y": "348px",
       "w": "300px",
       "h": "300px",
-      "z": "18",
+      "z": "20",
       "style": "",
       "content": "https://raw.githubusercontent.com/Amit21686/NAV-Education/main/img_1775194897745.jpg?t=1775194899218"
     }
