@@ -58,8 +58,8 @@
       "w": "300px",
       "h": "auto",
       "z": "12",
-      "style": "font-family: \"Dancing Script\"; font-size: 28px;",
-      "content": "How are you"
+      "style": "font-family: \"Dancing Script\"; font-size: 28px; font-weight: bold;",
+      "content": "How are you ?"
     }
   ]
 }
