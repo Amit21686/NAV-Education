@@ -14,11 +14,11 @@
     },
     {
       "type": "paragraph",
-      "x": "316px",
-      "y": "806px",
+      "x": "472.5px",
+      "y": "623.5px",
       "w": "102.5px",
       "h": "auto",
-      "z": "34",
+      "z": "36",
       "style": "font-family: Palatino; font-size: 10px; color: rgb(232, 196, 130); background-color: rgb(255, 255, 255);",
       "content": "<span style=\"font-weight: bold; font-style: italic; text-decoration-line: underline;\">Hello</span>"
     },
