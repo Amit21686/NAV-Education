@@ -68,11 +68,12 @@
             -webkit-overflow-scrolling: touch;
             z-index: 1;
             padding: 20px;
+            touch-action: pan-x pan-y; /* Important for custom pinch zoom */
         }
 
         .canvas-scale-wrapper {
             transform-origin: top left;
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.1s linear; /* Faster response for pinch zoom */
             margin: 0 auto;
             position: relative;
         }
@@ -110,6 +111,12 @@
             font-size: 16px; line-height: 1.5;
             white-space: pre-wrap; word-wrap: break-word; 
             overflow: visible; 
+        }
+
+        /* Enforce inheritance so safeStyles propagate to headers perfectly */
+        .notes-content-editable h1, .notes-content-editable h2 { 
+            color: inherit; 
+            font-family: inherit; 
         }
 
         .notes-content-editable h1 { font-size: 2.2em; font-weight: 700; margin: 0; }
@@ -219,6 +226,42 @@
             }
         }
 
+        // ==========================================
+        // PINCH-TO-ZOOM MULTI-TOUCH PHYSICS ENGINE
+        // ==========================================
+        const viewport = document.getElementById('mainViewport');
+        let initialDistance = null;
+        let initialZoom = 1;
+
+        viewport.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                // Calculate hypotenuse distance between two fingers
+                initialDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                initialZoom = currentZoom;
+            }
+        }, { passive: false });
+
+        viewport.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2 && initialDistance) {
+                e.preventDefault(); // Stop native browser zoom
+                const currentDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                const scaleFactor = currentDistance / initialDistance;
+                changeZoom(0, initialZoom * scaleFactor);
+            }
+        }, { passive: false });
+
+        viewport.addEventListener('touchend', (e) => {
+            if (e.touches.length < 2) {
+                initialDistance = null;
+            }
+        });
+
         function wrapMath(html) {
             if(!html) return '';
             let res = String(html).replace(/\$\$(.*?)\$\$/g, (m) => `<span class="math-wrapper">${m}</span>`);
@@ -270,8 +313,14 @@
                 if(!b) return;
 
                 let w = b.w || '300px'; let h = b.h || 'auto';
-                let x = b.x || '20px'; let y = b.y || (i * 100 + 20) + 'px'; let z = b.z || 10;
-                let cStyles = b.style || '';
+                let x = b.x || '20px'; let y = b.y || (i * 100 + 20) + 'px'; 
+                
+                // EXPLICIT Z-INDEX PARSING FIX
+                let z = parseInt(b.z);
+                if (isNaN(z)) z = i + 10; // Fallback guarantees elements layer correctly if missing
+
+                // SAFE HTML ESCAPE FIX: Protects against quotes in font families breaking HTML tags
+                let safeStyles = (b.style || '').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 
                 let innerHTML = '';
                 let fillClass = (b.type === 'table' || b.type === 'image' || b.type === 'expression') ? 'fill-space' : '';
@@ -280,13 +329,13 @@
                 if (b.type === 'image') {
                     innerHTML = `<div class="notes-content-editable ${fillClass}"><img src="${b.content || ''}" style="width:100%;height:100%;"></div>`;
                 } else if (b.type === 'expression') {
-                    innerHTML = `<div class="notes-content-editable ${fillClass}" style="display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; ${cStyles}">
+                    innerHTML = `<div class="notes-content-editable ${fillClass}" style="display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; ${safeStyles}">
                                     <div class="math-render-target">${wrapMath(b.content || '')}</div>
                                  </div>`;
                 } else if (b.type === 'table') {
                     let rows = (b.content && typeof b.content === 'object' && b.content.rows) ? b.content.rows : 3; 
                     let cols = (b.content && typeof b.content === 'object' && b.content.cols) ? b.content.cols : 3;
-                    innerHTML = `<div class="notes-content-editable ${fillClass}" style="${cStyles}">
+                    innerHTML = `<div class="notes-content-editable ${fillClass}" style="${safeStyles}">
                                     <div class="tb-grid" style="grid-template-columns: repeat(${cols}, 1fr);">`;
                     for(let r=0; r<rows; r++) {
                         for(let c=0; c<cols; c++) {
@@ -298,10 +347,10 @@
                     innerHTML += `</div></div>`;
                 } else {
                     let tag = b.type === 'h1' ? 'h1' : (b.type === 'h2' ? 'h2' : 'div');
-                    innerHTML = `<div class="notes-content-editable" style="${cStyles}"><${tag}>${wrapMath(b.content || '<br>')}</${tag}></div>`;
+                    innerHTML = `<div class="notes-content-editable" style="${safeStyles}"><${tag}>${wrapMath(b.content || '<br>')}</${tag}></div>`;
                 }
 
-                let elHtml = `<div class="canvas-element" style="left:${x}; top:${y}; width:${w}; height:${h}; z-index:${z};">
+                let elHtml = `<div class="canvas-element" style="left:${x}; top:${y}; width:${w}; height:${h}; z-index:${z} !important;">
                                 ${innerHTML}
                               </div>`;
                 board.insertAdjacentHTML('beforeend', elHtml);
