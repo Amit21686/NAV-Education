@@ -50,16 +50,6 @@
           ]
         ]
       }
-    },
-    {
-      "type": "paragraph",
-      "x": "301px",
-      "y": "94.5px",
-      "w": "171.5px",
-      "h": "auto",
-      "z": "17",
-      "style": "font-family: ",
-      "content": "How are you ?"
     }
   ]
 }
