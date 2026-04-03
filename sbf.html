@@ -68,7 +68,7 @@
             -webkit-overflow-scrolling: touch;
             z-index: 1;
             padding: 20px;
-            touch-action: none; /* Block native gestures to allow custom pinch zoom to override perfectly */
+            touch-action: none; 
         }
 
         .canvas-scale-wrapper {
@@ -232,13 +232,11 @@
             if (originX !== null && originY !== null && oldZoom !== currentZoom) {
                 const rect = viewport.getBoundingClientRect();
                 
-                // Position of finger inside the content area (including what is currently scrolled away)
                 let contentX = viewport.scrollLeft + (originX - rect.left);
                 let contentY = viewport.scrollTop + (originY - rect.top);
                 
                 let scaleRatio = currentZoom / oldZoom;
                 
-                // Adjust scroll position to pin the content beneath the finger
                 viewport.scrollLeft = (contentX * scaleRatio) - (originX - rect.left);
                 viewport.scrollTop = (contentY * scaleRatio) - (originY - rect.top);
             }
@@ -437,7 +435,7 @@
         }
 
         // ==========================================
-        // HD PDF & SVG RASTERIZATION ENGINE
+        // HD PDF & EX/EM TO PIXEL CONVERSION ENGINE
         // ==========================================
         async function exportSmartBoardPDF() {
             if (typeof html2pdf === 'undefined') {
@@ -467,71 +465,63 @@
             document.body.classList.add('pdf-printing');
             document.querySelector('.app-header').style.display = 'none';
             
-            loadText.textContent = "Converting Math to High-Res Pixels...";
+            loadText.textContent = "Calculating Absolute Math Pixels...";
             const board = document.getElementById('canvasBoard');
+            
+            // Backup original SVG states before overwriting with hardcoded pixels
+            const originalMathStyles = [];
             const svgs = board.querySelectorAll('mjx-container svg');
-            const mathReplacements = [];
+            
+            svgs.forEach(svg => {
+                originalMathStyles.push({
+                    el: svg,
+                    width: svg.getAttribute('width'),
+                    height: svg.getAttribute('height'),
+                    sWidth: svg.style.width,
+                    sHeight: svg.style.height,
+                    sVerticalAlign: svg.style.verticalAlign,
+                    color: svg.style.color
+                });
 
-            // Convert all MathJax SVGs to crisp base64 PNGs to avoid PDF distortion
-            for (let svg of svgs) {
-                try {
-                    const rect = svg.getBoundingClientRect();
-                    if (rect.width === 0 || rect.height === 0) continue;
-                    
-                    const clone = svg.cloneNode(true);
-                    clone.setAttribute('width', rect.width + 'px');
-                    clone.setAttribute('height', rect.height + 'px');
-                    if (!clone.getAttribute('xmlns')) clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-                    
-                    // Force text to render solid white for the dark PDF background
-                    clone.style.color = '#ffffff';
-                    const paths = clone.querySelectorAll('path, rect');
-                    paths.forEach(p => { 
-                        if(p.getAttribute('fill') === 'currentColor') p.setAttribute('fill', '#ffffff');
-                        else if(!p.getAttribute('fill')) p.setAttribute('fill', '#ffffff');
-                    });
+                // Calculate the exact pixel multiplier based on the container's font size
+                const fontSizePx = parseFloat(window.getComputedStyle(svg).fontSize) || 16;
+                const exToPx = fontSizePx * 0.5; // MathJax standard: 1ex roughly equals half the font size
+                const emToPx = fontSizePx;
 
-                    const svgData = new XMLSerializer().serializeToString(clone);
-                    const svg64 = btoa(unescape(encodeURIComponent(svgData)));
-                    const image64 = 'data:image/svg+xml;base64,' + svg64;
+                const convertToPx = (val) => {
+                    if (!val) return null;
+                    if (val.endsWith('ex')) return (parseFloat(val) * exToPx) + 'px';
+                    if (val.endsWith('em')) return (parseFloat(val) * emToPx) + 'px';
+                    return val;
+                };
 
-                    const canvas = document.createElement('canvas');
-                    const scale = 3; // 3x Resolution Multiplier
-                    canvas.width = rect.width * scale;
-                    canvas.height = rect.height * scale;
-                    const ctx = canvas.getContext('2d');
-                    ctx.scale(scale, scale);
+                // Hardcode precise pixel widths to override native html2canvas distortion
+                const w = svg.getAttribute('width');
+                if (w) { const px = convertToPx(w); svg.setAttribute('width', px); svg.style.width = px; }
 
-                    const img = new Image();
-                    await new Promise((resolve) => {
-                        img.onload = () => { ctx.drawImage(img, 0, 0); resolve(); };
-                        img.onerror = () => resolve(); 
-                        img.src = image64;
-                    });
+                const h = svg.getAttribute('height');
+                if (h) { const px = convertToPx(h); svg.setAttribute('height', px); svg.style.height = px; }
 
-                    const imgTag = document.createElement('img');
-                    imgTag.src = canvas.toDataURL('image/png');
-                    imgTag.style.width = rect.width + 'px';
-                    imgTag.style.height = rect.height + 'px';
-                    imgTag.style.display = 'inline-block';
-                    imgTag.style.verticalAlign = 'middle';
-                    
-                    const parent = svg.parentNode;
-                    mathReplacements.push({ parent, oldChild: svg, newChild: imgTag });
-                    parent.replaceChild(imgTag, svg);
-                } catch(err) {
-                    console.warn("SVG Conversion skipped", err);
-                }
-            }
+                const va = svg.style.verticalAlign;
+                if (va) { const px = convertToPx(va); svg.style.verticalAlign = px; }
 
-            await new Promise(r => setTimeout(r, 300)); 
+                // Force solid contrast rendering for the PDF dark background
+                svg.style.color = '#ffffff';
+                svg.querySelectorAll('path, rect').forEach(p => {
+                    if (p.getAttribute('fill') === 'currentColor' || !p.getAttribute('fill')) {
+                        p.setAttribute('fill', '#ffffff');
+                    }
+                });
+            });
+
+            await new Promise(r => setTimeout(r, 200)); 
 
             const docTitle = cachedNoteData.title || 'NAV_Board';
             
             loadText.textContent = "Generating HD Smart Board PDF...";
             const finalHeight = board.scrollHeight;
 
-            // Upped the Html2Canvas scale to 3 for massive improvement in visual clarity
+            // Upped Html2Canvas scale to 3 for maximum visual clarity
             const opt = {
                 margin:       0, 
                 filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_smartboard.pdf`,
@@ -566,12 +556,15 @@
                 console.error("PDF Error:", e);
                 alert("Failed to generate PDF. Memory might be full.");
             } finally {
-                // Restore original vector MathJax elements so the document remains editable/scalable
-                for (let r of mathReplacements) {
-                    if (r.parent.contains(r.newChild)) {
-                        r.parent.replaceChild(r.oldChild, r.newChild);
-                    }
-                }
+                // Restore all original relative units (em/ex) to the SVGs for responsive viewing
+                originalMathStyles.forEach(orig => {
+                    if(orig.width) orig.el.setAttribute('width', orig.width); else orig.el.removeAttribute('width');
+                    if(orig.height) orig.el.setAttribute('height', orig.height); else orig.el.removeAttribute('height');
+                    orig.el.style.width = orig.sWidth || '';
+                    orig.el.style.height = orig.sHeight || '';
+                    orig.el.style.verticalAlign = orig.sVerticalAlign || '';
+                    orig.el.style.color = orig.color || '';
+                });
                 
                 document.body.classList.remove('pdf-printing');
                 document.querySelector('.app-header').style.display = 'flex';
