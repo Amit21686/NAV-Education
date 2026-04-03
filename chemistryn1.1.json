@@ -68,8 +68,8 @@
       "w": "300px",
       "h": "auto",
       "z": "13",
-      "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; font-family: Dancing Script; font-size: 28px; background-color: #ff00ff; font-weight: bold; font-style: italic; ",
-      "content": "$$ E=mc^2 $$"
+      "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; font-family: Dancing Script; font-size: 28px; background-color: #ff00ff; font-weight: bold; font-style: italic; ",
+      "content": "$$ $ E=rc^2 $$"
     }
   ]
 }
