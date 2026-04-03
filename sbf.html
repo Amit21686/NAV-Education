@@ -27,59 +27,67 @@
             --card-dark: rgba(30, 41, 59, 0.8); --card-light: rgba(255, 255, 255, 0.9);
             --text-dark: #f1f5f9; --text-light: #0f172a;
             --border-dark: rgba(255, 255, 255, 0.08); --border-light: rgba(0, 0, 0, 0.08);
-            --radius-md: 12px;
+            --danger: #f43f5e;
         }
 
         body { 
             font-family: 'Poppins', sans-serif; background: var(--bg-dark); color: var(--text-dark); 
             height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column;
-            transition: background 0.3s, color 0.3s; 
         }
-        body.light-theme { background: var(--bg-light); color: var(--text-light); }
+
+        /* Restored Animated Background */
+        body::before { 
+            content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; 
+            background: radial-gradient(circle at 70% 30%, rgba(99,102,241,0.15) 0%, transparent 70%); 
+            animation: rotateBg 40s linear infinite; pointer-events: none; z-index: 0; 
+        }
+        @keyframes rotateBg { to { transform: rotate(360deg); } }
 
         .app-header { 
             background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(20px); padding: 15px 20px; 
             display: flex; align-items: center; justify-content: space-between; z-index: 1000; 
-            border-bottom: 1px solid var(--border-dark); flex-shrink: 0;
+            border-bottom: 1px solid var(--border-dark); flex-shrink: 0; position: relative;
         }
-        body.light-theme .app-header { background: rgba(248, 250, 252, 0.85); border-color: var(--border-light); }
         
         .icon-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--card-dark); border: 1px solid var(--border-dark); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-dark); transition: 0.2s; }
-        body.light-theme .icon-btn { background: var(--card-light); border-color: var(--border-light); color: var(--text-light); }
         .icon-btn:active { transform: scale(0.9); }
 
         .header-title { font-weight: 600; font-size: 1.1rem; text-align: center; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 15px; }
 
         .font-controls { display: flex; gap: 8px; align-items: center; background: var(--card-dark); border: 1px solid var(--border-dark); border-radius: 30px; padding: 4px 8px; }
-        body.light-theme .font-controls { background: var(--card-light); border-color: var(--border-light); }
-        .font-btn { background: transparent; border: none; color: var(--text-dark); cursor: pointer; font-size: 1rem; font-family: 'Poppins'; font-weight: 600; padding: 4px 8px; transition: 0.2s;}
-        body.light-theme .font-btn { color: var(--text-light); }
+        .font-btn { background: transparent; border: none; color: var(--text-dark); cursor: pointer; font-size: 1rem; font-weight: 600; padding: 4px 10px; transition: 0.2s;}
         .font-btn:active { transform: scale(0.85); }
 
-        /* ===== CANVAS VIEWER AREA ===== */
+        /* ===== SMART CANVAS VIEWPORT ===== */
         .canvas-viewport {
             flex: 1;
             width: 100%;
-            overflow: auto; /* Allows panning around the large canvas */
-            background: #0f172a;
+            height: 100%;
+            overflow: auto;
             position: relative;
-            padding: 20px;
-            /* Smooth scrolling */
             -webkit-overflow-scrolling: touch;
+            z-index: 1;
+            padding: 20px;
+        }
+
+        /* Dynamic wrapper ensures scrollbars appear properly when scaled */
+        .canvas-scale-wrapper {
+            transform-origin: top left;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            margin: 0 auto;
+            position: relative;
         }
         
         .canvas-board {
-            width: 1200px; /* Exact match to admin portal width */
+            width: 1200px;
             min-height: 1000px;
-            background: var(--bg-dark);
+            background: rgba(2, 6, 23, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-dark);
             position: relative;
-            margin: 0 auto;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
             overflow: hidden;
-            transform-origin: top center;
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth zoom */
         }
-        body.light-theme .canvas-board { background: var(--bg-light); box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
 
         .canvas-element {
             position: absolute;
@@ -92,19 +100,19 @@
             white-space: pre-wrap; 
             word-wrap: break-word; 
         }
-        body.light-theme .canvas-element { color: rgba(0,0,0,0.9); }
 
-        .canvas-element h1 { font-size: 2.2em; font-weight: 700; margin: 0; }
-        .canvas-element h2 { font-size: 1.8em; font-weight: 600; margin: 0; }
+        .element-inner {
+            width: 100%; height: 100%;
+        }
+
+        .canvas-element h1 { font-size: 2.2em; font-weight: 700; margin: 0; line-height: 1.2;}
+        .canvas-element h2 { font-size: 1.8em; font-weight: 600; margin: 0; line-height: 1.3;}
         .canvas-element p { margin: 0; }
         
-        .canvas-element img { width: 100%; height: 100%; display: block; border-radius: 8px; object-fit: contain; }
+        .canvas-element img { width: 100%; height: 100%; display: block; border-radius: 8px; object-fit: contain; pointer-events: none;}
 
-        /* Draggable Table Styles - Viewer Mirror */
         .tb-grid { display: grid; flex: 1; width: 100%; height: 100%; min-height: 60px; border: 1px solid var(--border-dark); border-radius: 4px; box-sizing: border-box;}
-        body.light-theme .tb-grid { border-color: var(--border-light); }
         .tb-cell { border: 1px solid var(--border-dark); padding: 8px; outline: none; background: rgba(0,0,0,0.2); min-width: 20px;}
-        body.light-theme .tb-cell { border-color: var(--border-light); background: rgba(255,255,255,0.5); color: var(--text-light); }
         .tb-header { background: rgba(99,102,241,0.15); color: var(--primary); font-weight: 600; }
 
         .math-wrapper { display: inline-block; vertical-align: middle; }
@@ -117,8 +125,11 @@
         .error-card { background: rgba(244, 63, 94, 0.1); border: 1px solid var(--danger); border-radius: var(--radius-md); padding: 30px 20px; text-align: center; margin: 40px auto; max-width: 400px; color: var(--text-dark);}
 
         /* PDF Printing Override */
-        body.pdf-printing .canvas-viewport { overflow: visible; padding: 0; background: none;}
-        body.pdf-printing .canvas-board { transform: scale(1) !important; box-shadow: none; margin: 0; }
+        body.pdf-printing { overflow: visible !important; background: #020617 !important; }
+        body.pdf-printing::before { display: none !important; } /* Hide animation for PDF */
+        body.pdf-printing .canvas-viewport { overflow: visible !important; padding: 0 !important; background: none !important;}
+        body.pdf-printing .canvas-scale-wrapper { transform: scale(1) !important; margin: 0 !important; width: 1200px !important; }
+        body.pdf-printing .canvas-board { box-shadow: none !important; border: none !important; background: #020617 !important;}
     </style>
 </head>
 <body>
@@ -136,13 +147,15 @@
             <div style="width:1px; background:var(--border-dark); margin:4px 0; height:18px;"></div>
             <button class="font-btn" onclick="changeZoom(0.1)" title="Zoom In"><i class="fas fa-search-plus"></i></button>
             <div style="width:1px; background:var(--border-dark); margin:4px 0; height:18px;"></div>
-            <button class="font-btn" onclick="exportCanvasPDF()" title="Download PDF"><i class="fas fa-download"></i></button>
+            <button class="font-btn" onclick="exportContinuousPDF()" title="Download PDF"><i class="fas fa-download" style="color: var(--success);"></i></button>
         </div>
     </header>
 
     <div class="canvas-viewport" id="mainViewport">
-        <div class="canvas-board" id="canvasBoard">
-            </div>
+        <div class="canvas-scale-wrapper" id="canvasScaleWrapper">
+            <div class="canvas-board" id="canvasBoard">
+                </div>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
@@ -150,11 +163,7 @@
     <script>
         let cachedNoteData = null; 
         let currentZoom = 1;
-
-        // Auto-scale down slightly on mobile to fit the 1200px board better initially
-        if (window.innerWidth < 800) {
-            currentZoom = window.innerWidth / 1250; 
-        }
+        const BOARD_WIDTH = 1200;
 
         const safetyTimeout = setTimeout(() => {
             const overlay = document.getElementById('loadingOverlay');
@@ -164,34 +173,48 @@
                     <div class="error-card">
                         <i class="fas fa-wifi" style="font-size:3rem; color:var(--warning); margin-bottom:15px;"></i>
                         <h3 style="color:var(--warning); margin-bottom:10px;">Connection Timeout</h3>
-                        <div style="font-size: 0.95rem; line-height: 1.5;">The server took too long to respond.</div>
+                        <div style="font-size: 0.95rem; line-height: 1.5;">The server took too long to respond. Check your network.</div>
                     </div>
                 `;
             }
         }, 8000);
 
-        function applyTheme() {
-            try {
-                if (localStorage.getItem('nav_darkMode') === 'false') document.body.classList.add('light-theme');
-                const accent = localStorage.getItem('nav_accentColor');
-                if (accent) document.documentElement.style.setProperty('--primary', accent);
-            } catch(e) {}
-        }
-        applyTheme();
-
         function goBack() { window.history.length > 1 ? window.history.back() : window.location.href = 'library.html'; }
 
-        function changeZoom(amount) {
-            currentZoom += amount;
+        // Smart Zoom: Updates scale AND physical wrapper size to maintain native scrolling
+        function changeZoom(amount, absoluteVal = null) {
+            if (absoluteVal !== null) {
+                currentZoom = absoluteVal;
+            } else {
+                currentZoom += amount;
+            }
+            
             if(currentZoom < 0.2) currentZoom = 0.2;
             if(currentZoom > 3.0) currentZoom = 3.0;
             
-            document.getElementById('canvasBoard').style.transform = `scale(${currentZoom})`;
+            const wrapper = document.getElementById('canvasScaleWrapper');
+            const board = document.getElementById('canvasBoard');
+            
+            wrapper.style.transform = `scale(${currentZoom})`;
+            
+            // Update wrapper physical dimensions so the viewport knows how far to scroll
+            const newWidth = BOARD_WIDTH * currentZoom;
+            const newHeight = board.scrollHeight * currentZoom;
+            
+            wrapper.style.width = `${newWidth}px`;
+            wrapper.style.height = `${newHeight}px`;
+
+            // Keep it centered if it's smaller than the screen
+            const vpWidth = document.getElementById('mainViewport').clientWidth - 40; // 40px padding
+            if (newWidth < vpWidth) {
+                wrapper.style.marginLeft = `${(vpWidth - newWidth) / 2}px`;
+            } else {
+                wrapper.style.marginLeft = '0';
+            }
         }
 
         function wrapMath(html) {
             if(!html) return '';
-            // Safely parse out the raw math inside the $$ or \( blocks for viewing
             let res = String(html).replace(/\$\$(.*?)\$\$/g, (m) => `<span class="math-wrapper">${m}</span>`);
             res = res.replace(/\\\((.*?)\\\)/g, (m) => `<span class="math-wrapper">${m}</span>`);
             return res;
@@ -209,7 +232,6 @@
                 
                 const data = await response.json();
                 
-                // Flexible check: accepts Canvas format blocks
                 if (!data || !data.blocks || !Array.isArray(data.blocks)) {
                     throw new Error("Format Mismatch! The file loaded but does NOT contain the required 'blocks' array.");
                 }
@@ -231,14 +253,12 @@
         }
 
         function renderCanvas(data) {
-            if (data.title) {
-                document.getElementById('headerTitle').textContent = data.title;
-            }
+            if (data.title) document.getElementById('headerTitle').textContent = data.title;
 
             const board = document.getElementById('canvasBoard');
             board.innerHTML = '';
             
-            let maxBottomEdge = 1000; // Minimum board height
+            let maxBottomEdge = 1000; 
 
             data.blocks.forEach((b, i) => {
                 if(!b) return;
@@ -251,16 +271,15 @@
                 let fillClass = (b.type === 'table' || b.type === 'image' || b.type === 'expression') ? 'height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;' : '';
 
                 if (b.type === 'image') {
-                    innerHTML = `<div style="width:100%; height:100%;"><img src="${b.content || ''}" style="width:100%; height:100%; object-fit:contain; border-radius: 8px; display: block;"></div>`;
+                    innerHTML = `<div class="element-inner"><img src="${b.content || ''}"></div>`;
                 } else if (b.type === 'expression') {
-                    // Stripped border and bg for clean view mode
-                    innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; ${cStyles}">
+                    innerHTML = `<div class="element-inner" style="display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; ${cStyles}">
                                     <div class="math-render-target">${wrapMath(b.content || '')}</div>
                                  </div>`;
                 } else if (b.type === 'table') {
                     let rows = (b.content && typeof b.content === 'object' && b.content.rows) ? b.content.rows : 3; 
                     let cols = (b.content && typeof b.content === 'object' && b.content.cols) ? b.content.cols : 3;
-                    innerHTML = `<div style="width:100%; height:100%; ${cStyles}">
+                    innerHTML = `<div class="element-inner" style="${cStyles}">
                                     <div class="tb-grid" style="grid-template-columns: repeat(${cols}, 1fr);">`;
                     for(let r=0; r<rows; r++) {
                         for(let c=0; c<cols; c++) {
@@ -272,7 +291,7 @@
                     innerHTML += `</div></div>`;
                 } else {
                     let tag = b.type === 'h1' ? 'h1' : (b.type === 'h2' ? 'h2' : 'div');
-                    innerHTML = `<div style="${cStyles}"><${tag}>${wrapMath(b.content || '')}</${tag}></div>`;
+                    innerHTML = `<div class="element-inner" style="${cStyles}"><${tag}>${wrapMath(b.content || '')}</${tag}></div>`;
                 }
 
                 let elHtml = `<div class="canvas-element" style="left:${x}; top:${y}; width:${w}; height:${h}; z-index:${z}; ${fillClass}">
@@ -280,25 +299,31 @@
                               </div>`;
                 board.insertAdjacentHTML('beforeend', elHtml);
 
-                // Track the lowest element to dynamically set the canvas board height
                 let yVal = parseInt(y.replace('px','')) || 0;
-                let hVal = parseInt(h.replace('px','')) || 200; // Estimated height for 'auto'
+                let hVal = parseInt(h.replace('px','')) || 200; 
                 if (yVal + hVal > maxBottomEdge) {
                     maxBottomEdge = yVal + hVal;
                 }
             });
 
-            // Add padding to the bottom of the board so nothing is cut off
-            board.style.minHeight = (maxBottomEdge + 200) + 'px';
+            // Ensure the board is tall enough to contain all elements + padding
+            board.style.minHeight = (maxBottomEdge + 150) + 'px';
 
-            // Apply initial zoom transform
-            board.style.transform = `scale(${currentZoom})`;
+            // Auto-scale down on mobile to fit the width perfectly
+            let initialScale = 1;
+            const vpWidth = document.getElementById('mainViewport').clientWidth - 40;
+            if (vpWidth < BOARD_WIDTH) {
+                initialScale = vpWidth / BOARD_WIDTH;
+            }
+            changeZoom(0, initialScale);
 
             setTimeout(() => {
                 if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
                     MathJax.typesetPromise([board]).then(() => {
                         clearTimeout(safetyTimeout);
                         document.getElementById('loadingOverlay').classList.remove('active');
+                        // Recalculate zoom sizing after math renders (as elements might expand)
+                        changeZoom(0, currentZoom); 
                     });
                 } else {
                     clearTimeout(safetyTimeout);
@@ -307,29 +332,31 @@
             }, 200);
         }
 
-        async function exportCanvasPDF() {
+        async function exportContinuousPDF() {
             if (typeof html2pdf === 'undefined') {
-                alert("PDF Generator is still loading. Please wait a few seconds.");
+                alert("PDF Engine loading. Try again in a moment.");
                 return;
             }
-            if (!cachedNoteData) return alert("Canvas data is corrupted.");
+            if (!cachedNoteData) return alert("Canvas data is missing.");
 
             const overlay = document.getElementById('loadingOverlay');
             const loadText = document.getElementById('loadingText');
             overlay.classList.add('active');
+            loadText.textContent = "Taking High-Res Snapshot...";
             
             document.body.classList.add('pdf-printing');
             document.querySelector('.app-header').style.display = 'none';
             
-            // Reset zoom to 1 for perfect 1:1 PDF scaling
-            const originalZoom = currentZoom;
-            const board = document.getElementById('canvasBoard');
-            board.style.transform = `scale(1)`;
-            
-            loadText.textContent = "Taking High-Res Snapshot...";
-            const docTitle = cachedNoteData.title || 'NAV_Board';
+            // Wait for DOM reflow
+            await new Promise(r => setTimeout(r, 200));
 
-            // We use a continuous portrait PDF fitted perfectly to the 1200px board width
+            const board = document.getElementById('canvasBoard');
+            const docTitle = cachedNoteData.title || 'NAV_Board';
+            
+            // Capture exact height of the rendered board
+            const finalHeight = board.scrollHeight;
+
+            // Single continuous PDF page ensures absolute elements are NEVER cut in half
             const opt = {
                 margin:       0, 
                 filename:     `${docTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_board.pdf`,
@@ -339,25 +366,25 @@
                     useCORS: true, 
                     scrollY: 0, 
                     scrollX: 0, 
-                    width: 1200, 
-                    windowWidth: 1200,
-                    backgroundColor: getComputedStyle(document.body).getPropertyValue('--bg-dark').trim()
+                    width: BOARD_WIDTH,
+                    height: finalHeight,
+                    windowWidth: BOARD_WIDTH,
+                    backgroundColor: '#020617' // Hardcoded dark bg to match portal
                 }, 
-                jsPDF:        { unit: 'px', format: [1200, 1600], orientation: 'portrait', hotfixes: ["px_scaling"] }
+                jsPDF: { unit: 'px', format: [BOARD_WIDTH, finalHeight], orientation: 'portrait', hotfixes: ["px_scaling"] }
             };
 
             try {
                 await html2pdf().set(opt).from(board).save();
             } catch(e) {
                 console.error("PDF Error:", e);
-                alert("Failed to generate PDF: " + e.message);
+                alert("Failed to generate PDF. Memory might be full.");
             } finally {
                 document.body.classList.remove('pdf-printing');
                 document.querySelector('.app-header').style.display = 'flex';
-                // Restore zoom
-                currentZoom = originalZoom;
-                board.style.transform = `scale(${currentZoom})`;
+                changeZoom(0, currentZoom); // Restore exact state
                 overlay.classList.remove('active');
+                loadText.textContent = "Rendering Canvas...";
             }
         }
 
