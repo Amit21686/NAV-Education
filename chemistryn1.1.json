@@ -14,11 +14,11 @@
     },
     {
       "type": "paragraph",
-      "x": "20px",
-      "y": "50px",
+      "x": "0px",
+      "y": "0px",
       "w": "266.5px",
       "h": "auto",
-      "z": "25",
+      "z": "27",
       "style": "font-family: Impact; font-size: 36px;",
       "content": "<span style=\"color: rgb(0, 255, 0); background-color: rgb(255, 255, 0); text-decoration-line: underline;\">अमित</span>"
     }
