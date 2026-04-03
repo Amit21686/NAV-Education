@@ -34,11 +34,11 @@
     },
     {
       "type": "table",
-      "x": "39.5px",
-      "y": "54px",
+      "x": "42.5px",
+      "y": "149.5px",
       "w": "400px",
       "h": "auto",
-      "z": "23",
+      "z": "25",
       "style": "font-size: 10px; ",
       "content": {
         "rows": 5,
