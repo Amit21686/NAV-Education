@@ -18,9 +18,9 @@
       "y": "50px",
       "w": "266.5px",
       "h": "auto",
-      "z": "25",
+      "z": "27",
       "style": "font-family: Bookman; font-size: 36px;",
-      "content": "<span style=\"font-weight: bold; font-style: italic; text-decoration-line: underline; color: rgb(255, 0, 0);\">Amit</span>"
+      "content": "<span style=\"font-weight: bold; font-style: italic; text-decoration-line: underline; color: rgb(255, 255, 255);\">Amit</span>"
     }
   ]
 }
