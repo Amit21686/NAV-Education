@@ -4,14 +4,7 @@
   "chapters": [
     {
       "title": "Solution",
-      "contents": [
-        {
-          "title": "Amit",
-          "file": "chemistryn1.1.json",
-          "type": "notes",
-          "status": "draft"
-        }
-      ]
+      "contents": []
     }
   ]
 }
