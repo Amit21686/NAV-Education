@@ -54,11 +54,11 @@
     },
     {
       "type": "paragraph",
-      "x": "20px",
-      "y": "50px",
+      "x": "190.5px",
+      "y": "121.5px",
       "w": "300px",
       "h": "auto",
-      "z": "15",
+      "z": "17",
       "style": "font-family: Palatino; font-size: 24px; ",
       "content": "<br>"
     }
