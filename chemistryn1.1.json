@@ -24,11 +24,11 @@
     },
     {
       "type": "expression",
-      "x": "78.5px",
-      "y": "55px",
+      "x": "0px",
+      "y": "29.5px",
       "w": "70.5px",
       "h": "40px",
-      "z": "44",
+      "z": "46",
       "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; font-size: 10px; ",
       "content": "$$ F = ma $$"
     }
