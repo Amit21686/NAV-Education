@@ -18,7 +18,7 @@
       "y": "0px",
       "w": "349.5px",
       "h": "auto",
-      "z": "63",
+      "z": "68",
       "style": "text-decoration: none; font-weight: normal; font-style: normal; color: rgb(0, 255, 255); font-family: ",
       "content": "             Gujarat of India </h2><div>                               $$ \\frac{1}{v} + \\frac{1}{u} = \\frac{1}{f} $$&nbsp;</div><div>          </div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 3)\" ontouchstart=\"CanvasInteraction.startResize(event, 3)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 2)\" ontouchstart=\"CanvasInteraction.startResize(event, 2)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 1)\" ontouchstart=\"CanvasInteraction.startResize(event, 1)\">"
     },
@@ -26,9 +26,9 @@
       "type": "table",
       "x": "5px",
       "y": "270px",
-      "w": "253.5px",
-      "h": "276px",
-      "z": "27",
+      "w": "294.5px",
+      "h": "272.5px",
+      "z": "33",
       "style": "",
       "content": {
         "rows": 6,
@@ -40,22 +40,22 @@
           ],
           [
             "Sunday",
-            ""
+            "Maths"
           ],
           [
             "Monday",
-            ""
+            "Computer"
           ],
           [
             "Tuesday",
-            ""
+            "Science"
           ],
           [
             "Wednesday",
-            ""
+            "Social science"
           ],
           [
-            "",
+            "Thursday",
             ""
           ]
         ]
