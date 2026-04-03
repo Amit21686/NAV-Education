@@ -50,6 +50,16 @@
           ]
         ]
       }
+    },
+    {
+      "type": "paragraph",
+      "x": "1103px",
+      "y": "54px",
+      "w": "300px",
+      "h": "auto",
+      "z": "12",
+      "style": "font-family: Dancing Script; font-size: 28px; background-color: #ff00ff; font-weight: bold; font-style: italic; ",
+      "content": "<br>"
     }
   ]
 }
