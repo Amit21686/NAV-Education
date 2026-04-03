@@ -26,9 +26,9 @@
       "type": "expression",
       "x": "134px",
       "y": "114.5px",
-      "w": "130.5px",
-      "h": "84px",
-      "z": "25",
+      "w": "70.5px",
+      "h": "40px",
+      "z": "26",
       "style": "display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px; text-align:center; font-size: 10px; ",
       "content": "$$ E=mc^2 $$"
     }
