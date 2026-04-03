@@ -81,7 +81,6 @@
         .canvas-board {
             width: 1200px;
             min-height: 1000px;
-            /* Removed background, borders, and shadows for seamless floating elements */
             background: transparent;
             border: none;
             box-shadow: none;
@@ -90,6 +89,7 @@
             z-index: 1;
         }
 
+        /* 1:1 CSS MATCH WITH ADMIN PORTAL */
         .canvas-element {
             position: absolute;
             min-height: 40px;
@@ -98,7 +98,7 @@
             display: flex;
             flex-direction: column;
             transform: translateZ(0); 
-            transition: top 0.3s ease; /* Smooth transition for pagination shifts */
+            transition: top 0.3s ease; 
         }
 
         .fill-space { height: 100% !important; display: flex; flex-direction: column; justify-content: center; align-items: center;}
@@ -144,7 +144,6 @@
         body.pdf-printing::before { display: none !important; }
         body.pdf-printing .canvas-viewport { overflow: visible !important; padding: 0 !important; background: none !important;}
         body.pdf-printing .canvas-scale-wrapper { transform: scale(1) !important; margin: 0 !important; width: 1200px !important; }
-        /* Solid background applied purely for the PDF output so text is legible */
         body.pdf-printing .canvas-board { background: #020617 !important; } 
     </style>
 </head>
@@ -391,12 +390,7 @@
 
             board.style.minHeight = (maxBottomEdge + 150) + 'px';
 
-            // Mobile Readability Fix: Ensure scale defaults to 1.0 on small screens so text is readable
-            let initialScale = 1;
-            const vpWidth = document.getElementById('mainViewport').clientWidth - 40;
-            if (window.innerWidth > 800 && vpWidth < BOARD_WIDTH) {
-                initialScale = vpWidth / BOARD_WIDTH;
-            }
+            let initialScale = 1.0; 
             changeZoom(0, initialScale);
 
             setTimeout(() => {
@@ -441,17 +435,15 @@
             document.body.classList.add('pdf-printing');
             document.querySelector('.app-header').style.display = 'none';
             
-            // SMART BOARD WATERFALL PAGINATION ENGINE
             loadText.textContent = "Calculating Smart Slide Breaks...";
             const board = document.getElementById('canvasBoard');
             const originalHeight = board.style.minHeight;
-            const SLIDE_H = 675; // 16:9 Landscape Height based on 1200 width
+            const SLIDE_H = 675; 
             
             let elements = Array.from(board.querySelectorAll('.canvas-element'));
             let originalTops = new Map();
             let pushDownAmount = 0;
 
-            // Sort elements visually top to bottom to prevent overlap shifting
             let sortedElData = elements.map(el => {
                 let origTop = parseFloat(el.style.top) || 0;
                 originalTops.set(el, origTop);
@@ -462,14 +454,13 @@
                 };
             }).sort((a,b) => a.origTop - b.origTop);
 
-            // Shift elements down if they cross the 675px smart board page boundary
             sortedElData.forEach(item => {
                 let proposedTop = item.origTop + pushDownAmount;
                 let slideStart = Math.floor(proposedTop / SLIDE_H) * SLIDE_H;
                 let slideEnd = slideStart + SLIDE_H;
 
                 if (proposedTop + item.h > slideEnd && item.h < SLIDE_H) {
-                    let shift = (slideEnd - proposedTop) + 20; // push to next slide boundary + 20px padding
+                    let shift = (slideEnd - proposedTop) + 20; 
                     pushDownAmount += shift;
                     proposedTop += shift;
                 }
@@ -485,7 +476,6 @@
             const finalHeight = Math.ceil(maxBottom / SLIDE_H) * SLIDE_H;
             board.style.minHeight = finalHeight + 'px';
 
-            // MATH EX/EM TO EXACT PIXEL CONVERSION FOR PDF
             const originalMathStyles = [];
             const svgs = board.querySelectorAll('mjx-container svg');
             
@@ -563,7 +553,6 @@
                 console.error("PDF Error:", e);
                 alert("Failed to generate PDF. Memory might be full.");
             } finally {
-                // Restore Math Relative Units
                 originalMathStyles.forEach(orig => {
                     if(orig.width) orig.el.setAttribute('width', orig.width); else orig.el.removeAttribute('width');
                     if(orig.height) orig.el.setAttribute('height', orig.height); else orig.el.removeAttribute('height');
@@ -571,7 +560,6 @@
                     orig.el.style.verticalAlign = orig.sVerticalAlign || ''; orig.el.style.color = orig.color || '';
                 });
 
-                // Restore Original Element Positions (Remove Waterfall Effect)
                 elements.forEach(el => {
                     el.style.top = originalTops.get(el) + 'px';
                 });
