@@ -49,7 +49,7 @@
       "w": "300px",
       "h": "auto",
       "z": "16",
-      "style": "font-family: Courier New; ",
+      "style": "font-family: \"Courier New\"; font-size: 20px;",
       "content": "<br>"
     }
   ]
