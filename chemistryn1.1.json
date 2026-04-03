@@ -23,16 +23,6 @@
       "content": "<span style=\"font-weight: bold; font-style: italic; text-decoration-line: underline;\">Hello</span>"
     },
     {
-      "type": "image",
-      "x": "81.5px",
-      "y": "812.5px",
-      "w": "105.5px",
-      "h": "92.5px",
-      "z": "47",
-      "style": "",
-      "content": "https://raw.githubusercontent.com/Amit21686/NAV-Education/main/img_1775194897745.jpg?t=1775194899218"
-    },
-    {
       "type": "h2",
       "x": "0px",
       "y": "0px",
@@ -40,7 +30,7 @@
       "h": "auto",
       "z": "53",
       "style": "text-decoration: none; font-weight: normal; font-style: italic; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255); font-family: ",
-      "content": "             Gujarat of India </h2><div>            $$ \\frac{1}{v} + \\frac{1}{u} = \\frac{1}{f} $$&nbsp;</div><div>          </div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 3)\" ontouchstart=\"CanvasInteraction.startResize(event, 3)\">"
+      "content": "             Gujarat of India </h2><div>            $$ \\frac{1}{v} + \\frac{1}{u} = \\frac{1}{f} $$&nbsp;</div><div>          </div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 4)\" ontouchstart=\"CanvasInteraction.startResize(event, 4)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 3)\" ontouchstart=\"CanvasInteraction.startResize(event, 3)\"></div><div class=\"resize-handle\" onmousedown=\"CanvasInteraction.startResize(event, 2)\" ontouchstart=\"CanvasInteraction.startResize(event, 2)\">"
     },
     {
       "type": "image",
