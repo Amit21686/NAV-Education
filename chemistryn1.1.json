@@ -58,7 +58,7 @@
       "w": "313px",
       "h": "auto",
       "z": "12",
-      "style": "font-family: \"Great Vibes\"; font-size: 28px; font-weight: bold; font-style: italic; text-decoration: none;",
+      "style": "font-family: \"Great Vibes\"; font-size: 28px; font-weight: bold; font-style: italic; text-decoration: none; background-color: rgb(255, 255, 0);",
       "content": "Hello how are you ? 👋 😊 "
     }
   ]
