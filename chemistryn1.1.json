@@ -71,6 +71,16 @@
       "z": "46",
       "style": "",
       "content": "https://raw.githubusercontent.com/Amit21686/NAV-Education/main/img_1775194897745.jpg?t=1775194899218"
+    },
+    {
+      "type": "h1",
+      "x": "403px",
+      "y": "51px",
+      "w": "500px",
+      "h": "auto",
+      "z": "14",
+      "style": "font-family: Bookman; font-size: 72px; ",
+      "content": "<br>"
     }
   ]
 }
