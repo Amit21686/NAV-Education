@@ -3,7 +3,7 @@
   "topic": "Solution",
   "blocks": [
     {
-      "type": "image",
+      "type": "paragraph",
       "x": "289px",
       "y": "1.5px",
       "w": "193px",
@@ -13,43 +13,14 @@
       "content": "https://raw.githubusercontent.com/Amit21686/NAV-Education/main/img_1775181589486.jpg?t=1775181591751"
     },
     {
-      "type": "table",
+      "type": "paragraph",
       "x": "8px",
       "y": "0px",
       "w": "289.5px",
       "h": "118.5px",
       "z": "34",
       "style": "",
-      "content": {
-        "rows": 6,
-        "cols": 2,
-        "data": [
-          [
-            "Day",
-            "Subject"
-          ],
-          [
-            "Sunday",
-            "Maths"
-          ],
-          [
-            "Monday",
-            "Computer"
-          ],
-          [
-            "Tuesday",
-            "Science"
-          ],
-          [
-            "Wednesday",
-            "Social science"
-          ],
-          [
-            "Thursday",
-            "Chemistry"
-          ]
-        ]
-      }
+      "content": "[object Object]"
     },
     {
       "type": "paragraph",
