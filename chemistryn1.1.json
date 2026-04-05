@@ -1,16 +1,5 @@
 {
   "title": "Amit",
   "topic": "Solution",
-  "blocks": [
-    {
-      "type": "paragraph",
-      "x": "871.5px",
-      "y": "39px",
-      "w": "313px",
-      "h": "auto",
-      "z": "12",
-      "style": "font-family: ",
-      "content": "Hello how are you ? 👋 😊 "
-    }
-  ]
+  "blocks": []
 }
