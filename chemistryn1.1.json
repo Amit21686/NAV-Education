@@ -29,7 +29,7 @@
       "w": "300px",
       "h": "auto",
       "z": "13",
-      "style": "font-family: Great Vibes; font-size: 28px; background-color: #ff0000; font-weight: bold; font-style: italic; ",
+      "style": "font-family: \"Great Vibes\"; font-size: 28px; background-color: rgb(255, 0, 0); font-weight: bold; font-style: italic; color: rgb(255, 255, 255);",
       "content": "<br>"
     }
   ]
