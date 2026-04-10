@@ -8,14 +8,24 @@
         {
           "id": "q1",
           "text": "What does CPU stand for?",
-          "options": ["Central Processing Unit", "Computer Personal Unit", "Central Program Unit", "Central Processor Unit"],
+          "options": [
+            "Central Processing Unit",
+            "Computer Personal Unit",
+            "Central Program Unit",
+            "Central Processor Unit"
+          ],
           "correct": 0,
           "explanation": "CPU stands for Central Processing Unit"
         },
         {
           "id": "q2",
           "text": "Which of these is an output device?",
-          "options": ["Keyboard", "Mouse", "Monitor", "Scanner"],
+          "options": [
+            "Keyboard",
+            "Mouse",
+            "Monitor",
+            "Scanner"
+          ],
           "correct": 2,
           "explanation": "Monitor displays output from the computer"
         }
@@ -29,9 +39,33 @@
         {
           "id": "q1",
           "text": "Which is an operating system?",
-          "options": ["Windows", "Chrome", "Firefox", "Photoshop"],
+          "options": [
+            "Windows",
+            "Chrome",
+            "Firefox",
+            "Photoshop"
+          ],
           "correct": 0,
           "explanation": "Windows is an operating system"
+        }
+      ]
+    },
+    {
+      "id": "topic_1775802071648",
+      "name": "ch 5",
+      "description": "Amit",
+      "questions": [
+        {
+          "id": "q17758020716480",
+          "text": "who is this",
+          "options": [
+            "🙂‍↔️",
+            "amit",
+            "hi 😊👋",
+            "Aman"
+          ],
+          "correct": 1,
+          "explanation": "my will"
         }
       ]
     }
