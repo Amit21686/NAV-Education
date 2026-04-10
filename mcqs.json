@@ -89,129 +89,21 @@
       ]
     },
     {
-      "id": "topic_1775835286510",
-      "name": "computer",
-      "description": "conclusion",
+      "id": "topic_1775835435168",
+      "name": "amit kumar",
+      "description": "hhh",
       "questions": [
         {
-          "id": "q17758352865100",
-          "text": "What is HTML?",
+          "id": "q17758354351630",
+          "text": "amit kumar",
           "options": [
-            "Programming Language",
-            "Markup Language",
-            "Database",
-            "Operating System"
+            "h",
+            "a",
+            "b",
+            "k"
           ],
           "correct": 1,
-          "explanation": "HTML is a markup language used to structure web pages."
-        },
-        {
-          "id": "q17758352865101",
-          "text": "What is CPU?",
-          "options": [
-            "Central Process Unit",
-            "Central Processing Unit",
-            "Computer Personal Unit",
-            "Control Panel Unit"
-          ],
-          "correct": 1,
-          "explanation": "CPU stands for Central Processing Unit and performs all calculations."
-        },
-        {
-          "id": "q17758352865102",
-          "text": "Which is an input device?",
-          "options": [
-            "Monitor",
-            "Printer",
-            "Keyboard",
-            "Speaker"
-          ],
-          "correct": 2,
-          "explanation": "Keyboard is used to input data into the computer."
-        },
-        {
-          "id": "q17758352865103",
-          "text": "What is Python?",
-          "options": [
-            "Snake",
-            "Programming Language",
-            "Game",
-            "Software"
-          ],
-          "correct": 1,
-          "explanation": "Python is a high-level programming language."
-        },
-        {
-          "id": "q17758352865104",
-          "text": "What is RAM?",
-          "options": [
-            "Read Access Memory",
-            "Random Access Memory",
-            "Run Access Memory",
-            "Real Access Memory"
-          ],
-          "correct": 1,
-          "explanation": "RAM is temporary memory used by the computer."
-        },
-        {
-          "id": "q17758352865105",
-          "text": "Which is a web browser?",
-          "options": [
-            "Google",
-            "Chrome",
-            "Windows",
-            "Linux"
-          ],
-          "correct": 1,
-          "explanation": "Chrome is a web browser used to access websites."
-        },
-        {
-          "id": "q17758352865106",
-          "text": "What is an Operating System?",
-          "options": [
-            "Hardware",
-            "Software",
-            "Device",
-            "Network"
-          ],
-          "correct": 1,
-          "explanation": "Operating system is system software that manages computer hardware."
-        },
-        {
-          "id": "q17758352865107",
-          "text": "Which device is used to store data permanently?",
-          "options": [
-            "RAM",
-            "Cache",
-            "Hard Disk",
-            "Register"
-          ],
-          "correct": 2,
-          "explanation": "Hard disk stores data permanently."
-        },
-        {
-          "id": "q17758352865108",
-          "text": "What is Internet?",
-          "options": [
-            "Network of computers",
-            "Software",
-            "Device",
-            "Program"
-          ],
-          "correct": 0,
-          "explanation": "Internet is a global network connecting computers."
-        },
-        {
-          "id": "q17758352865109",
-          "text": "Which language is used for styling web pages?",
-          "options": [
-            "HTML",
-            "Python",
-            "CSS",
-            "Java"
-          ],
-          "correct": 2,
-          "explanation": "CSS is used to design and style web pages."
+          "explanation": "ggg"
         }
       ]
     }
