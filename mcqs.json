@@ -6,8 +6,8 @@
       "description": "Basic concepts of computer hardware and software",
       "questions": [
         {
-          "id": "q17758398329970",
-          "text": "What does CPU stand for? Amit AAYUV  Anjali 😲",
+          "id": "q17758383520430",
+          "text": "What does CPU stand for? Amit AAYUV 😲",
           "options": [
             "Central Processing Unit",
             "Computer Personal Unit",
@@ -18,7 +18,7 @@
           "explanation": "CPU stands for Central Processing Unit"
         },
         {
-          "id": "q17758398329971",
+          "id": "q17758383520431",
           "text": "Which of these is an output device?",
           "options": [
             "Keyboard",
@@ -47,63 +47,6 @@
           ],
           "correct": 0,
           "explanation": "Windows is an operating system"
-        }
-      ]
-    },
-    {
-      "id": "topic_1775802238394",
-      "name": "amit",
-      "description": "hello",
-      "questions": [
-        {
-          "id": "q17758022383940",
-          "text": "why you are",
-          "options": [
-            "it's",
-            "now",
-            "all",
-            "hello"
-          ],
-          "correct": 2,
-          "explanation": "my will"
-        }
-      ]
-    },
-    {
-      "id": "topic_1775802494403",
-      "name": "ch 4 how are you",
-      "description": "concept",
-      "questions": [
-        {
-          "id": "q17758024944030",
-          "text": "what's your name 🤣",
-          "options": [
-            "nothing",
-            "Aa",
-            "👋🤗",
-            "hi 😌"
-          ],
-          "correct": 3,
-          "explanation": "you are egoistic."
-        }
-      ]
-    },
-    {
-      "id": "topic_1775835435168",
-      "name": "amit kumar",
-      "description": "hhh",
-      "questions": [
-        {
-          "id": "q17758354351630",
-          "text": "amit kumar",
-          "options": [
-            "h",
-            "a",
-            "b",
-            "k"
-          ],
-          "correct": 1,
-          "explanation": "ggg"
         }
       ]
     },
@@ -231,6 +174,49 @@
           ],
           "correct": 2,
           "explanation": "CSS is used to design and style web pages."
+        }
+      ]
+    },
+    {
+      "id": "topic_1775840027527",
+      "name": "Anmit",
+      "description": "Aviit",
+      "questions": [
+        {
+          "id": "q17758400275270",
+          "text": "What is HTML?",
+          "options": [
+            "Programming Language",
+            "Markup Language",
+            "Database",
+            "Operating System"
+          ],
+          "correct": 1,
+          "explanation": "HTML is a markup language used to structure web pages."
+        },
+        {
+          "id": "q17758400275271",
+          "text": "What is CPU?",
+          "options": [
+            "Central Process Unit",
+            "Central Processing Unit",
+            "Computer Personal Unit",
+            "Control Panel Unit"
+          ],
+          "correct": 1,
+          "explanation": "CPU stands for Central Processing Unit and performs all calculations."
+        },
+        {
+          "id": "q17758400275272",
+          "text": "Which is an input device?",
+          "options": [
+            "Monitor",
+            "Printer",
+            "Keyboard",
+            "Speaker"
+          ],
+          "correct": 2,
+          "explanation": "Keyboard is used to input data into the computer."
         }
       ]
     }
