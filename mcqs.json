@@ -1,0 +1,39 @@
+{
+  "topics": [
+    {
+      "id": "topic_1",
+      "name": "Chapter 1: Introduction to Computers",
+      "description": "Basic concepts of computer hardware and software",
+      "questions": [
+        {
+          "id": "q1",
+          "text": "What does CPU stand for?",
+          "options": ["Central Processing Unit", "Computer Personal Unit", "Central Program Unit", "Central Processor Unit"],
+          "correct": 0,
+          "explanation": "CPU stands for Central Processing Unit"
+        },
+        {
+          "id": "q2",
+          "text": "Which of these is an output device?",
+          "options": ["Keyboard", "Mouse", "Monitor", "Scanner"],
+          "correct": 2,
+          "explanation": "Monitor displays output from the computer"
+        }
+      ]
+    },
+    {
+      "id": "topic_2",
+      "name": "Chapter 2: Operating Systems",
+      "description": "Types and functions of operating systems",
+      "questions": [
+        {
+          "id": "q1",
+          "text": "Which is an operating system?",
+          "options": ["Windows", "Chrome", "Firefox", "Photoshop"],
+          "correct": 0,
+          "explanation": "Windows is an operating system"
+        }
+      ]
+    }
+  ]
+}
