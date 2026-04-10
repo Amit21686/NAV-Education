@@ -6,8 +6,8 @@
       "description": "Basic concepts of computer hardware and software",
       "questions": [
         {
-          "id": "q17758369533110",
-          "text": "What does CPU stand for? Aman",
+          "id": "q1",
+          "text": "What does CPU stand for?",
           "options": [
             "Central Processing Unit",
             "Computer Personal Unit",
@@ -18,7 +18,7 @@
           "explanation": "CPU stands for Central Processing Unit"
         },
         {
-          "id": "q17758369533111",
+          "id": "q2",
           "text": "Which of these is an output device?",
           "options": [
             "Keyboard",
@@ -104,6 +104,133 @@
           ],
           "correct": 1,
           "explanation": "ggg"
+        }
+      ]
+    },
+    {
+      "id": "topic_1775837035273",
+      "name": "check",
+      "description": "deck",
+      "questions": [
+        {
+          "id": "q17758370352730",
+          "text": "What is HTML?",
+          "options": [
+            "Programming Language",
+            "Markup Language",
+            "Database",
+            "Operating System"
+          ],
+          "correct": 1,
+          "explanation": "HTML is a markup language used to structure web pages."
+        },
+        {
+          "id": "q17758370352731",
+          "text": "What is CPU?",
+          "options": [
+            "Central Process Unit",
+            "Central Processing Unit",
+            "Computer Personal Unit",
+            "Control Panel Unit"
+          ],
+          "correct": 1,
+          "explanation": "CPU stands for Central Processing Unit and performs all calculations."
+        },
+        {
+          "id": "q17758370352732",
+          "text": "Which is an input device?",
+          "options": [
+            "Monitor",
+            "Printer",
+            "Keyboard",
+            "Speaker"
+          ],
+          "correct": 2,
+          "explanation": "Keyboard is used to input data into the computer."
+        },
+        {
+          "id": "q17758370352733",
+          "text": "What is Python?",
+          "options": [
+            "Snake",
+            "Programming Language",
+            "Game",
+            "Software"
+          ],
+          "correct": 1,
+          "explanation": "Python is a high-level programming language."
+        },
+        {
+          "id": "q17758370352734",
+          "text": "What is RAM?",
+          "options": [
+            "Read Access Memory",
+            "Random Access Memory",
+            "Run Access Memory",
+            "Real Access Memory"
+          ],
+          "correct": 1,
+          "explanation": "RAM is temporary memory used by the computer."
+        },
+        {
+          "id": "q17758370352735",
+          "text": "Which is a web browser?",
+          "options": [
+            "Google",
+            "Chrome",
+            "Windows",
+            "Linux"
+          ],
+          "correct": 1,
+          "explanation": "Chrome is a web browser used to access websites."
+        },
+        {
+          "id": "q17758370352736",
+          "text": "What is an Operating System?",
+          "options": [
+            "Hardware",
+            "Software",
+            "Device",
+            "Network"
+          ],
+          "correct": 1,
+          "explanation": "Operating system is system software that manages computer hardware."
+        },
+        {
+          "id": "q17758370352737",
+          "text": "Which device is used to store data permanently?",
+          "options": [
+            "RAM",
+            "Cache",
+            "Hard Disk",
+            "Register"
+          ],
+          "correct": 2,
+          "explanation": "Hard disk stores data permanently."
+        },
+        {
+          "id": "q17758370352738",
+          "text": "What is Internet?",
+          "options": [
+            "Network of computers",
+            "Software",
+            "Device",
+            "Program"
+          ],
+          "correct": 0,
+          "explanation": "Internet is a global network connecting computers."
+        },
+        {
+          "id": "q17758370352739",
+          "text": "Which language is used for styling web pages?",
+          "options": [
+            "HTML",
+            "Python",
+            "CSS",
+            "Java"
+          ],
+          "correct": 2,
+          "explanation": "CSS is used to design and style web pages."
         }
       ]
     }
