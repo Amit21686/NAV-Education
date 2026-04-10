@@ -6,8 +6,8 @@
       "description": "Basic concepts of computer hardware and software",
       "questions": [
         {
-          "id": "q17758378864350",
-          "text": "What does CPU stand for? Amit 😲",
+          "id": "q17758383520430",
+          "text": "What does CPU stand for? Amit AAYUV 😲",
           "options": [
             "Central Processing Unit",
             "Computer Personal Unit",
@@ -18,7 +18,7 @@
           "explanation": "CPU stands for Central Processing Unit"
         },
         {
-          "id": "q17758378864351",
+          "id": "q17758383520431",
           "text": "Which of these is an output device?",
           "options": [
             "Keyboard",
