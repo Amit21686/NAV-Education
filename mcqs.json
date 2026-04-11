@@ -219,6 +219,49 @@
           "explanation": "Keyboard is used to input data into the computer."
         }
       ]
+    },
+    {
+      "id": "topic_1775872523647",
+      "name": "Amit Kumar",
+      "description": "hello 👋 ji",
+      "questions": [
+        {
+          "id": "q17758725236470",
+          "text": "What is an Operating System?",
+          "options": [
+            "Hardware",
+            "Software",
+            "Device",
+            "Network"
+          ],
+          "correct": 1,
+          "explanation": "Operating system is system software that manages computer hardware."
+        },
+        {
+          "id": "q17758725236481",
+          "text": "Which device is used to store data permanently?",
+          "options": [
+            "RAM",
+            "Cache",
+            "Hard Disk",
+            "Register"
+          ],
+          "correct": 2,
+          "explanation": "Hard disk stores data permanently."
+        },
+        {
+          "id": "q17758725236482",
+          "text": "What is Internet?",
+          "options": [
+            "Network of computers",
+            "Software",
+            "Device",
+            "Program"
+          ],
+          "correct": 0,
+          "explanation": "Internet is a global network connecting computers."
+        }
+      ]
     }
   ]
 }
