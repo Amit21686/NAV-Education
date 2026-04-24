@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Mr. Amit (Mr. ATM)",
+    "contribution": "Founder, Lead Full-Stack Developer & UI/UX Architect",
+    "image": "https://ui-avatars.com/api/?name=Mr+Amit&background=6366f1&color=ffffff&size=256&bold=true"
+  },
+  {
+    "name": "Mukesh Kumar",
+    "contribution": "Chief Academic Advisor & Subject Matter Expert",
+    "image": "https://ui-avatars.com/api/?name=Mukesh+Kumar&background=f59e0b&color=ffffff&size=256&bold=true"
+  },
+  {
+    "name": "Sanju Vyas",
+    "contribution": "Quality Assurance, Content Strategist & Beta Tester",
+    "image": "https://ui-avatars.com/api/?name=Sanju+Vyas&background=8b5cf6&color=ffffff&size=256&bold=true"
+  },
+  {
+    "name": "NAV Education Community",
+    "contribution": "Open Source Libraries & Student Feedback",
+    "image": "https://ui-avatars.com/api/?name=NAV+Edu&background=10b981&color=ffffff&size=256&bold=true"
+  }
+]
