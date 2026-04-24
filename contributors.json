@@ -1,22 +1,20 @@
 [
   {
     "name": "Mr. Amit (Mr. ATM)",
-    "contribution": "Founder, Lead Full-Stack Developer & UI/UX Architect",
+    "contribution": "Founder & UI/UX Architect",
+    "description": "Architected the entire EduQuiz platform, engineered the native Android bridge, and designed the premium user interface for NAV Education.",
     "image": "https://raw.githubusercontent.com/Amit21686/NAV-Education/refs/heads/main/images/file_000000003f9c72089e7e806424cb1513.png"
   },
   {
-    "name": "Mukesh Kumar",
-    "contribution": "Chief Academic Advisor & Subject Matter Expert",
+    "name": "Aashish Patel",
+    "contribution": "Chief Academic Advisor",
+    "description": "Provided expert guidance on academic structures and curated the foundational study notes.",
     "image": "https://ui-avatars.com/api/?name=Mukesh+Kumar&background=f59e0b&color=ffffff&size=256&bold=true"
   },
   {
     "name": "Sanju Vyas",
-    "contribution": "Quality Assurance, Content Strategist & Beta Tester",
+    "contribution": "Content Strategist & Beta Tester",
+    "description": "Ensured zero-bug tolerance and optimized the student learning flows through extensive testing.",
     "image": "https://ui-avatars.com/api/?name=Sanju+Vyas&background=8b5cf6&color=ffffff&size=256&bold=true"
-  },
-  {
-    "name": "NAV Education Community",
-    "contribution": "Open Source Libraries & Student Feedback",
-    "image": "https://ui-avatars.com/api/?name=NAV+Edu&background=10b981&color=ffffff&size=256&bold=true"
   }
 ]
