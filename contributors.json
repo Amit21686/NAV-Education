@@ -1,30 +1,23 @@
 [
   {
     "name": "Mr. Amit (Mr. ATM)",
-    "contribution": "Founder & UI/UX Architect",
     "tag": "he",
-    "description": "Architected the entire EduQuiz platform, engineered the native Android bridge, and designed the premium user interface for NAV Education.",
-    "image": "https://raw.githubusercontent.com/Amit21686/NAV-Education/refs/heads/main/images/file_000000003f9c72089e7e806424cb1513.png"
+    "contribution": "Founder & UI\/UX Architect",
+    "image": "https:\/\/raw.githubusercontent.com\/Amit21686\/NAV-Education\/refs\/heads\/main\/images\/file_000000003f9c72089e7e806424cb1513.png",
+    "description": "Architected the entire EduQuiz platform, engineered the native Android bridge, and designed the premium user interface for NAV Education."
   },
   {
     "name": "Aashish Patel",
-    "contribution": "Chief Academic Advisor",
-    "description": "Provided expert guidance on academic structures and curated the foundational study notes.",
     "tag": "he",
-    "image": "https://ui-avatars.com/api/?name=Aashish+Patel&background=f59e0b&color=ffffff&size=256&bold=true"
+    "contribution": "Chief Academic Advisor",
+    "image": "https:\/\/ui-avatars.com\/api\/?name=Aashish+Patel&background=f59e0b&color=ffffff&size=256&bold=true",
+    "description": "Provided expert guidance on academic structures and curated the foundational study notes."
   },
   {
     "name": "Sanju Vyas",
-    "contribution": "Content Strategist & Beta Tester",
     "tag": "he",
-    "description": "Ensured zero-bug tolerance and optimized the student learning flows through extensive testing.",
-    "image": "https://ui-avatars.com/api/?name=Sanju+Vyas&background=8b5cf6&color=ffffff&size=256&bold=true"
-  },
-  {
-    "name": "Anjali ",
-    "tag": "she",
-    "contribution": "Love",
-    "image": "",
-    "description": "broke up but Biology 🥼"
+    "contribution": "Content Strategist & Beta Tester",
+    "image": "https:\/\/ui-avatars.com\/api\/?name=Sanju+Vyas&background=8b5cf6&color=ffffff&size=256&bold=true",
+    "description": "Ensured zero-bug tolerance and optimized the student learning flows through extensive testing."
   }
 ]
