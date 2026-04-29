@@ -1,6 +1,7 @@
 {
-  "versionCode": 2.1,
-  "versionName": "1.1",
+  "versionCode": 3,
+  "versionName": "2.1",
   "apkUrl": "https://github.com/Amit21686/NAV-Education/releases/download/1.1/app-debug.apk",
-  "releaseNotes": "1. Added new Jumper Grid.\n2. Fixed Recent Tests UI.\n3. Added Auto-Updater!"
+  "releaseNotes": "1. Added new Jumper Grid.\n2. Fixed Recent Tests UI.\n3. Added Auto-Updater!",
+  "forceUpdate": false
 }
