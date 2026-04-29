@@ -1,7 +1,7 @@
 {
-  "versionCode": 3,
+  "versionCode": 1,
   "versionName": "2.1",
   "apkUrl": "https://github.com/Amit21686/NAV-Education/releases/download/1.1/EduQuiz.apk",
   "releaseNotes": "1. Added new Jumper Grid.\n2. Fixed Recent Tests UI.\n3. Added Auto-Updater!",
-  "forceUpdate": true
+  "forceUpdate": false
 }
