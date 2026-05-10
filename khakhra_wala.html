@@ -43,7 +43,13 @@ html { scroll-behavior: smooth; overflow-x: hidden; }
 html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
 body { font-family: 'Poppins', sans-serif; background: var(--bg-main); color: var(--text-dark); line-height: 1.6; overflow-x: hidden; }
-body.no-scroll { overflow: hidden; }
+
+/* STRICT BACKGROUND SCROLL LOCK */
+html.no-scroll, body.no-scroll { 
+    overflow: hidden !important; 
+    height: 100vh !important;
+    overscroll-behavior: none; /* Stops scroll bleeding on modern browsers */
+}
 
 h1, h2, h3, .logo-text { font-family: 'Playfair Display', serif; }
 button, a, .qty-control, .qty-btn, .btn-remove { user-select: none; -webkit-user-select: none; }
@@ -79,7 +85,6 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 .btn-primary { background: var(--brand); color: var(--surface); box-shadow: 0 4px 15px rgba(224, 93, 38, 0.25); }
 .btn-primary:hover { background: var(--brand-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(224, 93, 38, 0.35); }
 
-/* Support Buttons */
 .btn-whatsapp { background: #25D366; color: #FFF; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.25); height: 48px; font-size: 15px; }
 .btn-whatsapp:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35); }
 
@@ -95,7 +100,6 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 .hero-content p { font-size: 16px; color: var(--text-muted); margin-bottom: 28px; max-width: 480px;}
 
 .hero-image { display: flex; justify-content: flex-end; width: 100%; }
-/* Clean logo styling without borders or shadows */
 .hero-image img { width: 100%; max-width: 480px; object-fit: contain; pointer-events: none; }
 .hero-img-mobile { width: 100%; max-width: 280px; object-fit: contain; pointer-events: none; margin: 10px 0 24px 0; align-self: center; }
 
@@ -144,7 +148,7 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 /* =========================================
    FULLSCREEN IMAGE LIGHTBOX
    ========================================= */
-.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 9999; display: none; flex-direction: column; opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 9999; display: none; flex-direction: column; opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); overscroll-behavior: contain; }
 .lightbox.show { display: flex; opacity: 1; }
 .lightbox-header { display: flex; justify-content: flex-end; padding: 20px; flex-shrink: 0; }
 .lightbox-close { background: rgba(255,255,255,0.15); border: none; color: white; width: 44px; height: 44px; border-radius: 50%; font-size: 20px; cursor: pointer; display:flex; align-items:center; justify-content:center; }
@@ -159,12 +163,18 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 /* =========================================
    SLIDE SCREENS SYSTEM
    ========================================= */
-.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: var(--transition); }
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: var(--transition); overscroll-behavior: contain; }
 .overlay.active { opacity: 1; visibility: visible; }
 #cartOverlay { z-index: 1999; }
 #slideOverlay { z-index: 2499; } 
 
-.slide-panel { position: fixed; top: 0; bottom: 0; right: -120%; width: 100%; max-width: 440px; height: 100%; height: 100dvh; background: var(--surface); transition: var(--transition); display: flex; flex-direction: column; box-shadow: none; }
+.slide-panel { 
+    position: fixed; top: 0; bottom: 0; right: -120%; 
+    width: 100%; max-width: 440px; 
+    height: 100%; height: 100dvh; background: var(--surface);
+    transition: var(--transition); display: flex; flex-direction: column; 
+    box-shadow: none; overscroll-behavior: contain; 
+}
 .slide-panel.active { right: 0; box-shadow: -4px 0 24px rgba(0,0,0,0.08); }
 
 .cart-drawer { z-index: 2000; }
@@ -176,7 +186,7 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 .btn-close { width: 38px; height: 38px; border-radius: 50%; background: var(--bg-main); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-dark); }
 .btn-close:hover { background: #FFEBEB; color: #D32F2F; }
 
-.slide-body { flex: 1 1 auto; overflow-y: auto; padding: 24px; min-height: 0; background: var(--surface); }
+.slide-body { flex: 1 1 auto; overflow-y: auto; padding: 24px; min-height: 0; background: var(--surface); overscroll-behavior-y: contain;}
 .slide-footer { padding: 20px 24px calc(20px + env(safe-area-inset-bottom)); background: var(--surface); border-top: 1px solid var(--border-color); flex-shrink: 0; }
 
 /* Forms & UI inside Slides */
@@ -207,7 +217,9 @@ textarea.form-input { height: 90px; resize: none; }
 .support-banner { background: #E8F5E9; border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 24px; border: 1px solid #C8E6C9; }
 .success-icon { width: 80px; height: 80px; background: #E8F5E9; color: #2E7D32; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 20px; box-shadow: var(--shadow-sm); }
 .empty-state { text-align: center; color: var(--text-muted); margin-top: 60px; font-size: 15px; display: flex; flex-direction: column; align-items: center;}
-.empty-state img { width: 100%; max-width: 200px; object-fit: contain; margin-bottom: 20px; pointer-events: none;}
+
+/* LARGER EMPTY CART GRAPHIC */
+.empty-state img { width: 100%; max-width: 280px; object-fit: contain; margin-bottom: 24px; pointer-events: none;}
 
 /* Cart Specific */
 .cart-item { display: flex; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); align-items: center;}
@@ -234,13 +246,13 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
     .hero { padding: 100px 0 40px; } 
     
     .hero-content { margin: 0 auto; display: flex; flex-direction: column; align-items: center; width: 100%;}
-    .hero-content h1 { font-size: 32px; order: 3; margin-top: 10px; }
-    .hero-badge { order: 1; margin-bottom: 10px;}
+    
+    /* PERFECT LOGO POSITIONING: Just below badge */
+    .hero-badge { order: 1; margin-bottom: 8px;}
+    .hero-img-mobile { display: block !important; order: 2; margin: 0 0 16px 0 !important; max-width: 300px; }
+    .hero-content h1 { font-size: 32px; order: 3; margin-top: 5px; }
     .hero-content p { font-size: 16px; order: 4; margin-bottom: 24px;}
     .hero-content button { order: 5; margin: 0 auto;}
-    
-    /* Bring image inside flex flow for perfect mobile sandwiching */
-    .hero-img-mobile { display: block !important; order: 2; }
     
     .btn-primary > span { display: none; }
     .btn-primary { padding: 0 14px; }
@@ -258,7 +270,7 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
         <a href="#" class="logo"><span class="logo-text">Khakhra Wala.</span></a>
         
         <div class="header-actions">
-            <button class="btn-icon desktop-only" onclick="openOrdersModal()">📦 <span>Orders</span></button>
+            <button class="btn-icon desktop-only" onclick="openSlide('ordersPanel')">📦 <span>Orders</span></button>
             <button class="btn-icon desktop-only" onclick="openProfile(true)">👤 <span>Account</span></button>
             
             <button class="btn-primary" onclick="toggleCart()">🛒 <span>Cart</span><div class="cart-badge" id="cartBadge">0</div></button>
@@ -340,7 +352,7 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
         <button class="btn-close" onclick="closeSlide('mobileMenuPanel')">✕</button>
     </div>
     <div class="slide-body">
-        <button class="btn-icon menu-list-item" onclick="closeSlide('mobileMenuPanel'); setTimeout(() => openOrdersModal(), 400);">📦 Order History</button>
+        <button class="btn-icon menu-list-item" onclick="closeSlide('mobileMenuPanel'); setTimeout(() => openSlide('ordersPanel'), 400);">📦 Order History</button>
         <button class="btn-icon menu-list-item" onclick="closeSlide('mobileMenuPanel'); setTimeout(() => openProfile(true), 400);">👤 Account Details</button>
         <button class="btn-icon menu-list-item" style="border: 1px solid #C8E6C9; background: #E8F5E9; color: #2E7D32;" onclick="closeSlide('mobileMenuPanel'); setTimeout(() => openSlide('helpPanel'), 400);">🎧 Help & Support</button>
     </div>
@@ -429,7 +441,7 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
         <div class="success-icon">✓</div>
         <h2 style="font-size: 26px; color: var(--text-dark); margin-bottom: 8px;">Order Placed!</h2>
         <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 30px;">Your delicious crunch is on the way.</p>
-        <div id="successBody" style="width: 100%;"></div>
+        <div id="successBody" style="width: 100%; text-align: left;"></div>
     </div>
     <div class="slide-footer">
         <button class="btn-primary" style="width: 100%; justify-content: center; height: 50px;" onclick="closeSlide('successPanel')">Continue Shopping</button>
@@ -439,38 +451,49 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
 <div class="toast-container" id="toastBox"></div>
 
 <script>
-// --- Data ---
+// --- ROBUST SCROLL LOCK MECHANISM ---
+function lockScroll() {
+    document.documentElement.classList.add('no-scroll');
+    document.body.classList.add('no-scroll');
+}
+
+function unlockScroll() {
+    document.documentElement.classList.remove('no-scroll');
+    document.body.classList.remove('no-scroll');
+}
+
+// --- Data (Optimized Images for Faster Loading) ---
 const products = [
     { 
         id: 'p1', name: 'Classic Masala', desc: 'A timeless blend of vibrant Indian spices.', price: 120, 
         images: [
-            'https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?q=80&w=800&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=80&w=800&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1596450514735-111a2fe02935?q=80&w=800&auto=format&fit=crop'
+            'https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?q=60&w=500&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=60&w=500&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1596450514735-111a2fe02935?q=60&w=500&auto=format&fit=crop'
         ] 
     },
     { 
         id: 'p2', name: 'Roasted Methi', desc: 'Earthy fenugreek leaves baked to perfection.', price: 110, 
         images: [
-            'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=800&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1604328727574-65d8b82436d4?q=80&w=800&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1621236378699-8597faf6a176?q=80&w=800&auto=format&fit=crop'
+            'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=60&w=500&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1604328727574-65d8b82436d4?q=60&w=500&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1621236378699-8597faf6a176?q=60&w=500&auto=format&fit=crop'
         ] 
     },
     { 
         id: 'p3', name: 'Cumin (Jeera)', desc: 'Subtle, aromatic jeera for a soothing crunch.', price: 115, 
         images: [
-            'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1589301760014-d929f39ce9b1?q=80&w=800&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=80&w=800&auto=format&fit=crop'
+            'https://images.unsplash.com/photo-1542838132-92c53300491e?q=60&w=500&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1589301760014-d929f39ce9b1?q=60&w=500&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=60&w=500&auto=format&fit=crop'
         ] 
     },
     { 
         id: 'p4', name: 'Cheddar Cheese', desc: 'A modern, gourmet twist with real cheese dust.', price: 140, 
         images: [
-            'https://images.unsplash.com/photo-1604068549290-dea0e4a30536?q=80&w=800&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=800&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1541696490-8744a5dc0228?q=80&w=800&auto=format&fit=crop'
+            'https://images.unsplash.com/photo-1604068549290-dea0e4a30536?q=60&w=500&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=60&w=500&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1541696490-8744a5dc0228?q=60&w=500&auto=format&fit=crop'
         ] 
     }
 ];
@@ -495,7 +518,7 @@ function openLightbox(productId, index) {
     `).join('');
 
     document.getElementById('lightbox').classList.add('show');
-    document.body.classList.add('no-scroll');
+    lockScroll();
 
     setTimeout(() => {
         const slideWidth = gallery.clientWidth;
@@ -506,7 +529,7 @@ function openLightbox(productId, index) {
 function closeLightbox() {
     document.getElementById('lightbox').classList.remove('show');
     if (document.querySelectorAll('.app-screen.active').length === 0 && !document.getElementById('cartDrawer').classList.contains('active')) {
-        document.body.classList.remove('no-scroll');
+        unlockScroll();
     }
 }
 
@@ -520,7 +543,7 @@ function scrollLightbox(direction) {
 function openSlide(id) {
     document.getElementById('slideOverlay').classList.add('active');
     document.getElementById(id).classList.add('active');
-    document.body.classList.add('no-scroll');
+    lockScroll();
 }
 
 function closeSlide(id) {
@@ -531,7 +554,7 @@ function closeSlide(id) {
         if (activeAppScreens === 0) {
             document.getElementById('slideOverlay').classList.remove('active');
             if (!document.getElementById('cartDrawer').classList.contains('active')) {
-                document.body.classList.remove('no-scroll');
+                unlockScroll();
             }
         }
     }, 400);
@@ -542,7 +565,7 @@ function closeAllSlides() {
     screens.forEach(screen => screen.classList.remove('active'));
     document.getElementById('slideOverlay').classList.remove('active');
     if (!document.getElementById('cartDrawer').classList.contains('active')) {
-        document.body.classList.remove('no-scroll');
+        unlockScroll();
     }
 }
 
@@ -554,12 +577,12 @@ function toggleCart() {
         drawer.classList.remove('active');
         overlay.classList.remove('active');
         if (document.querySelectorAll('.app-screen.active').length === 0) {
-            document.body.classList.remove('no-scroll');
+            unlockScroll();
         }
     } else {
         drawer.classList.add('active');
         overlay.classList.add('active');
-        document.body.classList.add('no-scroll');
+        lockScroll();
     }
 }
 
@@ -571,14 +594,14 @@ function showToast(msg) {
     setTimeout(() => t.remove(), 3300);
 }
 
-// --- Product Rendering with Swipeable Carousel ---
+// --- Product Rendering with Swipeable Carousel & Lazy Loading ---
 function renderProducts() {
     const grid = document.getElementById('productGrid');
     
     grid.innerHTML = products.map((p) => {
         const imagesHTML = p.images.map((img, index) => `
             <div class="carousel-slide">
-                <img src="${img}" alt="${p.name}" onclick="openLightbox('${p.id}', ${index})">
+                <img loading="lazy" src="${img}" alt="${p.name}" onclick="openLightbox('${p.id}', ${index})">
             </div>
         `).join('');
 
@@ -659,7 +682,6 @@ function updateCartUI() {
     let totalQty = 0; let totalPrice = 0;
 
     if(cart.length === 0) {
-        // EMPTY CART GRAPHIC INJECTED HERE
         body.innerHTML = `
             <div class="empty-state">
                 <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Cart_empty_graphic.png" alt="Empty Cart">
