@@ -178,6 +178,7 @@ textarea.form-input { height: 90px; resize: none; }
 .delivery-name { display: block; font-weight: 600; font-size: 15px; color: var(--text-dark); margin-bottom: 2px; }
 .delivery-phone { display: block; font-size: 13px; color: var(--brand); font-weight: 500; margin-bottom: 6px; }
 .delivery-address { display: block; font-size: 13px; line-height: 1.5; color: var(--text-muted); }
+.delivery-map-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--brand); text-decoration: none; font-weight: 600; margin-top: 4px; background: var(--brand-light); padding: 4px 12px; border-radius: 8px; }
 
 .order-history-card { background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin-bottom: 16px; }
 .order-date { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; }
@@ -325,10 +326,11 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
         <div class="form-group">
             <label>Complete Address</label>
             <textarea id="uAddress" class="form-input" placeholder="House no, Building, Street, Area"></textarea>
+            <div id="mapLinkContainer" style="margin-top: 10px; display: none;"></div>
         </div>
     </div>
     <div class="slide-footer" style="display: flex; flex-direction: column; gap: 12px;">
-        <button class="btn-icon" id="btnLocate" style="height: 48px; width: 100%; justify-content: center;" onclick="autoLocate()">📍 Detect My Live Location</button>
+        <button class="btn-icon" id="btnLocate" style="height: 48px; width: 100%; justify-content: center; background: var(--bg-main);" onclick="autoLocate()">📍 Use My Current Location</button>
         <button class="btn-primary" style="height: 48px; width: 100%; justify-content: center;" onclick="saveProfile()">Save Securely</button>
     </div>
 </div>
@@ -571,12 +573,39 @@ function updateCartUI() {
     totalEl.innerText = `₹${totalPrice}`;
 }
 
+// --- Map Link Logic ---
+function renderMapLink(url) {
+    const container = document.getElementById('mapLinkContainer');
+    if (url) {
+        container.style.display = 'block';
+        container.innerHTML = `
+            <a href="${url}" target="_blank" style="display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: #2E7D32; background: #E8F5E9; padding: 6px 12px; border-radius: 50px; text-decoration: none; font-weight: 500;">
+                📍 View Pinned Location
+            </a> 
+            <span style="cursor:pointer; color: #D32F2F; font-size: 12px; margin-left: 10px; text-decoration: underline;" onclick="clearMapLink()">Remove</span>
+        `;
+    } else {
+        container.style.display = 'none';
+        container.innerHTML = '';
+    }
+}
+
+function clearMapLink() {
+    localStorage.removeItem('kw_map_link');
+    renderMapLink(null);
+    showToast("🗑️ Pinned location removed.");
+}
+
 // --- Profile & Location Logic ---
 function openProfile(allowClose) {
     document.getElementById('profileCloseBtn').style.display = allowClose ? 'flex' : 'none';
     document.getElementById('uName').value = localStorage.getItem('kw_name') || '';
     document.getElementById('uPhone').value = localStorage.getItem('kw_phone') || '';
     document.getElementById('uAddress').value = localStorage.getItem('kw_address') || '';
+    
+    // Check for saved map link
+    renderMapLink(localStorage.getItem('kw_map_link'));
+    
     openSlide('profilePanel');
 }
 
@@ -599,19 +628,22 @@ function saveProfile() {
 function autoLocate() {
     const btn = document.getElementById('btnLocate');
     const ogText = btn.innerText;
-    btn.innerText = "⏳ Fetching GPS...";
+    btn.innerText = "⏳ Pinpointing Location...";
     
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
             (pos) => {
-                const mapLink = `[GPS: ${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}]`;
-                const box = document.getElementById('uAddress');
-                box.value = box.value && !box.value.includes('[GPS') ? box.value + "\n" + mapLink : mapLink + " ";
-                btn.innerText = "✅ Location Appended";
-                showToast("📍 Live location added.");
+                const mapUrl = `https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`;
+                
+                // Save and render the link badge immediately
+                localStorage.setItem('kw_map_link', mapUrl);
+                renderMapLink(mapUrl);
+                
+                btn.innerText = "✅ Location Pinned!";
+                showToast("📍 Location attached successfully.");
                 setTimeout(() => { btn.innerText = ogText; }, 3000);
             },
-            (err) => { btn.innerText = ogText; showToast("⚠️ Unable to fetch location."); },
+            (err) => { btn.innerText = ogText; showToast("⚠️ Unable to fetch location. Please type your address."); },
             { enableHighAccuracy: true, timeout: 10000 }
         );
     } else showToast("⚠️ Geolocation not supported.");
@@ -627,15 +659,19 @@ function isProfileReady() {
     return true;
 }
 
-function getCustomerDetailsHTML() {
+function getCustomerDetailsHTML(mapLinkOverride) {
     const cName = localStorage.getItem('kw_name');
     const cPhone = localStorage.getItem('kw_phone');
     const cAddress = localStorage.getItem('kw_address');
+    const cMap = mapLinkOverride !== undefined ? mapLinkOverride : localStorage.getItem('kw_map_link');
+    
+    let mapHtml = cMap ? `<a href="${cMap}" target="_blank" class="delivery-map-link">📍 Open in Google Maps</a>` : '';
     
     return `
         <span class="delivery-name">${cName}</span>
         <span class="delivery-phone">📞 ${cPhone}</span>
         <span class="delivery-address">${cAddress}</span>
+        ${mapHtml}
     `;
 }
 
@@ -650,6 +686,8 @@ function reviewDirectOrder(id) {
         sourceId: id,
         items: [{ name: p.name, quantity: q, price: p.price }],
         total: p.price * q,
+        address: localStorage.getItem('kw_address'),
+        mapLink: localStorage.getItem('kw_map_link'),
         date: new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
     };
     
@@ -666,6 +704,8 @@ function reviewCartOrder() {
         type: 'cart',
         items: JSON.parse(JSON.stringify(cart)), 
         total: total,
+        address: localStorage.getItem('kw_address'),
+        mapLink: localStorage.getItem('kw_map_link'),
         date: new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
     };
     
@@ -692,7 +732,7 @@ function renderReviewModal() {
         <div class="receipt-box">
             <p style="margin-bottom: 12px; color: var(--brand);"><strong>Deliver To</strong></p>
             <div class="address-block">
-                ${getCustomerDetailsHTML()}
+                ${getCustomerDetailsHTML(pendingOrder.mapLink)}
             </div>
         </div>
     `;
@@ -730,7 +770,7 @@ function finalizeOrder() {
         <div class="receipt-box">
             <p style="margin-bottom: 12px; color: var(--brand);"><strong>Dispatching To</strong></p>
             <div class="address-block">
-                ${getCustomerDetailsHTML()}
+                ${getCustomerDetailsHTML(pendingOrder.mapLink)}
             </div>
         </div>
     `;
@@ -760,11 +800,10 @@ function openOrdersModal() {
             let detailedMsg = `Hello Khakhra Wala Team! 🎧\nI need help with my order.\n\n`;
             detailedMsg += `*Order Date:* ${order.date}\n`;
             detailedMsg += `*Items ordered:*\n`;
-            order.items.forEach(i => {
-                detailedMsg += `• ${i.quantity}x ${i.name}\n`;
-            });
+            order.items.forEach(i => { detailedMsg += `• ${i.quantity}x ${i.name}\n`; });
             detailedMsg += `\n*Total (COD):* ₹${order.total}\n\n`;
-            detailedMsg += `*My Details:*\nName: ${cName}\nPhone: ${cPhone}`;
+            detailedMsg += `*My Details:*\nName: ${cName}\nPhone: ${cPhone}\nAddress: ${order.address}`;
+            if (order.mapLink) detailedMsg += `\nMap Link: ${order.mapLink}`;
             
             const waMsg = encodeURIComponent(detailedMsg);
             const waLink = `https://wa.me/918980599865?text=${waMsg}`;
