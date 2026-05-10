@@ -46,10 +46,7 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body { font-family: 'Poppins', sans-serif; background: var(--bg-main); color: var(--text-dark); line-height: 1.6; overflow-x: hidden; }
 
 /* STRICT BACKGROUND SCROLL LOCK */
-html.no-scroll, body.no-scroll { 
-    overflow: hidden !important; 
-    overscroll-behavior: none; 
-}
+html.no-scroll, body.no-scroll { overflow: hidden !important; overscroll-behavior: none; }
 
 h1, h2, h3, .logo-text { font-family: 'Playfair Display', serif; }
 button, a, .qty-control, .qty-btn, .btn-remove { user-select: none; -webkit-user-select: none; }
@@ -212,7 +209,6 @@ textarea.form-input { height: 90px; resize: none; }
 .receipt-box p strong { font-weight: 600; color: var(--text-muted);}
 .receipt-box .address-block { flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; }
 
-/* Delivery Details Typography */
 .delivery-name { display: block; font-weight: 600; font-size: 15px; color: var(--text-dark); margin-bottom: 2px; }
 .delivery-phone { display: block; font-size: 13px; color: var(--brand); font-weight: 500; margin-bottom: 6px; }
 .delivery-address { display: block; font-size: 13px; line-height: 1.5; color: var(--text-muted); }
@@ -226,6 +222,10 @@ textarea.form-input { height: 90px; resize: none; }
 
 .support-banner { background: #E8F5E9; border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 24px; border: 1px solid #C8E6C9; }
 .success-icon { width: 80px; height: 80px; background: #E8F5E9; color: #2E7D32; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 20px; box-shadow: var(--shadow-sm); }
+
+/* --- FULL SIZED EMPTY STATES --- */
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; flex: 1; padding: 10px;}
+.empty-state img { width: 100%; max-width: 90%; max-height: 80vh; object-fit: contain; pointer-events: none;}
 
 /* Cart Specific */
 .cart-item { display: flex; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); align-items: center;}
@@ -253,7 +253,6 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
     
     .hero-content { margin: 0 auto; display: flex; flex-direction: column; align-items: center; width: 100%;}
     
-    /* PERFECT LOGO POSITIONING */
     .hero-badge { order: 1; margin-bottom: 8px;}
     .hero-img-mobile { display: block !important; order: 2; margin: 0 0 16px 0 !important; max-width: 300px; }
     .hero-content h1 { font-size: 32px; order: 3; margin-top: 5px; }
@@ -339,13 +338,13 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
 <div class="overlay" id="cartOverlay" onclick="history.back()"></div>
 <div class="overlay" id="slideOverlay" onclick="history.back()"></div>
 
-<div class="slide-panel cart-drawer" id="cartDrawer">
+<div class="slide-panel cart-drawer" id="cartDrawer" style="display: flex; flex-direction: column;">
     <div class="slide-header">
         <h2>Your Cart</h2>
         <button class="btn-close" onclick="history.back()">✕</button>
     </div>
-    <div class="slide-body" id="cartBody"></div>
-    <div class="slide-footer">
+    <div class="slide-body" id="cartBody" style="display: flex; flex-direction: column;"></div>
+    <div class="slide-footer" id="cartFooter">
         <div style="display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 18px; font-weight: 700;">
             <span>Subtotal</span><span id="cartTotal">₹0</span>
         </div>
@@ -407,7 +406,7 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
     </div>
 </div>
 
-<div class="slide-panel app-screen" id="ordersPanel">
+<div class="slide-panel app-screen" id="ordersPanel" style="display: flex; flex-direction: column;">
     <div class="slide-header">
         <h2 style="margin: 0;">Your Orders</h2>
         <div style="display: flex; gap: 8px;">
@@ -415,7 +414,7 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
             <button class="btn-close" onclick="history.back()">✕</button>
         </div>
     </div>
-    <div class="slide-body" id="ordersBody" style="padding-top: 10px;">
+    <div class="slide-body" id="ordersBody" style="display: flex; flex-direction: column; padding-top: 10px;">
         </div>
 </div>
 
@@ -458,7 +457,10 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
     <div class="modal-content" style="max-width: 360px; text-align: center; padding: 30px 24px;">
         <div style="font-size: 40px; margin-bottom: 12px;">⚠️</div>
         <h2 style="font-size: 20px; color: var(--text-dark); margin-bottom: 8px;">Cancel Order?</h2>
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">Are you sure you want to cancel this order? This action cannot be undone.</p>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Are you sure you want to cancel this order? This action cannot be undone.</p>
+        
+        <textarea id="cancelReasonInput" class="form-input" style="margin-bottom: 24px; height: 70px;" placeholder="Reason for cancellation (optional)"></textarea>
+        
         <div style="display: flex; gap: 12px;">
             <button class="btn-icon" style="flex: 1; height: 46px;" onclick="history.back()">Keep It</button>
             <button class="btn-primary" style="flex: 1; height: 46px; background: #D32F2F; box-shadow: none;" onclick="executeCancelOrder()">Yes, Cancel</button>
@@ -572,7 +574,7 @@ function toggleCart() {
     }
 }
 
-// --- Fullscreen Lightbox Logic ---
+// --- Fullscreen Lightbox Logic (SMART HIGH-RES SCALING) ---
 function openLightbox(productId, index) {
     const product = products.find(p => p.id === productId);
     const gallery = document.getElementById('lightboxGallery');
@@ -606,7 +608,7 @@ function showToast(msg) {
     setTimeout(() => t.remove(), 3300);
 }
 
-// --- Product Rendering ---
+// --- Product Rendering with Swipeable Carousel & Instant Loading ---
 function renderProducts() {
     const grid = document.getElementById('productGrid');
     grid.innerHTML = products.map((p) => {
@@ -689,17 +691,19 @@ function updateCartUI() {
     const body = document.getElementById('cartBody');
     const badge = document.getElementById('cartBadge');
     const totalEl = document.getElementById('cartTotal');
+    const footer = document.getElementById('cartFooter');
     
     let totalQty = 0; let totalPrice = 0;
 
     if(cart.length === 0) {
         body.innerHTML = `
-            <div style="text-align: center; margin-top: 50px;">
-                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Cart_empty_graphic.png" style="width: 100%; max-width: 250px;" alt="Empty Cart">
-                <p style="color: var(--text-muted); font-size: 15px; font-weight: 500; margin-top: 16px;">Your cart is empty</p>
+            <div class="empty-state">
+                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Cart_empty_graphic.png" alt="Empty Cart">
             </div>
         `;
+        if(footer) footer.style.display = 'none';
     } else {
+        if(footer) footer.style.display = 'block';
         body.innerHTML = cart.map((item, i) => {
             totalQty += item.quantity; totalPrice += item.price * item.quantity;
             return `
@@ -782,7 +786,7 @@ function autoLocate() {
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
             (pos) => {
-                const mapUrl = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                const mapUrl = `https://maps.google.com/?q=lat,lng?q=${pos.coords.latitude},${pos.coords.longitude}`;
                 
                 localStorage.setItem('kw_map_link', mapUrl);
                 renderMapLink(mapUrl);
@@ -865,7 +869,7 @@ function reviewCartOrder() {
     };
     
     if(document.getElementById('cartDrawer').classList.contains('active')) history.back();
-    setTimeout(renderReviewModal, 300);
+    setTimeout(renderReviewModal, 400);
 }
 
 function renderReviewModal() {
@@ -936,7 +940,7 @@ function finalizeOrder() {
         document.getElementById('successBody').innerHTML = receiptHTML;
         openSlide('successPanel');
         pendingOrder = null; 
-    }, 300);
+    }, 400);
 }
 
 // --- Order History, Support & Cancel Logic ---
@@ -947,7 +951,14 @@ function confirmCancelOrder(index) {
 
 function executeCancelOrder() {
     if (orderToCancelIndex !== null && orderHistory[orderToCancelIndex]) {
+        const reason = document.getElementById('cancelReasonInput').value.trim() || 'No reason provided';
+        const now = new Date();
+        const cancelDateStr = now.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        
         orderHistory[orderToCancelIndex].status = 'Cancelled';
+        orderHistory[orderToCancelIndex].cancelDate = cancelDateStr;
+        orderHistory[orderToCancelIndex].cancelReason = reason;
+        
         localStorage.setItem('kw_orders', JSON.stringify(orderHistory));
     }
     
@@ -955,8 +966,18 @@ function executeCancelOrder() {
     
     setTimeout(() => {
         showToast("🚫 Order Cancelled.");
+        document.getElementById('cancelReasonInput').value = ''; // Reset input
         renderOrdersList(); 
     }, 300);
+}
+
+function toggleReason(id) {
+    const el = document.getElementById(id);
+    if (el.style.display === 'none') {
+        el.style.display = 'block';
+    } else {
+        el.style.display = 'none';
+    }
 }
 
 function toggleCancelledOrders() {
@@ -979,9 +1000,8 @@ function renderOrdersList() {
     
     if(!orderHistory || orderHistory.length === 0) {
         ordersBody.innerHTML = `
-            <div style="text-align: center; margin-top: 60px;">
-                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Order_notplaced_graphic.png" style="width: 100%; max-width: 250px; margin-bottom: 16px;" alt="No Orders">
-                <p style="color: var(--text-muted); font-size: 15px; font-weight: 500;">You haven't placed any orders yet.</p>
+            <div class="empty-state">
+                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Order_notplaced_graphic.png" alt="No Orders">
             </div>
         `;
         return;
@@ -1029,30 +1049,38 @@ function renderOrdersList() {
         }).join('');
     } else {
         html += `
-            <div style="text-align: center; margin-top: 40px; margin-bottom: 40px;">
-                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Order_notplaced_graphic.png" style="width: 100%; max-width: 200px; margin-bottom: 16px;" alt="No Orders">
-                <p style="color: var(--text-muted); font-size: 14px; font-weight: 500;">No active orders right now.</p>
+            <div class="empty-state" style="margin-bottom: 20px;">
+                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Order_notplaced_graphic.png" alt="No Active Orders">
             </div>
         `;
     }
     
-    // Cancelled Orders View Block
+    // Cancelled Orders Block
     if(cancelledOrders.length > 0) {
         html += `
             <button id="toggleCancelledBtn" onclick="toggleCancelledOrders()" style="width: 100%; background: transparent; border: 1px dashed var(--border-color); padding: 12px; border-radius: var(--radius-md); font-family: 'Poppins'; font-weight: 600; color: var(--text-muted); margin-top: 16px; cursor: pointer;">
                 View Cancelled Orders
             </button>
-            <div id="cancelledList" style="display:none; margin-top: 20px; opacity: 0.6;">
+            <div id="cancelledList" style="display:none; margin-top: 20px; opacity: 0.8;">
                 <h3 style="font-size: 16px; margin-bottom: 12px; color: var(--text-dark); text-align: center;">Cancelled Orders</h3>
-                ${cancelledOrders.map(order => {
-                    const itemsText = order.items.map(i => `<div class="order-item-row"><span style="text-decoration: line-through;">${i.name}</span><span style="font-weight:600;">x${i.quantity}</span></div>`).join('');
+                ${cancelledOrders.map((order, i) => {
+                    const itemsText = order.items.map(item => `<div class="order-item-row"><span style="text-decoration: line-through;">${item.name}</span><span style="font-weight:600;">x${item.quantity}</span></div>`).join('');
+                    const reasonId = 'cancel-reason-' + i;
                     return `
                         <div class="order-history-card" style="background: var(--bg-main);">
                             <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                                 <div class="order-status" style="background: #FFEBEB; color: #D32F2F;">Cancelled</div>
-                                <div class="order-date">${order.date}</div>
+                                <div class="order-date" style="text-align: right; line-height: 1.3;">
+                                    Placed: ${order.date}<br>
+                                    <span style="color: #D32F2F;">Cancelled: ${order.cancelDate || 'N/A'}</span>
+                                </div>
                             </div>
                             <div style="margin-top: 8px; margin-bottom: 12px; padding: 0 4px;">${itemsText}</div>
+                            
+                            <button onclick="toggleReason('${reasonId}')" style="background:none; border:none; color:var(--brand); font-size:12px; font-weight:600; cursor:pointer; font-family:'Poppins', sans-serif; padding:0; text-decoration: underline;">See Reason</button>
+                            <div id="${reasonId}" style="display:none; margin-top: 8px; font-size: 12px; color: var(--text-dark); background: var(--surface); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                                <strong>Reason:</strong> ${order.cancelReason || 'N/A'}
+                            </div>
                         </div>
                     `;
                 }).join('')}
