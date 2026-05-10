@@ -192,7 +192,7 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 .slide-body { flex: 1 1 auto; overflow-y: auto; padding: 24px; min-height: 0; background: var(--surface); overscroll-behavior-y: contain;}
 .slide-footer { padding: 20px 24px calc(20px + env(safe-area-inset-bottom)); background: var(--surface); border-top: 1px solid var(--border-color); flex-shrink: 0; }
 
-/* Custom Native Modals (Cancel Confirmation) */
+/* Custom Native Modals */
 .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 3000; padding: 16px; opacity: 0; transition: opacity 0.3s ease; }
 .modal.show { display: flex; opacity: 1; }
 .modal-content { background: var(--surface); width: 100%; max-width: 400px; border-radius: var(--radius-lg); padding: 30px 24px; position: relative; transform: translateY(20px); transition: transform 0.3s ease; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
@@ -213,15 +213,14 @@ textarea.form-input { height: 90px; resize: none; }
 .receipt-box p strong { font-weight: 600; color: var(--text-muted);}
 .receipt-box .address-block { flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; }
 
-/* Delivery Details Typography */
 .delivery-name { display: block; font-weight: 600; font-size: 15px; color: var(--text-dark); margin-bottom: 2px; }
 .delivery-phone { display: block; font-size: 13px; color: var(--brand); font-weight: 500; margin-bottom: 6px; }
 .delivery-address { display: block; font-size: 13px; line-height: 1.5; color: var(--text-muted); }
 .delivery-map-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--brand); text-decoration: none; font-weight: 600; margin-top: 4px; background: var(--brand-light); padding: 4px 12px; border-radius: 8px; }
 
-.order-history-card { background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin-bottom: 16px; }
+.order-history-card { background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin-bottom: 16px; transition: var(--transition); }
 .order-date { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; }
-.order-status { display: inline-block; padding: 4px 10px; background: #E8F5E9; color: #2E7D32; font-size: 11px; font-weight: 700; border-radius: var(--radius-pill); margin-bottom: 12px; text-transform: uppercase;}
+.order-status { display: inline-block; padding: 4px 12px; font-size: 11px; font-weight: 700; border-radius: var(--radius-pill); margin-bottom: 12px; text-transform: uppercase;}
 .order-item-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-dark); margin-bottom: 4px; }
 .order-total { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; border-top: 1px dashed rgba(0,0,0,0.1); padding-top: 12px; color: var(--brand); margin-top: 12px;}
 
@@ -410,7 +409,8 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
 <div class="slide-panel app-screen" id="ordersPanel" style="display: flex; flex-direction: column;">
     <div class="slide-header">
         <h2 style="margin: 0;">Your Orders</h2>
-        <div style="display: flex; gap: 8px;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <button id="syncOrdersBtn" onclick="syncOrdersWithServer()" style="background: transparent; border: none; font-size: 12px; color: var(--brand); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px;">🔄 Sync Live</button>
             <button class="btn-icon" style="width: 38px; height: 38px; padding: 0; border-radius: 50%; font-size: 18px;" onclick="openSlide('helpPanel')" title="Help">🎧</button>
             <button class="btn-close" onclick="history.back()">✕</button>
         </div>
@@ -475,7 +475,7 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
 // --- BACKEND INTEGRATION ---
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyM7XOoD5bB6W5vwMy_7uzh-MU8gwXvF-LsN8tJbIjP7bAoflN81F8OAUFoEFHM-i8/exec";
 
-// --- Data (Optimized Images for INSTANT Loading: w=300, q=30, format=webp) ---
+// --- Data (Optimized Images) ---
 const products = [
     { 
         id: 'p1', name: 'Classic Masala', desc: 'A timeless blend of vibrant Indian spices.', price: 120, 
@@ -528,7 +528,6 @@ function unlockScroll() { document.documentElement.classList.remove('no-scroll')
 
 window.addEventListener('popstate', (e) => {
     const ids = ['lightbox', 'cancelConfirmModal', 'successPanel', 'reviewPanel', 'helpPanel', 'profilePanel', 'ordersPanel', 'mobileMenuPanel', 'cartDrawer'];
-    
     for (let id of ids) {
         let el = document.getElementById(id);
         if (el.classList.contains('show') || el.classList.contains('active')) {
@@ -537,7 +536,6 @@ window.addEventListener('popstate', (e) => {
             break; 
         }
     }
-    
     setTimeout(() => {
         const anyOpen = document.querySelectorAll('.app-screen.active, .lightbox.show, .modal.show').length > 0;
         const cartOpen = document.getElementById('cartDrawer').classList.contains('active');
@@ -571,18 +569,12 @@ function openCartDrawer() {
 }
 
 function toggleCart() {
-    if (document.getElementById('cartDrawer').classList.contains('active')) {
-        history.back(); 
-    } else {
-        openCartDrawer();
-    }
+    if (document.getElementById('cartDrawer').classList.contains('active')) { history.back(); } else { openCartDrawer(); }
 }
 
-// --- Fullscreen Lightbox Logic (SMART HIGH-RES SCALING) ---
 function openLightbox(productId, index) {
     const product = products.find(p => p.id === productId);
     const gallery = document.getElementById('lightboxGallery');
-    
     gallery.innerHTML = product.images.map(img => {
         const highResImg = img.replace('q=30&w=300', 'q=90&w=1200');
         return `<div class="lightbox-slide"><img src="${highResImg}" alt="${product.name}"></div>`;
@@ -845,7 +837,6 @@ function reviewDirectOrder(id) {
     pendingOrder = {
         type: 'direct',
         orderId: 'KW-' + Date.now(),
-        sourceId: id,
         status: 'Active',
         items: [{ name: p.name, quantity: q, price: p.price, img: p.images[0] }],
         total: p.price * q,
@@ -930,7 +921,6 @@ function finalizeOrder() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(backendData)
     }).catch(e => console.log('Network error:', e));
-    // -------------------------------
 
     if(pendingOrder.type === 'cart') {
         cart = [];
@@ -971,7 +961,61 @@ function finalizeOrder() {
     }, 400);
 }
 
-// --- Order History, Support & Cancel Logic ---
+// --- LIVE TRACKING ENGINE (Sync Orders with Server) ---
+function syncOrdersWithServer() {
+    if(orderHistory.length === 0) return; 
+
+    const syncBtn = document.getElementById('syncOrdersBtn');
+    if(syncBtn) syncBtn.innerText = 'Syncing...';
+
+    fetch(SCRIPT_URL)
+        .then(res => res.json())
+        .then(serverOrders => {
+            let isUpdated = false;
+            
+            orderHistory.forEach(localOrder => {
+                const matchedServerOrder = serverOrders.find(so => so.orderId === localOrder.orderId);
+                if(matchedServerOrder) {
+                    if(localOrder.status !== matchedServerOrder.status) {
+                        localOrder.status = matchedServerOrder.status;
+                        if(matchedServerOrder.cancelReason) {
+                            localOrder.cancelReason = matchedServerOrder.cancelReason;
+                        }
+                        isUpdated = true;
+                    }
+                }
+            });
+
+            if(isUpdated) {
+                localStorage.setItem('kw_orders', JSON.stringify(orderHistory));
+                if (document.getElementById('ordersPanel').classList.contains('active')) {
+                    renderOrdersList(); 
+                }
+            }
+            
+            if(syncBtn) {
+                syncBtn.innerText = '✅ Live Tracked';
+                setTimeout(() => { if(syncBtn) syncBtn.innerText = '🔄 Sync Live'; }, 3000);
+            }
+        })
+        .catch(e => {
+            if(syncBtn) syncBtn.innerText = '⚠️ Offline';
+            setTimeout(() => { if(syncBtn) syncBtn.innerText = '🔄 Sync Live'; }, 3000);
+        });
+}
+
+// --- Dynamic Badge Generator ---
+function getStatusBadge(status) {
+    if (!status || status === 'Active') return `<div class="order-status" style="background: #E3F2FD; color: #1976D2;">Active (Preparing)</div>`;
+    if (status === 'Packaging Done') return `<div class="order-status" style="background: #F3E5F5; color: #7B1FA2;">Packaging Done</div>`;
+    if (status === 'Dispatched') return `<div class="order-status" style="background: #FFF3E0; color: #F57C00;">Dispatched</div>`;
+    if (status === 'Out for Delivery') return `<div class="order-status" style="background: #FBE9E7; color: #E64A19;">Out for Delivery 🛵</div>`;
+    if (status === 'Delivered' || status === 'Received') return `<div class="order-status" style="background: #E8F5E9; color: #2E7D32;">Delivered ✅</div>`;
+    if (status === 'Cancelled' || status === 'Unable to Deliver') return `<div class="order-status" style="background: #FFEBEB; color: #D32F2F;">${status}</div>`;
+    return `<div class="order-status" style="background: #E3F2FD; color: #1976D2;">${status}</div>`;
+}
+
+// --- Order History & Cancel Logic ---
 function confirmCancelOrder(index) {
     orderToCancelIndex = index;
     document.getElementById('cancelReasonInput').classList.remove('error');
@@ -1013,7 +1057,6 @@ function executeCancelOrder() {
                 cancelReason: reason
             })
         }).catch(e => console.log('Network error:', e));
-        // ------------------------------------
     }
     
     history.back(); 
@@ -1061,8 +1104,11 @@ function renderOrdersList() {
         return;
     }
     
-    const activeOrders = orderHistory.filter(o => o.status !== 'Cancelled');
-    const cancelledOrders = orderHistory.filter(o => o.status === 'Cancelled');
+    // Safety check for legacy orders missing status
+    orderHistory.forEach(o => { if(!o.status) o.status = 'Active'; });
+    
+    const activeOrders = orderHistory.filter(o => o.status !== 'Cancelled' && o.status !== 'Unable to Deliver');
+    const cancelledOrders = orderHistory.filter(o => o.status === 'Cancelled' || o.status === 'Unable to Deliver');
     
     let html = '';
     
@@ -1083,10 +1129,14 @@ function renderOrdersList() {
             const waMsg = encodeURIComponent(detailedMsg);
             const waLink = `https://wa.me/918980599865?text=${waMsg}`;
             
+            // Smart Protection: Hide cancel button if already Dispatched, Out for Delivery, or Delivered
+            const canCancel = (order.status === 'Active' || order.status === 'Packaging Done');
+            const cancelBtnHTML = canCancel ? `<button onclick="confirmCancelOrder(${index})" class="btn-cancel-order">✕ Cancel</button>` : '';
+            
             return `
                 <div class="order-history-card">
                     <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                        <div class="order-status">Preparing</div>
+                        ${getStatusBadge(order.status)}
                         <div class="order-date">${order.date}</div>
                     </div>
                     <div style="margin-top: 8px; margin-bottom: 16px; padding: 0 4px;">${itemsText}</div>
@@ -1096,7 +1146,7 @@ function renderOrdersList() {
                         <a href="${waLink}" target="_blank" style="text-decoration: none; font-size: 13px; color: #25D366; font-weight: 600; display: flex; align-items: center; gap: 6px;">
                             <span style="font-size: 16px;">💬</span> Help
                         </a>
-                        <button onclick="confirmCancelOrder(${index})" class="btn-cancel-order">✕ Cancel</button>
+                        ${cancelBtnHTML}
                     </div>
                 </div>
             `;
@@ -1113,20 +1163,22 @@ function renderOrdersList() {
     if(cancelledOrders.length > 0) {
         html += `
             <button id="toggleCancelledBtn" onclick="toggleCancelledOrders()" style="width: 100%; background: var(--brand-light); border: 2px dashed var(--brand); padding: 14px; border-radius: var(--radius-md); font-family: 'Poppins'; font-weight: 600; color: var(--brand); margin-top: 16px; cursor: pointer; transition: 0.3s;">
-                View Cancelled Orders
+                View Cancelled / Failed Orders
             </button>
             <div id="cancelledList" style="display:none; margin-top: 20px; opacity: 0.85;">
-                <h3 style="font-size: 16px; margin-bottom: 12px; color: var(--text-dark); text-align: center;">Cancelled Orders</h3>
+                <h3 style="font-size: 16px; margin-bottom: 12px; color: var(--text-dark); text-align: center;">Cancelled / Failed</h3>
                 ${cancelledOrders.map((order, i) => {
                     const itemsText = order.items.map(item => `<div class="order-item-row"><span style="text-decoration: line-through;">${item.name}</span><span style="font-weight:600;">x${item.quantity}</span></div>`).join('');
                     const reasonId = 'cancel-reason-' + i;
+                    const statusLabel = order.status === 'Unable to Deliver' ? 'Failed' : 'Cancelled';
+                    
                     return `
                         <div class="order-history-card" style="background: var(--bg-main);">
                             <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                                <div class="order-status" style="background: #FFEBEB; color: #D32F2F;">Cancelled</div>
+                                <div class="order-status" style="background: #FFEBEB; color: #D32F2F;">${statusLabel}</div>
                                 <div class="order-date" style="text-align: right; line-height: 1.4;">
                                     Placed: <br><span style="color: var(--text-dark);">${order.date}</span><br><br>
-                                    <span style="color: #D32F2F;">Cancelled:</span><br><span style="color: #D32F2F; font-weight: 700;">${order.cancelDate || 'N/A'}</span>
+                                    <span style="color: #D32F2F;">${statusLabel}:</span><br><span style="color: #D32F2F; font-weight: 700;">${order.cancelDate || 'N/A'}</span>
                                 </div>
                             </div>
                             <div style="margin-top: 8px; margin-bottom: 12px; padding: 0 4px;">${itemsText}</div>
@@ -1149,6 +1201,8 @@ function renderOrdersList() {
 function openOrdersModal() {
     renderOrdersList();
     openSlide('ordersPanel');
+    // Silently pull fresh updates from backend when user checks orders
+    syncOrdersWithServer();
 }
 </script>
 
