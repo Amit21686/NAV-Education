@@ -195,7 +195,7 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 /* Custom Native Modals */
 .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 3000; padding: 16px; opacity: 0; transition: opacity 0.3s ease; }
 .modal.show { display: flex; opacity: 1; }
-.modal-content { background: var(--surface); width: 100%; max-width: 400px; border-radius: var(--radius-lg); padding: 30px 24px; position: relative; transform: translateY(20px); transition: transform 0.3s ease; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+.modal-content { background: var(--surface); width: 100%; max-width: 400px; border-radius: var(--radius-lg); padding: 30px 24px; position: relative; transform: translateY(20px); transition: transform 0.3s ease; box-shadow: 0 20px 50px rgba(0,0,0,0.2); text-align: center; }
 .modal.show .modal-content { transform: translateY(0); }
 
 /* Forms & UI inside Slides */
@@ -410,7 +410,6 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
     <div class="slide-header">
         <h2 style="margin: 0;">Your Orders</h2>
         <div style="display: flex; gap: 8px; align-items: center;">
-            <button id="syncOrdersBtn" onclick="syncOrdersWithServer()" style="background: transparent; border: none; font-size: 12px; color: var(--brand); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px;">🔄 Sync Live</button>
             <button class="btn-icon" style="width: 38px; height: 38px; padding: 0; border-radius: 50%; font-size: 18px;" onclick="openSlide('helpPanel')" title="Help">🎧</button>
             <button class="btn-close" onclick="history.back()">✕</button>
         </div>
@@ -515,6 +514,7 @@ let cart = JSON.parse(localStorage.getItem('kw_cart')) || [];
 let orderHistory = JSON.parse(localStorage.getItem('kw_orders')) || [];
 let pendingOrder = null;
 let orderToCancelIndex = null;
+let autoSyncTimer = null; 
 
 // --- Init ---
 window.onload = () => {
@@ -533,6 +533,7 @@ window.addEventListener('popstate', (e) => {
         if (el.classList.contains('show') || el.classList.contains('active')) {
             el.classList.remove('show', 'active');
             if (id === 'cartDrawer') document.getElementById('cartOverlay').classList.remove('active');
+            if (id === 'ordersPanel' && autoSyncTimer) clearInterval(autoSyncTimer);
             break; 
         }
     }
@@ -961,12 +962,9 @@ function finalizeOrder() {
     }, 400);
 }
 
-// --- LIVE TRACKING ENGINE (Sync Orders with Server) ---
+// --- LIVE TRACKING ENGINE (Auto Background Sync) ---
 function syncOrdersWithServer() {
     if(orderHistory.length === 0) return; 
-
-    const syncBtn = document.getElementById('syncOrdersBtn');
-    if(syncBtn) syncBtn.innerText = 'Syncing...';
 
     fetch(SCRIPT_URL)
         .then(res => res.json())
@@ -992,19 +990,12 @@ function syncOrdersWithServer() {
                     renderOrdersList(); 
                 }
             }
-            
-            if(syncBtn) {
-                syncBtn.innerText = '✅ Live Tracked';
-                setTimeout(() => { if(syncBtn) syncBtn.innerText = '🔄 Sync Live'; }, 3000);
-            }
         })
         .catch(e => {
-            if(syncBtn) syncBtn.innerText = '⚠️ Offline';
-            setTimeout(() => { if(syncBtn) syncBtn.innerText = '🔄 Sync Live'; }, 3000);
+            console.log('Background sync failed (offline or network error).');
         });
 }
 
-// --- Dynamic Badge Generator ---
 function getStatusBadge(status) {
     if (!status || status === 'Active') return `<div class="order-status" style="background: #E3F2FD; color: #1976D2;">Active (Preparing)</div>`;
     if (status === 'Packaging Done') return `<div class="order-status" style="background: #F3E5F5; color: #7B1FA2;">Packaging Done</div>`;
@@ -1082,10 +1073,10 @@ function toggleCancelledOrders() {
     const btn = document.getElementById('toggleCancelledBtn');
     if (list.style.display === 'none') {
         list.style.display = 'block';
-        btn.innerText = 'Hide Cancelled Orders';
+        btn.innerText = 'Hide Cancelled / Failed Orders';
     } else {
         list.style.display = 'none';
-        btn.innerText = 'View Cancelled Orders';
+        btn.innerText = 'View Cancelled / Failed Orders';
     }
 }
 
@@ -1104,7 +1095,6 @@ function renderOrdersList() {
         return;
     }
     
-    // Safety check for legacy orders missing status
     orderHistory.forEach(o => { if(!o.status) o.status = 'Active'; });
     
     const activeOrders = orderHistory.filter(o => o.status !== 'Cancelled' && o.status !== 'Unable to Deliver');
@@ -1112,7 +1102,6 @@ function renderOrdersList() {
     
     let html = '';
     
-    // Active Orders
     if(activeOrders.length > 0) {
         html += activeOrders.map((order) => {
             const index = orderHistory.indexOf(order);
@@ -1129,7 +1118,6 @@ function renderOrdersList() {
             const waMsg = encodeURIComponent(detailedMsg);
             const waLink = `https://wa.me/918980599865?text=${waMsg}`;
             
-            // Smart Protection: Hide cancel button if already Dispatched, Out for Delivery, or Delivered
             const canCancel = (order.status === 'Active' || order.status === 'Packaging Done');
             const cancelBtnHTML = canCancel ? `<button onclick="confirmCancelOrder(${index})" class="btn-cancel-order">✕ Cancel</button>` : '';
             
@@ -1159,7 +1147,6 @@ function renderOrdersList() {
         `;
     }
     
-    // Cancelled Orders View Block
     if(cancelledOrders.length > 0) {
         html += `
             <button id="toggleCancelledBtn" onclick="toggleCancelledOrders()" style="width: 100%; background: var(--brand-light); border: 2px dashed var(--brand); padding: 14px; border-radius: var(--radius-md); font-family: 'Poppins'; font-weight: 600; color: var(--brand); margin-top: 16px; cursor: pointer; transition: 0.3s;">
@@ -1201,8 +1188,8 @@ function renderOrdersList() {
 function openOrdersModal() {
     renderOrdersList();
     openSlide('ordersPanel');
-    // Silently pull fresh updates from backend when user checks orders
-    syncOrdersWithServer();
+    syncOrdersWithServer(); 
+    autoSyncTimer = setInterval(syncOrdersWithServer, 8000); 
 }
 </script>
 
