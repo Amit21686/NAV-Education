@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Admin Dashboard | Khakhra Wala</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --brand: #E05D26;
+        --brand-hover: #BF4A1A;
+        --brand-light: #FFF0E8;
+        --bg-main: #F4F6F8; 
+        --surface: #FFFFFF; 
+        --text-dark: #1A1A1A;
+        --text-muted: #6B6B6B;
+        --border-color: rgba(0,0,0,0.08);
+        --shadow-sm: 0 4px 12px rgba(0,0,0,0.04);
+        --radius-md: 16px;
+        --radius-lg: 20px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg-main); color: var(--text-dark); line-height: 1.6; }
+    
+    header { background: var(--surface); padding: 16px 20px; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color);}
+    .brand { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--brand); }
+    
+    .btn-refresh { background: var(--brand-light); color: var(--brand); border: none; padding: 8px 16px; border-radius: 50px; font-weight: 600; font-family: 'Poppins'; cursor: pointer; display: flex; align-items: center; gap: 6px;}
+    .btn-refresh:active { transform: scale(0.95); }
+
+    .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+
+    /* Stats Row */
+    .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+    .stat-box { background: var(--surface); padding: 16px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); text-align: center; border: 1px solid var(--border-color);}
+    .stat-val { font-size: 24px; font-weight: 700; color: var(--brand); line-height: 1.2;}
+    .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; }
+
+    /* Tabs */
+    .tabs { display: flex; background: var(--surface); border-radius: 50px; padding: 4px; margin-bottom: 24px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);}
+    .tab { flex: 1; text-align: center; padding: 10px; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 50px; transition: 0.3s; }
+    .tab.active { background: var(--brand); color: #fff; box-shadow: 0 4px 10px rgba(224, 93, 38, 0.3); }
+
+    /* Order Cards */
+    .order-grid { display: flex; flex-direction: column; gap: 16px; }
+    .order-card { background: var(--surface); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); position: relative; overflow: hidden; }
+    
+    /* Top Accent Line */
+    .order-card.active-order { border-top: 4px solid #25D366; }
+    .order-card.cancelled-order { border-top: 4px solid #D32F2F; opacity: 0.85;}
+
+    .oc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+    .oc-id { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 4px;}
+    .oc-date { font-size: 11px; color: var(--text-muted); }
+    .oc-status { padding: 4px 10px; border-radius: 50px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    .status-active { background: #E8F5E9; color: #2E7D32; }
+    .status-cancelled { background: #FFEBEB; color: #D32F2F; }
+
+    .oc-customer { background: var(--bg-main); padding: 12px; border-radius: 12px; margin-bottom: 16px; }
+    .c-name { font-weight: 600; font-size: 15px; color: var(--text-dark); display: block; margin-bottom: 2px;}
+    .c-phone { font-size: 13px; font-weight: 600; color: var(--brand); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 8px;}
+    .c-address { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 8px;}
+    .btn-map { background: #E8F5E9; color: #2E7D32; font-size: 12px; font-weight: 600; text-decoration: none; padding: 6px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px;}
+
+    .oc-items { font-size: 14px; font-weight: 500; color: var(--text-dark); margin-bottom: 16px; line-height: 1.6;}
+    
+    .oc-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border-color); padding-top: 16px; }
+    .oc-total { font-size: 18px; font-weight: 700; color: var(--brand); }
+    
+    .oc-reason { margin-top: 12px; font-size: 13px; color: #D32F2F; background: #FFF5F5; padding: 10px; border-radius: 8px; border: 1px dashed #FFCDD2; font-weight: 500;}
+
+    /* Loader */
+    .loader-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 50vh; color: var(--brand); font-weight: 600;}
+    .spinner { border: 4px solid rgba(224, 93, 38, 0.2); width: 40px; height: 40px; border-radius: 50%; border-left-color: var(--brand); animation: spin 1s linear infinite; margin-bottom: 16px;}
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
+    .empty-state { text-align: center; color: var(--text-muted); padding: 40px 0; font-weight: 500;}
+</style>
+</head>
+<body>
+
+<header>
+    <div class="brand">Admin Panel</div>
+    <button class="btn-refresh" onclick="fetchOrders()"><span>🔄</span> Refresh</button>
+</header>
+
+<div class="container">
+    
+    <div class="stats-container">
+        <div class="stat-box">
+            <div class="stat-val" id="statActive">0</div>
+            <div class="stat-label">Active Orders</div>
+        </div>
+        <div class="stat-box" style="opacity: 0.7;">
+            <div class="stat-val" id="statCancelled" style="color: #D32F2F;">0</div>
+            <div class="stat-label">Cancelled</div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="filterOrders('All', this)">All</div>
+        <div class="tab" onclick="filterOrders('Active', this)">Active</div>
+        <div class="tab" onclick="filterOrders('Cancelled', this)">Cancelled</div>
+    </div>
+
+    <div id="dashboardData">
+        <div class="loader-container">
+            <div class="spinner"></div>
+            <div>Syncing with server...</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ==========================================
+// ⚠️ PASTE YOUR GOOGLE SCRIPT WEB APP URL BELOW
+// ==========================================
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyM7XOoD5bB6W5vwMy_7uzh-MU8gwXvF-LsN8tJbIjP7bAoflN81F8OAUFoEFHM-i8/exec";
+
+let allOrders = [];
+
+// Initialize
+window.onload = fetchOrders;
+
+function fetchOrders() {
+    const dash = document.getElementById('dashboardData');
+    dash.innerHTML = `
+        <div class="loader-container">
+            <div class="spinner"></div>
+            <div>Syncing with server...</div>
+        </div>
+    `;
+
+    fetch(SCRIPT_URL)
+        .then(response => response.json())
+        .then(data => {
+            allOrders = data;
+            updateStats();
+            renderOrders(allOrders); // Default renders all
+            
+            // Reset tabs to 'All'
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector('.tab').classList.add('active');
+        })
+        .catch(error => {
+            dash.innerHTML = `<div class="empty-state" style="color: #D32F2F;">⚠️ Error syncing data. Please check your internet connection and Script URL.</div>`;
+        });
+}
+
+function updateStats() {
+    const activeCount = allOrders.filter(o => o.status === 'Active').length;
+    const cancelledCount = allOrders.filter(o => o.status === 'Cancelled').length;
+    
+    document.getElementById('statActive').innerText = activeCount;
+    document.getElementById('statCancelled').innerText = cancelledCount;
+}
+
+function filterOrders(filterType, tabElement) {
+    // Update active tab UI
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tabElement.classList.add('active');
+
+    // Filter Logic
+    let filtered = [];
+    if(filterType === 'All') filtered = allOrders;
+    else filtered = allOrders.filter(o => o.status === filterType);
+
+    renderOrders(filtered);
+}
+
+function renderOrders(ordersArray) {
+    const dash = document.getElementById('dashboardData');
+    
+    if(!ordersArray || ordersArray.length === 0) {
+        dash.innerHTML = `<div class="empty-state">No orders found in this category.</div>`;
+        return;
+    }
+
+    dash.innerHTML = `<div class="order-grid">` + ordersArray.map(order => {
+        const isActive = order.status === 'Active';
+        const cardClass = isActive ? 'active-order' : 'cancelled-order';
+        const statusClass = isActive ? 'status-active' : 'status-cancelled';
+        
+        // Build map button if link exists
+        const mapBtn = order.mapLink && order.mapLink !== "undefined" && order.mapLink !== "" 
+            ? `<a href="${order.mapLink}" target="_blank" class="btn-map">📍 Open Map</a>` 
+            : `<span style="font-size: 11px; color: var(--text-muted);">No GPS Pinned</span>`;
+
+        // Build Reason block if cancelled
+        const reasonBlock = !isActive && order.cancelReason 
+            ? `<div class="oc-reason"><strong>Reason:</strong> ${order.cancelReason}</div>` 
+            : ``;
+
+        // Clean items list (split by comma and add line breaks for easier reading)
+        const cleanItems = order.items.split(', ').join('<br>• ');
+
+        return `
+            <div class="order-card ${cardClass}">
+                <div class="oc-header">
+                    <div>
+                        <div class="oc-id">ID: ${order.orderId}</div>
+                        <div class="oc-date">${order.date}</div>
+                    </div>
+                    <div class="oc-status ${statusClass}">${order.status}</div>
+                </div>
+
+                <div class="oc-customer">
+                    <span class="c-name">${order.name}</span>
+                    <a href="tel:${order.phone}" class="c-phone">📞 ${order.phone}</a><br>
+                    <div class="c-address">${order.address}</div>
+                    ${mapBtn}
+                </div>
+
+                <div class="oc-items">
+                    <span style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px; text-transform: uppercase;">Items Ordered:</span>
+                    • ${cleanItems}
+                </div>
+
+                <div class="oc-footer">
+                    <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">COD AMOUNT</div>
+                    <div class="oc-total">₹${order.total}</div>
+                </div>
+                
+                ${reasonBlock}
+            </div>
+        `;
+    }).join('') + `</div>`;
+}
+</script>
+
+</body>
+</html>
