@@ -89,6 +89,9 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 .btn-whatsapp { background: #25D366; color: #FFF; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.25); height: 48px; font-size: 15px; }
 .btn-whatsapp:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35); }
 
+.btn-cancel-order { background: #FFEBEB; color: #D32F2F; border: none; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: 0.2s;}
+.btn-cancel-order:hover { background: #FFD6D6; }
+
 .cart-badge { background: var(--surface); color: var(--brand); height: 20px; min-width: 20px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; padding: 0 6px; margin-left: 4px; }
 
 /* --- Hero Section --- */
@@ -204,6 +207,7 @@ textarea.form-input { height: 90px; resize: none; }
 .receipt-box p strong { font-weight: 600; color: var(--text-muted);}
 .receipt-box .address-block { flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; }
 
+/* Delivery Details Typography */
 .delivery-name { display: block; font-weight: 600; font-size: 15px; color: var(--text-dark); margin-bottom: 2px; }
 .delivery-phone { display: block; font-size: 13px; color: var(--brand); font-weight: 500; margin-bottom: 6px; }
 .delivery-address { display: block; font-size: 13px; line-height: 1.5; color: var(--text-muted); }
@@ -218,9 +222,9 @@ textarea.form-input { height: 90px; resize: none; }
 .support-banner { background: #E8F5E9; border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 24px; border: 1px solid #C8E6C9; }
 .success-icon { width: 80px; height: 80px; background: #E8F5E9; color: #2E7D32; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 20px; box-shadow: var(--shadow-sm); }
 
-/* --- 40% Larger Empty Cart Graphic & Centered Empty Orders --- */
-.empty-state { text-align: center; color: var(--text-muted); margin-top: 40px; font-size: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;}
-.empty-state img { width: 100%; max-width: 380px; object-fit: contain; margin-bottom: 24px; pointer-events: none;}
+/* Empty States */
+.empty-state { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;}
+.empty-state img { width: 100%; max-width: 380px; object-fit: contain; pointer-events: none;}
 
 /* Cart Specific */
 .cart-item { display: flex; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); align-items: center;}
@@ -510,14 +514,16 @@ window.onload = () => {
     updateCartUI();
 };
 
-// --- Fullscreen Lightbox Logic ---
+// --- Fullscreen Lightbox Logic (SMART HIGH-RES SCALING) ---
 function openLightbox(productId, index) {
     const product = products.find(p => p.id === productId);
     const gallery = document.getElementById('lightboxGallery');
     
-    gallery.innerHTML = product.images.map(img => `
-        <div class="lightbox-slide"><img src="${img}" alt="${product.name}"></div>
-    `).join('');
+    gallery.innerHTML = product.images.map(img => {
+        // Automatically fetch High Resolution Image for full screen (q=90, w=1200)
+        const highResImg = img.replace('q=30&w=300', 'q=90&w=1200');
+        return `<div class="lightbox-slide"><img src="${highResImg}" alt="${product.name}"></div>`;
+    }).join('');
 
     document.getElementById('lightbox').classList.add('show');
     lockScroll();
@@ -603,7 +609,7 @@ function renderProducts() {
     grid.innerHTML = products.map((p) => {
         const imagesHTML = p.images.map((img, index) => `
             <div class="carousel-slide">
-                <img src="${img}" alt="${p.name}" onclick="openLightbox('${p.id}', ${index})">
+                <img loading="lazy" src="${img}" alt="${p.name}" onclick="openLightbox('${p.id}', ${index})">
             </div>
         `).join('');
 
@@ -927,7 +933,16 @@ function finalizeOrder() {
     }, 400);
 }
 
-// --- Order History & Support Logic ---
+// --- Order History, Support & Cancel Logic ---
+function cancelOrder(index) {
+    if(confirm("Are you sure you want to cancel this order?")) {
+        orderHistory.splice(index, 1);
+        localStorage.setItem('kw_orders', JSON.stringify(orderHistory));
+        showToast("🚫 Order Cancelled.");
+        openOrdersModal(); 
+    }
+}
+
 function openOrdersModal() {
     const ordersBody = document.getElementById('ordersBody');
     const cName = localStorage.getItem('kw_name') || 'Customer';
@@ -938,11 +953,10 @@ function openOrdersModal() {
         ordersBody.innerHTML = `
             <div class="empty-state">
                 <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Order_notplaced_graphic.png" alt="No Orders">
-                <p>You haven't placed any orders yet.</p>
             </div>
         `;
     } else {
-        ordersBody.innerHTML = orderHistory.map((order) => {
+        ordersBody.innerHTML = orderHistory.map((order, index) => {
             const itemsText = order.items.map(i => `<div class="order-item-row"><span>${i.name}</span><span style="font-weight:600;">x${i.quantity}</span></div>`).join('');
             
             const orderAddress = order.address || currentGlobalAddress;
@@ -971,10 +985,13 @@ function openOrdersModal() {
                         <span>₹${order.total}</span>
                     </div>
                     
-                    <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-color); text-align: center;">
-                        <a href="${waLink}" target="_blank" style="text-decoration: none; font-size: 13px; color: #25D366; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                            <span style="font-size: 16px;">💬</span> Help with this order
+                    <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                        <a href="${waLink}" target="_blank" style="text-decoration: none; font-size: 13px; color: #25D366; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                            <span style="font-size: 16px;">💬</span> Help
                         </a>
+                        <button onclick="cancelOrder(${index})" class="btn-cancel-order">
+                            ✕ Cancel
+                        </button>
                     </div>
                 </div>
             `;
