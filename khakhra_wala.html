@@ -376,7 +376,7 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
         </div>
         
         <div style="display: flex; flex-direction: column; gap: 16px;">
-            <a href="https://wa.me/918980599865?text=Hello%20Khakhra%20Wala%20Team!%20I%20need%20some%20help%20with%20my%20recent%20order." target="_blank" class="btn-whatsapp">
+            <a href="https://wa.me/918980599865?text=Hello%20Khakhra%20Wala%20Team!%20I%20need%20some%20help." target="_blank" class="btn-whatsapp">
                 💬 Chat on WhatsApp
             </a>
             <a href="tel:+918980599865" class="btn-primary" style="height: 48px; justify-content: center; font-size: 15px; text-decoration: none;">
@@ -603,9 +603,7 @@ function openProfile(allowClose) {
     document.getElementById('uPhone').value = localStorage.getItem('kw_phone') || '';
     document.getElementById('uAddress').value = localStorage.getItem('kw_address') || '';
     
-    // Check for saved map link
     renderMapLink(localStorage.getItem('kw_map_link'));
-    
     openSlide('profilePanel');
 }
 
@@ -633,18 +631,24 @@ function autoLocate() {
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
             (pos) => {
-                const mapUrl = `https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`;
+                // FIXED Google Maps URL 
+                const mapUrl = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
                 
-                // Save and render the link badge immediately
                 localStorage.setItem('kw_map_link', mapUrl);
                 renderMapLink(mapUrl);
                 
                 btn.innerText = "✅ Location Pinned!";
-                showToast("📍 Location attached successfully.");
+                showToast("📍 High-accuracy location attached.");
                 setTimeout(() => { btn.innerText = ogText; }, 3000);
             },
-            (err) => { btn.innerText = ogText; showToast("⚠️ Unable to fetch location. Please type your address."); },
-            { enableHighAccuracy: true, timeout: 10000 }
+            (err) => { 
+                btn.innerText = ogText; 
+                let errorMsg = "⚠️ Unable to fetch location.";
+                if(err.code === 1) errorMsg = "⚠️ Location access denied by your browser.";
+                showToast(errorMsg); 
+            },
+            // Added high accuracy flags for better mobile pinpointing
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
         );
     } else showToast("⚠️ Geolocation not supported.");
 }
@@ -687,7 +691,7 @@ function reviewDirectOrder(id) {
         items: [{ name: p.name, quantity: q, price: p.price }],
         total: p.price * q,
         address: localStorage.getItem('kw_address'),
-        mapLink: localStorage.getItem('kw_map_link'),
+        mapLink: localStorage.getItem('kw_map_link') || '',
         date: new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
     };
     
@@ -705,7 +709,7 @@ function reviewCartOrder() {
         items: JSON.parse(JSON.stringify(cart)), 
         total: total,
         address: localStorage.getItem('kw_address'),
-        mapLink: localStorage.getItem('kw_map_link'),
+        mapLink: localStorage.getItem('kw_map_link') || '',
         date: new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
     };
     
@@ -789,6 +793,7 @@ function openOrdersModal() {
     const ordersBody = document.getElementById('ordersBody');
     const cName = localStorage.getItem('kw_name') || 'Customer';
     const cPhone = localStorage.getItem('kw_phone') || '';
+    const currentGlobalAddress = localStorage.getItem('kw_address') || 'N/A';
     
     if(orderHistory.length === 0) {
         ordersBody.innerHTML = `<div class="empty-state"><div>📦</div><p>You haven't placed any orders yet.</p></div>`;
@@ -796,14 +801,16 @@ function openOrdersModal() {
         ordersBody.innerHTML = orderHistory.map((order) => {
             const itemsText = order.items.map(i => `<div class="order-item-row"><span>${i.name}</span><span style="font-weight:600;">x${i.quantity}</span></div>`).join('');
             
-            // Build detailed WhatsApp Message for this specific order
+            const orderAddress = order.address || currentGlobalAddress;
+            const orderMapLink = order.mapLink || '';
+            
             let detailedMsg = `Hello Khakhra Wala Team! 🎧\nI need help with my order.\n\n`;
             detailedMsg += `*Order Date:* ${order.date}\n`;
             detailedMsg += `*Items ordered:*\n`;
             order.items.forEach(i => { detailedMsg += `• ${i.quantity}x ${i.name}\n`; });
             detailedMsg += `\n*Total (COD):* ₹${order.total}\n\n`;
-            detailedMsg += `*My Details:*\nName: ${cName}\nPhone: ${cPhone}\nAddress: ${order.address}`;
-            if (order.mapLink) detailedMsg += `\nMap Link: ${order.mapLink}`;
+            detailedMsg += `*My Details:*\nName: ${cName}\nPhone: ${cPhone}\nAddress: ${orderAddress}`;
+            if (orderMapLink) detailedMsg += `\nMap Link: ${orderMapLink}`;
             
             const waMsg = encodeURIComponent(detailedMsg);
             const waLink = `https://wa.me/918980599865?text=${waMsg}`;
