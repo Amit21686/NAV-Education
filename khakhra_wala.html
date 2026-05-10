@@ -6,7 +6,8 @@
 <title>Khakhra Wala | Premium Snacks</title>
 
 <link rel="preload" as="image" href="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Khakhra_logo.png" fetchpriority="high">
-<link rel="preload" as="image" href="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Cart_empty_graphic.png">
+<link rel="preload" as="image" href="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Cart_empty_graphic.png" fetchpriority="high">
+<link rel="preload" as="image" href="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Order_notplaced_graphic.png" fetchpriority="high">
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
@@ -48,7 +49,7 @@ body { font-family: 'Poppins', sans-serif; background: var(--bg-main); color: va
 html.no-scroll, body.no-scroll { 
     overflow: hidden !important; 
     height: 100vh !important;
-    overscroll-behavior: none; /* Stops scroll bleeding on modern browsers */
+    overscroll-behavior: none; 
 }
 
 h1, h2, h3, .logo-text { font-family: 'Playfair Display', serif; }
@@ -216,10 +217,10 @@ textarea.form-input { height: 90px; resize: none; }
 
 .support-banner { background: #E8F5E9; border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 24px; border: 1px solid #C8E6C9; }
 .success-icon { width: 80px; height: 80px; background: #E8F5E9; color: #2E7D32; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 20px; box-shadow: var(--shadow-sm); }
-.empty-state { text-align: center; color: var(--text-muted); margin-top: 60px; font-size: 15px; display: flex; flex-direction: column; align-items: center;}
 
-/* LARGER EMPTY CART GRAPHIC */
-.empty-state img { width: 100%; max-width: 280px; object-fit: contain; margin-bottom: 24px; pointer-events: none;}
+/* --- 40% Larger Empty Cart Graphic & Centered Empty Orders --- */
+.empty-state { text-align: center; color: var(--text-muted); margin-top: 40px; font-size: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;}
+.empty-state img { width: 100%; max-width: 380px; object-fit: contain; margin-bottom: 24px; pointer-events: none;}
 
 /* Cart Specific */
 .cart-item { display: flex; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); align-items: center;}
@@ -259,6 +260,7 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
     .cart-badge { margin-left: 0; }
     
     .section-wrapper { padding: 50px 0; }
+    
     .slide-panel.active { box-shadow: none; max-width: 100%; width: 100%; }
 }
 </style>
@@ -270,7 +272,7 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
         <a href="#" class="logo"><span class="logo-text">Khakhra Wala.</span></a>
         
         <div class="header-actions">
-            <button class="btn-icon desktop-only" onclick="openSlide('ordersPanel')">📦 <span>Orders</span></button>
+            <button class="btn-icon desktop-only" onclick="openOrdersModal()">📦 <span>Orders</span></button>
             <button class="btn-icon desktop-only" onclick="openProfile(true)">👤 <span>Account</span></button>
             
             <button class="btn-primary" onclick="toggleCart()">🛒 <span>Cart</span><div class="cart-badge" id="cartBadge">0</div></button>
@@ -352,7 +354,7 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
         <button class="btn-close" onclick="closeSlide('mobileMenuPanel')">✕</button>
     </div>
     <div class="slide-body">
-        <button class="btn-icon menu-list-item" onclick="closeSlide('mobileMenuPanel'); setTimeout(() => openSlide('ordersPanel'), 400);">📦 Order History</button>
+        <button class="btn-icon menu-list-item" onclick="closeSlide('mobileMenuPanel'); setTimeout(() => openOrdersModal(), 400);">📦 Order History</button>
         <button class="btn-icon menu-list-item" onclick="closeSlide('mobileMenuPanel'); setTimeout(() => openProfile(true), 400);">👤 Account Details</button>
         <button class="btn-icon menu-list-item" style="border: 1px solid #C8E6C9; background: #E8F5E9; color: #2E7D32;" onclick="closeSlide('mobileMenuPanel'); setTimeout(() => openSlide('helpPanel'), 400);">🎧 Help & Support</button>
     </div>
@@ -409,7 +411,7 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
         </div>
     </div>
     <div class="slide-body">
-        <div id="ordersBody"></div>
+        <div id="ordersBody" style="height: 100%;"></div>
     </div>
 </div>
 
@@ -462,38 +464,38 @@ function unlockScroll() {
     document.body.classList.remove('no-scroll');
 }
 
-// --- Data (Optimized Images for Faster Loading) ---
+// --- Data (Optimized Images for INSTANT Loading: w=300, q=30, format=webp) ---
 const products = [
     { 
         id: 'p1', name: 'Classic Masala', desc: 'A timeless blend of vibrant Indian spices.', price: 120, 
         images: [
-            'https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?q=60&w=500&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=60&w=500&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1596450514735-111a2fe02935?q=60&w=500&auto=format&fit=crop'
+            'https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?q=30&w=300&fm=webp&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=30&w=300&fm=webp&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1596450514735-111a2fe02935?q=30&w=300&fm=webp&auto=format&fit=crop'
         ] 
     },
     { 
         id: 'p2', name: 'Roasted Methi', desc: 'Earthy fenugreek leaves baked to perfection.', price: 110, 
         images: [
-            'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=60&w=500&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1604328727574-65d8b82436d4?q=60&w=500&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1621236378699-8597faf6a176?q=60&w=500&auto=format&fit=crop'
+            'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=30&w=300&fm=webp&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1604328727574-65d8b82436d4?q=30&w=300&fm=webp&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1621236378699-8597faf6a176?q=30&w=300&fm=webp&auto=format&fit=crop'
         ] 
     },
     { 
         id: 'p3', name: 'Cumin (Jeera)', desc: 'Subtle, aromatic jeera for a soothing crunch.', price: 115, 
         images: [
-            'https://images.unsplash.com/photo-1542838132-92c53300491e?q=60&w=500&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1589301760014-d929f39ce9b1?q=60&w=500&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=60&w=500&auto=format&fit=crop'
+            'https://images.unsplash.com/photo-1542838132-92c53300491e?q=30&w=300&fm=webp&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1589301760014-d929f39ce9b1?q=30&w=300&fm=webp&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=30&w=300&fm=webp&auto=format&fit=crop'
         ] 
     },
     { 
         id: 'p4', name: 'Cheddar Cheese', desc: 'A modern, gourmet twist with real cheese dust.', price: 140, 
         images: [
-            'https://images.unsplash.com/photo-1604068549290-dea0e4a30536?q=60&w=500&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=60&w=500&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1541696490-8744a5dc0228?q=60&w=500&auto=format&fit=crop'
+            'https://images.unsplash.com/photo-1604068549290-dea0e4a30536?q=30&w=300&fm=webp&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=30&w=300&fm=webp&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1541696490-8744a5dc0228?q=30&w=300&fm=webp&auto=format&fit=crop'
         ] 
     }
 ];
@@ -594,14 +596,14 @@ function showToast(msg) {
     setTimeout(() => t.remove(), 3300);
 }
 
-// --- Product Rendering with Swipeable Carousel & Lazy Loading ---
+// --- Product Rendering with Swipeable Carousel & Instant Loading ---
 function renderProducts() {
     const grid = document.getElementById('productGrid');
     
     grid.innerHTML = products.map((p) => {
         const imagesHTML = p.images.map((img, index) => `
             <div class="carousel-slide">
-                <img loading="lazy" src="${img}" alt="${p.name}" onclick="openLightbox('${p.id}', ${index})">
+                <img src="${img}" alt="${p.name}" onclick="openLightbox('${p.id}', ${index})">
             </div>
         `).join('');
 
@@ -933,7 +935,12 @@ function openOrdersModal() {
     const currentGlobalAddress = localStorage.getItem('kw_address') || 'N/A';
     
     if(orderHistory.length === 0) {
-        ordersBody.innerHTML = `<div class="empty-state"><div>📦</div><p>You haven't placed any orders yet.</p></div>`;
+        ordersBody.innerHTML = `
+            <div class="empty-state">
+                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Order_notplaced_graphic.png" alt="No Orders">
+                <p>You haven't placed any orders yet.</p>
+            </div>
+        `;
     } else {
         ordersBody.innerHTML = orderHistory.map((order) => {
             const itemsText = order.items.map(i => `<div class="order-item-row"><span>${i.name}</span><span style="font-weight:600;">x${i.quantity}</span></div>`).join('');
