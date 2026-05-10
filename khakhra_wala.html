@@ -76,7 +76,6 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 .btn-primary { background: var(--brand); color: var(--surface); box-shadow: 0 4px 15px rgba(224, 93, 38, 0.25); }
 .btn-primary:hover { background: var(--brand-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(224, 93, 38, 0.35); }
 
-/* Support Buttons */
 .btn-whatsapp { background: #25D366; color: #FFF; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.25); height: 48px; font-size: 15px; }
 .btn-whatsapp:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35); }
 
@@ -93,7 +92,7 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 .hero-image { display: flex; justify-content: flex-end; width: 100%; }
 .hero-image img { width: 100%; max-width: 500px; aspect-ratio: 4/5; object-fit: cover; border-radius: 32px; box-shadow: var(--shadow-md); pointer-events: none; }
 
-/* --- Products & Grids --- */
+/* --- Products & Carousel Grids --- */
 .section-wrapper { padding: 70px 0; }
 .section-header { text-align: center; margin-bottom: 40px; }
 .section-header h2 { font-size: 34px; margin-bottom: 10px; color: var(--text-dark); }
@@ -103,9 +102,24 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 .product-card { background: var(--surface); border-radius: var(--radius-lg); padding: 16px; box-shadow: var(--shadow-md); border: 1px solid var(--card-border); display: flex; flex-direction: column; transition: var(--transition); }
 .product-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); }
 
-.img-wrapper { width: 100%; height: 220px; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 16px; background: var(--bg-main);}
-.img-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; pointer-events: none; }
-.product-card:hover .img-wrapper img { transform: scale(1.05); }
+/* Swipeable Card Image Setup */
+.img-wrapper { 
+    width: 100%; height: 220px; border-radius: var(--radius-md); overflow: hidden; 
+    margin-bottom: 16px; background: var(--bg-main); position: relative;
+}
+.carousel { 
+    display: flex; overflow-x: auto; scroll-snap-type: x mandatory; 
+    width: 100%; height: 100%; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.carousel::-webkit-scrollbar { display: none; }
+.carousel-slide { flex: 0 0 100%; height: 100%; scroll-snap-align: center; position: relative; }
+.carousel-slide img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; }
+
+.swipe-hint {
+    position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6);
+    color: #fff; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px;
+    pointer-events: none; z-index: 10; backdrop-filter: blur(4px);
+}
 
 .product-info { display: flex; flex-direction: column; flex: 1; }
 .product-info h3 { font-size: 20px; margin-bottom: 6px; }
@@ -130,6 +144,25 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 .feature-icon { width: 64px; height: 64px; background: var(--brand-light); color: var(--brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px; }
 .feature-item h3 { font-size: 18px; margin-bottom: 8px; }
 .feature-item p { color: var(--text-muted); font-size: 13px; }
+
+/* =========================================
+   FULLSCREEN IMAGE LIGHTBOX
+   ========================================= */
+.lightbox { 
+    position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 9999; 
+    display: none; flex-direction: column; opacity: 0; transition: opacity 0.3s ease; 
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.lightbox.show { display: flex; opacity: 1; }
+.lightbox-header { display: flex; justify-content: flex-end; padding: 20px; flex-shrink: 0; }
+.lightbox-close { background: rgba(255,255,255,0.15); border: none; color: white; width: 44px; height: 44px; border-radius: 50%; font-size: 20px; cursor: pointer; display:flex; align-items:center; justify-content:center; }
+.lightbox-gallery { flex: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+.lightbox-gallery::-webkit-scrollbar { display: none; }
+.lightbox-slide { flex: 0 0 100%; height: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; padding: 10px; }
+.lightbox-slide img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 12px; }
+.lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 100%; display: flex; justify-content: space-between; padding: 0 20px; pointer-events: none; }
+.lb-btn { pointer-events: auto; background: rgba(255,255,255,0.15); border: none; color: white; width: 48px; height: 48px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+.lb-btn:hover { background: rgba(255,255,255,0.3); }
 
 /* =========================================
    SLIDE SCREENS SYSTEM
@@ -188,7 +221,6 @@ textarea.form-input { height: 90px; resize: none; }
 
 /* Support Banner & Card */
 .support-banner { background: #E8F5E9; border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 24px; border: 1px solid #C8E6C9; }
-
 .success-icon { width: 80px; height: 80px; background: #E8F5E9; color: #2E7D32; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 20px; box-shadow: var(--shadow-sm); }
 .empty-state { text-align: center; color: var(--text-muted); margin-top: 60px; font-size: 15px; }
 
@@ -277,6 +309,20 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
         <p>© 2026 Khakhra Wala. Crafted with passion in Gujarat.</p>
     </div>
 </footer>
+
+<div class="lightbox" id="lightbox">
+    <div class="lightbox-header">
+        <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    </div>
+    <div class="lightbox-nav desktop-only">
+        <button class="lb-btn" onclick="scrollLightbox(-1)">❮</button>
+        <button class="lb-btn" onclick="scrollLightbox(1)">❯</button>
+    </div>
+    <div class="lightbox-gallery" id="lightboxGallery"></div>
+    <div style="text-align: center; color: rgba(255,255,255,0.7); padding-bottom: 20px; font-size: 13px;">
+        ↔ Swipe to see more
+    </div>
+</div>
 
 <div class="overlay" id="cartOverlay" onclick="toggleCart()"></div>
 <div class="overlay" id="slideOverlay" onclick="closeAllSlides()"></div>
@@ -402,11 +448,40 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
 
 <script>
 // --- Data ---
+// Now each product has multiple high-quality angles
 const products = [
-    { id: 'p1', name: 'Classic Masala', desc: 'A timeless blend of vibrant Indian spices.', price: 120, img: 'https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?q=80&w=800&auto=format&fit=crop' },
-    { id: 'p2', name: 'Roasted Methi', desc: 'Earthy fenugreek leaves baked to perfection.', price: 110, img: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=800&auto=format&fit=crop' },
-    { id: 'p3', name: 'Cumin (Jeera)', desc: 'Subtle, aromatic jeera for a soothing crunch.', price: 115, img: 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop' },
-    { id: 'p4', name: 'Cheddar Cheese', desc: 'A modern, gourmet twist with real cheese dust.', price: 140, img: 'https://images.unsplash.com/photo-1604068549290-dea0e4a30536?q=80&w=800&auto=format&fit=crop' }
+    { 
+        id: 'p1', name: 'Classic Masala', desc: 'A timeless blend of vibrant Indian spices.', price: 120, 
+        images: [
+            'https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?q=80&w=800&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=80&w=800&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1596450514735-111a2fe02935?q=80&w=800&auto=format&fit=crop'
+        ] 
+    },
+    { 
+        id: 'p2', name: 'Roasted Methi', desc: 'Earthy fenugreek leaves baked to perfection.', price: 110, 
+        images: [
+            'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=800&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1604328727574-65d8b82436d4?q=80&w=800&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1621236378699-8597faf6a176?q=80&w=800&auto=format&fit=crop'
+        ] 
+    },
+    { 
+        id: 'p3', name: 'Cumin (Jeera)', desc: 'Subtle, aromatic jeera for a soothing crunch.', price: 115, 
+        images: [
+            'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1589301760014-d929f39ce9b1?q=80&w=800&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=80&w=800&auto=format&fit=crop'
+        ] 
+    },
+    { 
+        id: 'p4', name: 'Cheddar Cheese', desc: 'A modern, gourmet twist with real cheese dust.', price: 140, 
+        images: [
+            'https://images.unsplash.com/photo-1604068549290-dea0e4a30536?q=80&w=800&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=800&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1541696490-8744a5dc0228?q=80&w=800&auto=format&fit=crop'
+        ] 
+    }
 ];
 
 let cart = JSON.parse(localStorage.getItem('kw_cart')) || [];
@@ -418,6 +493,41 @@ window.onload = () => {
     renderProducts();
     updateCartUI();
 };
+
+// --- Fullscreen Lightbox Logic ---
+function openLightbox(productId, index) {
+    const product = products.find(p => p.id === productId);
+    const gallery = document.getElementById('lightboxGallery');
+    
+    gallery.innerHTML = product.images.map(img => `
+        <div class="lightbox-slide">
+            <img src="${img}" alt="${product.name}">
+        </div>
+    `).join('');
+
+    document.getElementById('lightbox').classList.add('show');
+    document.body.classList.add('no-scroll');
+
+    // Instantly scroll to the specific image tapped
+    setTimeout(() => {
+        const slideWidth = gallery.clientWidth;
+        gallery.scrollLeft = slideWidth * index;
+    }, 10);
+}
+
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('show');
+    // Only unfreeze body if no other slide panels are open
+    if (document.querySelectorAll('.app-screen.active').length === 0 && !document.getElementById('cartDrawer').classList.contains('active')) {
+        document.body.classList.remove('no-scroll');
+    }
+}
+
+function scrollLightbox(direction) {
+    const gallery = document.getElementById('lightboxGallery');
+    const slideWidth = gallery.clientWidth;
+    gallery.scrollBy({ left: direction * slideWidth, behavior: 'smooth' });
+}
 
 // --- Slide UI System ---
 function openSlide(id) {
@@ -474,30 +584,43 @@ function showToast(msg) {
     setTimeout(() => t.remove(), 3300);
 }
 
-// --- Product Rendering ---
+// --- Product Rendering with Swipeable Carousel ---
 function renderProducts() {
     const grid = document.getElementById('productGrid');
-    grid.innerHTML = products.map((p) => `
-        <div class="product-card">
-            <div class="img-wrapper"><img src="${p.img}" alt="${p.name}"></div>
-            <div class="product-info">
-                <h3>${p.name}</h3>
-                <p>${p.desc}</p>
-                <div class="price-row">
-                    <span class="price">₹${p.price}</span>
-                    <div class="qty-control">
-                        <button class="qty-btn" onclick="adjQty('${p.id}', -1)">-</button>
-                        <input type="tel" id="qty-${p.id}" class="qty-input" value="1" readonly>
-                        <button class="qty-btn" onclick="adjQty('${p.id}', 1)">+</button>
+    
+    grid.innerHTML = products.map((p) => {
+        // Build the inner HTML for multiple images
+        const imagesHTML = p.images.map((img, index) => `
+            <div class="carousel-slide">
+                <img src="${img}" alt="${p.name}" onclick="openLightbox('${p.id}', ${index})">
+            </div>
+        `).join('');
+
+        return `
+            <div class="product-card">
+                <div class="img-wrapper">
+                    <div class="carousel">${imagesHTML}</div>
+                    <div class="swipe-hint">↔ Swipe</div>
+                </div>
+                <div class="product-info">
+                    <h3>${p.name}</h3>
+                    <p>${p.desc}</p>
+                    <div class="price-row">
+                        <span class="price">₹${p.price}</span>
+                        <div class="qty-control">
+                            <button class="qty-btn" onclick="adjQty('${p.id}', -1)">-</button>
+                            <input type="tel" id="qty-${p.id}" class="qty-input" value="1" readonly>
+                            <button class="qty-btn" onclick="adjQty('${p.id}', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-outline" onclick="addToCart('${p.id}')">Add to Cart</button>
+                        <button class="btn-fill" onclick="reviewDirectOrder('${p.id}')">Buy Now</button>
                     </div>
                 </div>
-                <div class="card-actions">
-                    <button class="btn-outline" onclick="addToCart('${p.id}')">Add to Cart</button>
-                    <button class="btn-fill" onclick="reviewDirectOrder('${p.id}')">Buy Now</button>
-                </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function adjQty(id, delta) {
@@ -514,8 +637,12 @@ function addToCart(id) {
     const qty = parseInt(qtyInput.value);
     
     const existing = cart.find(i => i.id === id);
-    if(existing) existing.quantity += qty;
-    else cart.push({ ...product, quantity: qty });
+    if(existing) {
+        existing.quantity += qty;
+    } else {
+        // Store only the primary image for the cart to keep memory footprint light
+        cart.push({ ...product, quantity: qty, img: product.images[0] });
+    }
 
     qtyInput.value = 1;
     saveCart();
@@ -631,8 +758,7 @@ function autoLocate() {
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
             (pos) => {
-                // FIXED Google Maps URL 
-                const mapUrl = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                const mapUrl = `https://maps.google.com/?q=lat,lng?q=${pos.coords.latitude},${pos.coords.longitude}`;
                 
                 localStorage.setItem('kw_map_link', mapUrl);
                 renderMapLink(mapUrl);
@@ -647,7 +773,6 @@ function autoLocate() {
                 if(err.code === 1) errorMsg = "⚠️ Location access denied by your browser.";
                 showToast(errorMsg); 
             },
-            // Added high accuracy flags for better mobile pinpointing
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
         );
     } else showToast("⚠️ Geolocation not supported.");
@@ -688,7 +813,7 @@ function reviewDirectOrder(id) {
     pendingOrder = {
         type: 'direct',
         sourceId: id,
-        items: [{ name: p.name, quantity: q, price: p.price }],
+        items: [{ name: p.name, quantity: q, price: p.price, img: p.images[0] }],
         total: p.price * q,
         address: localStorage.getItem('kw_address'),
         mapLink: localStorage.getItem('kw_map_link') || '',
