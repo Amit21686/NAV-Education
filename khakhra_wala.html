@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>Khakhra Wala | Premium Snacks</title>
 
+<link rel="preload" as="image" href="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Khakhra_logo.png" fetchpriority="high">
+<link rel="preload" as="image" href="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Cart_empty_graphic.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
@@ -76,6 +79,7 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 .btn-primary { background: var(--brand); color: var(--surface); box-shadow: 0 4px 15px rgba(224, 93, 38, 0.25); }
 .btn-primary:hover { background: var(--brand-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(224, 93, 38, 0.35); }
 
+/* Support Buttons */
 .btn-whatsapp { background: #25D366; color: #FFF; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.25); height: 48px; font-size: 15px; }
 .btn-whatsapp:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35); }
 
@@ -84,15 +88,18 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 /* --- Hero Section --- */
 .hero { padding: 120px 0 60px; min-height: auto; }
 .hero .container { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
-.hero-content { max-width: 600px; }
+.hero-content { max-width: 600px; display: flex; flex-direction: column; align-items: flex-start; }
 .hero-badge { display: inline-block; background: var(--brand-light); color: var(--brand); padding: 6px 16px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 20px; }
 .hero-content h1 { font-size: clamp(36px, 5vw, 60px); line-height: 1.15; margin-bottom: 16px; }
 .hero-content h1 span { color: var(--brand); font-style: italic;}
 .hero-content p { font-size: 16px; color: var(--text-muted); margin-bottom: 28px; max-width: 480px;}
-.hero-image { display: flex; justify-content: flex-end; width: 100%; }
-.hero-image img { width: 100%; max-width: 500px; aspect-ratio: 4/5; object-fit: cover; border-radius: 32px; box-shadow: var(--shadow-md); pointer-events: none; }
 
-/* --- Products & Carousel Grids --- */
+.hero-image { display: flex; justify-content: flex-end; width: 100%; }
+/* Clean logo styling without borders or shadows */
+.hero-image img { width: 100%; max-width: 480px; object-fit: contain; pointer-events: none; }
+.hero-img-mobile { width: 100%; max-width: 280px; object-fit: contain; pointer-events: none; margin: 10px 0 24px 0; align-self: center; }
+
+/* --- Products & Grids --- */
 .section-wrapper { padding: 70px 0; }
 .section-header { text-align: center; margin-bottom: 40px; }
 .section-header h2 { font-size: 34px; margin-bottom: 10px; color: var(--text-dark); }
@@ -103,23 +110,12 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 .product-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); }
 
 /* Swipeable Card Image Setup */
-.img-wrapper { 
-    width: 100%; height: 220px; border-radius: var(--radius-md); overflow: hidden; 
-    margin-bottom: 16px; background: var(--bg-main); position: relative;
-}
-.carousel { 
-    display: flex; overflow-x: auto; scroll-snap-type: x mandatory; 
-    width: 100%; height: 100%; scrollbar-width: none; -webkit-overflow-scrolling: touch;
-}
+.img-wrapper { width: 100%; height: 220px; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 16px; background: var(--bg-main); position: relative; }
+.carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; width: 100%; height: 100%; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .carousel::-webkit-scrollbar { display: none; }
 .carousel-slide { flex: 0 0 100%; height: 100%; scroll-snap-align: center; position: relative; }
 .carousel-slide img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; }
-
-.swipe-hint {
-    position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6);
-    color: #fff; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px;
-    pointer-events: none; z-index: 10; backdrop-filter: blur(4px);
-}
+.swipe-hint { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6); color: #fff; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px; pointer-events: none; z-index: 10; backdrop-filter: blur(4px); }
 
 .product-info { display: flex; flex-direction: column; flex: 1; }
 .product-info h3 { font-size: 20px; margin-bottom: 6px; }
@@ -148,11 +144,7 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 /* =========================================
    FULLSCREEN IMAGE LIGHTBOX
    ========================================= */
-.lightbox { 
-    position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 9999; 
-    display: none; flex-direction: column; opacity: 0; transition: opacity 0.3s ease; 
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-}
+.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 9999; display: none; flex-direction: column; opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .lightbox.show { display: flex; opacity: 1; }
 .lightbox-header { display: flex; justify-content: flex-end; padding: 20px; flex-shrink: 0; }
 .lightbox-close { background: rgba(255,255,255,0.15); border: none; color: white; width: 44px; height: 44px; border-radius: 50%; font-size: 20px; cursor: pointer; display:flex; align-items:center; justify-content:center; }
@@ -172,13 +164,7 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 #cartOverlay { z-index: 1999; }
 #slideOverlay { z-index: 2499; } 
 
-.slide-panel { 
-    position: fixed; top: 0; bottom: 0; right: -120%; 
-    width: 100%; max-width: 440px; 
-    height: 100%; height: 100dvh; background: var(--surface);
-    transition: var(--transition); display: flex; flex-direction: column; 
-    box-shadow: none; 
-}
+.slide-panel { position: fixed; top: 0; bottom: 0; right: -120%; width: 100%; max-width: 440px; height: 100%; height: 100dvh; background: var(--surface); transition: var(--transition); display: flex; flex-direction: column; box-shadow: none; }
 .slide-panel.active { right: 0; box-shadow: -4px 0 24px rgba(0,0,0,0.08); }
 
 .cart-drawer { z-index: 2000; }
@@ -207,7 +193,6 @@ textarea.form-input { height: 90px; resize: none; }
 .receipt-box p strong { font-weight: 600; color: var(--text-muted);}
 .receipt-box .address-block { flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; }
 
-/* Delivery Details Typography */
 .delivery-name { display: block; font-weight: 600; font-size: 15px; color: var(--text-dark); margin-bottom: 2px; }
 .delivery-phone { display: block; font-size: 13px; color: var(--brand); font-weight: 500; margin-bottom: 6px; }
 .delivery-address { display: block; font-size: 13px; line-height: 1.5; color: var(--text-muted); }
@@ -219,10 +204,10 @@ textarea.form-input { height: 90px; resize: none; }
 .order-item-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-dark); margin-bottom: 4px; }
 .order-total { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; border-top: 1px dashed rgba(0,0,0,0.1); padding-top: 12px; color: var(--brand); margin-top: 12px;}
 
-/* Support Banner & Card */
 .support-banner { background: #E8F5E9; border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 24px; border: 1px solid #C8E6C9; }
 .success-icon { width: 80px; height: 80px; background: #E8F5E9; color: #2E7D32; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 20px; box-shadow: var(--shadow-sm); }
-.empty-state { text-align: center; color: var(--text-muted); margin-top: 60px; font-size: 15px; }
+.empty-state { text-align: center; color: var(--text-muted); margin-top: 60px; font-size: 15px; display: flex; flex-direction: column; align-items: center;}
+.empty-state img { width: 100%; max-width: 200px; object-fit: contain; margin-bottom: 20px; pointer-events: none;}
 
 /* Cart Specific */
 .cart-item { display: flex; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); align-items: center;}
@@ -242,21 +227,26 @@ textarea.form-input { height: 90px; resize: none; }
 footer { padding: 30px 0; text-align: center; background: var(--surface); border-top: 1px solid var(--border-color); font-size: 13px; color: var(--text-muted);}
 
 /* =========================================
-   MOBILE FIXES 
+   MOBILE FIXES & REORDERING
    ========================================= */
 @media(max-width: 900px) {
-    .hero .container { grid-template-columns: 1fr; text-align: center; gap: 30px;}
+    .hero .container { display: flex; flex-direction: column; text-align: center; gap: 0;}
     .hero { padding: 100px 0 40px; } 
-    .hero-content { margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
-    .hero-image img { max-width: 320px; aspect-ratio: 1/1; border-radius: 32px; margin: 0 auto; }
-    .hero-content h1 { font-size: 32px; }
+    
+    .hero-content { margin: 0 auto; display: flex; flex-direction: column; align-items: center; width: 100%;}
+    .hero-content h1 { font-size: 32px; order: 3; margin-top: 10px; }
+    .hero-badge { order: 1; margin-bottom: 10px;}
+    .hero-content p { font-size: 16px; order: 4; margin-bottom: 24px;}
+    .hero-content button { order: 5; margin: 0 auto;}
+    
+    /* Bring image inside flex flow for perfect mobile sandwiching */
+    .hero-img-mobile { display: block !important; order: 2; }
     
     .btn-primary > span { display: none; }
     .btn-primary { padding: 0 14px; }
     .cart-badge { margin-left: 0; }
     
     .section-wrapper { padding: 50px 0; }
-    
     .slide-panel.active { box-shadow: none; max-width: 100%; width: 100%; }
 }
 </style>
@@ -285,12 +275,15 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
         <div class="container">
             <div class="hero-content">
                 <div class="hero-badge">100% Homemade</div>
+                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Khakhra_logo.png" fetchpriority="high" class="hero-img-mobile mobile-only" alt="Khakhra Wala Logo">
+                
                 <h1>The Crunch of <br><span>Tradition</span></h1>
                 <p>Elevate your snacking. Perfectly roasted, artisan-crafted Gujarati khakhra made with premium ingredients and unparalleled hygiene.</p>
                 <button class="btn-primary" style="height: 48px; padding: 0 28px; font-size: 15px;" onclick="document.getElementById('shop').scrollIntoView()">Explore Flavours</button>
             </div>
-            <div class="hero-image">
-                <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=800&auto=format&fit=crop" alt="Premium Khakhra">
+            
+            <div class="hero-image desktop-only">
+                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Khakhra_logo.png" fetchpriority="high" alt="Khakhra Wala Logo">
             </div>
         </div>
     </section>
@@ -404,7 +397,6 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
         </div>
     </div>
     <div class="slide-body">
-        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Track your recently placed orders here.</p>
         <div id="ordersBody"></div>
     </div>
 </div>
@@ -448,7 +440,6 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
 
 <script>
 // --- Data ---
-// Now each product has multiple high-quality angles
 const products = [
     { 
         id: 'p1', name: 'Classic Masala', desc: 'A timeless blend of vibrant Indian spices.', price: 120, 
@@ -500,15 +491,12 @@ function openLightbox(productId, index) {
     const gallery = document.getElementById('lightboxGallery');
     
     gallery.innerHTML = product.images.map(img => `
-        <div class="lightbox-slide">
-            <img src="${img}" alt="${product.name}">
-        </div>
+        <div class="lightbox-slide"><img src="${img}" alt="${product.name}"></div>
     `).join('');
 
     document.getElementById('lightbox').classList.add('show');
     document.body.classList.add('no-scroll');
 
-    // Instantly scroll to the specific image tapped
     setTimeout(() => {
         const slideWidth = gallery.clientWidth;
         gallery.scrollLeft = slideWidth * index;
@@ -517,7 +505,6 @@ function openLightbox(productId, index) {
 
 function closeLightbox() {
     document.getElementById('lightbox').classList.remove('show');
-    // Only unfreeze body if no other slide panels are open
     if (document.querySelectorAll('.app-screen.active').length === 0 && !document.getElementById('cartDrawer').classList.contains('active')) {
         document.body.classList.remove('no-scroll');
     }
@@ -589,7 +576,6 @@ function renderProducts() {
     const grid = document.getElementById('productGrid');
     
     grid.innerHTML = products.map((p) => {
-        // Build the inner HTML for multiple images
         const imagesHTML = p.images.map((img, index) => `
             <div class="carousel-slide">
                 <img src="${img}" alt="${p.name}" onclick="openLightbox('${p.id}', ${index})">
@@ -640,7 +626,6 @@ function addToCart(id) {
     if(existing) {
         existing.quantity += qty;
     } else {
-        // Store only the primary image for the cart to keep memory footprint light
         cart.push({ ...product, quantity: qty, img: product.images[0] });
     }
 
@@ -674,7 +659,12 @@ function updateCartUI() {
     let totalQty = 0; let totalPrice = 0;
 
     if(cart.length === 0) {
-        body.innerHTML = `<div class="empty-state"><div>🌾</div><p>Your cart is empty</p></div>`;
+        // EMPTY CART GRAPHIC INJECTED HERE
+        body.innerHTML = `
+            <div class="empty-state">
+                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Cart_empty_graphic.png" alt="Empty Cart">
+            </div>
+        `;
     } else {
         body.innerHTML = cart.map((item, i) => {
             totalQty += item.quantity; totalPrice += item.price * item.quantity;
