@@ -45,10 +45,9 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
 body { font-family: 'Poppins', sans-serif; background: var(--bg-main); color: var(--text-dark); line-height: 1.6; overflow-x: hidden; }
 
-/* STRICT BACKGROUND SCROLL LOCK */
+/* FIXED SCROLL LOCK: Removed height:100vh to stop screen jumping to top */
 html.no-scroll, body.no-scroll { 
     overflow: hidden !important; 
-    height: 100vh !important;
     overscroll-behavior: none; 
 }
 
@@ -165,7 +164,7 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 .lb-btn:hover { background: rgba(255,255,255,0.3); }
 
 /* =========================================
-   SLIDE SCREENS SYSTEM
+   SLIDE SCREENS SYSTEM & MODALS
    ========================================= */
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: var(--transition); overscroll-behavior: contain; }
 .overlay.active { opacity: 1; visibility: visible; }
@@ -192,6 +191,12 @@ button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; tran
 
 .slide-body { flex: 1 1 auto; overflow-y: auto; padding: 24px; min-height: 0; background: var(--surface); overscroll-behavior-y: contain;}
 .slide-footer { padding: 20px 24px calc(20px + env(safe-area-inset-bottom)); background: var(--surface); border-top: 1px solid var(--border-color); flex-shrink: 0; }
+
+/* Custom Native Modals (Cancel Confirmation) */
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 3000; padding: 16px; opacity: 0; transition: opacity 0.3s ease; }
+.modal.show { display: flex; opacity: 1; }
+.modal-content { background: var(--surface); width: 100%; max-width: 400px; border-radius: var(--radius-lg); padding: 30px 24px; position: relative; transform: translateY(20px); transition: transform 0.3s ease; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+.modal.show .modal-content { transform: translateY(0); }
 
 /* Forms & UI inside Slides */
 .form-group { margin-bottom: 18px; }
@@ -221,10 +226,7 @@ textarea.form-input { height: 90px; resize: none; }
 
 .support-banner { background: #E8F5E9; border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 24px; border: 1px solid #C8E6C9; }
 .success-icon { width: 80px; height: 80px; background: #E8F5E9; color: #2E7D32; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 20px; box-shadow: var(--shadow-sm); }
-
-/* Empty States */
-.empty-state { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;}
-.empty-state img { width: 100%; max-width: 380px; object-fit: contain; pointer-events: none;}
+.empty-state { text-align: center; color: var(--text-muted); margin-top: 20px; font-size: 15px; display: flex; flex-direction: column; align-items: center;}
 
 /* Cart Specific */
 .cart-item { display: flex; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); align-items: center;}
@@ -276,10 +278,10 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
         <a href="#" class="logo"><span class="logo-text">Khakhra Wala.</span></a>
         
         <div class="header-actions">
-            <button class="btn-icon desktop-only" onclick="openOrdersModal()">📦 <span>Orders</span></button>
+            <button class="btn-icon desktop-only" onclick="openSlide('ordersPanel')">📦 <span>Orders</span></button>
             <button class="btn-icon desktop-only" onclick="openProfile(true)">👤 <span>Account</span></button>
             
-            <button class="btn-primary" onclick="toggleCart()">🛒 <span>Cart</span><div class="cart-badge" id="cartBadge">0</div></button>
+            <button class="btn-primary" onclick="openCartDrawer()">🛒 <span>Cart</span><div class="cart-badge" id="cartBadge">0</div></button>
             
             <button class="btn-icon mobile-only" style="padding: 0 12px;" onclick="openSlide('mobileMenuPanel')">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
@@ -323,7 +325,7 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
 
 <div class="lightbox" id="lightbox">
     <div class="lightbox-header">
-        <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+        <button class="lightbox-close" onclick="history.back()">✕</button>
     </div>
     <div class="lightbox-nav desktop-only">
         <button class="lb-btn" onclick="scrollLightbox(-1)">❮</button>
@@ -335,13 +337,13 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
     </div>
 </div>
 
-<div class="overlay" id="cartOverlay" onclick="toggleCart()"></div>
-<div class="overlay" id="slideOverlay" onclick="closeAllSlides()"></div>
+<div class="overlay" id="cartOverlay" onclick="history.back()"></div>
+<div class="overlay" id="slideOverlay" onclick="history.back()"></div>
 
 <div class="slide-panel cart-drawer" id="cartDrawer">
     <div class="slide-header">
         <h2>Your Cart</h2>
-        <button class="btn-close" onclick="toggleCart()">✕</button>
+        <button class="btn-close" onclick="history.back()">✕</button>
     </div>
     <div class="slide-body" id="cartBody"></div>
     <div class="slide-footer">
@@ -355,19 +357,19 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
 <div class="slide-panel app-screen" id="mobileMenuPanel">
     <div class="slide-header">
         <h2>Menu</h2>
-        <button class="btn-close" onclick="closeSlide('mobileMenuPanel')">✕</button>
+        <button class="btn-close" onclick="history.back()">✕</button>
     </div>
     <div class="slide-body">
-        <button class="btn-icon menu-list-item" onclick="closeSlide('mobileMenuPanel'); setTimeout(() => openOrdersModal(), 400);">📦 Order History</button>
-        <button class="btn-icon menu-list-item" onclick="closeSlide('mobileMenuPanel'); setTimeout(() => openProfile(true), 400);">👤 Account Details</button>
-        <button class="btn-icon menu-list-item" style="border: 1px solid #C8E6C9; background: #E8F5E9; color: #2E7D32;" onclick="closeSlide('mobileMenuPanel'); setTimeout(() => openSlide('helpPanel'), 400);">🎧 Help & Support</button>
+        <button class="btn-icon menu-list-item" onclick="history.back(); setTimeout(() => openSlide('ordersPanel'), 300);">📦 Order History</button>
+        <button class="btn-icon menu-list-item" onclick="history.back(); setTimeout(() => openProfile(true), 300);">👤 Account Details</button>
+        <button class="btn-icon menu-list-item" style="border: 1px solid #C8E6C9; background: #E8F5E9; color: #2E7D32;" onclick="history.back(); setTimeout(() => openSlide('helpPanel'), 300);">🎧 Help & Support</button>
     </div>
 </div>
 
 <div class="slide-panel app-screen" id="profilePanel">
     <div class="slide-header">
         <h2>Delivery Details</h2>
-        <button class="btn-close" id="profileCloseBtn" onclick="closeSlide('profilePanel')">✕</button>
+        <button class="btn-close" id="profileCloseBtn" onclick="history.back()">✕</button>
     </div>
     <div class="slide-body">
         <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 24px;">Save your details once for seamless future checkouts.</p>
@@ -395,7 +397,7 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
 <div class="slide-panel app-screen" id="reviewPanel">
     <div class="slide-header">
         <h2>Review Order</h2>
-        <button class="btn-close" onclick="closeSlide('reviewPanel')">✕</button>
+        <button class="btn-close" onclick="history.back()">✕</button>
     </div>
     <div class="slide-body" style="padding-top: 10px;">
         <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Please confirm your items and delivery details.</p>
@@ -411,7 +413,7 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
         <h2 style="margin: 0;">Your Orders</h2>
         <div style="display: flex; gap: 8px;">
             <button class="btn-icon" style="width: 38px; height: 38px; padding: 0; border-radius: 50%; font-size: 18px;" onclick="openSlide('helpPanel')" title="Help">🎧</button>
-            <button class="btn-close" onclick="closeSlide('ordersPanel')">✕</button>
+            <button class="btn-close" onclick="history.back()">✕</button>
         </div>
     </div>
     <div class="slide-body">
@@ -422,7 +424,7 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
 <div class="slide-panel app-screen help-screen" id="helpPanel">
     <div class="slide-header">
         <h2>Support & Help</h2>
-        <button class="btn-close" onclick="closeSlide('helpPanel')">✕</button>
+        <button class="btn-close" onclick="history.back()">✕</button>
     </div>
     <div class="slide-body">
         <div class="support-banner">
@@ -450,24 +452,25 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
         <div id="successBody" style="width: 100%; text-align: left;"></div>
     </div>
     <div class="slide-footer">
-        <button class="btn-primary" style="width: 100%; justify-content: center; height: 50px;" onclick="closeSlide('successPanel')">Continue Shopping</button>
+        <button class="btn-primary" style="width: 100%; justify-content: center; height: 50px;" onclick="history.back()">Continue Shopping</button>
+    </div>
+</div>
+
+<div class="modal" id="cancelConfirmModal">
+    <div class="modal-content" style="max-width: 360px; text-align: center; padding: 30px 24px;">
+        <div style="font-size: 40px; margin-bottom: 12px;">⚠️</div>
+        <h2 style="font-size: 20px; color: var(--text-dark); margin-bottom: 8px;">Cancel Order?</h2>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">Are you sure you want to cancel this order? This action cannot be undone.</p>
+        <div style="display: flex; gap: 12px;">
+            <button class="btn-icon" style="flex: 1; height: 46px;" onclick="history.back()">Keep It</button>
+            <button class="btn-primary" style="flex: 1; height: 46px; background: #D32F2F; box-shadow: none;" onclick="executeCancelOrder()">Yes, Cancel</button>
+        </div>
     </div>
 </div>
 
 <div class="toast-container" id="toastBox"></div>
 
 <script>
-// --- ROBUST SCROLL LOCK MECHANISM ---
-function lockScroll() {
-    document.documentElement.classList.add('no-scroll');
-    document.body.classList.add('no-scroll');
-}
-
-function unlockScroll() {
-    document.documentElement.classList.remove('no-scroll');
-    document.body.classList.remove('no-scroll');
-}
-
 // --- Data (Optimized Images for INSTANT Loading: w=300, q=30, format=webp) ---
 const products = [
     { 
@@ -507,6 +510,7 @@ const products = [
 let cart = JSON.parse(localStorage.getItem('kw_cart')) || [];
 let orderHistory = JSON.parse(localStorage.getItem('kw_orders')) || [];
 let pendingOrder = null;
+let orderToCancelIndex = null;
 
 // --- Init ---
 window.onload = () => {
@@ -514,19 +518,78 @@ window.onload = () => {
     updateCartUI();
 };
 
+// --- NATIVE HARDWARE BACK BUTTON & SCROLL LOCK SYSTEM ---
+function lockScroll() { document.body.classList.add('no-scroll'); }
+function unlockScroll() { document.body.classList.remove('no-scroll'); }
+
+window.addEventListener('popstate', (e) => {
+    const ids = ['lightbox', 'cancelConfirmModal', 'successPanel', 'reviewPanel', 'helpPanel', 'profilePanel', 'ordersPanel', 'mobileMenuPanel', 'cartDrawer'];
+    
+    // Finds the top-most active UI element and closes it
+    for (let id of ids) {
+        let el = document.getElementById(id);
+        if (el.classList.contains('show') || el.classList.contains('active')) {
+            el.classList.remove('show', 'active');
+            if (id === 'cartDrawer') document.getElementById('cartOverlay').classList.remove('active');
+            break; 
+        }
+    }
+    
+    // Safety check to remove overlays and scroll locks if everything is closed
+    setTimeout(() => {
+        const anyOpen = document.querySelectorAll('.app-screen.active, .lightbox.show, .modal.show').length > 0;
+        const cartOpen = document.getElementById('cartDrawer').classList.contains('active');
+        if (!anyOpen && !cartOpen) {
+            document.getElementById('slideOverlay').classList.remove('active');
+            unlockScroll();
+        } else if (!anyOpen && cartOpen) {
+            document.getElementById('slideOverlay').classList.remove('active');
+        }
+    }, 100);
+});
+
+// UI Opening Helpers (Hooks into Hardware Back Button)
+function openSlide(id) {
+    document.getElementById('slideOverlay').classList.add('active');
+    document.getElementById(id).classList.add('active');
+    lockScroll();
+    history.pushState({ open: id }, '', '#' + id);
+}
+
+function openModal(id) {
+    document.getElementById(id).classList.add('show');
+    lockScroll();
+    history.pushState({ open: id }, '', '#' + id);
+}
+
+function openCartDrawer() {
+    document.getElementById('cartDrawer').classList.add('active');
+    document.getElementById('cartOverlay').classList.add('active');
+    lockScroll();
+    history.pushState({ open: 'cart' }, '', '#cart');
+}
+
+function toggleCart() {
+    if (document.getElementById('cartDrawer').classList.contains('active')) {
+        history.back(); // Triggers popstate to close seamlessly
+    } else {
+        openCartDrawer();
+    }
+}
+
 // --- Fullscreen Lightbox Logic (SMART HIGH-RES SCALING) ---
 function openLightbox(productId, index) {
     const product = products.find(p => p.id === productId);
     const gallery = document.getElementById('lightboxGallery');
     
     gallery.innerHTML = product.images.map(img => {
-        // Automatically fetch High Resolution Image for full screen (q=90, w=1200)
         const highResImg = img.replace('q=30&w=300', 'q=90&w=1200');
         return `<div class="lightbox-slide"><img src="${highResImg}" alt="${product.name}"></div>`;
     }).join('');
 
     document.getElementById('lightbox').classList.add('show');
     lockScroll();
+    history.pushState({ open: 'lightbox' }, '', '#gallery');
 
     setTimeout(() => {
         const slideWidth = gallery.clientWidth;
@@ -534,64 +597,10 @@ function openLightbox(productId, index) {
     }, 10);
 }
 
-function closeLightbox() {
-    document.getElementById('lightbox').classList.remove('show');
-    if (document.querySelectorAll('.app-screen.active').length === 0 && !document.getElementById('cartDrawer').classList.contains('active')) {
-        unlockScroll();
-    }
-}
-
 function scrollLightbox(direction) {
     const gallery = document.getElementById('lightboxGallery');
     const slideWidth = gallery.clientWidth;
     gallery.scrollBy({ left: direction * slideWidth, behavior: 'smooth' });
-}
-
-// --- Slide UI System ---
-function openSlide(id) {
-    document.getElementById('slideOverlay').classList.add('active');
-    document.getElementById(id).classList.add('active');
-    lockScroll();
-}
-
-function closeSlide(id) {
-    document.getElementById(id).classList.remove('active');
-    
-    setTimeout(() => {
-        const activeAppScreens = document.querySelectorAll('.app-screen.active').length;
-        if (activeAppScreens === 0) {
-            document.getElementById('slideOverlay').classList.remove('active');
-            if (!document.getElementById('cartDrawer').classList.contains('active')) {
-                unlockScroll();
-            }
-        }
-    }, 400);
-}
-
-function closeAllSlides() {
-    const screens = document.querySelectorAll('.app-screen.active');
-    screens.forEach(screen => screen.classList.remove('active'));
-    document.getElementById('slideOverlay').classList.remove('active');
-    if (!document.getElementById('cartDrawer').classList.contains('active')) {
-        unlockScroll();
-    }
-}
-
-function toggleCart() {
-    const drawer = document.getElementById('cartDrawer');
-    const overlay = document.getElementById('cartOverlay');
-    
-    if (drawer.classList.contains('active')) {
-        drawer.classList.remove('active');
-        overlay.classList.remove('active');
-        if (document.querySelectorAll('.app-screen.active').length === 0) {
-            unlockScroll();
-        }
-    } else {
-        drawer.classList.add('active');
-        overlay.classList.add('active');
-        lockScroll();
-    }
 }
 
 function showToast(msg) {
@@ -691,8 +700,8 @@ function updateCartUI() {
 
     if(cart.length === 0) {
         body.innerHTML = `
-            <div class="empty-state">
-                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Cart_empty_graphic.png" alt="Empty Cart">
+            <div class="empty-state" style="margin-top: 20px;">
+                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Cart_empty_graphic.png" style="max-width: 300px;" alt="Empty Cart">
             </div>
         `;
     } else {
@@ -766,8 +775,8 @@ function saveProfile() {
     localStorage.setItem('kw_phone', p);
     localStorage.setItem('kw_address', a);
     
-    closeSlide('profilePanel');
-    showToast("✅ Delivery details saved.");
+    history.back(); // Closes Profile Safely
+    setTimeout(() => { showToast("✅ Delivery details saved."); }, 300);
 }
 
 function autoLocate() {
@@ -833,6 +842,7 @@ function reviewDirectOrder(id) {
     pendingOrder = {
         type: 'direct',
         sourceId: id,
+        status: 'Active',
         items: [{ name: p.name, quantity: q, price: p.price, img: p.images[0] }],
         total: p.price * q,
         address: localStorage.getItem('kw_address'),
@@ -845,12 +855,13 @@ function reviewDirectOrder(id) {
 
 function reviewCartOrder() {
     if(cart.length === 0) { showToast("⚠️ Your cart is empty!"); return; }
-    if(!isProfileReady()) { toggleCart(); return; }
+    if(!isProfileReady()) { history.back(); return; }
     
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     
     pendingOrder = {
         type: 'cart',
+        status: 'Active',
         items: JSON.parse(JSON.stringify(cart)), 
         total: total,
         address: localStorage.getItem('kw_address'),
@@ -858,8 +869,8 @@ function reviewCartOrder() {
         date: new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
     };
     
-    if(document.getElementById('cartDrawer').classList.contains('active')) toggleCart();
-    setTimeout(renderReviewModal, 400);
+    if(document.getElementById('cartDrawer').classList.contains('active')) history.back();
+    setTimeout(renderReviewModal, 300);
 }
 
 function renderReviewModal() {
@@ -924,30 +935,53 @@ function finalizeOrder() {
         </div>
     `;
     
-    closeSlide('reviewPanel');
+    history.back(); // Closes review seamlessly
     
     setTimeout(() => {
         document.getElementById('successBody').innerHTML = receiptHTML;
         openSlide('successPanel');
         pendingOrder = null; 
-    }, 400);
+    }, 300);
 }
 
-// --- Order History, Support & Cancel Logic ---
-function cancelOrder(index) {
-    if(confirm("Are you sure you want to cancel this order?")) {
-        orderHistory.splice(index, 1);
-        localStorage.setItem('kw_orders', JSON.stringify(orderHistory));
+// --- Order History, Support & Safe Cancel Logic ---
+function confirmCancelOrder(index) {
+    orderToCancelIndex = index;
+    openModal('cancelConfirmModal');
+}
+
+function executeCancelOrder() {
+    orderHistory[orderToCancelIndex].status = 'Cancelled';
+    localStorage.setItem('kw_orders', JSON.stringify(orderHistory));
+    
+    history.back(); // Closes confirmation modal
+    
+    setTimeout(() => {
         showToast("🚫 Order Cancelled.");
-        openOrdersModal(); 
+        renderOrdersList(); // Refresh the list dynamically
+    }, 300);
+}
+
+function toggleCancelledOrders() {
+    const list = document.getElementById('cancelledList');
+    const btn = document.getElementById('toggleCancelledBtn');
+    if (list.style.display === 'none') {
+        list.style.display = 'block';
+        btn.innerText = 'Hide Cancelled Orders';
+    } else {
+        list.style.display = 'none';
+        btn.innerText = 'View Cancelled Orders';
     }
 }
 
-function openOrdersModal() {
+function renderOrdersList() {
     const ordersBody = document.getElementById('ordersBody');
     const cName = localStorage.getItem('kw_name') || 'Customer';
     const cPhone = localStorage.getItem('kw_phone') || '';
     const currentGlobalAddress = localStorage.getItem('kw_address') || 'N/A';
+    
+    const activeOrders = orderHistory.filter(o => o.status !== 'Cancelled');
+    const cancelledOrders = orderHistory.filter(o => o.status === 'Cancelled');
     
     if(orderHistory.length === 0) {
         ordersBody.innerHTML = `
@@ -955,19 +989,23 @@ function openOrdersModal() {
                 <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Order_notplaced_graphic.png" alt="No Orders">
             </div>
         `;
-    } else {
-        ordersBody.innerHTML = orderHistory.map((order, index) => {
+        return;
+    }
+    
+    let html = '';
+    
+    // Active Orders
+    if(activeOrders.length > 0) {
+        html += activeOrders.map((order) => {
+            const index = orderHistory.indexOf(order);
             const itemsText = order.items.map(i => `<div class="order-item-row"><span>${i.name}</span><span style="font-weight:600;">x${i.quantity}</span></div>`).join('');
             
             const orderAddress = order.address || currentGlobalAddress;
             const orderMapLink = order.mapLink || '';
             
-            let detailedMsg = `Hello Khakhra Wala Team! 🎧\nI need help with my order.\n\n`;
-            detailedMsg += `*Order Date:* ${order.date}\n`;
-            detailedMsg += `*Items ordered:*\n`;
+            let detailedMsg = `Hello Khakhra Wala Team! 🎧\nI need help with my order.\n\n*Order Date:* ${order.date}\n*Items ordered:*\n`;
             order.items.forEach(i => { detailedMsg += `• ${i.quantity}x ${i.name}\n`; });
-            detailedMsg += `\n*Total (COD):* ₹${order.total}\n\n`;
-            detailedMsg += `*My Details:*\nName: ${cName}\nPhone: ${cPhone}\nAddress: ${orderAddress}`;
+            detailedMsg += `\n*Total (COD):* ₹${order.total}\n\n*My Details:*\nName: ${cName}\nPhone: ${cPhone}\nAddress: ${orderAddress}`;
             if (orderMapLink) detailedMsg += `\nMap Link: ${orderMapLink}`;
             
             const waMsg = encodeURIComponent(detailedMsg);
@@ -980,24 +1018,54 @@ function openOrdersModal() {
                         <div class="order-date">${order.date}</div>
                     </div>
                     <div style="margin-top: 8px; margin-bottom: 16px; padding: 0 4px;">${itemsText}</div>
-                    <div class="order-total">
-                        <span>Total (COD)</span>
-                        <span>₹${order.total}</span>
-                    </div>
+                    <div class="order-total"><span>Total (COD)</span><span>₹${order.total}</span></div>
                     
                     <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
                         <a href="${waLink}" target="_blank" style="text-decoration: none; font-size: 13px; color: #25D366; font-weight: 600; display: flex; align-items: center; gap: 6px;">
                             <span style="font-size: 16px;">💬</span> Help
                         </a>
-                        <button onclick="cancelOrder(${index})" class="btn-cancel-order">
-                            ✕ Cancel
-                        </button>
+                        <button onclick="confirmCancelOrder(${index})" class="btn-cancel-order">✕ Cancel</button>
                     </div>
                 </div>
             `;
         }).join('');
+    } else {
+        html += `
+            <div class="empty-state">
+                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Order_notplaced_graphic.png" alt="No Orders">
+            </div>
+        `;
     }
     
+    // Cancelled Orders Block
+    if(cancelledOrders.length > 0) {
+        html += `
+            <button id="toggleCancelledBtn" onclick="toggleCancelledOrders()" style="width: 100%; background: transparent; border: 1px dashed var(--border-color); padding: 12px; border-radius: var(--radius-md); font-family: 'Poppins'; font-weight: 600; color: var(--text-muted); margin-top: 24px; cursor: pointer;">
+                View Cancelled Orders
+            </button>
+            <div id="cancelledList" style="display:none; margin-top: 20px; opacity: 0.6;">
+                <h3 style="font-size: 16px; margin-bottom: 12px; color: var(--text-dark); text-align: center;">Cancelled Orders</h3>
+                ${cancelledOrders.map(order => {
+                    const itemsText = order.items.map(i => `<div class="order-item-row"><span style="text-decoration: line-through;">${i.name}</span><span style="font-weight:600;">x${i.quantity}</span></div>`).join('');
+                    return `
+                        <div class="order-history-card" style="background: var(--bg-main);">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <div class="order-status" style="background: #FFEBEB; color: #D32F2F;">Cancelled</div>
+                                <div class="order-date">${order.date}</div>
+                            </div>
+                            <div style="margin-top: 8px; margin-bottom: 12px; padding: 0 4px;">${itemsText}</div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    }
+    
+    ordersBody.innerHTML = html;
+}
+
+function openOrdersModal() {
+    renderOrdersList();
     openSlide('ordersPanel');
 }
 </script>
