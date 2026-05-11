@@ -1,46 +1,45 @@
 [
-    { 
-        "id": "p1", 
-        "name": "Classic Masala", 
-        "desc": "A timeless blend of vibrant Indian spices.", 
-        "price": 120, 
+    {
+        "id": "p1",
+        "name": "Classic Masala",
+        "desc": "A timeless blend of vibrant Indian spices.",
+        "price": 120,
         "images": [
             "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?q=30&w=300&fm=webp&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=30&w=300&fm=webp&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1596450514735-111a2fe02935?q=30&w=300&fm=webp&auto=format&fit=crop"
-        ] 
+        ]
     },
-    { 
-        "id": "p2", 
-        "name": "Roasted Methi", 
-        "desc": "Earthy fenugreek leaves baked to perfection.", 
-        "price": 110, 
+    {
+        "id": "p2",
+        "name": "Roasted Methi",
+        "desc": "Earthy fenugreek leaves baked to perfection.",
+        "price": 110,
         "images": [
             "https://images.unsplash.com/photo-1509440159596-0249088772ff?q=30&w=300&fm=webp&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1604328727574-65d8b82436d4?q=30&w=300&fm=webp&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1621236378699-8597faf6a176?q=30&w=300&fm=webp&auto=format&fit=crop"
-        ] 
+        ]
     },
-    { 
-        "id": "p3", 
-        "name": "Cumin (Jeera)", 
-        "desc": "Subtle, aromatic jeera for a soothing crunch.", 
-        "price": 115, 
+    {
+        "id": "p3",
+        "name": "Cumin (Jeera)",
+        "desc": "Subtle, aromatic jeera for a soothing crunch.",
+        "price": 115,
         "images": [
             "https://images.unsplash.com/photo-1542838132-92c53300491e?q=30&w=300&fm=webp&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1589301760014-d929f39ce9b1?q=30&w=300&fm=webp&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=30&w=300&fm=webp&auto=format&fit=crop"
-        ] 
+        ]
     },
-    { 
-        "id": "p4", 
-        "name": "Cheddar Cheese", 
-        "desc": "A modern, gourmet twist with real cheese dust.", 
-        "price": 140, 
+    {
+        "id": "p4",
+        "name": "Cheddar Cheese",
+        "desc": "A modern, gourmet twist with real cheese dust.",
+        "price": 140,
         "images": [
-            "https://images.unsplash.com/photo-1604068549290-dea0e4a30536?q=30&w=300&fm=webp&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1550583724-b2692b85b150?q=30&w=300&fm=webp&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1541696490-8744a5dc0228?q=30&w=300&fm=webp&auto=format&fit=crop"
-        ] 
+        ]
     }
 ]
