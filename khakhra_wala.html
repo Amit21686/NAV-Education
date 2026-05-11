@@ -227,10 +227,6 @@ textarea.form-input { height: 90px; resize: none; }
 .support-banner { background: #E8F5E9; border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 24px; border: 1px solid #C8E6C9; }
 .success-icon { width: 80px; height: 80px; background: #E8F5E9; color: #2E7D32; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 20px; box-shadow: var(--shadow-sm); }
 
-/* --- FULL SIZED EMPTY STATES --- */
-.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; flex: 1; padding: 10px;}
-.empty-state img { width: 100%; max-width: 90%; max-height: 80vh; object-fit: contain; pointer-events: none;}
-
 /* Cart Specific */
 .cart-item { display: flex; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); align-items: center;}
 .cart-item img { width: 80px; height: 80px; border-radius: var(--radius-sm); object-fit: cover; }
@@ -496,7 +492,7 @@ async function initApp() {
         updateCartUI();
     } catch (error) {
         console.error("Fetch error:", error);
-        document.getElementById('productGrid').innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">⚠️ Could not load products. Please check if products.json file is uploaded correctly.</div>';
+        document.getElementById('productGrid').innerHTML = '<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: #D32F2F; background: #FFEBEB; border-radius: 12px; font-weight: 500;">⚠️ Could not load products. Please check if your products.json file is uploaded to GitHub correctly.</div>';
     }
 }
 window.onload = initApp;
@@ -673,8 +669,8 @@ function updateCartUI() {
 
     if(cart.length === 0) {
         body.innerHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Cart_empty_graphic.png" style="width: 100%; max-width: 500px; transform: scale(1.35); transform-origin: center;" alt="Empty Cart">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; min-height: 60vh;">
+                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Cart_empty_graphic.png" style="width: 100%; max-width: 400px; transform: scale(1.35); object-fit: contain;" alt="Empty Cart">
             </div>
         `;
         if(footer) footer.style.display = 'none';
@@ -884,7 +880,7 @@ function finalizeOrder() {
     orderHistory.unshift(pendingOrder); 
     localStorage.setItem('kw_orders', JSON.stringify(orderHistory));
     
-    // --- BACKEND: POST NEW ORDER ---
+    // --- BACKEND: POST NEW ORDER (Secure Text Payload) ---
     const itemsFormatted = pendingOrder.items.map(i => i.quantity + "x " + i.name).join(', ');
     const backendData = {
         type: 'NEW_ORDER',
@@ -900,10 +896,9 @@ function finalizeOrder() {
 
     fetch(SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(backendData)
-    }).catch(e => console.log('Network error:', e));
+        body: JSON.stringify(backendData),
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    }).catch(e => console.log('Offline: saved locally.'));
 
     if(pendingOrder.type === 'cart') {
         cart = [];
@@ -960,11 +955,16 @@ function syncOrdersWithServer() {
                 const matchedServerOrder = serverOrders.find(so => so.orderId === localOrder.orderId);
                 if(matchedServerOrder) {
                     if(localOrder.status !== matchedServerOrder.status) {
-                        localOrder.status = matchedServerOrder.status;
-                        if(matchedServerOrder.cancelReason) {
-                            localOrder.cancelReason = matchedServerOrder.cancelReason;
+                        // Crucial fix: Do not allow server lag to revert a local cancellation back to Active
+                        if (localOrder.status === 'Cancelled' && matchedServerOrder.status === 'Active') {
+                            // Backend is lagging behind, do nothing
+                        } else {
+                            localOrder.status = matchedServerOrder.status;
+                            if(matchedServerOrder.cancelReason) {
+                                localOrder.cancelReason = matchedServerOrder.cancelReason;
+                            }
+                            isUpdated = true;
                         }
-                        isUpdated = true;
                     }
                 }
             });
@@ -1014,7 +1014,7 @@ function executeCancelOrder() {
         const now = new Date();
         const cancelDateStr = now.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         
-        const targetOrderId = orderHistory[orderToCancelIndex].orderId;
+        const targetOrderId = orderHistory[orderToCancelIndex].orderId || 'Unknown';
 
         orderHistory[orderToCancelIndex].status = 'Cancelled';
         orderHistory[orderToCancelIndex].cancelDate = cancelDateStr;
@@ -1022,17 +1022,16 @@ function executeCancelOrder() {
         
         localStorage.setItem('kw_orders', JSON.stringify(orderHistory));
 
-        // --- BACKEND: UPDATE CANCELLATION ---
+        // --- BACKEND: UPDATE CANCELLATION (Secure Text Payload) ---
         fetch(SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 type: 'CANCEL_ORDER',
                 orderId: targetOrderId,
                 cancelReason: reason
-            })
-        }).catch(e => console.log('Network error:', e));
+            }),
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        }).catch(e => console.log('Offline: cancel saved locally.'));
     }
     
     history.back(); 
@@ -1073,8 +1072,8 @@ function renderOrdersList() {
     
     if(!orderHistory || orderHistory.length === 0) {
         ordersBody.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
-                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Order_notplaced_graphic.png" style="width: 100%; max-width: 400px; transform: scale(1.15);" alt="No Orders">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; min-height: 60vh;">
+                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Order_notplaced_graphic.png" style="width: 100%; max-width: 400px; transform: scale(1.15); object-fit: contain;" alt="No Orders">
             </div>
         `;
         return;
@@ -1095,7 +1094,7 @@ function renderOrdersList() {
             const orderAddress = order.address || currentGlobalAddress;
             const orderMapLink = order.mapLink || '';
             
-            let detailedMsg = `Hello Khakhra Wala Team! 🎧\nI need help with my order.\n\n*Order ID:* ${order.orderId}\n*Order Date:* ${order.date}\n*Items ordered:*\n`;
+            let detailedMsg = `Hello Khakhra Wala Team! 🎧\nI need help with my order.\n\n*Order ID:* ${order.orderId || 'N/A'}\n*Order Date:* ${order.date}\n*Items ordered:*\n`;
             order.items.forEach(i => { detailedMsg += `• ${i.quantity}x ${i.name}\n`; });
             detailedMsg += `\n*Total (COD):* ₹${order.total}\n\n*My Details:*\nName: ${cName}\nPhone: ${cPhone}\nAddress: ${orderAddress}`;
             if (orderMapLink) detailedMsg += `\nMap Link: ${orderMapLink}`;
@@ -1126,8 +1125,8 @@ function renderOrdersList() {
         }).join('');
     } else {
         html += `
-            <div style="display: flex; align-items: center; justify-content: center; padding: 20px 0;">
-                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Order_notplaced_graphic.png" style="width: 100%; max-width: 300px;" alt="No Active Orders">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0;">
+                <img src="https://raw.githubusercontent.com/Amit21686/NAV-Education/main/Order_notplaced_graphic.png" style="width: 100%; max-width: 300px; object-fit: contain;" alt="No Active Orders">
             </div>
         `;
     }
