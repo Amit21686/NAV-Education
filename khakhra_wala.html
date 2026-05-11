@@ -227,6 +227,10 @@ textarea.form-input { height: 90px; resize: none; }
 .support-banner { background: #E8F5E9; border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 24px; border: 1px solid #C8E6C9; }
 .success-icon { width: 80px; height: 80px; background: #E8F5E9; color: #2E7D32; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 20px; box-shadow: var(--shadow-sm); }
 
+/* --- FULL SIZED EMPTY STATES --- */
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; flex: 1; padding: 10px;}
+.empty-state img { width: 100%; max-width: 90%; max-height: 80vh; object-fit: contain; pointer-events: none;}
+
 /* Cart Specific */
 .cart-item { display: flex; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); align-items: center;}
 .cart-item img { width: 80px; height: 80px; border-radius: var(--radius-sm); object-fit: cover; }
@@ -474,53 +478,28 @@ footer { padding: 30px 0; text-align: center; background: var(--surface); border
 // --- BACKEND INTEGRATION ---
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyM7XOoD5bB6W5vwMy_7uzh-MU8gwXvF-LsN8tJbIjP7bAoflN81F8OAUFoEFHM-i8/exec";
 
-// --- Data (Optimized Images) ---
-const products = [
-    { 
-        id: 'p1', name: 'Classic Masala', desc: 'A timeless blend of vibrant Indian spices.', price: 120, 
-        images: [
-            'https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?q=30&w=300&fm=webp&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=30&w=300&fm=webp&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1596450514735-111a2fe02935?q=30&w=300&fm=webp&auto=format&fit=crop'
-        ] 
-    },
-    { 
-        id: 'p2', name: 'Roasted Methi', desc: 'Earthy fenugreek leaves baked to perfection.', price: 110, 
-        images: [
-            'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=30&w=300&fm=webp&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1604328727574-65d8b82436d4?q=30&w=300&fm=webp&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1621236378699-8597faf6a176?q=30&w=300&fm=webp&auto=format&fit=crop'
-        ] 
-    },
-    { 
-        id: 'p3', name: 'Cumin (Jeera)', desc: 'Subtle, aromatic jeera for a soothing crunch.', price: 115, 
-        images: [
-            'https://images.unsplash.com/photo-1542838132-92c53300491e?q=30&w=300&fm=webp&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1589301760014-d929f39ce9b1?q=30&w=300&fm=webp&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=30&w=300&fm=webp&auto=format&fit=crop'
-        ] 
-    },
-    { 
-        id: 'p4', name: 'Cheddar Cheese', desc: 'A modern, gourmet twist with real cheese dust.', price: 140, 
-        images: [
-            'https://images.unsplash.com/photo-1604068549290-dea0e4a30536?q=30&w=300&fm=webp&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=30&w=300&fm=webp&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1541696490-8744a5dc0228?q=30&w=300&fm=webp&auto=format&fit=crop'
-        ] 
-    }
-];
-
+// Global Variables
+let products = [];
 let cart = JSON.parse(localStorage.getItem('kw_cart')) || [];
 let orderHistory = JSON.parse(localStorage.getItem('kw_orders')) || [];
 let pendingOrder = null;
 let orderToCancelIndex = null;
 let autoSyncTimer = null; 
 
-// --- Init ---
-window.onload = () => {
-    renderProducts();
-    updateCartUI();
-};
+// --- Initialize App & Fetch products.json ---
+async function initApp() {
+    try {
+        const response = await fetch('products.json');
+        if (!response.ok) throw new Error('Failed to load products');
+        products = await response.json();
+        renderProducts();
+        updateCartUI();
+    } catch (error) {
+        console.error("Fetch error:", error);
+        document.getElementById('productGrid').innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">⚠️ Could not load products. Please check if products.json file is uploaded correctly.</div>';
+    }
+}
+window.onload = initApp;
 
 // --- NATIVE HARDWARE BACK BUTTON & SCROLL LOCK SYSTEM ---
 function lockScroll() { document.documentElement.classList.add('no-scroll'); document.body.classList.add('no-scroll'); }
@@ -838,6 +817,7 @@ function reviewDirectOrder(id) {
     pendingOrder = {
         type: 'direct',
         orderId: 'KW-' + Date.now(),
+        sourceId: id,
         status: 'Active',
         items: [{ name: p.name, quantity: q, price: p.price, img: p.images[0] }],
         total: p.price * q,
@@ -899,6 +879,8 @@ function renderReviewModal() {
 }
 
 function finalizeOrder() {
+    if(!pendingOrder) return;
+    
     orderHistory.unshift(pendingOrder); 
     localStorage.setItem('kw_orders', JSON.stringify(orderHistory));
     
@@ -927,7 +909,10 @@ function finalizeOrder() {
         cart = [];
         saveCart();
     } else if (pendingOrder.type === 'direct') {
-        document.getElementById(`qty-${pendingOrder.sourceId}`).value = 1;
+        try {
+            const qtyInput = document.getElementById(`qty-${pendingOrder.sourceId}`);
+            if(qtyInput) qtyInput.value = 1;
+        } catch(e) {}
     }
     
     const itemsListHTML = pendingOrder.items.map(item => `
@@ -959,7 +944,7 @@ function finalizeOrder() {
         document.getElementById('successBody').innerHTML = receiptHTML;
         openSlide('successPanel');
         pendingOrder = null; 
-    }, 400);
+    }, 300);
 }
 
 // --- LIVE TRACKING ENGINE (Auto Background Sync) ---
