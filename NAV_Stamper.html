@@ -575,7 +575,7 @@
     });
 
     /* ========================= TINT ========================= */
-    hSlider.oninput = () => {
+    hSlider.oninput = async () => {
         if (!logoObj) return;
         const val = hSlider.value;
         const c = document.createElement('canvas');
@@ -592,10 +592,10 @@
         
         x.fillRect(0, 0, c.width, c.height);
         
-        c.toBlob(b => {
-            lI.src = URL.createObjectURL(b);
-            b.arrayBuffer().then(buf => { logoBytes = buf; });
-        }, 'image/png');
+        // Guarantee the blob is fully saved into memory before moving on
+        const blob = await new Promise(res => c.toBlob(res, 'image/png'));
+        lI.src = URL.createObjectURL(blob);
+        logoBytes = await blob.arrayBuffer();
     };
 
     /* ========================= LOGO AI BRAIN (Pythagorean Deep-Fit) ========================= */
@@ -971,9 +971,8 @@
 
             const copiedPages = await currentDoc.copyPages(appendDoc, appendDoc.getPageIndices());
             
-            // INTELLIGENT SPLICING: Insert BEFORE the back cover
             const oldPageCount = pdfProxy.numPages;
-            let insertIdx = oldPageCount - 1; // The current back cover index
+            let insertIdx = oldPageCount - 1; 
 
             copiedPages.forEach(p => {
                 currentDoc.insertPage(insertIdx, p);
@@ -984,11 +983,9 @@
 
             pdfProxy = await pdfjsLib.getDocument({ data: pdfBytes }).promise;
 
-            // Preserve the back cover's memory settings and move them to the new absolute end
             const backCoverSettings = pageSettings.get(oldPageCount - 1);
             pageSettings.set(pdfProxy.numPages - 1, backCoverSettings);
 
-            // Initialize fresh settings for the newly appended pages
             for (let i = oldPageCount - 1; i < pdfProxy.numPages - 1; i++) {
                 pageSettings.set(i, {
                     del: false,
@@ -999,7 +996,6 @@
 
             await renderSidebar();
             
-            // Auto-jump to the start of the newly appended document
             await loadP(oldPageCount - 1);
 
         } catch (err) {
@@ -1217,10 +1213,10 @@
                 x.fillStyle = '#000';
                 x.fillRect(0, 0, c.width, c.height);
 
-                c.toBlob(bt => {
-                    lI.src = URL.createObjectURL(bt);
-                    bt.arrayBuffer().then(buf => { logoBytes = buf; });
-                }, 'image/png');
+                // Guarantee the blob is fully saved into memory before moving on
+                const blob = await new Promise(res => c.toBlob(res, 'image/png'));
+                lI.src = URL.createObjectURL(blob);
+                logoBytes = await blob.arrayBuffer();
             }
 
             uL.style.display = 'block';
@@ -1239,7 +1235,7 @@
         }
     };
 
-    /* ========================= EXPORT ========================= */
+    /* ========================= EXPORT (Scaling Mismatch Fixed) ========================= */
     document.getElementById('final-btn').onclick = async () => {
         const btn = document.getElementById('final-btn');
         let name = fnField.value.trim() || "NAV_Master_PDF";
@@ -1271,12 +1267,20 @@
                         p.drawImage(im, { x: 0, y: 0, width: p.getWidth(), height: p.getHeight() });
                     }
 
+                    // Dynamic Scale mapping between screen coordinates and actual PDF coordinates
+                    const scaleX = p.getWidth() / pW;
+                    const scaleY = p.getHeight() / pH;
+
                     if (!s.skip) {
                         if (uL.style.display !== 'none') {
-                            const uw = uL.offsetWidth;
-                            const uh = uL.offsetHeight;
-                            const ux = parseFloat(uL.style.left);
-                            const uy = pH - parseFloat(uL.style.top) - uh;
+                            const uw = uL.offsetWidth * scaleX;
+                            const uh = uL.offsetHeight * scaleY;
+                            const ux = parseFloat(uL.style.left) * scaleX;
+                            
+                            // Map Y position correctly against native PDF height (origin bottom-left)
+                            const uTopScaled = parseFloat(uL.style.top) * scaleY;
+                            const uy = p.getHeight() - uTopScaled - uh;
+                            
                             const r = uw / 2;
 
                             p.drawRectangle({ x: ux, y: uy + r, width: uw, height: uh - r, color: rgb(1, 1, 1) });
@@ -1284,10 +1288,12 @@
                         }
 
                         if (embeddedLogo && lL.style.display !== 'none') {
-                            const lw = lL.offsetWidth;
-                            const lh = lL.offsetHeight || (lw * (logoObj.height / logoObj.width));
-                            const lx = parseFloat(lL.style.left);
-                            const ly = pH - parseFloat(lL.style.top) - lh;
+                            const lw = lL.offsetWidth * scaleX;
+                            const lh = lL.offsetHeight * scaleY;
+                            const lx = parseFloat(lL.style.left) * scaleX;
+                            
+                            const lTopScaled = parseFloat(lL.style.top) * scaleY;
+                            const ly = p.getHeight() - lTopScaled - lh;
 
                             p.drawImage(embeddedLogo, { x: lx, y: ly, width: lw, height: lh });
                         }
