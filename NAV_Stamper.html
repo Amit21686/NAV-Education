@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>NAV Stamper | Master V29 Ultra</title>
+
+    <!-- External Libraries -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <style>
+        :root {
+            --brand: #6366F1;
+            --brand-2: #8B5CF6;
+            --bg: linear-gradient(145deg, #020617 0%, #0F172A 35%, #111827 100%);
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-2: rgba(255, 255, 255, 0.12);
+            --text: #F8FAFC;
+            --muted: #94A3B8;
+            --line: rgba(255, 255, 255, 0.08);
+            --danger: #F43F5E;
+            --spring: cubic-bezier(.22, 1, .36, 1);
+            --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+            --glow: 0 0 35px rgba(99, 102, 241, 0.35);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform .25s var(--spring), background .25s ease, border .25s ease, opacity .25s ease, box-shadow .25s ease;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        /* ===== Scrollbar ===== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 20px; }
+
+        /* ===== Helpers ===== */
+        .tap:active { transform: scale(.94); }
+        .blur { backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+        .glass { background: var(--glass); border: 1px solid var(--line); }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px) scale(.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.98); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.02); }
+            100% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.98); }
+        }
+
+        /* ===== LOADING SPINNER ===== */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--brand);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 12px;
+        }
+
+        /* ========================= SETUP SCREEN ========================= */
+        #setup-screen {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 3000;
+        }
+
+        .prime-card {
+            width: 100%;
+            max-width: 430px;
+            border-radius: 38px;
+            padding: 45px 28px;
+            animation: fadeUp .6s var(--spring);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prime-card::before {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            background: radial-gradient(circle, rgba(99, 102, 241, .28), transparent 70%);
+            top: -100px;
+            right: -100px;
+            border-radius: 50%;
+        }
+
+        .logo-title {
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: -3px;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-title span { color: var(--brand); }
+        .sub { margin-top: 8px; color: var(--muted); font-weight: 600; font-size: 14px; position: relative; z-index: 2; }
+        
+        .init-btn {
+            width: 100%;
+            border: none;
+            margin-top: 28px;
+            padding: 20px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, var(--brand), var(--brand-2));
+            color: white;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: var(--glow);
+            position: relative;
+            z-index: 2;
+            display: block;
+            text-align: center;
+        }
+
+        #load-status {
+            margin-top: 24px;
+            font-weight: 800;
+            color: #C4B5FD;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            font-size: 13px;
+            text-align: center;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* ========================= EDITOR ========================= */
+        #editor-screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        /* ========================= FLOAT BUTTONS ========================= */
+        .fab {
+            position: fixed;
+            top: 14px;
+            width: 54px;
+            height: 54px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            z-index: 1500;
+            cursor: pointer;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, .25);
+            user-select: none;
+        }
+
+        .fab:hover { transform: translateY(-3px); }
+        #hamburger { left: 14px; }
+        #reset-view { right: 14px; }
+
+        /* ========================= SIDEBAR ========================= */
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: -340px;
+            width: 330px;
+            height: 100%;
+            z-index: 2000;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: .45s var(--spring);
+            box-shadow: 20px 0 60px rgba(0, 0, 0, .45);
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        #sidebar.open { left: 0; }
+        .side-wrap { min-height: 100%; display: flex; flex-direction: column;}
+        
+        .side-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            padding: 18px 16px 16px;
+            backdrop-filter: blur(24px);
+            background: rgba(15, 23, 42, .82);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .side-header input {
+            width: 100%;
+            border: none;
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, .08);
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            outline: none;
+        }
+
+        .side-header input::placeholder { color: var(--muted); }
+        .side-body { padding: 16px; flex: 1; }
+
+        /* ========================= PAGE CARD ========================= */
+        .p-card {
+            position: relative;
+            margin-bottom: 22px;
+            border-radius: 28px;
+            overflow: hidden;
+            padding: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .18);
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid transparent;
+        }
+
+        .p-card:hover { transform: translateY(-3px); }
+        .p-card.active {
+            border: 2px solid var(--brand);
+            box-shadow: 0 0 0 5px rgba(99, 102, 241, .16), 0 20px 45px rgba(0, 0, 0, .28);
+        }
+
+        .card-meta {
+            padding-left: 6px;
+            margin-bottom: 10px;
+            font-size: 10px;
+            color: var(--muted);
+            font-weight: 800;
+            letter-spacing: .8px;
+        }
+
+        .p-card canvas {
+            width: 100%;
+            display: block;
+            border-radius: 20px;
+            background: #111827;
+        }
+
+        .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+        .m-btn {
+            border: none;
+            padding: 13px 8px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .08);
+            color: white;
+            font-size: 10px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .m-btn:hover { background: rgba(255, 255, 255, .14); }
+        
+        .del-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(2, 6, 23, .88);
+            backdrop-filter: blur(14px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            border-radius: 26px;
+        }
+
+        .p-card.deleted .del-overlay { opacity: 1; pointer-events: auto; }
+        .btn-restore {
+            border: none;
+            padding: 12px 24px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--brand), var(--brand-2));
+            color: white;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        /* ========================= VIEWPORT ========================= */
+        #viewport {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            touch-action: none;
+            background: radial-gradient(circle at center, #1E293B, #0F172A);
+        }
+
+        #page-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 24px 32px;
+            border-radius: 24px;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #C4B5FD;
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            animation: pulse 1.5s infinite ease-in-out;
+            pointer-events: none;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        #stage {
+            position: absolute;
+            transform-origin: 0 0;
+            background: white;
+            overflow: hidden;
+            border-radius: 26px;
+            box-shadow: 0 45px 100px rgba(0, 0, 0, .5);
+            opacity: 0; 
+            pointer-events: none;
+            will-change: transform;
+            transition: opacity 0.3s ease;
+        }
+
+        /* ========================= MOVABLES ========================= */
+        .movable { position: absolute; touch-action: none; z-index: 100; cursor: grab; }
+        .movable:active { cursor: grabbing; }
+        .movable.active { outline: 4px solid var(--brand); outline-offset: 8px; }
+
+        .vertex {
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--brand), var(--brand-2));
+            border: 5px solid white;
+            box-shadow: var(--glow);
+            display: none;
+            cursor: nwse-resize;
+        }
+
+        .movable.active .vertex { display: block; }
+        #u-layer { filter: drop-shadow(0 12px 25px rgba(0, 0, 0, .28)); }
+        #logo-layer { filter: drop-shadow(0 10px 20px rgba(0, 0, 0, .22)); }
+
+        /* ========================= TOOLBAR ========================= */
+        #toolbar {
+            padding: 20px 20px 34px;
+            border-top: 1px solid var(--line);
+            border-radius: 36px 36px 0 0;
+            background: rgba(15, 23, 42, .82);
+            backdrop-filter: blur(26px);
+            box-shadow: 0 -20px 60px rgba(0, 0, 0, .35);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            z-index: 1500;
+        }
+
+        .color-row { display: flex; flex-direction: column; gap: 8px; }
+        .color-row label { font-size: 10px; font-weight: 900; letter-spacing: .8px; color: var(--muted); }
+        
+        .hue-bar {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 18px;
+            border-radius: 30px;
+            border: 1px solid var(--line);
+            background: linear-gradient(to right, #000, #fff, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+            outline: none;
+        }
+
+        .hue-bar::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: white;
+            border: 4px solid var(--brand);
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, .2);
+        }
+
+        .tool-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+        .t-btn {
+            border: none;
+            padding: 18px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, .08);
+            color: white;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .t-btn:hover { transform: translateY(-2px); background: rgba(255, 255, 255, .14); }
+        
+        .btn-append {
+            border: none;
+            padding: 18px;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #34D399;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.1);
+        }
+        .btn-append:hover {
+            transform: translateY(-2px);
+            background: rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-export {
+            border: none;
+            padding: 22px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, var(--brand), var(--brand-2));
+            color: white;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: var(--glow);
+        }
+
+        .btn-export:hover { transform: translateY(-2px); }
+        .btn-export:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        /* ========================= MOBILE ========================= */
+        @media(max-width: 600px) { #sidebar { width: 300px; } }
+    </style>
+</head>
+<body>
+
+    <input type="file" id="swap-trigger" accept="image/*" style="display:none;">
+    <input type="file" id="pdf-append" accept="application/pdf" style="display:none;">
+
+    <!-- SETUP SCREEN -->
+    <div id="setup-screen">
+        <div class="prime-card glass blur">
+            <h1 class="logo-title">NAV<span>.</span></h1>
+            <div class="sub">Master Production V29 Ultra</div>
+            
+            <label class="init-btn tap" for="pdf-in">INITIALIZE STUDIO</label>
+            <input type="file" id="pdf-in" accept="application/pdf" style="display:none;">
+            
+            <div id="load-status">
+                <div class="spinner"></div>
+                <span id="load-text">🧠 ASSEMBLING MASTER ARCHITECTURE...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDITOR SCREEN -->
+    <div id="editor-screen">
+        <div id="hamburger" class="fab glass blur tap">☰</div>
+        <div id="reset-view" class="fab glass blur tap">⛶</div>
+
+        <!-- Sidebar -->
+        <div id="sidebar">
+            <div class="side-wrap glass">
+                <div class="side-header">
+                    <input type="text" id="fn-field" placeholder="Untitled Project">
+                </div>
+                <div class="side-body" id="card-list"></div>
+            </div>
+        </div>
+
+        <!-- Viewport -->
+        <div id="viewport">
+            <div id="page-loader" class="glass blur">
+                <div class="spinner" style="width: 28px; height: 28px; border-width: 3px;"></div>
+                <span id="page-loader-text">⏳ RENDERING HD PAGE...</span>
+            </div>
+
+            <div id="stage">
+                <canvas id="cvs-main"></canvas>
+                
+                <div id="u-layer" class="movable" style="left:50px; top:50px; width:140px; height:170px; display:none;">
+                    <svg id="u-svg" width="100%" height="100%" style="display:block; pointer-events:none;"></svg>
+                    <div class="vertex"></div>
+                </div>
+
+                <div id="logo-layer" class="movable" style="left:70px; top:70px; width:100px; display:none;">
+                    <img id="logo-img" draggable="false" style="width:100%; height:100%; display:block; pointer-events:none;">
+                    <div class="vertex"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div id="toolbar">
+            <div class="color-row">
+                <label>CHROMATIC LOGO TINT</label>
+                <input type="range" id="hue-pick" class="hue-bar" min="0" max="360" value="0">
+            </div>
+
+            <div class="tool-grid">
+                <button id="snap-btn" class="t-btn tap" style="color:#C4B5FD;">🧠 SNAP</button>
+                <button id="logo-btn" class="t-btn tap">LOGO</button>
+                <button id="u-btn" class="t-btn tap">SHAPE</button>
+            </div>
+
+            <button id="append-btn" class="btn-append tap">➕ APPEND PDF</button>
+            <button id="final-btn" class="btn-export tap">DOWNLOAD PREMIUM PDF</button>
+        </div>
+    </div>
+
+<script>
+    /* ========================= VARIABLES ========================= */
+    let pdfBytes = null;
+    let pdfProxy = null;
+    let logoBytes = null;
+    let logoObj = null;
+    let pW = 0;
+    let pH = 0;
+    let activeMove = null;
+    let currI = 0;
+    let swapTargetIdx = null;
+
+    const pageSettings = new Map();
+    const stage = document.getElementById('stage');
+    const view = document.getElementById('viewport');
+    const cvs = document.getElementById('cvs-main');
+    const uL = document.getElementById('u-layer');
+    const lL = document.getElementById('logo-layer');
+    const lI = document.getElementById('logo-img');
+    const sidebar = document.getElementById('sidebar');
+    const hSlider = document.getElementById('hue-pick');
+    const fnField = document.getElementById('fn-field');
+    const pageLoader = document.getElementById('page-loader');
+    const pageLoaderText = document.getElementById('page-loader-text');
+
+    // Setup PDF.js worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    /* ========================= SIDEBAR ========================= */
+    document.getElementById('hamburger').onclick = () => {
+        sidebar.classList.toggle('open');
+    };
+
+    view.addEventListener('touchstart', () => {
+        sidebar.classList.remove('open');
+    });
+
+    view.addEventListener('mousedown', () => {
+        sidebar.classList.remove('open');
+    });
+
+    /* ========================= TINT ========================= */
+    hSlider.oninput = () => {
+        if (!logoObj) return;
+        const val = hSlider.value;
+        const c = document.createElement('canvas');
+        const x = c.getContext('2d');
+        c.width = logoObj.width;
+        c.height = logoObj.height;
+        
+        x.drawImage(logoObj, 0, 0);
+        x.globalCompositeOperation = 'source-in';
+        
+        if (val < 10) x.fillStyle = '#000';
+        else if (val > 350) x.fillStyle = '#fff';
+        else x.fillStyle = `hsl(${val},80%,50%)`;
+        
+        x.fillRect(0, 0, c.width, c.height);
+        
+        c.toBlob(b => {
+            lI.src = URL.createObjectURL(b);
+            b.arrayBuffer().then(buf => { logoBytes = buf; });
+        }, 'image/png');
+    };
+
+    /* ========================= LOGO AI BRAIN (Pythagorean Deep-Fit) ========================= */
+    function syncLogoToShape() {
+        if (uL.style.display === 'none' || lL.style.display === 'none' || !logoObj) return;
+        
+        const uLeft = parseFloat(uL.style.left || 0);
+        const uTop = parseFloat(uL.style.top || 0);
+        const uWidth = uL.offsetWidth;
+        const uHeight = uL.offsetHeight;
+        
+        const marginX = uWidth * 0.04; 
+        
+        const safeLeft = uLeft + marginX;
+        const safeRight = uLeft + uWidth - marginX;
+
+        const visLeft = Math.max(0, safeLeft);
+        const visRight = Math.min(pW, safeRight);
+        const usableWidth = visRight - visLeft;
+
+        if (usableWidth > 15) {
+            const aspect = logoObj.height / logoObj.width;
+            
+            let lw = usableWidth;
+            let lh = lw * aspect;
+            
+            const r = uWidth / 2; 
+            const rectHeight = uHeight - r; 
+            
+            const halfLw = lw / 2;
+            let depthIntoCurve = 0;
+            if (halfLw < r) {
+                depthIntoCurve = Math.sqrt((r * r) - (halfLw * halfLw));
+            }
+            
+            const safeBottomLimit = uTop + rectHeight + depthIntoCurve - marginX;
+            const safeTopLimit = uTop + marginX;
+            
+            const visTop = Math.max(0, safeTopLimit);
+            const visBottom = Math.min(pH, safeBottomLimit);
+            const usableHeight = visBottom - visTop;
+
+            if (lh > usableHeight && usableHeight > 10) {
+                lh = usableHeight;
+                lw = lh / aspect;
+            }
+            
+            lL.style.width = lw + 'px';
+            lL.style.height = lh + 'px';
+            
+            lL.style.left = (visLeft + (usableWidth - lw) / 2) + 'px';
+            lL.style.top = (visTop + (usableHeight - lh) / 2) + 'px';
+        } else {
+            lL.style.width = '0px';
+        }
+    }
+
+    /* ========================= SNAP AI (Tightly Padded Coverage) ========================= */
+    document.getElementById('snap-btn').onclick = async () => {
+        if (!pW || !pH) return;
+        const ctx = cvs.getContext('2d');
+        
+        const scanWidth = Math.min(300, pW);
+        const scanHeight = Math.min(300, pH);
+        const scanX = Math.max(0, pW - scanWidth);
+        const scanY = 0;
+
+        const data = ctx.getImageData(scanX, scanY, scanWidth, scanHeight).data;
+        
+        let minX = scanWidth, maxX = -1, minY = scanHeight, maxY = -1;
+        let foundWhite = false;
+
+        for (let y = 0; y < scanHeight; y++) {
+            for (let x = 0; x < scanWidth; x++) {
+                const idx = (y * scanWidth + x) * 4;
+                if (data[idx] > 240 && data[idx+1] > 240 && data[idx+2] > 240) {
+                    if (x < minX) minX = x;
+                    if (x > maxX) maxX = x;
+                    if (y < minY) minY = y;
+                    if (y > maxY) maxY = y;
+                    foundWhite = true;
+                }
+            }
+        }
+
+        if (foundWhite && maxX > minX && maxY > minY) {
+            let baseWidth = maxX - minX + 1;
+            let baseHeight = maxY - minY + 1;
+            
+            const pad = 3; 
+            
+            let finalWidth = baseWidth + (pad * 2);
+            let finalHeight = baseHeight + (pad * 2);
+            
+            if (uL.style.display === 'none') uL.style.display = 'block';
+            
+            uL.style.width = finalWidth + 'px';
+            uL.style.height = finalHeight + 'px';
+            drawU(finalWidth, finalHeight);
+
+            uL.style.left = (scanX + minX - pad) + 'px';
+            uL.style.top = (scanY + minY - pad) + 'px';
+
+            syncLogoToShape();
+        }
+    };
+
+    /* ========================= CAMERA / ZOOM ========================= */
+    let camera = { x: 0, y: 0, z: 1 };
+
+    function applyCam() {
+        stage.style.transform = `translate(${camera.x}px, ${camera.y}px) scale(${camera.z})`;
+    }
+
+    function fit() {
+        if (!pW || !pH) return;
+        
+        const r = view.getBoundingClientRect();
+        
+        if (r.width === 0 || r.height === 0) {
+            setTimeout(fit, 50);
+            return;
+        }
+
+        const padding = 60;
+        camera.z = Math.min((r.width - padding) / pW, (r.height - padding) / pH);
+        if (camera.z > 1) camera.z = 1;
+        
+        const scaledWidth = pW * camera.z;
+        const scaledHeight = pH * camera.z;
+        
+        camera.x = Math.round((r.width - scaledWidth) / 2);
+        camera.y = Math.round((r.height - scaledHeight) / 2);
+        
+        applyCam();
+    }
+
+    document.getElementById('reset-view').onclick = fit;
+    window.addEventListener('resize', fit);
+
+    /* ========================= PINCH / PAN ========================= */
+    let isP = false, isZ = false;
+    let lp = { x: 0, y: 0 }, iM = { x: 0, y: 0 };
+    let iD = 0;
+
+    view.addEventListener('touchstart', e => {
+        if (e.target === view || e.target === cvs) {
+            if (activeMove) {
+                activeMove.classList.remove('active');
+                activeMove = null;
+            }
+            if (e.touches.length === 1) {
+                isP = true;
+                lp = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+        }
+        if (e.touches.length === 2) {
+            isZ = true;
+            isP = false;
+            iD = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            iM = {
+                x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+                y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+            };
+        }
+    }, { passive: false });
+
+    view.addEventListener('touchmove', e => {
+        if (isZ && e.touches.length === 2) {
+            e.preventDefault();
+            const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            const m = {
+                x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+                y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+            };
+            const ratio = d / iD;
+            let nz = Math.max(0.1, Math.min(camera.z * ratio, 8));
+            const zd = nz / camera.z;
+            
+            camera.x = m.x - (m.x - camera.x) * zd + (m.x - iM.x);
+            camera.y = m.y - (m.y - camera.y) * zd + (m.y - iM.y);
+            camera.z = nz;
+            iD = d;
+            iM = m;
+            applyCam();
+        } else if (isP && e.touches.length === 1) {
+            e.preventDefault();
+            camera.x += (e.touches[0].clientX - lp.x);
+            camera.y += (e.touches[0].clientY - lp.y);
+            lp = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            applyCam();
+        }
+    }, { passive: false });
+
+    view.addEventListener('touchend', () => { isP = false; isZ = false; });
+
+    /* ========================= DRAG & RESIZE ========================= */
+    let isD = false, isR = false;
+    let trg = null;
+    let sx = 0, sy = 0, sw = 0;
+
+    document.querySelectorAll('.vertex').forEach(v => {
+        v.addEventListener('touchstart', e => {
+            e.stopPropagation();
+            isR = true;
+            trg = v.parentElement;
+            sx = e.touches[0].clientX;
+            sw = trg.offsetWidth;
+        }, { passive: false });
+    });
+
+    function startM(e, el) {
+        if (e.touches && e.touches.length > 1) return;
+        e.stopPropagation();
+        isD = true;
+        trg = el;
+        sx = e.touches ? e.touches[0].clientX : e.clientX;
+        sy = e.touches ? e.touches[0].clientY : e.clientY;
+        
+        if (activeMove) activeMove.classList.remove('active');
+        el.classList.add('active');
+        activeMove = el;
+    }
+
+    window.addEventListener('touchmove', e => {
+        if (!isD && !isR) return;
+        if (e.touches && e.touches.length > 1) return;
+        
+        e.preventDefault();
+        const cx = e.touches ? e.touches[0].clientX : e.clientX;
+        const cy = e.touches ? e.touches[0].clientY : e.clientY;
+
+        if (isR) {
+            const nw = Math.max(30, sw + (cx - sx) / camera.z);
+            trg.style.width = nw + 'px';
+            
+            if (trg === uL) {
+                trg.style.height = (nw * 1.22) + 'px';
+                drawU(nw, nw * 1.22);
+                syncLogoToShape(); // AI Logo dynamically tracks scaling
+            }
+            if (trg === lL && logoObj) {
+                const aspect = logoObj.height / logoObj.width;
+                trg.style.height = (nw * aspect) + 'px';
+            }
+        } else {
+            const dx = (cx - sx) / camera.z;
+            const dy = (cy - sy) / camera.z;
+            
+            trg.style.left = (parseFloat(trg.style.left || 0) + dx) + 'px';
+            trg.style.top = (parseFloat(trg.style.top || 0) + dy) + 'px';
+            
+            if (trg === uL) {
+                syncLogoToShape(); // AI Logo dynamically tracks movement
+            }
+
+            sx = cx; sy = cy;
+        }
+    }, { passive: false });
+
+    window.addEventListener('touchend', () => { isD = false; isR = false; });
+
+    uL.addEventListener('touchstart', e => startM(e, uL), { passive: false });
+    lL.addEventListener('touchstart', e => startM(e, lL), { passive: false });
+
+    /* ========================= HELPERS ========================= */
+    async function fImg(url) {
+        try {
+            const r = await fetch(url);
+            if (!r.ok) return null;
+            const b = await r.blob();
+            return { b: await b.arrayBuffer(), t: b.type || 'image/jpeg' };
+        } catch (e) {
+            console.warn("Failed to fetch external image:", url);
+            return null;
+        }
+    }
+
+    function drawU(w, h) {
+        const r = w / 2;
+        const rh = h - r;
+        document.getElementById('u-svg').innerHTML = `
+            <path d="M 0 0 L ${w} 0 L ${w} ${rh} A ${r} ${r} 0 0 1 0 ${rh} Z" fill="white" />
+        `;
+    }
+
+    /* ========================= PDF INIT ========================= */
+    document.getElementById('pdf-in').onchange = async e => {
+        const f = e.target.files[0];
+        if (!f) return;
+
+        document.getElementById('load-text').innerText = "🧠 ASSEMBLING MASTER ARCHITECTURE...";
+        document.getElementById('load-status').style.display = 'flex';
+        fnField.value = f.name.replace(/\.[^/.]+$/, "") + "_NAV";
+
+        try {
+            const fD = await fImg('https://raw.githubusercontent.com/Amit21686/NAV-Education/main/images/IMG_1778658737930.jpg');
+            const bD = await fImg('https://raw.githubusercontent.com/Amit21686/NAV-Education/main/images/IMG_1778658764291.jpg');
+
+            const { PDFDocument } = PDFLib;
+            const uPdf = await PDFDocument.load(await f.arrayBuffer());
+            const final = await PDFDocument.create();
+
+            if (fD) {
+                const i = fD.t.includes('png') ? await final.embedPng(fD.b) : await final.embedJpg(fD.b);
+                const p = final.addPage([i.width, i.height]);
+                p.drawImage(i, { x: 0, y: 0, width: i.width, height: i.height });
+            }
+
+            const copied = await final.copyPages(uPdf, uPdf.getPageIndices());
+            copied.forEach(p => final.addPage(p));
+
+            if (bD) {
+                const i = bD.t.includes('png') ? await final.embedPng(bD.b) : await final.embedJpg(bD.b);
+                const p = final.addPage([i.width, i.height]);
+                p.drawImage(i, { x: 0, y: 0, width: i.width, height: i.height });
+            }
+
+            pdfBytes = await final.save();
+            pdfProxy = await pdfjsLib.getDocument({ data: pdfBytes }).promise;
+            pageSettings.clear();
+
+            for (let i = 0; i < pdfProxy.numPages; i++) {
+                pageSettings.set(i, {
+                    del: false,
+                    skip: (i === 0 || i === pdfProxy.numPages - 1),
+                    bgB: null, bgT: null, bgD: null
+                });
+            }
+
+            document.getElementById('setup-screen').style.display = 'none';
+            const editor = document.getElementById('editor-screen');
+            editor.style.display = 'flex';
+            
+            await new Promise(r => setTimeout(r, 60));
+            editor.style.opacity = '1';
+
+            await loadP(0);
+            uL.style.display = 'block';
+            drawU(140, 170);
+
+            renderSidebar();
+
+        } catch (err) {
+            console.error(err);
+            alert("Error loading PDF: " + err.message);
+            document.getElementById('load-status').style.display = 'none';
+        }
+    };
+
+    /* ========================= APPEND ENGINE (Smart Splicing) ========================= */
+    document.getElementById('append-btn').onclick = () => {
+        document.getElementById('pdf-append').click();
+    };
+
+    document.getElementById('pdf-append').onchange = async e => {
+        const f = e.target.files[0];
+        if (!f) return;
+
+        pageLoaderText.innerText = "⏳ APPENDING DOCUMENT...";
+        pageLoader.style.display = 'flex';
+        stage.style.pointerEvents = 'none';
+
+        await new Promise(r => setTimeout(r, 50));
+
+        try {
+            const { PDFDocument } = PDFLib;
+            
+            const currentDoc = await PDFDocument.load(pdfBytes);
+            
+            const appendBuffer = await f.arrayBuffer();
+            const appendDoc = await PDFDocument.load(appendBuffer);
+
+            const copiedPages = await currentDoc.copyPages(appendDoc, appendDoc.getPageIndices());
+            
+            // INTELLIGENT SPLICING: Insert BEFORE the back cover
+            const oldPageCount = pdfProxy.numPages;
+            let insertIdx = oldPageCount - 1; // The current back cover index
+
+            copiedPages.forEach(p => {
+                currentDoc.insertPage(insertIdx, p);
+                insertIdx++;
+            });
+
+            pdfBytes = await currentDoc.save();
+
+            pdfProxy = await pdfjsLib.getDocument({ data: pdfBytes }).promise;
+
+            // Preserve the back cover's memory settings and move them to the new absolute end
+            const backCoverSettings = pageSettings.get(oldPageCount - 1);
+            pageSettings.set(pdfProxy.numPages - 1, backCoverSettings);
+
+            // Initialize fresh settings for the newly appended pages
+            for (let i = oldPageCount - 1; i < pdfProxy.numPages - 1; i++) {
+                pageSettings.set(i, {
+                    del: false,
+                    skip: false, 
+                    bgB: null, bgT: null, bgD: null
+                });
+            }
+
+            await renderSidebar();
+            
+            // Auto-jump to the start of the newly appended document
+            await loadP(oldPageCount - 1);
+
+        } catch (err) {
+            console.error(err);
+            alert("Error appending PDF: " + err.message);
+        } finally {
+            pageLoader.style.display = 'none';
+            stage.style.pointerEvents = 'auto';
+            pageLoaderText.innerText = "⏳ RENDERING HD PAGE...";
+            e.target.value = ''; 
+        }
+    };
+
+    /* ========================= LOAD PAGE ========================= */
+    async function loadP(idx) {
+        currI = idx;
+        const s = pageSettings.get(idx);
+        
+        if (stage.style.opacity === '1') {
+            stage.style.opacity = '0.5';
+        }
+        
+        stage.style.pointerEvents = 'none';
+        pageLoader.style.display = 'flex';
+
+        updateActiveCard();
+
+        await new Promise(resolve => requestAnimationFrame(resolve));
+
+        try {
+            if (s.bgD) {
+                const i = new Image();
+                i.onload = () => {
+                    updateStage(i, i.width, i.height);
+                };
+                i.src = s.bgD;
+            } else {
+                const p = await pdfProxy.getPage(idx + 1);
+                const v = p.getViewport({ scale: 1.5 });
+
+                const offCvs = document.createElement('canvas');
+                offCvs.width = v.width;
+                offCvs.height = v.height;
+                const offCtx = offCvs.getContext('2d');
+
+                await p.render({ canvasContext: offCtx, viewport: v }).promise;
+
+                updateStage(offCvs, v.width, v.height);
+            }
+        } catch(err) {
+            console.error("Render failed", err);
+            pageLoader.style.display = 'none';
+            stage.style.opacity = '1';
+        }
+        
+        sidebar.classList.remove('open');
+    }
+
+    function updateStage(source, w, h) {
+        cvs.width = w;
+        cvs.height = h;
+        stage.style.width = w + 'px';
+        stage.style.height = h + 'px';
+        pW = w; 
+        pH = h;
+
+        const ctx = cvs.getContext('2d');
+        ctx.drawImage(source, 0, 0);
+
+        fit();
+
+        pageLoader.style.display = 'none';
+        stage.style.opacity = '1';
+        stage.style.pointerEvents = 'auto';
+    }
+
+    /* ========================= SIDEBAR RENDER ========================= */
+    async function renderSidebar() {
+        const list = document.getElementById('card-list');
+        const scroll = sidebar.scrollTop;
+        list.innerHTML = '';
+
+        for (let i = 0; i < pdfProxy.numPages; i++) {
+            const s = pageSettings.get(i);
+            const card = document.createElement('div');
+            card.id = `card-${i}`;
+            card.className = 'p-card glass blur' + (i === currI ? ' active' : '');
+
+            let lbl = (i === 0) ? "FRONT COVER" : (i === pdfProxy.numPages - 1 ? "BACK COVER" : `PAGE ${i}`);
+
+            card.innerHTML = `
+                <div class="del-overlay"><button class="btn-restore tap">RESTORE PAGE</button></div>
+                <div class="card-meta">${lbl}</div>
+                <canvas></canvas>
+                <div class="card-actions">
+                    <button class="m-btn btn-view">VIEW</button>
+                    <button class="m-btn btn-stamp">${s.skip ? 'SKIP' : 'STAMP'}</button>
+                    <button class="m-btn btn-swap">SWAP</button>
+                    <button class="m-btn btn-del" style="color:#FDA4AF;">DEL</button>
+                </div>
+            `;
+
+            card.querySelector('.btn-view').onclick = () => loadP(i);
+            card.querySelector('.btn-stamp').onclick = e => {
+                s.skip = !s.skip;
+                e.target.innerText = s.skip ? 'SKIP' : 'STAMP';
+            };
+            card.querySelector('.btn-del').onclick = () => {
+                s.del = true;
+                card.classList.add('deleted');
+            };
+            card.querySelector('.btn-restore').onclick = () => {
+                s.del = false;
+                card.classList.remove('deleted');
+            };
+            card.querySelector('.btn-swap').onclick = () => {
+                swapTargetIdx = i;
+                document.getElementById('swap-trigger').click();
+            };
+
+            list.appendChild(card);
+        }
+        
+        for (let i = 0; i < pdfProxy.numPages; i++) {
+            const s = pageSettings.get(i);
+            const card = document.getElementById(`card-${i}`);
+            if(!card) continue;
+            
+            const ctx = card.querySelector('canvas').getContext('2d');
+
+            if (s.bgD) {
+                const im = new Image();
+                await new Promise(r => {
+                    im.onload = () => {
+                        const targetWidth = 150;
+                        const targetHeight = im.height * (targetWidth / im.width);
+                        card.querySelector('canvas').width = targetWidth;
+                        card.querySelector('canvas').height = targetHeight;
+                        ctx.drawImage(im, 0, 0, targetWidth, targetHeight);
+                        r();
+                    };
+                    im.src = s.bgD;
+                });
+            } else {
+                const pg = await pdfProxy.getPage(i + 1);
+                const vp = pg.getViewport({ scale: 0.3 }); 
+                card.querySelector('canvas').width = vp.width;
+                card.querySelector('canvas').height = vp.height;
+                await pg.render({ canvasContext: ctx, viewport: vp }).promise;
+            }
+            
+            await new Promise(r => setTimeout(r, 15));
+        }
+
+        sidebar.scrollTop = scroll;
+    }
+
+    /* ========================= SWAP ========================= */
+    document.getElementById('swap-trigger').onchange = e => {
+        const f = e.target.files[0];
+        if (!f || swapTargetIdx === null) return;
+        
+        const reader = new FileReader();
+        reader.onload = ev => {
+            const s = pageSettings.get(swapTargetIdx);
+            s.bgD = ev.target.result;
+            s.bgT = f.type;
+            f.arrayBuffer().then(b => {
+                s.bgB = b;
+                renderSidebar();
+                if (swapTargetIdx === currI) loadP(currI);
+            });
+        };
+        reader.readAsDataURL(f);
+    };
+
+    function updateActiveCard() {
+        document.querySelectorAll('.p-card').forEach((c, i) => {
+            c.classList.toggle('active', i === currI);
+        });
+    }
+
+    /* ========================= TOOLS ========================= */
+    document.getElementById('u-btn').onclick = () => {
+        uL.style.display = uL.style.display === 'none' ? 'block' : 'none';
+        if (uL.style.display === 'block') {
+             startM({ touches: [{ clientX: 0, clientY: 0 }], stopPropagation: () => {} }, uL);
+        }
+    };
+
+    document.getElementById('logo-btn').onclick = async () => {
+        const b = document.getElementById('logo-btn');
+        b.innerText = '...';
+        b.disabled = true;
+
+        try {
+            if (!logoObj) {
+                const res = await fImg('https://raw.githubusercontent.com/Amit21686/NAV-Education/main/logo.png');
+                if (!res) throw new Error("Could not load logo");
+                
+                const bl = new Blob([res.b], { type: 'image/png' });
+                await new Promise((rs, rj) => {
+                    const i = new Image();
+                    i.onload = () => { logoObj = i; rs(); };
+                    i.onerror = rj;
+                    i.src = URL.createObjectURL(bl);
+                });
+
+                const c = document.createElement('canvas');
+                const x = c.getContext('2d');
+                c.width = logoObj.width;
+                c.height = logoObj.height;
+                x.drawImage(logoObj, 0, 0);
+                x.globalCompositeOperation = 'source-in';
+                x.fillStyle = '#000';
+                x.fillRect(0, 0, c.width, c.height);
+
+                c.toBlob(bt => {
+                    lI.src = URL.createObjectURL(bt);
+                    bt.arrayBuffer().then(buf => { logoBytes = buf; });
+                }, 'image/png');
+            }
+
+            uL.style.display = 'block';
+            lL.style.display = 'block';
+            
+            syncLogoToShape(); 
+
+            startM({ touches: [{ clientX: 0, clientY: 0 }], stopPropagation: () => {} }, lL);
+
+        } catch (e) {
+            console.error(e);
+            alert("Error loading logo.");
+        } finally {
+            b.innerText = 'LOGO';
+            b.disabled = false;
+        }
+    };
+
+    /* ========================= EXPORT ========================= */
+    document.getElementById('final-btn').onclick = async () => {
+        const btn = document.getElementById('final-btn');
+        let name = fnField.value.trim() || "NAV_Master_PDF";
+        if (!name.endsWith('.pdf')) name += ".pdf";
+
+        btn.disabled = true;
+        btn.innerText = "⏳ PROCESSING...";
+
+        setTimeout(async () => {
+            try {
+                const { PDFDocument, rgb } = PDFLib;
+                const doc = await PDFDocument.load(pdfBytes);
+                const pgs = doc.getPages();
+                
+                let embeddedLogo = null;
+                if (logoBytes && lL.style.display !== 'none') {
+                    embeddedLogo = await doc.embedPng(logoBytes);
+                }
+
+                for (let i = 0; i < pgs.length; i++) {
+                    const s = pageSettings.get(i);
+                    if (s.del) continue;
+
+                    const p = pgs[i];
+
+                    if (s.bgB) {
+                        const im = s.bgT.includes('png') ? await doc.embedPng(s.bgB) : await doc.embedJpg(s.bgB);
+                        p.drawRectangle({ x: 0, y: 0, width: p.getWidth(), height: p.getHeight(), color: rgb(1, 1, 1) });
+                        p.drawImage(im, { x: 0, y: 0, width: p.getWidth(), height: p.getHeight() });
+                    }
+
+                    if (!s.skip) {
+                        if (uL.style.display !== 'none') {
+                            const uw = uL.offsetWidth;
+                            const uh = uL.offsetHeight;
+                            const ux = parseFloat(uL.style.left);
+                            const uy = pH - parseFloat(uL.style.top) - uh;
+                            const r = uw / 2;
+
+                            p.drawRectangle({ x: ux, y: uy + r, width: uw, height: uh - r, color: rgb(1, 1, 1) });
+                            p.drawEllipse({ x: ux + r, y: uy + r, xScale: r, yScale: r, color: rgb(1, 1, 1) });
+                        }
+
+                        if (embeddedLogo && lL.style.display !== 'none') {
+                            const lw = lL.offsetWidth;
+                            const lh = lL.offsetHeight || (lw * (logoObj.height / logoObj.width));
+                            const lx = parseFloat(lL.style.left);
+                            const ly = pH - parseFloat(lL.style.top) - lh;
+
+                            p.drawImage(embeddedLogo, { x: lx, y: ly, width: lw, height: lh });
+                        }
+                    }
+                }
+
+                for (let i = pgs.length - 1; i >= 0; i--) {
+                    if (pageSettings.get(i).del) doc.removePage(i);
+                }
+
+                const fBytes = await doc.save();
+                const blb = new Blob([fBytes], { type: "application/pdf" });
+                const ln = document.createElement('a');
+                ln.href = URL.createObjectURL(blb);
+                ln.download = name;
+                ln.click();
+
+            } catch (e) {
+                console.error(e);
+                alert("Error saving PDF.");
+            } finally {
+                btn.innerText = "DOWNLOAD PREMIUM PDF";
+                btn.disabled = false;
+            }
+        }, 50);
+    };
+</script>
+</body>
+</html>
