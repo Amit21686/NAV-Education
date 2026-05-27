@@ -134,6 +134,27 @@ pointer-events:none; z-index:60; opacity:0; transition:opacity 0.5s ease;
 100% { transform: scale(1.06); }
 }
 
+/* ===== NEW: TOP LYRICS STYLE ===== */
+.top-lyrics {
+    position: absolute;
+    top: 6%;
+    left: 0;
+    width: 100%;
+    font-family: 'Parisienne', cursive;
+    font-size: 1.8rem;
+    color: #ffe082;
+    text-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+    text-align: center;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 15;
+    padding: 0 15px;
+}
+
+.top-lyrics.show { opacity: 1; transform: translateY(0); }
+.top-lyrics.hide { opacity: 0; transform: translateY(10px); }
+
 /* ===== TEXT STYLES ===== */
 .top-text{ font-size:1.3rem; font-weight:500; letter-spacing:4px; color:#ffffffd9; margin-bottom:12px; opacity:0; transform:translateY(-15px); animation:fadeDown 1.2s forwards .5s; }
 .name{
@@ -170,30 +191,8 @@ background: radial-gradient(circle, rgba(255,215,0,.22), transparent 70%); filte
 .spark { position: absolute; bottom: 210px; left: 50%; width: 5px; height: 5px; background: #ffd54f; border-radius: 50%; box-shadow: 0 0 10px #ff9800, 0 0 20px #ffeb3b; opacity: 0; z-index: 20; pointer-events: none; }
 @keyframes sparkFloat { 0% { transform: translate(-50%, 0) scale(1); opacity: 1; } 100% { transform: translate(calc(-50% + var(--drift)), -150px) scale(0); opacity: 0; } }
 
-/* ===== LYRICS & MESSAGE AREA ===== */
-.text-area-wrapper {
-    position: relative; width: 100%; max-width: 520px;
-    min-height: 100px; margin-top: 20px;
-    display: flex; justify-content: center; align-items: center;
-}
-
-.lyrics-box {
-    position: absolute; width: 100%;
-    font-family: 'Parisienne', cursive; font-size: 1.8rem; line-height: 1.4;
-    color: #ffe082; text-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
-    text-align: center; opacity: 0; transform: translateY(10px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.lyrics-box.show { opacity: 1; transform: translateY(0); }
-.lyrics-box.hide { opacity: 0; transform: translateY(-15px); }
-
-.message-box{ 
-    position: absolute; width: 100%;
-    font-size: 1.05rem; line-height: 1.85; text-align: center; color: #ffe8ef; 
-    display: none; /* Hidden until finale */
-}
-
+/* ===== TYPEWRITER MESSAGE (AT THE BOTTOM) ===== */
+.message-box{ margin-top:20px; font-size:1.05rem; line-height:1.85; text-align:center; color:#ffe8ef; max-width:520px; min-height: 90px; }
 .cursor { display: inline-block; width: 2px; height: 1.1em; background: #ffe8ef; vertical-align: text-bottom; margin-left: 3px; animation: blink 0.7s infinite; }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
@@ -204,10 +203,9 @@ background: radial-gradient(circle, rgba(255,215,0,.22), transparent 70%); filte
 
 /* ===== MOBILE ===== */
 @media(max-width:480px){
+.top-lyrics { top: 4%; font-size: 1.45rem; }
 .name{ font-size:4.8rem; margin-bottom:42px; }
 .cake-area{ transform:scale(.95); }
-.text-area-wrapper { min-height: 80px; }
-.lyrics-box { font-size: 1.45rem; padding: 0 15px; }
 .message-box{ font-size:.95rem; line-height:1.75; padding:0 10px; }
 .top-text{ font-size:1.1rem; letter-spacing:3px; }
 .intro-title{ font-size: 2.2rem; }
@@ -258,6 +256,10 @@ for(let i=0;i<12;i++){
 
 <!-- MAIN CONTENT -->
 <div class="main" id="main">
+    
+    <!-- LYRICS AT THE VERY TOP -->
+    <div id="topLyrics" class="top-lyrics"></div>
+
     <div class="top-text">HAPPY BIRTHDAY TO MY</div>
     <div class="name">Anjali</div>
     <div class="cake-area">
@@ -274,11 +276,8 @@ for(let i=0;i<12;i++){
         </div>
     </div>
     
-    <!-- Lyrical & Message Wrapper -->
-    <div class="text-area-wrapper">
-        <div id="lyricsBox" class="lyrics-box"></div>
-        <div id="messageBox" class="message-box"></div>
-    </div>
+    <!-- PERSONAL MESSAGE AT THE BOTTOM -->
+    <div class="message-box" id="messageBox"></div>
 </div>
 
 <script>
@@ -292,7 +291,6 @@ let isOpened = false;
 // Timeline Flags
 let currentLyricIndex = -1;
 let hasStartedFireworks = false;
-let hasStartedFinaleMsg = false;
 let hasPackedUp = false;
 
 // Snapshot the main HTML so we can perfectly reset the screen later
@@ -422,7 +420,7 @@ const lyricsData = [
 function audioHandler() {
     let t = bgMusic.currentTime;
 
-    // 1. Sync Lyrics
+    // 1. Sync Lyrics (Shows at the TOP)
     for (let i = lyricsData.length - 1; i >= 0; i--) {
         if (t >= lyricsData[i].time && currentLyricIndex !== i) {
             currentLyricIndex = i;
@@ -437,17 +435,7 @@ function audioHandler() {
         startFireworksSequence();
     }
 
-    // 3. Grand Finale Custom Message (92.5 seconds)
-    if (t >= 92.5 && !hasStartedFinaleMsg) {
-        hasStartedFinaleMsg = true;
-        
-        // Hide lyrics & start fast typewriter
-        document.getElementById("lyricsBox").style.display = "none";
-        document.getElementById("messageBox").style.display = "block";
-        startTypewriter();
-    }
-
-    // 4. Reverse Fast-Pack (95.0 seconds)
+    // 3. Reverse Fast-Pack (95.0 seconds)
     if (t >= 95.0 && !hasPackedUp) {
         hasPackedUp = true;
         fastPackUp();
@@ -465,9 +453,11 @@ function audioHandler() {
     }
 }
 
-// Function to animate the text changing
+// Function to animate the TOP lyrics changing
 function showLyric(text) {
-    const box = document.getElementById("lyricsBox");
+    const box = document.getElementById("topLyrics");
+    if (!box) return;
+
     box.classList.remove("show");
     box.classList.add("hide");
     
@@ -497,7 +487,6 @@ function startExperience(){
     
     currentLyricIndex = -1;
     hasStartedFireworks = false;
-    hasStartedFinaleMsg = false;
     hasPackedUp = false;
 
     // Start Audio Timeline
@@ -528,6 +517,11 @@ function startExperience(){
         requestAnimationFrame(() => { main.style.opacity="1"; });
         startCake();
     },1600);
+
+    // Start the personal message typewriter as normal (at 5.5 seconds)
+    setTimeout(() => {
+        startTypewriter();
+    }, 5500);
 }
 
 
@@ -579,7 +573,7 @@ function fastPackUp() {
 }
 
 
-/* ================= FAST FINALE TYPEWRITER ================= */
+/* ================= NORMAL SPEED TYPEWRITER (AT BOTTOM) ================= */
 function startTypewriter() {
     const textLines = [
         "To the woman who holds my heart,",
@@ -590,10 +584,12 @@ function startTypewriter() {
     let i = 0;
     
     const msgBox = document.getElementById("messageBox");
+    if (!msgBox) return; // Prevent errors if not loaded yet
+    
     msgBox.innerHTML = "<span id='typeText'></span><span class='cursor'></span>";
     const typeText = document.getElementById("typeText");
 
-    // Types very quickly (25ms per letter) to fit in the 2.5 second window
+    // Normal, romantic typing speed (40ms per letter)
     typingInterval = setInterval(() => {
         if (i < fullText.length) {
             let char = fullText.charAt(i);
@@ -605,10 +601,13 @@ function startTypewriter() {
             i++;
         } else {
             clearInterval(typingInterval);
-            document.querySelector('.cursor').style.animation = "none";
-            document.querySelector('.cursor').style.opacity = "0";
+            const cursor = document.querySelector('.cursor');
+            if(cursor) {
+                cursor.style.animation = "none";
+                cursor.style.opacity = "0";
+            }
         }
-    }, 25); 
+    }, 40); 
 }
 
 
