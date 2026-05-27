@@ -224,6 +224,9 @@ let typingInterval;
 let fwActive = false;
 let isOpened = false;
 
+// Snapshot the main HTML so we can perfectly reset the screen later
+let initialMainHTML = document.getElementById("main").innerHTML;
+
 /* ================= FIREWORKS ENGINE ================= */
 const canvas = document.getElementById("fireworksCanvas");
 const ctx = canvas.getContext("2d");
@@ -314,31 +317,44 @@ function stopFireworksSequence() {
 }
 
 
+/* ================= AUDIO CONTROLLER ================= */
+const bgMusic = document.getElementById("bgMusic");
+const MAX_VOLUME = 0.8;
+
+function audioHandler() {
+    if (bgMusic.currentTime >= 94.5 && bgMusic.currentTime < 96) {
+        let timeLeft = 96 - bgMusic.currentTime;
+        bgMusic.volume = Math.max(0, (timeLeft / 1.5) * MAX_VOLUME); 
+    }
+    if (bgMusic.currentTime >= 96) {
+        bgMusic.pause();
+    }
+}
+
+
 /* ================= TIMELINE SEQUENCE ================= */
 function startExperience(){
-    if(isOpened) return; 
+    if(isOpened) return; // Prevent multiple clicks
     isOpened = true;
+
+    // Reset MAIN completely using our saved snapshot 
+    // (This clears all old animations, layers, and text)
+    const main = document.getElementById("main");
+    main.innerHTML = initialMainHTML;
+    main.style = ""; // Clear inline styles applied from last closing
 
     // 1. Play Music
     setTimeout(() => {
-        const bgMusic = document.getElementById("bgMusic");
-        const MAX_VOLUME = 0.8;
+        bgMusic.removeEventListener('timeupdate', audioHandler); // Clean up old listener
+        bgMusic.addEventListener('timeupdate', audioHandler);
+        
         bgMusic.volume = MAX_VOLUME;
         bgMusic.currentTime = 75; // Start exactly at 1:15
         
         bgMusic.play().catch(err => console.log("Audio failed:", err));
-
-        bgMusic.addEventListener('timeupdate', function() {
-            if (bgMusic.currentTime >= 94.5 && bgMusic.currentTime < 96) {
-                let timeLeft = 96 - bgMusic.currentTime;
-                bgMusic.volume = Math.max(0, (timeLeft / 1.5) * MAX_VOLUME); 
-            }
-            if (bgMusic.currentTime >= 96) bgMusic.pause();
-        });
     }, 120);
 
     const env = document.getElementById("envelopeWrapper");
-    const main = document.getElementById("main");
     const heart = document.getElementById("envHeart");
 
     // Hide heart, open flap
@@ -410,7 +426,16 @@ function fastPackUp() {
             env.classList.add("bump");
             
             // Bring heart back
-            setTimeout(() => { document.getElementById("envHeart").style.opacity = "1"; }, 300);
+            setTimeout(() => { 
+                document.getElementById("envHeart").style.opacity = "1"; 
+                
+                // FULL RESET: Make the envelope ready to be clicked again!
+                setTimeout(() => {
+                    isOpened = false;
+                    env.classList.remove("bump");
+                }, 500);
+                
+            }, 300);
 
         }, 500);
 
@@ -428,6 +453,7 @@ function startTypewriter() {
     let fullText = textLines.join("\n");
     let i = 0;
     
+    // We fetch messageBox dynamically because it gets recreated from the snapshot
     const msgBox = document.getElementById("messageBox");
     msgBox.innerHTML = "<span id='typeText'></span><span class='cursor'></span>";
     const typeText = document.getElementById("typeText");
@@ -469,6 +495,7 @@ function startSparks() {
 
 /* ================= CAKE ANIMATION ================= */
 function startCake(){
+    // Fetch newly created DOM elements dynamically
     const l1 = document.getElementById("l1");
     const l2 = document.getElementById("l2");
     const l3 = document.getElementById("l3");
