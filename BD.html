@@ -767,38 +767,24 @@ letter-spacing:3px;
 <body>
 
 <!-- FLOATING LIGHTS -->
-
 <script>
-
 for(let i=0;i<12;i++){
-
-const light=document.createElement("div");
-
-light.className="light";
-
-light.style.left=
-Math.random()*100+"vw";
-
-light.style.width=
-6 + Math.random()*8+"px";
-
-light.style.height=
-light.style.width;
-
-light.style.animationDuration=
-8 + Math.random()*8+"s";
-
-light.style.animationDelay=
-Math.random()*5+"s";
-
-document.body.appendChild(light);
-
+    const light=document.createElement("div");
+    light.className="light";
+    light.style.left=Math.random()*100+"vw";
+    light.style.width=6 + Math.random()*8+"px";
+    light.style.height=light.style.width;
+    light.style.animationDuration=8 + Math.random()*8+"s";
+    light.style.animationDelay=Math.random()*5+"s";
+    document.body.appendChild(light);
 }
-
 </script>
 
-<!-- ENVELOPE -->
+<!-- BACKGROUND MUSIC: MAJBOOR -->
+<!-- Using media fragments (#t=75,96) to hint to the browser the specific timeline needed -->
+<audio id="bgMusic" src="majboor.mp3#t=75,96" preload="auto"></audio>
 
+<!-- ENVELOPE -->
 <div class="envelope-wrapper"
 id="envelopeWrapper"
 onclick="openEnvelope()">
@@ -874,115 +860,33 @@ Happy Birthday My Love ❤"
 
 <script>
 
-let audioCtx;
-
-/* ===== FLOATING AUDIO ===== */
-
-function initAudio(){
-
-if(!audioCtx){
-
-audioCtx =
-new (
-window.AudioContext ||
-window.webkitAudioContext
-)();
-
-}
-
-if(audioCtx.state==="suspended"){
-audioCtx.resume();
-}
-
-}
-
-function playNote(freq,start,duration){
-
-const osc=
-audioCtx.createOscillator();
-
-const gain=
-audioCtx.createGain();
-
-osc.type="triangle";
-
-osc.frequency.setValueAtTime(
-freq,
-start
-);
-
-gain.gain.setValueAtTime(
-0.16,
-start
-);
-
-gain.gain.exponentialRampToValueAtTime(
-0.001,
-start + duration
-);
-
-osc.connect(gain);
-gain.connect(audioCtx.destination);
-
-osc.start(start);
-osc.stop(start + duration);
-
-}
-
-function playBirthdaySong(){
-
-if(!audioCtx) return;
-
-const now=audioCtx.currentTime;
-
-const t=.38;
-
-const notes=[
-
-261.63,
-261.63,
-293.66,
-261.63,
-349.23,
-329.63,
-
-261.63,
-261.63,
-392.00,
-349.23
-
-];
-
-const durations=[
-1,1,2,2,2,4,
-1,1,2,4
-];
-
-let current=now;
-
-for(let i=0;i<notes.length;i++){
-
-playNote(
-notes[i],
-current,
-t * durations[i]
-);
-
-current += t * durations[i];
-
-}
-
-}
-
 /* ===== OPEN ENVELOPE ===== */
 
 function openEnvelope(){
 
-initAudio();
+// Play Majboor song exactly from 1:15 to 1:36 on click
+setTimeout(() => {
+    const bgMusic = document.getElementById("bgMusic");
+    bgMusic.volume = 0.8;
+    
+    // Set start time to 1:15 (75 seconds)
+    bgMusic.currentTime = 75; 
+    
+    bgMusic.play().catch(err => console.log("Audio play failed:", err));
 
-setTimeout(()=>{
-playBirthdaySong();
-},120);
+    // Event Listener to check when the song hits 1:36 (96 seconds)
+    bgMusic.addEventListener('timeupdate', function() {
+        if (bgMusic.currentTime >= 96) {
+            bgMusic.pause(); // Stops playing at exactly 1:36
+            
+            // NOTE: If you want this specific part to loop over and over, 
+            // remove `bgMusic.pause();` above and UNCOMMENT the next two lines:
+            // bgMusic.currentTime = 75; 
+            // bgMusic.play();
+        }
+    });
+
+}, 120);
 
 const env=
 document.getElementById(
@@ -1025,52 +929,24 @@ startCake();
 
 function startCake(){
 
-const l1 =
-document.getElementById("l1");
-
-const l2 =
-document.getElementById("l2");
-
-const l3 =
-document.getElementById("l3");
-
-const candle =
-document.getElementById("candle");
-
-const flame =
-document.getElementById("flame");
-
-const rays =
-document.getElementById("rays");
-
-const cakeText =
-document.querySelector(".cake-text");
+const l1 = document.getElementById("l1");
+const l2 = document.getElementById("l2");
+const l3 = document.getElementById("l3");
+const candle = document.getElementById("candle");
+const flame = document.getElementById("flame");
+const rays = document.getElementById("rays");
+const cakeText = document.querySelector(".cake-text");
 
 /* ===== BASE ===== */
 
 setTimeout(()=>{
 
 l1.animate(
-
 [
-{
-transform:"translateY(40px) scaleY(.2)",
-opacity:0
-},
-
-{
-transform:"translateY(0) scaleY(1)",
-opacity:1
-}
-
+{ transform:"translateY(40px) scaleY(.2)", opacity:0 },
+{ transform:"translateY(0) scaleY(1)", opacity:1 }
 ],
-
-{
-duration:700,
-fill:"forwards",
-easing:"cubic-bezier(.22,1,.36,1)"
-}
-
+{ duration:700, fill:"forwards", easing:"cubic-bezier(.22,1,.36,1)" }
 );
 
 },200);
@@ -1080,26 +956,11 @@ easing:"cubic-bezier(.22,1,.36,1)"
 setTimeout(()=>{
 
 l2.animate(
-
 [
-{
-transform:"translateY(35px) scaleY(.2)",
-opacity:0
-},
-
-{
-transform:"translateY(0) scaleY(1)",
-opacity:1
-}
-
+{ transform:"translateY(35px) scaleY(.2)", opacity:0 },
+{ transform:"translateY(0) scaleY(1)", opacity:1 }
 ],
-
-{
-duration:650,
-fill:"forwards",
-easing:"cubic-bezier(.22,1,.36,1)"
-}
-
+{ duration:650, fill:"forwards", easing:"cubic-bezier(.22,1,.36,1)" }
 );
 
 },950);
@@ -1109,26 +970,11 @@ easing:"cubic-bezier(.22,1,.36,1)"
 setTimeout(()=>{
 
 l3.animate(
-
 [
-{
-transform:"translateY(30px) scaleY(.2)",
-opacity:0
-},
-
-{
-transform:"translateY(0) scaleY(1)",
-opacity:1
-}
-
+{ transform:"translateY(30px) scaleY(.2)", opacity:0 },
+{ transform:"translateY(0) scaleY(1)", opacity:1 }
 ],
-
-{
-duration:600,
-fill:"forwards",
-easing:"cubic-bezier(.22,1,.36,1)"
-}
-
+{ duration:600, fill:"forwards", easing:"cubic-bezier(.22,1,.36,1)" }
 );
 
 },1650);
@@ -1138,26 +984,11 @@ easing:"cubic-bezier(.22,1,.36,1)"
 setTimeout(()=>{
 
 cakeText.animate(
-
 [
-{
-opacity:0,
-transform:"translateY(10px)"
-},
-
-{
-opacity:1,
-transform:"translateY(0)"
-}
-
+{ opacity:0, transform:"translateY(10px)" },
+{ opacity:1, transform:"translateY(0)" }
 ],
-
-{
-duration:700,
-fill:"forwards",
-easing:"ease"
-}
-
+{ duration:700, fill:"forwards", easing:"ease" }
 );
 
 },2200);
@@ -1167,26 +998,11 @@ easing:"ease"
 setTimeout(()=>{
 
 candle.animate(
-
 [
-{
-transform:"scaleY(0)",
-opacity:0
-},
-
-{
-transform:"scaleY(1)",
-opacity:1
-}
-
+{ transform:"scaleY(0)", opacity:0 },
+{ transform:"scaleY(1)", opacity:1 }
 ],
-
-{
-duration:500,
-fill:"forwards",
-easing:"ease-out"
-}
-
+{ duration:500, fill:"forwards", easing:"ease-out" }
 );
 
 },2600);
@@ -1196,48 +1012,19 @@ easing:"ease-out"
 setTimeout(()=>{
 
 flame.animate(
-
 [
-{
-opacity:0,
-transform:"scale(.2)"
-},
-
-{
-opacity:1,
-transform:"scale(1)"
-}
-
+{ opacity:0, transform:"scale(.2)" },
+{ opacity:1, transform:"scale(1)" }
 ],
-
-{
-duration:400,
-fill:"forwards"
-}
-
+{ duration:400, fill:"forwards" }
 );
 
 rays.animate(
-
 [
-{
-opacity:0,
-transform:"scale(.5)"
-},
-
-{
-opacity:1,
-transform:"scale(1)"
-}
-
+{ opacity:0, transform:"scale(.5)" },
+{ opacity:1, transform:"scale(1)" }
 ],
-
-{
-duration:1200,
-fill:"forwards",
-easing:"ease-out"
-}
-
+{ duration:1200, fill:"forwards", easing:"ease-out" }
 );
 
 },3100);
