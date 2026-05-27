@@ -43,6 +43,24 @@ from{ transform:translateY(100vh); }
 to{ transform:translateY(-120vh); }
 }
 
+/* ===== INTRO SCREEN ===== */
+#introScreen {
+position: absolute; inset: 0; z-index: 100;
+background: #09070d;
+display: flex; flex-direction: column; justify-content: center; align-items: center;
+color: #ffe8ef; transition: opacity 0.8s ease; cursor: pointer;
+}
+
+.intro-title {
+font-family: 'Parisienne', cursive; font-size: 2.8rem; margin-bottom: 20px;
+color: #ffb6c1; text-align: center; padding: 0 20px;
+}
+
+.intro-tap {
+font-size: 1rem; letter-spacing: 2px; opacity: 0.7;
+animation: pulse 1.5s infinite;
+}
+
 /* ===== ENVELOPE ===== */
 .envelope-wrapper{
 position:absolute; z-index:50; cursor:pointer;
@@ -163,12 +181,19 @@ background: radial-gradient(circle, rgba(255,215,0,.22), transparent 70%); filte
 .cake-area{ transform:scale(.95); }
 .message-box{ font-size:.95rem; line-height:1.75; padding:0 10px; }
 .top-text{ font-size:1.1rem; letter-spacing:3px; }
+.intro-title{ font-size: 2.2rem; }
 }
 
 </style>
 </head>
 
 <body>
+
+<!-- INTRO SCREEN -->
+<div id="introScreen" onclick="startApp()">
+    <div class="intro-title">A special message for Anjali...</div>
+    <div class="intro-tap">[ Tap anywhere to open ]</div>
+</div>
 
 <!-- FLOATING BACKGROUND LIGHTS -->
 <script>
@@ -185,7 +210,7 @@ for(let i=0;i<12;i++){
 </script>
 
 <!-- BACKGROUND MUSIC: MAJBOOR -->
-<audio id="bgMusic" src="majboor.mp3#t=75,96" preload="auto"></audio>
+<audio id="bgMusic" src="majboor.mp3" preload="auto"></audio>
 
 <!-- FIREWORKS CANVAS -->
 <canvas id="fireworksCanvas"></canvas>
@@ -233,6 +258,30 @@ let isOpened = false;
 
 // Snapshot the main HTML so we can perfectly reset the screen later
 let initialMainHTML = document.getElementById("main").innerHTML;
+
+/* ================= INTRO SCREEN / FULL SCREEN LAUNCHER ================= */
+function startApp() {
+    // 1. Request Full Screen immediately
+    let elem = document.documentElement;
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(err => console.log(err));
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+        elem.webkitRequestFullscreen().catch(err => console.log(err));
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+        elem.msRequestFullscreen();
+    }
+
+    // 2. Pre-load audio to bypass strict mobile autoplay rules
+    document.getElementById("bgMusic").load();
+
+    // 3. Fade out the intro screen to reveal the envelope smoothly
+    const intro = document.getElementById("introScreen");
+    intro.style.opacity = "0";
+    setTimeout(() => {
+        intro.style.display = "none";
+    }, 800);
+}
+
 
 /* ================= FIREWORKS ENGINE ================= */
 const canvas = document.getElementById("fireworksCanvas");
@@ -344,26 +393,14 @@ function startExperience(){
     if(isOpened) return; // Prevent multiple clicks
     isOpened = true;
 
-    // === REQUEST FULL SCREEN ON TAP ===
-    let elem = document.documentElement;
-    if (elem.requestFullscreen) {
-        elem.requestFullscreen().catch(err => console.log(err));
-    } else if (elem.webkitRequestFullscreen) { /* Safari */
-        elem.webkitRequestFullscreen().catch(err => console.log(err));
-    } else if (elem.msRequestFullscreen) { /* IE11 */
-        elem.msRequestFullscreen();
-    }
-    // ==================================
-
     // Reset MAIN completely using our saved snapshot 
-    // (This clears all old animations, layers, and text)
     const main = document.getElementById("main");
     main.innerHTML = initialMainHTML;
-    main.style = ""; // Clear inline styles applied from last closing
+    main.style = ""; 
 
     // 1. Play Music
     setTimeout(() => {
-        bgMusic.removeEventListener('timeupdate', audioHandler); // Clean up old listener
+        bgMusic.removeEventListener('timeupdate', audioHandler); 
         bgMusic.addEventListener('timeupdate', audioHandler);
         
         bgMusic.volume = MAX_VOLUME;
@@ -427,18 +464,6 @@ function fastPackUp() {
     main.style.transition = "all 0.5s cubic-bezier(0.8, -0.5, 0.2, 1.4)";
     main.style.transform = "scale(0) translateY(150px)";
     main.style.opacity = "0";
-
-    // === EXIT FULL SCREEN ===
-    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
-        if (document.exitFullscreen) {
-            document.exitFullscreen().catch(err => console.log(err));
-        } else if (document.webkitExitFullscreen) { /* Safari */
-            document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) { /* IE11 */
-            document.msExitFullscreen();
-        }
-    }
-    // ========================
 
     // Bring envelope back simultaneously
     setTimeout(() => {
