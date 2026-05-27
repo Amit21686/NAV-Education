@@ -134,7 +134,7 @@ pointer-events:none; z-index:60; opacity:0; transition:opacity 0.5s ease;
 100% { transform: scale(1.06); }
 }
 
-/* ===== NEW: TOP LYRICS STYLE (FLICKER FREE) ===== */
+/* ===== TOP LYRICS STYLE (FLICKER FREE) ===== */
 .top-lyrics {
     position: absolute;
     top: 6%;
@@ -416,12 +416,12 @@ function stopFireworksSequence() {
 const bgMusic = document.getElementById("bgMusic");
 const MAX_VOLUME = 0.8;
 
-// Carefully adjusted timeline to perfectly match the vocal beats
+// PERFECTLY TIMED EXACTLY AS REQUESTED
 const lyricsData = [
-    { time: 75.5, text: "Aapka hi kehna banta, keh do na..." },
-    { time: 80.0, text: "Main sharma ke keh doongi, maine bhi dil diya..." },
-    { time: 84.0, text: "Aankhon-aankhon ka masla achha tha..." },
-    { time: 88.0, text: "Ab le jaao apna bana ke mujhe, meri jaan..." }
+    { time: 75.0, text: "Aap ka hi kehna banta<br>Keh do na..." },
+    { time: 80.0, text: "Main Sharma ke keh dungi<br>Maine bhi dil diya..." },
+    { time: 86.0, text: "Aankhon aankhon ka masla<br>Achha tha..." },
+    { time: 91.0, text: "Ab le jao apna bana ke<br>Mujhe, meri jaan..." }
 ];
 
 function audioHandler() {
@@ -436,8 +436,8 @@ function audioHandler() {
         }
     }
 
-    // 2. Start Fireworks at Climax (89 seconds)
-    if (t >= 89.0 && !hasStartedFireworks) {
+    // 2. Start Fireworks at Climax (91.5s - matches "Mujhe, meri jaan")
+    if (t >= 91.5 && !hasStartedFireworks) {
         hasStartedFireworks = true;
         startFireworksSequence();
     }
@@ -454,7 +454,7 @@ function audioHandler() {
         bgMusic.volume = Math.max(0, (timeLeft / 1.5) * MAX_VOLUME); 
     }
     
-    // Stop strictly at 1:36
+    // Stop strictly at 1:36 (96 seconds)
     if (t >= 96) {
         bgMusic.pause();
     }
