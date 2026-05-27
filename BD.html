@@ -23,745 +23,363 @@ box-sizing:border-box;
 }
 
 body{
-
 width:100vw;
 height:100vh;
-
 overflow:hidden;
-
 display:flex;
 justify-content:center;
 align-items:center;
-
 font-family:'Poppins',sans-serif;
-
-background:
-radial-gradient(circle at top,
-#4b1127 0%,
-#09070d 78%);
-
+background: radial-gradient(circle at top, #4b1127 0%, #09070d 78%);
 position:relative;
 }
 
 /* ===== BACKGROUND GLOW ===== */
-
 body::before{
-
 content:"";
-
 position:absolute;
 inset:0;
-
 background:
-
-radial-gradient(
-circle at 20% 20%,
-rgba(255,215,0,.08),
-transparent 30%
-),
-
-radial-gradient(
-circle at 80% 70%,
-rgba(255,70,120,.08),
-transparent 35%
-);
-
+radial-gradient(circle at 20% 20%, rgba(255,215,0,.08), transparent 30%),
+radial-gradient(circle at 80% 70%, rgba(255,70,120,.08), transparent 35%);
 pointer-events:none;
 }
 
 /* ===== FLOATING LIGHTS ===== */
-
 .light{
-
 position:absolute;
-
 border-radius:50%;
-
 background:#ffd54f;
-
 opacity:.35;
-
 filter:blur(1px);
-
 animation:float linear infinite;
 }
 
 @keyframes float{
-
-from{
-transform:translateY(100vh);
-}
-
-to{
-transform:translateY(-120vh);
-}
-
+from{ transform:translateY(100vh); }
+to{ transform:translateY(-120vh); }
 }
 
 /* ===== ENVELOPE ===== */
-
 .envelope-wrapper{
-
 position:absolute;
-
 z-index:50;
-
 cursor:pointer;
-
 transition:1s ease;
 }
 
 .envelope{
-
 width:320px;
 height:210px;
-
 position:relative;
-
 background:#711228;
-
 border-radius:0 0 18px 18px;
-
 overflow:hidden;
-
-box-shadow:
-0 15px 40px rgba(0,0,0,.45);
+box-shadow: 0 15px 40px rgba(0,0,0,.45);
 }
 
-.flap-left,
-.flap-right,
-.flap-bottom{
+.flap-left, .flap-right, .flap-bottom{
 position:absolute;
 width:0;
 height:0;
 }
 
 .flap-left{
-
 border-left:160px solid transparent;
 border-top:105px solid transparent;
 border-bottom:105px solid transparent;
 border-right:160px solid #56101f;
-
-left:0;
-top:0;
-
-z-index:2;
+left:0; top:0; z-index:2;
 }
 
 .flap-right{
-
 border-right:160px solid transparent;
 border-top:105px solid transparent;
 border-bottom:105px solid transparent;
 border-left:160px solid #56101f;
-
-right:0;
-top:0;
-
-z-index:2;
+right:0; top:0; z-index:2;
 }
 
 .flap-bottom{
-
 border-bottom:115px solid #711228;
 border-left:160px solid transparent;
 border-right:160px solid transparent;
-
-bottom:0;
-left:0;
-
-z-index:3;
+bottom:0; left:0; z-index:3;
 }
 
 .flap-top{
-
 position:absolute;
-
-top:0;
-left:0;
-
-width:0;
-height:0;
-
+top:0; left:0;
+width:0; height:0;
 border-left:160px solid transparent;
 border-right:160px solid transparent;
 border-top:115px solid #94203d;
-
 transform-origin:top;
-
 transition:.9s ease;
-
 z-index:4;
 }
 
-.envelope-wrapper.open .flap-top{
-transform:rotateX(180deg);
-}
+.envelope-wrapper.open .flap-top{ transform:rotateX(180deg); }
 
 .letter{
-
 position:absolute;
-
-width:280px;
-height:180px;
-
+width:280px; height:180px;
 background:#fffdf8;
-
-left:20px;
-top:15px;
-
+left:20px; top:15px;
 border-radius:12px;
-
 display:flex;
 justify-content:center;
 align-items:center;
-
 transition:1s ease;
-
 z-index:1;
 }
 
 .letter h2{
-
 font-family:'Parisienne',cursive;
-
 font-size:2.3rem;
-
 color:#7d1026;
 }
 
-.envelope-wrapper.open .letter{
-transform:translateY(-120px);
-}
+.envelope-wrapper.open .letter{ transform:translateY(-120px); }
 
 .heart{
-
 position:absolute;
-
-top:84px;
-left:50%;
-
+top:84px; left:50%;
 transform:translateX(-50%);
-
 font-size:3rem;
-
 color:#ffd54f;
-
 z-index:10;
-
 animation:pulse 1.5s infinite;
 }
 
 @keyframes pulse{
-
-0%,100%{
-transform:translateX(-50%) scale(1);
-}
-
-50%{
-transform:translateX(-50%) scale(1.13);
-}
-
+0%,100%{ transform:translateX(-50%) scale(1); }
+50%{ transform:translateX(-50%) scale(1.13); }
 }
 
 /* ===== MAIN ===== */
-
 .main{
-
 position:absolute;
-
 inset:0;
-
 display:none;
-
 flex-direction:column;
 justify-content:center;
 align-items:center;
-
 opacity:0;
-
 transition:1.8s ease;
-
 z-index:5;
-
 padding:20px;
 }
 
+/* CINEMATIC PAN ANIMATION applied via JS */
+@keyframes cinematicPan {
+0% { transform: scale(1); }
+100% { transform: scale(1.06); }
+}
+
 /* ===== TOP TEXT ===== */
-
 .top-text{
-
 font-size:1.3rem;
-
 font-weight:500;
-
 letter-spacing:4px;
-
 color:#ffffffd9;
-
 margin-bottom:12px;
-
 opacity:0;
-
 transform:translateY(-15px);
-
-/* Stretched timeline: appears slower */
-animation:fadeDown 2s forwards 1s;
+animation:fadeDown 1.2s forwards .5s;
 }
 
 /* ===== NAME ===== */
-
 .name{
-
 position:relative;
-
 font-family:'Parisienne',cursive;
-
 font-size:clamp(4.5rem,13vw,7.5rem);
-
 line-height:1.25;
-
-padding:
-0 25px
-18px;
-
+padding:0 25px 18px;
 margin-bottom:48px;
-
-background:
-linear-gradient(
-90deg,
-#f7d774,
-#fff8cf,
-#dca93a,
-#fff2aa
-);
-
+background: linear-gradient(90deg, #f7d774, #fff8cf, #dca93a, #fff2aa);
 -webkit-background-clip:text;
 background-clip:text;
-
 color:transparent;
-
-text-shadow:
-0 0 20px rgba(255,215,0,.15);
-
+text-shadow: 0 0 20px rgba(255,215,0,.15);
 opacity:0;
-
 transform:scale(.8);
-
-/* Stretched timeline: starts zooming at 3s */
-animation:
-zoomIn 2.5s forwards 3s,
-floatName 4s ease-in-out infinite 6.5s;
+animation: zoomIn 1.5s forwards .8s, floatName 4s ease-in-out infinite 2.5s;
 }
 
 .name::after{
-
 content:"";
-
 position:absolute;
-
-left:50%;
-top:50%;
-
-width:240px;
-height:130px;
-
+left:50%; top:50%;
+width:240px; height:130px;
 transform:translate(-50%,-50%);
-
-background:
-radial-gradient(
-circle,
-rgba(255,215,0,.22),
-transparent 70%
-);
-
+background: radial-gradient(circle, rgba(255,215,0,.22), transparent 70%);
 filter:blur(40px);
-
 z-index:-1;
 }
 
 @keyframes floatName{
-
-0%,100%{
-transform:translateY(0);
-}
-
-50%{
-transform:translateY(-6px);
-}
-
+0%,100%{ transform:translateY(0); }
+50%{ transform:translateY(-6px); }
 }
 
 /* ===== CAKE AREA ===== */
-
 .cake-area{
-
 position:relative;
-
 transform:scale(1.02);
-
 transform-origin:center;
 }
 
 .cake{
-
 position:relative;
-
-width:260px;
-height:220px;
-
-display:flex;
-justify-content:center;
-align-items:flex-end;
+width:260px; height:220px;
+display:flex; justify-content:center; align-items:flex-end;
 }
 
 /* ===== PLATE ===== */
-
 .plate{
-
 position:absolute;
-
-width:250px;
-height:14px;
-
-background:
-linear-gradient(
-to bottom,
-#f6f6f6,
-#cccccc
-);
-
+width:250px; height:14px;
+background: linear-gradient(to bottom, #f6f6f6, #cccccc);
 border-radius:20px;
-
 bottom:8px;
-
-box-shadow:
-0 5px 12px rgba(0,0,0,.22);
+box-shadow: 0 5px 12px rgba(0,0,0,.22);
 }
 
 /* ===== CAKE LAYERS ===== */
-
 .layer{
-
 position:absolute;
-
 border-radius:24px 24px 10px 10px;
-
 overflow:hidden;
-
-box-shadow:
-0 10px 20px rgba(0,0,0,.25);
-
+box-shadow: 0 10px 20px rgba(0,0,0,.25);
 opacity:0;
 }
-
-.layer1{
-
-width:210px;
-height:62px;
-
-background:
-linear-gradient(
-to bottom,
-#6b3a28,
-#4e2a1d
-);
-
-bottom:20px;
-}
-
-.layer2{
-
-width:170px;
-height:52px;
-
-background:
-linear-gradient(
-to bottom,
-#ff6da2,
-#eb3e7f
-);
-
-bottom:82px;
-}
-
-.layer3{
-
-width:125px;
-height:44px;
-
-background:
-linear-gradient(
-to bottom,
-#fff7d2,
-#ffe47b
-);
-
-bottom:132px;
-}
+.layer1{ width:210px; height:62px; background: linear-gradient(to bottom, #6b3a28, #4e2a1d); bottom:20px; }
+.layer2{ width:170px; height:52px; background: linear-gradient(to bottom, #ff6da2, #eb3e7f); bottom:82px; }
+.layer3{ width:125px; height:44px; background: linear-gradient(to bottom, #fff7d2, #ffe47b); bottom:132px; }
 
 .drip{
-
 position:absolute;
-
-top:0;
-
-width:100%;
-height:12px;
-
-background:
-linear-gradient(
-to right,
-rgba(255,255,255,.95),
-rgba(255,255,255,.55)
-);
-
+top:0; width:100%; height:12px;
+background: linear-gradient(to right, rgba(255,255,255,.95), rgba(255,255,255,.55));
 border-radius:0 0 12px 12px;
 }
 
 /* ===== CAKE TEXT ===== */
-
 .cake-text{
-
 position:absolute;
-
 bottom:83px;
-
 font-size:1.8rem;
-
 font-family:'Parisienne',cursive;
-
 color:#ffe082;
-
-text-shadow:
-0 0 8px rgba(0,0,0,.45),
-0 0 14px rgba(255,215,0,.7);
-
-opacity:0;
-
-z-index:5;
+text-shadow: 0 0 8px rgba(0,0,0,.45), 0 0 14px rgba(255,215,0,.7);
+opacity:0; z-index:5;
 }
 
 /* ===== CANDLE ===== */
-
 .candle{
-
 position:absolute;
-
-width:12px;
-height:42px;
-
+width:12px; height:42px;
 bottom:170px;
-
-background:
-repeating-linear-gradient(
-45deg,
-#fff,
-#fff 5px,
-#d32f2f 5px,
-#d32f2f 10px
-);
-
+background: repeating-linear-gradient(45deg, #fff, #fff 5px, #d32f2f 5px, #d32f2f 10px);
 border-radius:4px;
-
-transform-origin:bottom;
-
-opacity:0;
+transform-origin:bottom; opacity:0;
 }
 
 /* ===== FLAME ===== */
-
 .flame{
-
 position:absolute;
-
-width:16px;
-height:24px;
-
-top:-22px;
-left:-2px;
-
+width:16px; height:24px;
+top:-22px; left:-2px;
 border-radius:50% 50% 20% 20%;
-
-background:
-radial-gradient(circle,
-#fff176,
-#ff9800);
-
+background: radial-gradient(circle, #fff176, #ff9800);
 opacity:0;
-
-box-shadow:
-0 0 18px #ffeb3b,
-0 0 35px #ff9800;
-
+box-shadow: 0 0 18px #ffeb3b, 0 0 35px #ff9800;
 animation:flicker .4s infinite alternate;
 }
 
 .flame::after{
-
 content:"";
-
 position:absolute;
-
-width:70px;
-height:70px;
-
-left:50%;
-top:50%;
-
+width:70px; height:70px;
+left:50%; top:50%;
 transform:translate(-50%,-50%);
-
-background:
-radial-gradient(
-circle,
-rgba(255,200,0,.35),
-transparent 70%
-);
-
-filter:blur(18px);
-
-z-index:-1;
+background: radial-gradient(circle, rgba(255,200,0,.35), transparent 70%);
+filter:blur(18px); z-index:-1;
 }
 
 /* ===== SOFT RAYS ===== */
-
 .rays{
-
 position:absolute;
-
-width:180px;
-height:180px;
-
-top:-70px;
-left:-84px;
-
-border-radius:50%;
-
-opacity:0;
-
-background:
-conic-gradient(
-rgba(255,215,0,.35),
-transparent 25deg,
-rgba(255,215,0,.15) 55deg,
-transparent 80deg,
-rgba(255,215,0,.3) 110deg,
-transparent 135deg,
-rgba(255,215,0,.15) 170deg,
-transparent 200deg,
-rgba(255,215,0,.3) 240deg,
-transparent 270deg,
-rgba(255,215,0,.18) 300deg,
-transparent 330deg
-);
-
+width:180px; height:180px;
+top:-70px; left:-84px;
+border-radius:50%; opacity:0;
+background: conic-gradient(rgba(255,215,0,.35), transparent 25deg, rgba(255,215,0,.15) 55deg, transparent 80deg, rgba(255,215,0,.3) 110deg, transparent 135deg, rgba(255,215,0,.15) 170deg, transparent 200deg, rgba(255,215,0,.3) 240deg, transparent 270deg, rgba(255,215,0,.18) 300deg, transparent 330deg);
 filter:blur(18px);
-
 animation:rotateRays 18s linear infinite;
 }
 
 @keyframes rotateRays{
-
-from{
-transform:rotate(0deg);
+from{ transform:rotate(0deg); }
+to{ transform:rotate(360deg); }
 }
 
-to{
-transform:rotate(360deg);
+/* ===== MAGICAL SPARKS (NEW) ===== */
+.spark {
+position: absolute;
+bottom: 210px;
+left: 50%;
+width: 5px;
+height: 5px;
+background: #ffd54f;
+border-radius: 50%;
+box-shadow: 0 0 10px #ff9800, 0 0 20px #ffeb3b;
+opacity: 0;
+z-index: 20;
+pointer-events: none;
 }
 
+@keyframes sparkFloat {
+0% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+100% { transform: translate(calc(-50% + var(--drift)), -150px) scale(0); opacity: 0; }
 }
 
-/* ===== MESSAGE ===== */
-
+/* ===== MULTI-LINE MESSAGE (NEW) ===== */
 .message{
-
 margin-top:20px;
-
 font-size:1rem;
-
 line-height:1.85;
-
 text-align:center;
-
 color:#ffe8ef;
-
 max-width:520px;
-
-opacity:0;
-
-transform:translateY(20px);
-
-/* Stretched timeline: appears right as song peaks before ending */
-animation:fadeUp 2.5s forwards 16.5s;
 }
+
+.line {
+display: inline-block;
+opacity: 0;
+transform: translateY(15px);
+}
+
+/* Sequential timing to fill the song's duration */
+.line1 { animation: fadeUp 1.5s forwards 4.5s; }
+.line2 { animation: fadeUp 1.5s forwards 8.5s; }
+.line3 { animation: fadeUp 2s forwards 14s; }
 
 /* ===== ANIMATIONS ===== */
-
-@keyframes zoomIn{
-
-to{
-opacity:1;
-transform:scale(1);
-}
-
-}
-
-@keyframes fadeUp{
-
-to{
-opacity:1;
-transform:translateY(0);
-}
-
-}
-
-@keyframes fadeDown{
-
-to{
-opacity:1;
-transform:translateY(0);
-}
-
-}
-
+@keyframes zoomIn{ to{ opacity:1; transform:scale(1); } }
+@keyframes fadeUp{ to{ opacity:1; transform:translateY(0); } }
+@keyframes fadeDown{ to{ opacity:1; transform:translateY(0); } }
 @keyframes flicker{
-
-0%{
-transform:scale(1) rotate(-2deg);
-}
-
-100%{
-transform:scale(1.06) rotate(2deg);
-}
-
+0%{ transform:scale(1) rotate(-2deg); }
+100%{ transform:scale(1.06) rotate(2deg); }
 }
 
 /* ===== MOBILE ===== */
-
 @media(max-width:480px){
-
-.name{
-font-size:4.8rem;
-margin-bottom:42px;
-}
-
-.cake-area{
-transform:scale(.95);
-}
-
-.message{
-font-size:.93rem;
-line-height:1.75;
-padding:0 10px;
-}
-
-.top-text{
-font-size:1.1rem;
-letter-spacing:3px;
-}
-
+.name{ font-size:4.8rem; margin-bottom:42px; }
+.cake-area{ transform:scale(.95); }
+.message{ font-size:.93rem; line-height:1.75; padding:0 10px; }
+.top-text{ font-size:1.1rem; letter-spacing:3px; }
 }
 
 </style>
@@ -787,107 +405,69 @@ for(let i=0;i<12;i++){
 <audio id="bgMusic" src="majboor.mp3#t=75,96" preload="auto"></audio>
 
 <!-- ENVELOPE -->
-<div class="envelope-wrapper"
-id="envelopeWrapper"
-onclick="openEnvelope()">
-
+<div class="envelope-wrapper" id="envelopeWrapper" onclick="openEnvelope()">
 <div class="envelope">
-
 <div class="letter">
 <h2>For My An200</h2>
 </div>
-
 <div class="flap-left"></div>
 <div class="flap-right"></div>
 <div class="flap-bottom"></div>
 <div class="flap-top"></div>
-
 <div class="heart">❤</div>
-
 </div>
 </div>
 
 <!-- MAIN -->
-
 <div class="main" id="main">
 
-<div class="top-text">
-HAPPY BIRTHDAY TO MY
-</div>
+<div class="top-text">HAPPY BIRTHDAY TO MY</div>
 
-<div class="name">
-Anjali
-</div>
+<div class="name">Anjali</div>
 
 <div class="cake-area">
-
 <div class="cake">
-
 <div class="plate"></div>
-
-<div class="layer layer1" id="l1">
-<div class="drip"></div>
-</div>
-
-<div class="layer layer2" id="l2">
-<div class="drip"></div>
-</div>
-
-<div class="layer layer3" id="l3">
-<div class="drip"></div>
-</div>
-
-<div class="cake-text">
-An200
-</div>
-
+<div class="layer layer1" id="l1"><div class="drip"></div></div>
+<div class="layer layer2" id="l2"><div class="drip"></div></div>
+<div class="layer layer3" id="l3"><div class="drip"></div></div>
+<div class="cake-text">An200</div>
 <div class="candle" id="candle">
-
 <div class="rays" id="rays"></div>
-
 <div class="flame" id="flame"></div>
-
-</div>
-
 </div>
 </div>
+</div>
 
+<!-- Sequential Message Lines -->
 <div class="message">
-"To the woman who holds my heart,<br>
-May your smile shine brighter than every candle.<br>
-Happy Birthday My Love ❤"
+<span class="line line1">"To the woman who holds my heart,</span><br>
+<span class="line line2">May your smile shine brighter than every candle.</span><br>
+<span class="line line3">Happy Birthday My Love ❤"</span>
 </div>
 
 </div>
 
 <script>
-
 /* ===== OPEN ENVELOPE ===== */
-
 function openEnvelope(){
 
-// Play Majboor song exactly from 1:15 to 1:36 on click
+// Play Majboor from 1:15 to 1:36 
 setTimeout(() => {
     const bgMusic = document.getElementById("bgMusic");
     const MAX_VOLUME = 0.8;
     bgMusic.volume = MAX_VOLUME;
-    
-    // Set start time to 1:15 (75 seconds)
     bgMusic.currentTime = 75; 
     
     bgMusic.play().catch(err => console.log("Audio play failed:", err));
 
-    // Event Listener to check and fade out gracefully
+    // Monitor for the smooth cinematic fade out at the end
     bgMusic.addEventListener('timeupdate', function() {
-        
-        // Smooth audio fade out during the last 1.5 seconds (94.5s to 96s)
         if (bgMusic.currentTime >= 94.5 && bgMusic.currentTime < 96) {
             let timeLeft = 96 - bgMusic.currentTime;
             let currentVol = (timeLeft / 1.5) * MAX_VOLUME;
             bgMusic.volume = Math.max(0, currentVol); 
         }
-
-        // Hard stop at 1:36 (96 seconds)
         if (bgMusic.currentTime >= 96) {
             bgMusic.pause();
         }
@@ -895,47 +475,59 @@ setTimeout(() => {
 
 }, 120);
 
-const env=
-document.getElementById(
-"envelopeWrapper"
-);
-
-const main=
-document.getElementById(
-"main"
-);
+const env = document.getElementById("envelopeWrapper");
+const main = document.getElementById("main");
 
 env.classList.add("open");
 
 setTimeout(()=>{
-
 env.style.opacity="0";
-
-env.style.transform=
-"scale(.75) translateY(-20px)";
-
+env.style.transform="scale(.75) translateY(-20px)";
 },900);
 
 setTimeout(()=>{
-
 env.style.display="none";
-
 main.style.display="flex";
+
+// Start the slow cinematic camera zoom!
+main.style.animation = "cinematicPan 20s ease-out forwards";
 
 requestAnimationFrame(()=>{
 main.style.opacity="1";
 });
 
 startCake();
-
 },1600);
-
 }
 
-/* ===== CINEMATIC CAKE FORMATION (TIMINGS STRETCHED) ===== */
+/* ===== CONTINUOUS MAGICAL SPARKS ===== */
+function startSparks() {
+    const cake = document.querySelector('.cake');
+    
+    // Generates a new spark every 300ms
+    setInterval(() => {
+        const spark = document.createElement('div');
+        spark.className = 'spark';
+        
+        // Random drift left or right
+        const drift = (Math.random() * 80 - 40) + 'px';
+        spark.style.setProperty('--drift', drift);
+        
+        // Random float duration between 2s and 4s
+        const dur = (2 + Math.random() * 2) + 's';
+        spark.style.animation = `sparkFloat ${dur} ease-out forwards`;
+        
+        cake.appendChild(spark);
+        
+        // Remove spark after animation completes
+        setTimeout(() => {
+            spark.remove();
+        }, 4000);
+    }, 300);
+}
 
+/* ===== CINEMATIC CAKE FORMATION (ORIGINAL FAST PACING) ===== */
 function startCake(){
-
 const l1 = document.getElementById("l1");
 const l2 = document.getElementById("l2");
 const l3 = document.getElementById("l3");
@@ -944,82 +536,41 @@ const flame = document.getElementById("flame");
 const rays = document.getElementById("rays");
 const cakeText = document.querySelector(".cake-text");
 
-/* ===== BASE LAYER (Starts at 5.5s) ===== */
+// Base
 setTimeout(()=>{
-l1.animate(
-[
-{ transform:"translateY(40px) scaleY(.2)", opacity:0 },
-{ transform:"translateY(0) scaleY(1)", opacity:1 }
-],
-{ duration:1000, fill:"forwards", easing:"cubic-bezier(.22,1,.36,1)" }
-);
-}, 5500);
+l1.animate([{ transform:"translateY(40px) scaleY(.2)", opacity:0 }, { transform:"translateY(0) scaleY(1)", opacity:1 }], { duration:700, fill:"forwards", easing:"cubic-bezier(.22,1,.36,1)" });
+},200);
 
-/* ===== MIDDLE LAYER (Starts at 8s) ===== */
+// Middle
 setTimeout(()=>{
-l2.animate(
-[
-{ transform:"translateY(35px) scaleY(.2)", opacity:0 },
-{ transform:"translateY(0) scaleY(1)", opacity:1 }
-],
-{ duration:1000, fill:"forwards", easing:"cubic-bezier(.22,1,.36,1)" }
-);
-}, 8000);
+l2.animate([{ transform:"translateY(35px) scaleY(.2)", opacity:0 }, { transform:"translateY(0) scaleY(1)", opacity:1 }], { duration:650, fill:"forwards", easing:"cubic-bezier(.22,1,.36,1)" });
+},950);
 
-/* ===== TOP LAYER (Starts at 10.5s) ===== */
+// Top
 setTimeout(()=>{
-l3.animate(
-[
-{ transform:"translateY(30px) scaleY(.2)", opacity:0 },
-{ transform:"translateY(0) scaleY(1)", opacity:1 }
-],
-{ duration:1000, fill:"forwards", easing:"cubic-bezier(.22,1,.36,1)" }
-);
-}, 10500);
+l3.animate([{ transform:"translateY(30px) scaleY(.2)", opacity:0 }, { transform:"translateY(0) scaleY(1)", opacity:1 }], { duration:600, fill:"forwards", easing:"cubic-bezier(.22,1,.36,1)" });
+},1650);
 
-/* ===== CAKE TEXT (Starts at 12.5s) ===== */
+// Text
 setTimeout(()=>{
-cakeText.animate(
-[
-{ opacity:0, transform:"translateY(10px)" },
-{ opacity:1, transform:"translateY(0)" }
-],
-{ duration:1000, fill:"forwards", easing:"ease" }
-);
-}, 12500);
+cakeText.animate([{ opacity:0, transform:"translateY(10px)" }, { opacity:1, transform:"translateY(0)" }], { duration:700, fill:"forwards", easing:"ease" });
+},2200);
 
-/* ===== CANDLE (Starts at 14s) ===== */
+// Candle
 setTimeout(()=>{
-candle.animate(
-[
-{ transform:"scaleY(0)", opacity:0 },
-{ transform:"scaleY(1)", opacity:1 }
-],
-{ duration:800, fill:"forwards", easing:"ease-out" }
-);
-}, 14000);
+candle.animate([{ transform:"scaleY(0)", opacity:0 }, { transform:"scaleY(1)", opacity:1 }], { duration:500, fill:"forwards", easing:"ease-out" });
+},2600);
 
-/* ===== FLAME + RAYS (Starts at 15.5s) ===== */
+// Flame, Rays & Start Sparks!
 setTimeout(()=>{
-flame.animate(
-[
-{ opacity:0, transform:"scale(.2)" },
-{ opacity:1, transform:"scale(1)" }
-],
-{ duration:600, fill:"forwards" }
-);
+flame.animate([{ opacity:0, transform:"scale(.2)" }, { opacity:1, transform:"scale(1)" }], { duration:400, fill:"forwards" });
+rays.animate([{ opacity:0, transform:"scale(.5)" }, { opacity:1, transform:"scale(1)" }], { duration:1200, fill:"forwards", easing:"ease-out" });
 
-rays.animate(
-[
-{ opacity:0, transform:"scale(.5)" },
-{ opacity:1, transform:"scale(1)" }
-],
-{ duration:1500, fill:"forwards", easing:"ease-out" }
-);
-}, 15500);
+// Start the continuous spark particle effect here
+startSparks();
+},3100);
 
 }
-
 </script>
 
 </body>
