@@ -57,8 +57,13 @@ color: #ffb6c1; text-align: center; padding: 0 20px;
 }
 
 .intro-tap {
-font-size: 1rem; letter-spacing: 2px; opacity: 0.7;
-animation: pulse 1.5s infinite;
+font-size: 1rem; letter-spacing: 2px; text-align: center;
+animation: pulseText 1.8s infinite ease-in-out;
+}
+
+@keyframes pulseText {
+0%, 100% { opacity: 0.4; transform: scale(1); }
+50% { opacity: 1; transform: scale(1.05); }
 }
 
 /* ===== ENVELOPE ===== */
@@ -165,8 +170,30 @@ background: radial-gradient(circle, rgba(255,215,0,.22), transparent 70%); filte
 .spark { position: absolute; bottom: 210px; left: 50%; width: 5px; height: 5px; background: #ffd54f; border-radius: 50%; box-shadow: 0 0 10px #ff9800, 0 0 20px #ffeb3b; opacity: 0; z-index: 20; pointer-events: none; }
 @keyframes sparkFloat { 0% { transform: translate(-50%, 0) scale(1); opacity: 1; } 100% { transform: translate(calc(-50% + var(--drift)), -150px) scale(0); opacity: 0; } }
 
-/* ===== TYPEWRITER MESSAGE ===== */
-.message-box{ margin-top:20px; font-size:1.05rem; line-height:1.85; text-align:center; color:#ffe8ef; max-width:520px; min-height: 90px; }
+/* ===== LYRICS & MESSAGE AREA ===== */
+.text-area-wrapper {
+    position: relative; width: 100%; max-width: 520px;
+    min-height: 100px; margin-top: 20px;
+    display: flex; justify-content: center; align-items: center;
+}
+
+.lyrics-box {
+    position: absolute; width: 100%;
+    font-family: 'Parisienne', cursive; font-size: 1.8rem; line-height: 1.4;
+    color: #ffe082; text-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+    text-align: center; opacity: 0; transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.lyrics-box.show { opacity: 1; transform: translateY(0); }
+.lyrics-box.hide { opacity: 0; transform: translateY(-15px); }
+
+.message-box{ 
+    position: absolute; width: 100%;
+    font-size: 1.05rem; line-height: 1.85; text-align: center; color: #ffe8ef; 
+    display: none; /* Hidden until finale */
+}
+
 .cursor { display: inline-block; width: 2px; height: 1.1em; background: #ffe8ef; vertical-align: text-bottom; margin-left: 3px; animation: blink 0.7s infinite; }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
@@ -179,6 +206,8 @@ background: radial-gradient(circle, rgba(255,215,0,.22), transparent 70%); filte
 @media(max-width:480px){
 .name{ font-size:4.8rem; margin-bottom:42px; }
 .cake-area{ transform:scale(.95); }
+.text-area-wrapper { min-height: 80px; }
+.lyrics-box { font-size: 1.45rem; padding: 0 15px; }
 .message-box{ font-size:.95rem; line-height:1.75; padding:0 10px; }
 .top-text{ font-size:1.1rem; letter-spacing:3px; }
 .intro-title{ font-size: 2.2rem; }
@@ -244,8 +273,12 @@ for(let i=0;i<12;i++){
             </div>
         </div>
     </div>
-    <!-- Typewriter Area -->
-    <div class="message-box" id="messageBox"></div>
+    
+    <!-- Lyrical & Message Wrapper -->
+    <div class="text-area-wrapper">
+        <div id="lyricsBox" class="lyrics-box"></div>
+        <div id="messageBox" class="message-box"></div>
+    </div>
 </div>
 
 <script>
@@ -256,25 +289,28 @@ let typingInterval;
 let fwActive = false;
 let isOpened = false;
 
+// Timeline Flags
+let currentLyricIndex = -1;
+let hasStartedFireworks = false;
+let hasStartedFinaleMsg = false;
+let hasPackedUp = false;
+
 // Snapshot the main HTML so we can perfectly reset the screen later
 let initialMainHTML = document.getElementById("main").innerHTML;
 
 /* ================= INTRO SCREEN / FULL SCREEN LAUNCHER ================= */
 function startApp() {
-    // 1. Request Full Screen immediately
     let elem = document.documentElement;
     if (elem.requestFullscreen) {
         elem.requestFullscreen().catch(err => console.log(err));
-    } else if (elem.webkitRequestFullscreen) { /* Safari */
+    } else if (elem.webkitRequestFullscreen) {
         elem.webkitRequestFullscreen().catch(err => console.log(err));
-    } else if (elem.msRequestFullscreen) { /* IE11 */
+    } else if (elem.msRequestFullscreen) {
         elem.msRequestFullscreen();
     }
 
-    // 2. Pre-load audio to bypass strict mobile autoplay rules
     document.getElementById("bgMusic").load();
 
-    // 3. Fade out the intro screen to reveal the envelope smoothly
     const intro = document.getElementById("introScreen");
     intro.style.opacity = "0";
     setTimeout(() => {
@@ -349,11 +385,9 @@ function startFireworksSequence() {
     fwActive = true;
     animateFireworksLoop();
     
-    // First Big Bursts
     launchFirework(window.innerWidth*0.3, window.innerHeight*0.3);
     launchFirework(window.innerWidth*0.7, window.innerHeight*0.4);
     
-    // Continuous random bursts
     fireworksInterval = setInterval(() => {
         launchFirework(
             Math.random() * window.innerWidth * 0.8 + window.innerWidth * 0.1,
@@ -373,79 +407,127 @@ function stopFireworksSequence() {
 }
 
 
-/* ================= AUDIO CONTROLLER ================= */
+/* ================= AUDIO & TIMELINE CONTROLLER ================= */
 const bgMusic = document.getElementById("bgMusic");
 const MAX_VOLUME = 0.8;
 
+// Perfectly synced lyrics data
+const lyricsData = [
+    { time: 76.5, text: "Aapka hi kehna banta, keh do na..." },
+    { time: 80.5, text: "Main sharma ke keh doongi, maine bhi dil diya..." },
+    { time: 84.5, text: "Aankhon-aankhon ka masla achha tha..." },
+    { time: 88.5, text: "Ab le jaao apna bana ke mujhe, meri jaan..." }
+];
+
 function audioHandler() {
-    if (bgMusic.currentTime >= 94.5 && bgMusic.currentTime < 96) {
-        let timeLeft = 96 - bgMusic.currentTime;
+    let t = bgMusic.currentTime;
+
+    // 1. Sync Lyrics
+    for (let i = lyricsData.length - 1; i >= 0; i--) {
+        if (t >= lyricsData[i].time && currentLyricIndex !== i) {
+            currentLyricIndex = i;
+            showLyric(lyricsData[i].text);
+            break;
+        }
+    }
+
+    // 2. Start Fireworks at Climax (89 seconds)
+    if (t >= 89.0 && !hasStartedFireworks) {
+        hasStartedFireworks = true;
+        startFireworksSequence();
+    }
+
+    // 3. Grand Finale Custom Message (92.5 seconds)
+    if (t >= 92.5 && !hasStartedFinaleMsg) {
+        hasStartedFinaleMsg = true;
+        
+        // Hide lyrics & start fast typewriter
+        document.getElementById("lyricsBox").style.display = "none";
+        document.getElementById("messageBox").style.display = "block";
+        startTypewriter();
+    }
+
+    // 4. Reverse Fast-Pack (95.0 seconds)
+    if (t >= 95.0 && !hasPackedUp) {
+        hasPackedUp = true;
+        fastPackUp();
+    }
+
+    // Smooth Audio Fade Out at the end
+    if (t >= 94.5 && t < 96) {
+        let timeLeft = 96 - t;
         bgMusic.volume = Math.max(0, (timeLeft / 1.5) * MAX_VOLUME); 
     }
-    if (bgMusic.currentTime >= 96) {
+    
+    // Stop strictly at 1:36
+    if (t >= 96) {
         bgMusic.pause();
     }
 }
 
+// Function to animate the text changing
+function showLyric(text) {
+    const box = document.getElementById("lyricsBox");
+    box.classList.remove("show");
+    box.classList.add("hide");
+    
+    setTimeout(() => {
+        box.innerHTML = text;
+        box.classList.remove("hide");
+        box.classList.add("show");
+    }, 400); // Wait for fade out, then swap and fade in
+}
 
-/* ================= TIMELINE SEQUENCE ================= */
+
+/* ================= MASTER START SEQUENCE ================= */
 function startExperience(){
-    if(isOpened) return; // Prevent multiple clicks
+    if(isOpened) return; 
     isOpened = true;
 
-    // Reset MAIN completely using our saved snapshot 
+    // Reset Full Screen safely
+    let elem = document.documentElement;
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(err => console.log(err));
+    }
+
+    // Reset HTML and Timeline Flags for replayability
     const main = document.getElementById("main");
     main.innerHTML = initialMainHTML;
     main.style = ""; 
+    
+    currentLyricIndex = -1;
+    hasStartedFireworks = false;
+    hasStartedFinaleMsg = false;
+    hasPackedUp = false;
 
-    // 1. Play Music
+    // Start Audio Timeline
     setTimeout(() => {
         bgMusic.removeEventListener('timeupdate', audioHandler); 
         bgMusic.addEventListener('timeupdate', audioHandler);
-        
         bgMusic.volume = MAX_VOLUME;
         bgMusic.currentTime = 75; // Start exactly at 1:15
-        
         bgMusic.play().catch(err => console.log("Audio failed:", err));
     }, 120);
 
     const env = document.getElementById("envelopeWrapper");
     const heart = document.getElementById("envHeart");
 
-    // Hide heart, open flap
     heart.style.opacity = "0";
     env.classList.add("open");
 
-    // 2. Zoom envelope away
     setTimeout(()=>{
         env.style.opacity="0";
         env.style.transform="scale(.75) translateY(-20px)";
     },900);
 
-    // 3. Show main & start cake
     setTimeout(()=>{
         env.style.display="none";
         main.style.display="flex";
-        main.style.animation = "cinematicPan 20s ease-out forwards"; // Slow camera pan
+        main.style.animation = "cinematicPan 20s ease-out forwards"; 
         
         requestAnimationFrame(() => { main.style.opacity="1"; });
         startCake();
     },1600);
-
-    // 4. Start Typewriter
-    setTimeout(() => {
-        startTypewriter();
-    }, 5500);
-
-    // 5. Start Fireworks
-    setTimeout(() => {
-        startFireworksSequence();
-    }, 9500);
-
-    // 6. Fast-Pack Reverse Animation! (Syncs with end of song)
-    setTimeout(() => {
-        fastPackUp();
-    }, 17500);
 }
 
 
@@ -454,18 +536,23 @@ function fastPackUp() {
     const main = document.getElementById("main");
     const env = document.getElementById("envelopeWrapper");
 
-    // Stop visuals
     clearInterval(sparksInterval);
     clearInterval(typingInterval);
     stopFireworksSequence();
 
-    // Kill camera pan & violently shrink main content down
     main.style.animation = "none";
     main.style.transition = "all 0.5s cubic-bezier(0.8, -0.5, 0.2, 1.4)";
     main.style.transform = "scale(0) translateY(150px)";
     main.style.opacity = "0";
 
-    // Bring envelope back simultaneously
+    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
+        if (document.exitFullscreen) {
+            document.exitFullscreen().catch(err => console.log(err));
+        } else if (document.webkitExitFullscreen) { 
+            document.webkitExitFullscreen();
+        }
+    }
+
     setTimeout(() => {
         main.style.display = "none";
         env.style.display = "block";
@@ -475,30 +562,24 @@ function fastPackUp() {
             env.style.transform = "scale(1) translateY(0)";
         });
 
-        // Snap flap closed & bump it
         setTimeout(() => {
             env.classList.remove("open");
             env.classList.add("bump");
             
-            // Bring heart back
             setTimeout(() => { 
                 document.getElementById("envHeart").style.opacity = "1"; 
                 
-                // FULL RESET: Make the envelope ready to be clicked again!
                 setTimeout(() => {
                     isOpened = false;
                     env.classList.remove("bump");
                 }, 500);
-                
             }, 300);
-
         }, 500);
-
     }, 400);
 }
 
 
-/* ================= TYPEWRITER ================= */
+/* ================= FAST FINALE TYPEWRITER ================= */
 function startTypewriter() {
     const textLines = [
         "To the woman who holds my heart,",
@@ -508,11 +589,11 @@ function startTypewriter() {
     let fullText = textLines.join("\n");
     let i = 0;
     
-    // We fetch messageBox dynamically because it gets recreated from the snapshot
     const msgBox = document.getElementById("messageBox");
     msgBox.innerHTML = "<span id='typeText'></span><span class='cursor'></span>";
     const typeText = document.getElementById("typeText");
 
+    // Types very quickly (25ms per letter) to fit in the 2.5 second window
     typingInterval = setInterval(() => {
         if (i < fullText.length) {
             let char = fullText.charAt(i);
@@ -527,7 +608,7 @@ function startTypewriter() {
             document.querySelector('.cursor').style.animation = "none";
             document.querySelector('.cursor').style.opacity = "0";
         }
-    }, 40); // 40ms per letter = ~3.5 seconds
+    }, 25); 
 }
 
 
@@ -550,7 +631,6 @@ function startSparks() {
 
 /* ================= CAKE ANIMATION ================= */
 function startCake(){
-    // Fetch newly created DOM elements dynamically
     const l1 = document.getElementById("l1");
     const l2 = document.getElementById("l2");
     const l3 = document.getElementById("l3");
