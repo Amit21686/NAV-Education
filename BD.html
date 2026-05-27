@@ -429,10 +429,13 @@ function audioHandler() {
 
     // 1. Sync Lyrics (Shows at the TOP)
     for (let i = lyricsData.length - 1; i >= 0; i--) {
-        if (t >= lyricsData[i].time && currentLyricIndex !== i) {
-            currentLyricIndex = i;
-            showLyric(lyricsData[i].text);
-            break;
+        // BUG FIX: Added correct logic to stop falling back to previous lines!
+        if (t >= lyricsData[i].time) {
+            if (currentLyricIndex !== i) {
+                currentLyricIndex = i;
+                showLyric(lyricsData[i].text);
+            }
+            break; // Stop checking older timestamps!
         }
     }
 
