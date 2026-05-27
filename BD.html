@@ -306,7 +306,8 @@ opacity:0;
 
 transform:translateY(-15px);
 
-animation:fadeDown 1.2s forwards .5s;
+/* Stretched timeline: appears slower */
+animation:fadeDown 2s forwards 1s;
 }
 
 /* ===== NAME ===== */
@@ -348,9 +349,10 @@ opacity:0;
 
 transform:scale(.8);
 
+/* Stretched timeline: starts zooming at 3s */
 animation:
-zoomIn 1.5s forwards .8s,
-floatName 4s ease-in-out infinite 2.5s;
+zoomIn 2.5s forwards 3s,
+floatName 4s ease-in-out infinite 6.5s;
 }
 
 .name::after{
@@ -691,7 +693,8 @@ opacity:0;
 
 transform:translateY(20px);
 
-animation:fadeUp 1.5s forwards 4.5s;
+/* Stretched timeline: appears right as song peaks before ending */
+animation:fadeUp 2.5s forwards 16.5s;
 }
 
 /* ===== ANIMATIONS ===== */
@@ -781,7 +784,6 @@ for(let i=0;i<12;i++){
 </script>
 
 <!-- BACKGROUND MUSIC: MAJBOOR -->
-<!-- Using media fragments (#t=75,96) to hint to the browser the specific timeline needed -->
 <audio id="bgMusic" src="majboor.mp3#t=75,96" preload="auto"></audio>
 
 <!-- ENVELOPE -->
@@ -867,22 +869,27 @@ function openEnvelope(){
 // Play Majboor song exactly from 1:15 to 1:36 on click
 setTimeout(() => {
     const bgMusic = document.getElementById("bgMusic");
-    bgMusic.volume = 0.8;
+    const MAX_VOLUME = 0.8;
+    bgMusic.volume = MAX_VOLUME;
     
     // Set start time to 1:15 (75 seconds)
     bgMusic.currentTime = 75; 
     
     bgMusic.play().catch(err => console.log("Audio play failed:", err));
 
-    // Event Listener to check when the song hits 1:36 (96 seconds)
+    // Event Listener to check and fade out gracefully
     bgMusic.addEventListener('timeupdate', function() {
+        
+        // Smooth audio fade out during the last 1.5 seconds (94.5s to 96s)
+        if (bgMusic.currentTime >= 94.5 && bgMusic.currentTime < 96) {
+            let timeLeft = 96 - bgMusic.currentTime;
+            let currentVol = (timeLeft / 1.5) * MAX_VOLUME;
+            bgMusic.volume = Math.max(0, currentVol); 
+        }
+
+        // Hard stop at 1:36 (96 seconds)
         if (bgMusic.currentTime >= 96) {
-            bgMusic.pause(); // Stops playing at exactly 1:36
-            
-            // NOTE: If you want this specific part to loop over and over, 
-            // remove `bgMusic.pause();` above and UNCOMMENT the next two lines:
-            // bgMusic.currentTime = 75; 
-            // bgMusic.play();
+            bgMusic.pause();
         }
     });
 
@@ -925,7 +932,7 @@ startCake();
 
 }
 
-/* ===== CINEMATIC CAKE FORMATION ===== */
+/* ===== CINEMATIC CAKE FORMATION (TIMINGS STRETCHED) ===== */
 
 function startCake(){
 
@@ -937,86 +944,69 @@ const flame = document.getElementById("flame");
 const rays = document.getElementById("rays");
 const cakeText = document.querySelector(".cake-text");
 
-/* ===== BASE ===== */
-
+/* ===== BASE LAYER (Starts at 5.5s) ===== */
 setTimeout(()=>{
-
 l1.animate(
 [
 { transform:"translateY(40px) scaleY(.2)", opacity:0 },
 { transform:"translateY(0) scaleY(1)", opacity:1 }
 ],
-{ duration:700, fill:"forwards", easing:"cubic-bezier(.22,1,.36,1)" }
+{ duration:1000, fill:"forwards", easing:"cubic-bezier(.22,1,.36,1)" }
 );
+}, 5500);
 
-},200);
-
-/* ===== MIDDLE ===== */
-
+/* ===== MIDDLE LAYER (Starts at 8s) ===== */
 setTimeout(()=>{
-
 l2.animate(
 [
 { transform:"translateY(35px) scaleY(.2)", opacity:0 },
 { transform:"translateY(0) scaleY(1)", opacity:1 }
 ],
-{ duration:650, fill:"forwards", easing:"cubic-bezier(.22,1,.36,1)" }
+{ duration:1000, fill:"forwards", easing:"cubic-bezier(.22,1,.36,1)" }
 );
+}, 8000);
 
-},950);
-
-/* ===== TOP ===== */
-
+/* ===== TOP LAYER (Starts at 10.5s) ===== */
 setTimeout(()=>{
-
 l3.animate(
 [
 { transform:"translateY(30px) scaleY(.2)", opacity:0 },
 { transform:"translateY(0) scaleY(1)", opacity:1 }
 ],
-{ duration:600, fill:"forwards", easing:"cubic-bezier(.22,1,.36,1)" }
+{ duration:1000, fill:"forwards", easing:"cubic-bezier(.22,1,.36,1)" }
 );
+}, 10500);
 
-},1650);
-
-/* ===== CAKE TEXT ===== */
-
+/* ===== CAKE TEXT (Starts at 12.5s) ===== */
 setTimeout(()=>{
-
 cakeText.animate(
 [
 { opacity:0, transform:"translateY(10px)" },
 { opacity:1, transform:"translateY(0)" }
 ],
-{ duration:700, fill:"forwards", easing:"ease" }
+{ duration:1000, fill:"forwards", easing:"ease" }
 );
+}, 12500);
 
-},2200);
-
-/* ===== CANDLE ===== */
-
+/* ===== CANDLE (Starts at 14s) ===== */
 setTimeout(()=>{
-
 candle.animate(
 [
 { transform:"scaleY(0)", opacity:0 },
 { transform:"scaleY(1)", opacity:1 }
 ],
-{ duration:500, fill:"forwards", easing:"ease-out" }
+{ duration:800, fill:"forwards", easing:"ease-out" }
 );
+}, 14000);
 
-},2600);
-
-/* ===== FLAME + RAYS ===== */
-
+/* ===== FLAME + RAYS (Starts at 15.5s) ===== */
 setTimeout(()=>{
-
 flame.animate(
 [
 { opacity:0, transform:"scale(.2)" },
 { opacity:1, transform:"scale(1)" }
 ],
-{ duration:400, fill:"forwards" }
+{ duration:600, fill:"forwards" }
 );
 
 rays.animate(
@@ -1024,10 +1014,9 @@ rays.animate(
 { opacity:0, transform:"scale(.5)" },
 { opacity:1, transform:"scale(1)" }
 ],
-{ duration:1200, fill:"forwards", easing:"ease-out" }
+{ duration:1500, fill:"forwards", easing:"ease-out" }
 );
-
-},3100);
+}, 15500);
 
 }
 
