@@ -2,7 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+
+<!-- Allows the webpage to act as a standalone app / full screen on mobile -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#09070d">
+
 <title>Happy Birthday Anjali</title>
 <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
@@ -337,6 +344,17 @@ function startExperience(){
     if(isOpened) return; // Prevent multiple clicks
     isOpened = true;
 
+    // === REQUEST FULL SCREEN ON TAP ===
+    let elem = document.documentElement;
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(err => console.log(err));
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+        elem.webkitRequestFullscreen().catch(err => console.log(err));
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+        elem.msRequestFullscreen();
+    }
+    // ==================================
+
     // Reset MAIN completely using our saved snapshot 
     // (This clears all old animations, layers, and text)
     const main = document.getElementById("main");
@@ -409,6 +427,18 @@ function fastPackUp() {
     main.style.transition = "all 0.5s cubic-bezier(0.8, -0.5, 0.2, 1.4)";
     main.style.transform = "scale(0) translateY(150px)";
     main.style.opacity = "0";
+
+    // === EXIT FULL SCREEN ===
+    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
+        if (document.exitFullscreen) {
+            document.exitFullscreen().catch(err => console.log(err));
+        } else if (document.webkitExitFullscreen) { /* Safari */
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE11 */
+            document.msExitFullscreen();
+        }
+    }
+    // ========================
 
     // Bring envelope back simultaneously
     setTimeout(() => {
