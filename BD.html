@@ -134,26 +134,32 @@ pointer-events:none; z-index:60; opacity:0; transition:opacity 0.5s ease;
 100% { transform: scale(1.06); }
 }
 
-/* ===== NEW: TOP LYRICS STYLE ===== */
+/* ===== NEW: TOP LYRICS STYLE (FLICKER FREE) ===== */
 .top-lyrics {
     position: absolute;
     top: 6%;
     left: 0;
+    width: 100%;
+    min-height: 50px;
+    z-index: 15;
+}
+
+.lyric-line {
+    position: absolute;
     width: 100%;
     font-family: 'Parisienne', cursive;
     font-size: 1.8rem;
     color: #ffe082;
     text-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
     text-align: center;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    z-index: 15;
     padding: 0 15px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
-.top-lyrics.show { opacity: 1; transform: translateY(0); }
-.top-lyrics.hide { opacity: 0; transform: translateY(10px); }
+.lyric-line.show { opacity: 1; transform: translateY(0); }
+.lyric-line.hide { opacity: 0; transform: translateY(-20px); }
 
 /* ===== TEXT STYLES ===== */
 .top-text{ font-size:1.3rem; font-weight:500; letter-spacing:4px; color:#ffffffd9; margin-bottom:12px; opacity:0; transform:translateY(-15px); animation:fadeDown 1.2s forwards .5s; }
@@ -203,7 +209,8 @@ background: radial-gradient(circle, rgba(255,215,0,.22), transparent 70%); filte
 
 /* ===== MOBILE ===== */
 @media(max-width:480px){
-.top-lyrics { top: 4%; font-size: 1.45rem; }
+.top-lyrics { top: 4%; }
+.lyric-line { font-size: 1.45rem; }
 .name{ font-size:4.8rem; margin-bottom:42px; }
 .cake-area{ transform:scale(.95); }
 .message-box{ font-size:.95rem; line-height:1.75; padding:0 10px; }
@@ -409,12 +416,12 @@ function stopFireworksSequence() {
 const bgMusic = document.getElementById("bgMusic");
 const MAX_VOLUME = 0.8;
 
-// Perfectly synced lyrics data
+// Carefully adjusted timeline to perfectly match the vocal beats
 const lyricsData = [
-    { time: 76.5, text: "Aapka hi kehna banta, keh do na..." },
-    { time: 80.5, text: "Main sharma ke keh doongi, maine bhi dil diya..." },
-    { time: 84.5, text: "Aankhon-aankhon ka masla achha tha..." },
-    { time: 88.5, text: "Ab le jaao apna bana ke mujhe, meri jaan..." }
+    { time: 75.5, text: "Aapka hi kehna banta, keh do na..." },
+    { time: 80.0, text: "Main sharma ke keh doongi, maine bhi dil diya..." },
+    { time: 84.0, text: "Aankhon-aankhon ka masla achha tha..." },
+    { time: 88.0, text: "Ab le jaao apna bana ke mujhe, meri jaan..." }
 ];
 
 function audioHandler() {
@@ -453,19 +460,33 @@ function audioHandler() {
     }
 }
 
-// Function to animate the TOP lyrics changing
+// Flicker-Free Crossfade Lyrics Engine
 function showLyric(text) {
-    const box = document.getElementById("topLyrics");
-    if (!box) return;
+    const container = document.getElementById("topLyrics");
+    if (!container) return;
 
-    box.classList.remove("show");
-    box.classList.add("hide");
-    
-    setTimeout(() => {
-        box.innerHTML = text;
-        box.classList.remove("hide");
-        box.classList.add("show");
-    }, 400); // Wait for fade out, then swap and fade in
+    // 1. Find existing shown lyrics and trigger their fade-out animation
+    const oldLyrics = container.querySelectorAll('.lyric-line.show');
+    oldLyrics.forEach(el => {
+        el.classList.remove('show');
+        el.classList.add('hide');
+        // Remove from DOM entirely after the transition completes
+        setTimeout(() => {
+            if (el.parentNode === container) container.removeChild(el);
+        }, 800);
+    });
+
+    // 2. Create the completely new line of text
+    const newLyric = document.createElement('div');
+    newLyric.className = 'lyric-line';
+    newLyric.innerHTML = text;
+    container.appendChild(newLyric);
+
+    // 3. Force browser reflow to prevent snapping/flickering
+    void newLyric.offsetWidth;
+
+    // 4. Trigger the new text's fade-in animation
+    newLyric.classList.add('show');
 }
 
 
@@ -474,13 +495,13 @@ function startExperience(){
     if(isOpened) return; 
     isOpened = true;
 
-    // Reset Full Screen safely
+    // Optional safety request for Full Screen in case it dropped
     let elem = document.documentElement;
     if (elem.requestFullscreen) {
         elem.requestFullscreen().catch(err => console.log(err));
     }
 
-    // Reset HTML and Timeline Flags for replayability
+    // Reset HTML and Timeline Flags for perfect replayability
     const main = document.getElementById("main");
     main.innerHTML = initialMainHTML;
     main.style = ""; 
@@ -534,18 +555,16 @@ function fastPackUp() {
     clearInterval(typingInterval);
     stopFireworksSequence();
 
+    // Clear top lyrics immediately so they don't linger on replay
+    const topLyrics = document.getElementById("topLyrics");
+    if(topLyrics) topLyrics.innerHTML = "";
+
     main.style.animation = "none";
     main.style.transition = "all 0.5s cubic-bezier(0.8, -0.5, 0.2, 1.4)";
     main.style.transform = "scale(0) translateY(150px)";
     main.style.opacity = "0";
 
-    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
-        if (document.exitFullscreen) {
-            document.exitFullscreen().catch(err => console.log(err));
-        } else if (document.webkitExitFullscreen) { 
-            document.webkitExitFullscreen();
-        }
-    }
+    // NO EXIT FULL SCREEN CODE HERE - IT WILL STAY FULL SCREEN!
 
     setTimeout(() => {
         main.style.display = "none";
