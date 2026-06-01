@@ -66,7 +66,7 @@
         @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         .app-header { 
-            background: rgba(30, 41, 59, 0.85); padding: 15px 20px; display: flex; align-items: center; 
+            background: rgba(30, 41, 59, 0.85); padding: 12px 16px; display: flex; align-items: center; 
             justify-content: space-between; border-bottom: 1px solid var(--border); z-index: 10; 
             flex-shrink: 0; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
         }
@@ -105,7 +105,7 @@
         .icon-action:active { transform: scale(0.85); background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.2); }
         
         .fab { 
-            position: fixed; bottom: 35px; right: 25px; width: 65px; height: 65px; border-radius: 50%; 
+            position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; border-radius: 50%; 
             background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; 
             display: flex; align-items: center; justify-content: center; font-size: 2rem; 
             box-shadow: 0 10px 25px rgba(99,102,241,0.5); border: none; cursor: pointer; z-index: 100; transition: var(--transition); 
@@ -123,10 +123,33 @@
         .category-tab.active { background: var(--primary); border-color: var(--primary); color: white; box-shadow: 0 4px 10px rgba(99,102,241,0.3); }
 
         #codeEditorView { display: none; flex-direction: column; height: 100dvh; width: 100vw; position: fixed; top: 0; left: 0; background: var(--bg); z-index: 500; padding-bottom: env(safe-area-inset-bottom); }
-        #aceEditorContainer { flex: 1; width: 100%; position: relative; margin-bottom: 30px;} 
-        .jump-btn-wrapper { position: absolute; bottom: 50px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 510; }
+        #aceEditorContainer { flex: 1; width: 100%; position: relative; margin-bottom: 0; } 
+        .jump-btn-wrapper { position: absolute; bottom: 20px; right: 16px; display: flex; flex-direction: column; gap: 12px; z-index: 510; }
         .jump-btn { width: 45px; height: 45px; border-radius: 50%; background: var(--card); border: 1px solid var(--border); color: var(--text); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.5); cursor: pointer; transition: 0.2s; }
         .jump-btn:active { transform: scale(0.85); background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* ---- CUSTOM SEARCH OVERLAY (Mobile Perfect) ---- */
+        #aceSearchOverlay {
+            position: absolute; top: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px); padding: 12px 16px; display: none; align-items: center; gap: 10px;
+            z-index: 520; border-bottom: 1px solid var(--border); flex-wrap: wrap;
+        }
+        #aceSearchOverlay.show { display: flex; }
+        #aceSearchInput {
+            flex: 1; min-width: 120px; padding: 10px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border);
+            color: white; border-radius: 25px; font-family: inherit; font-size: 0.9rem;
+        }
+        #aceSearchInput:focus { outline: none; border-color: var(--primary); }
+        .ace-search-btn {
+            width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.9rem;
+        }
+        .ace-search-btn:active { background: rgba(255,255,255,0.15); }
+        .ace-search-case {
+            padding: 6px 12px; border-radius: 20px; background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+            font-size: 0.8rem; cursor: pointer; white-space: nowrap;
+        }
+        .ace-search-case.active { background: var(--primary); border-color: var(--primary); color: white; }
 
         #visualEditorContainer { flex: 1; width: 100%; overflow-y: auto; padding: 20px; padding-bottom: 250px; display: none; background: var(--bg); -webkit-overflow-scrolling: touch;}
         .visual-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; }
@@ -155,7 +178,7 @@
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-overlay.active { display: flex; animation: fadeModal 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         @keyframes fadeModal { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        .modal-card { background: var(--card); width: 100%; border-radius: 20px; padding: 25px; border: 1px solid var(--border); max-width: 400px; margin: 0 auto; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .modal-card { background: var(--card); width: 100%; border-radius: 20px; padding: 25px; border: 1px solid var(--border); max-width: 400px; margin: 0 auto; box-shadow: 0 20px 40px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; }
 
         #loadingOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; backdrop-filter: blur(8px); text-align: center; }
         .spinner { width: 50px; height: 50px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 15px; }
@@ -177,8 +200,25 @@
         
         .drag-handle { cursor: grab; margin-right: 8px; color: var(--text-muted); font-size: 1.2rem; }
         .sortable-ghost { opacity: 0.4; }
-        .dropzone { border: 2px dashed var(--primary); border-radius: var(--radius); padding: 20px; text-align: center; margin-bottom: 20px; color: var(--text-muted); transition: 0.3s; }
-        .dropzone.dragover { border-color: var(--success); background: rgba(16,185,129,0.1); }
+        .dropzone { 
+            border: 2px dashed var(--border); border-radius: var(--radius); padding: 30px 20px; text-align: center; 
+            margin-bottom: 20px; color: var(--text-muted); transition: 0.3s; cursor: pointer;
+        }
+        .dropzone.dragover { border-color: var(--primary); background: rgba(99,102,241,0.1); color: white; }
+        .dropzone i { font-size: 2rem; margin-bottom: 10px; display: block; }
+        .dropzone-mobile-text { display: none; }
+        
+        /* Mobile Specific Tweaks */
+        @media (max-width: 600px) {
+            .app-header { padding: 8px 12px; }
+            .header-title { font-size: 1rem; }
+            .btn { padding: 12px 14px; font-size: 0.9rem; }
+            .folder-grid { grid-template-columns: 1fr; }
+            .modal-card { margin: 0 10px; }
+            .dropzone { padding: 20px 15px; }
+            .dropzone i { font-size: 1.5rem; }
+            .dropzone-mobile-text { display: block; font-size: 0.85rem; }
+        }
     </style>
 </head>
 <body>
@@ -253,6 +293,14 @@
     </div>
 
     <div id="codeEditorView">
+        <div id="aceSearchOverlay">
+            <input type="text" id="aceSearchInput" placeholder="Search code..." autocomplete="off">
+            <button class="ace-search-btn" onclick="EditorEngine.searchNext()"><i class="fas fa-arrow-down"></i></button>
+            <button class="ace-search-btn" onclick="EditorEngine.searchPrev()"><i class="fas fa-arrow-up"></i></button>
+            <button class="ace-search-case" id="aceCaseBtn" onclick="EditorEngine.toggleCaseSensitive()">Aa</button>
+            <button class="ace-search-btn" onclick="EditorEngine.closeSearch()"><i class="fas fa-times"></i></button>
+        </div>
+
         <header class="app-header">
             <div class="header-icon" onclick="Nav.back()"><i class="fas fa-times"></i></div>
             <button id="editorModeToggle" class="btn btn-outline" style="color: #a5b4fc; border-color: var(--primary); padding: 6px 16px; font-size: 0.85rem; display:none;" onclick="EditorEngine.toggleMode()">
@@ -378,7 +426,8 @@
             mathTimeout: null, toastTimeout: null,
             originalCode: '', currentHash: '',
             quotesData: [], quotesSha: null, quotesFileName: 'Quotes.json', editQuoteIndex: -1,
-            autoSaveInterval: null, autoSaveActive: false
+            autoSaveInterval: null,
+            searchCaseSensitive: false
         };
 
         const API = {
@@ -469,7 +518,7 @@
                 switch(newHash) {
                     case 'home': UI.switchView('viewCourses', 'Courses', false); break;
                     case 'quotes': QuotesEngine.load(); break;
-                    case 'chapters': State.activeCourse.data ? CourseEngine.renderChapters() && UI.switchView('viewChapters', State.activeCourse.data.title, true) : Nav.push('home'); break;
+                    case 'chapters': State.activeCourse.data ? (CourseEngine.renderChapters(), UI.switchView('viewChapters', State.activeCourse.data.title, true)) : Nav.push('home'); break;
                     case 'contents': State.activeCourse.data?.chapters[State.activeChapIndex] ? (CourseEngine.renderContents(), UI.switchView('viewContents', State.activeCourse.data.chapters[State.activeChapIndex].title, true)) : Nav.push('home'); break;
                     case 'filemanager': FileManager.renderRoot(); break;
                     case 'editor': document.getElementById('codeEditorView').style.display = 'flex'; if(aceEditor) aceEditor.resize(); break;
@@ -838,14 +887,14 @@
         };
 
         // ==========================================
-        // 7. FILE MANAGER (with Drag & Drop Upload)
+        // 7. FILE MANAGER (with Drop & Click Upload)
         // ==========================================
         const FileManager = {
             renderRoot: () => {
                 State.fmFolder = '';
                 const list = document.getElementById('fileManagerList');
                 list.innerHTML = `
-                    <div class="dropzone" id="fmDropzone"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;margin-bottom:10px;"></i><br>Drop files here or click folders below</div>
+                    <div class="dropzone" id="fmDropzone"><i class="fas fa-cloud-upload-alt"></i><span>Drop files here</span><span class="dropzone-mobile-text"> or tap to upload</span></div>
                     <div class="folder-grid">
                         <div class="folder-card" onclick="Nav.push('folder_images')"><div class="folder-icon" style="color:#10b981;"><i class="fas fa-images"></i></div><div>Images</div></div>
                         <div class="folder-card" onclick="Nav.push('folder_pdfs')"><div class="folder-icon" style="color:#f43f5e;"><i class="fas fa-file-pdf"></i></div><div>PDFs</div></div>
@@ -860,7 +909,7 @@
                 State.fmFolder = category;
                 const list = document.getElementById('fileManagerList');
                 let html = `
-                    <div class="dropzone" id="fmDropzone"><i class="fas fa-cloud-upload-alt"></i> Drop files here for ${category}</div>
+                    <div class="dropzone" id="fmDropzone"><i class="fas fa-cloud-upload-alt"></i><span>Drop files here</span><span class="dropzone-mobile-text"> or tap to upload</span></div>
                     <div class="flex gap-2" style="margin-bottom:15px;">
                         <button class="btn btn-outline" style="flex:1;" onclick="document.getElementById('sysFileUploader').click()"><i class="fas fa-upload"></i> Upload</button>
                         <button class="btn btn-outline" style="flex:1;" onclick="FileManager.createFile()"><i class="fas fa-file-medical"></i> New File</button>
@@ -915,6 +964,9 @@
             initDropzone: (category) => {
                 const dropzone = document.getElementById('fmDropzone');
                 if(!dropzone) return;
+                // Click to upload
+                dropzone.onclick = () => document.getElementById('sysFileUploader').click();
+                // Drag events
                 dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
                 dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
                 dropzone.addEventListener('drop', async e => {
@@ -1020,7 +1072,7 @@
         });
 
         // ==========================================
-        // 8. HYBRID EDITOR ENGINE (with Auto-Save)
+        // 8. HYBRID EDITOR ENGINE (with perfect search)
         // ==========================================
         let aceEditor;
         const EditorEngine = {
@@ -1072,7 +1124,61 @@
                     }
                 }, 30000);
             },
-            triggerSearch: () => { if(State.editorMode==='code' && aceEditor) aceEditor.execCommand("find"); },
+            /* CUSTOM SEARCH FUNCTIONS */
+            triggerSearch: () => {
+                const overlay = document.getElementById('aceSearchOverlay');
+                overlay.classList.toggle('show');
+                if (overlay.classList.contains('show')) {
+                    document.getElementById('aceSearchInput').focus();
+                } else {
+                    aceEditor.find(''); // clear highlights
+                }
+            },
+            closeSearch: () => {
+                document.getElementById('aceSearchOverlay').classList.remove('show');
+                aceEditor.find('');
+            },
+            performSearch: (query, backwards = false) => {
+                if (!query) return;
+                aceEditor.find(query, {
+                    backwards: backwards,
+                    wrap: true,
+                    caseSensitive: State.searchCaseSensitive,
+                    wholeWord: false,
+                    regExp: false,
+                    preventScroll: false
+                });
+            },
+            searchNext: () => {
+                const query = document.getElementById('aceSearchInput').value;
+                if (!query) return;
+                if (State.searchCaseSensitive) {
+                    // Re-find with same options
+                    aceEditor.find(query, { backwards: false, wrap: true, caseSensitive: true });
+                } else {
+                    aceEditor.findNext();
+                }
+            },
+            searchPrev: () => {
+                const query = document.getElementById('aceSearchInput').value;
+                if (!query) return;
+                if (State.searchCaseSensitive) {
+                    aceEditor.find(query, { backwards: true, wrap: true, caseSensitive: true });
+                } else {
+                    aceEditor.findPrevious();
+                }
+            },
+            toggleCaseSensitive: () => {
+                State.searchCaseSensitive = !State.searchCaseSensitive;
+                const btn = document.getElementById('aceCaseBtn');
+                btn.classList.toggle('active', State.searchCaseSensitive);
+                // Re-run search with new setting
+                const query = document.getElementById('aceSearchInput').value;
+                if (query) {
+                    EditorEngine.performSearch(query);
+                }
+            },
+            /* END CUSTOM SEARCH */
             jumpToTop: () => { if(aceEditor) { aceEditor.navigateFileStart(); aceEditor.scrollToLine(0, true, true, ()=>{}); } },
             jumpToBottom: () => { if(aceEditor) { const ll = aceEditor.session.getLength(); aceEditor.navigateFileEnd(); aceEditor.scrollToLine(ll, true, true, ()=>{}); } },
             toggleMode: () => {
@@ -1103,6 +1209,14 @@
                 if(!silent) UI.hideLoading();
             }
         };
+
+        // Attach search input keydown
+        document.getElementById('aceSearchInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                EditorEngine.searchNext();
+            }
+        });
 
         // ==========================================
         // 9. VISUAL BUILDER (with reorder & duplicate)
