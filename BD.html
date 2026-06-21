@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 
-<!-- Allows the webpage to act as a standalone app / full screen on mobile -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -223,13 +222,11 @@ background: radial-gradient(circle, rgba(255,215,0,.22), transparent 70%); filte
 
 <body>
 
-<!-- INTRO SCREEN -->
 <div id="introScreen" onclick="startApp()">
     <div class="intro-title">A special message for Å7લી...</div>
     <div class="intro-tap">[ Tap anywhere to open ]</div>
 </div>
 
-<!-- FLOATING BACKGROUND LIGHTS -->
 <script>
 for(let i=0;i<12;i++){
     const light=document.createElement("div");
@@ -243,13 +240,10 @@ for(let i=0;i<12;i++){
 }
 </script>
 
-<!-- BACKGROUND MUSIC: MAJBOOR -->
 <audio id="bgMusic" src="majboor.mp3" preload="auto"></audio>
 
-<!-- FIREWORKS CANVAS -->
 <canvas id="fireworksCanvas"></canvas>
 
-<!-- ENVELOPE -->
 <div class="envelope-wrapper" id="envelopeWrapper" onclick="startExperience()">
     <div class="envelope">
         <div class="letter"><h2>For My An200</h2></div>
@@ -261,17 +255,14 @@ for(let i=0;i<12;i++){
     </div>
 </div>
 
-<!-- MAIN CONTENT -->
 <div class="main" id="main">
     
-    <!-- LYRICS AT THE VERY TOP -->
     <div id="topLyrics" class="top-lyrics"></div>
 
     <div class="top-text">HAPPY BIRTHDAY TO MY</div>
     <div class="name">Å7લી</div>
     <div class="cake-area">
-        <div class="c
-        ake">
+        <div class="cake">
             <div class="plate"></div>
             <div class="layer layer1" id="l1"><div class="drip"></div></div>
             <div class="layer layer2" id="l2"><div class="drip"></div></div>
@@ -284,7 +275,6 @@ for(let i=0;i<12;i++){
         </div>
     </div>
     
-    <!-- PERSONAL MESSAGE AT THE BOTTOM -->
     <div class="message-box" id="messageBox"></div>
 </div>
 
@@ -308,9 +298,9 @@ let initialMainHTML = document.getElementById("main").innerHTML;
 function startApp() {
     let elem = document.documentElement;
     if (elem.requestFullscreen) {
-        elem.requestFullscreen().catch(err => console.log(err));
+        elem.requestFullscreen().catch(err => console.warn("Fullscreen request blocked:", err));
     } else if (elem.webkitRequestFullscreen) {
-        elem.webkitRequestFullscreen().catch(err => console.log(err));
+        elem.webkitRequestFullscreen().catch(err => console.warn("Fullscreen request blocked:", err));
     } else if (elem.msRequestFullscreen) {
         elem.msRequestFullscreen();
     }
@@ -430,13 +420,12 @@ function audioHandler() {
 
     // 1. Sync Lyrics (Shows at the TOP)
     for (let i = lyricsData.length - 1; i >= 0; i--) {
-        // BUG FIX: Added correct logic to stop falling back to previous lines!
         if (t >= lyricsData[i].time) {
             if (currentLyricIndex !== i) {
                 currentLyricIndex = i;
                 showLyric(lyricsData[i].text);
             }
-            break; // Stop checking older timestamps!
+            break; 
         }
     }
 
@@ -502,7 +491,7 @@ function startExperience(){
     // Optional safety request for Full Screen in case it dropped
     let elem = document.documentElement;
     if (elem.requestFullscreen) {
-        elem.requestFullscreen().catch(err => console.log(err));
+        elem.requestFullscreen().catch(err => console.warn("Fullscreen skipped:", err));
     }
 
     // Reset HTML and Timeline Flags for perfect replayability
@@ -520,7 +509,12 @@ function startExperience(){
         bgMusic.addEventListener('timeupdate', audioHandler);
         bgMusic.volume = MAX_VOLUME;
         bgMusic.currentTime = 75; // Start exactly at 1:15
-        bgMusic.play().catch(err => console.log("Audio failed:", err));
+        
+        // Ensure play promise is caught safely
+        let playPromise = bgMusic.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(err => console.warn("Audio autoplay prevented by browser:", err));
+        }
     }, 120);
 
     const env = document.getElementById("envelopeWrapper");
@@ -553,6 +547,8 @@ function startExperience(){
 /* ================= REVERSE FAST-PACK ================= */
 function fastPackUp() {
     const main = document.getElementById("main");
+    if (!main) return;
+    
     const env = document.getElementById("envelopeWrapper");
 
     clearInterval(sparksInterval);
@@ -637,6 +633,8 @@ function startTypewriter() {
 /* ================= CONTINUOUS SPARKS ================= */
 function startSparks() {
     const cake = document.querySelector('.cake');
+    if (!cake) return;
+    
     sparksInterval = setInterval(() => {
         const spark = document.createElement('div');
         spark.className = 'spark';
