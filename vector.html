@@ -4,129 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NAV AI Enhancer</title>
-    <!-- Importing Poppins Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <!-- Importing ONNX Runtime Web for Local AI Processing -->
     <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
     
     <style>
-        /* --- STYLING (CSS) --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background-color: #f4f7f6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: #333;
-        }
-
-        .container {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            text-align: center;
-            width: 90%;
-            max-width: 500px;
-        }
-
-        /* Hide default file input */
-        input[type="file"] {
-            display: none;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            margin: 15px 0;
-            background-color: #e0e0e0;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease-in-out; 
-        }
-
-        .btn:hover {
-            background-color: #d0d0d0;
-            transform: translateY(-2px);
-        }
-
-        .primary-btn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            width: 100%;
-            font-size: 1rem;
-        }
-
-        .primary-btn:hover:not(:disabled) {
-            background-color: #0056b3;
-        }
-
-        .primary-btn:disabled {
-            background-color: #a0c4ff;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .preview-area {
-            margin: 20px 0;
-            border: 2px dashed #ccc;
-            border-radius: 8px;
-            min-height: 200px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            background-color: #fafafa;
-        }
-
-        canvas {
-            max-width: 100%;
-            display: none;
-            border-radius: 4px;
-        }
-
-        /* --- PROGRESS BAR STYLING --- */
-        .progress-container {
-            display: none; /* Hidden by default */
-            margin: 15px 0;
-            text-align: left;
-        }
-
-        .progress-track {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 8px;
-            height: 10px;
-            overflow: hidden;
-            margin-bottom: 5px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background-color: #007bff;
-            width: 0%; /* Starts at 0 */
-            transition: width 0.2s linear;
-        }
-
-        .progress-text {
-            font-size: 0.85rem;
-            color: #555;
-            font-weight: 600;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; width: 90%; max-width: 500px; }
+        input[type="file"] { display: none; }
+        .btn { display: inline-block; padding: 10px 20px; margin: 15px 0; background-color: #e0e0e0; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease-in-out; }
+        .btn:hover { background-color: #d0d0d0; transform: translateY(-2px); }
+        .primary-btn { background-color: #007bff; color: white; border: none; width: 100%; font-size: 1rem; }
+        .primary-btn:disabled { background-color: #a0c4ff; cursor: not-allowed; }
+        .preview-area { margin: 20px 0; border: 2px dashed #ccc; border-radius: 8px; min-height: 200px; display: flex; justify-content: center; align-items: center; background-color: #fafafa; }
+        canvas { max-width: 100%; display: none; border-radius: 4px; }
+        .progress-container { display: none; margin: 15px 0; text-align: left; }
+        .progress-track { width: 100%; background-color: #e0e0e0; border-radius: 8px; height: 10px; overflow: hidden; margin-bottom: 5px; }
+        .progress-fill { height: 100%; background-color: #007bff; width: 0%; }
+        .progress-text { font-size: 0.85rem; color: #555; font-weight: 600; }
     </style>
 </head>
 <body>
 
-    <!-- --- STRUCTURE (HTML) --- -->
     <div class="container">
         <h1>NAV AI Enhancer</h1>
         <p>100% Local AI Processing</p>
@@ -139,163 +38,92 @@
             <canvas id="imageCanvas"></canvas>
         </div>
 
-        <!-- Progress Bar UI -->
         <div class="progress-container" id="progressContainer">
-            <div class="progress-track">
-                <div class="progress-fill" id="progressBarFill"></div>
-            </div>
-            <span class="progress-text" id="progressText">Initializing Download...</span>
+            <div class="progress-track"><div class="progress-fill" id="progressBarFill"></div></div>
+            <span class="progress-text" id="progressText">Initializing...</span>
         </div>
         
         <button id="processBtn" class="btn primary-btn" disabled>Sharpen Boundaries</button>
     </div>
 
-    <!-- --- LOGIC (JAVASCRIPT) --- -->
     <script>
         const imageUpload = document.getElementById('imageUpload');
         const imageCanvas = document.getElementById('imageCanvas');
         const ctx = imageCanvas.getContext('2d');
         const processBtn = document.getElementById('processBtn');
-        const placeholderText = document.getElementById('placeholderText');
-        
-        // Progress Bar Elements
         const progressContainer = document.getElementById('progressContainer');
         const progressBarFill = document.getElementById('progressBarFill');
         const progressText = document.getElementById('progressText');
 
-        let rawPixelData = null;
-
-        // Handle Image Upload
-        imageUpload.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
+        imageUpload.addEventListener('change', (e) => {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = (event) => {
                 const img = new Image();
-                img.onload = function() {
+                img.onload = () => {
                     imageCanvas.width = img.width;
                     imageCanvas.height = img.height;
-                    
                     ctx.drawImage(img, 0, 0);
-                    
                     imageCanvas.style.display = 'block';
-                    placeholderText.style.display = 'none';
-                    
-                    const imageData = ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
-                    rawPixelData = imageData.data; 
-                    
+                    document.getElementById('placeholderText').style.display = 'none';
                     processBtn.disabled = false;
-                }
-                img.src = e.target.result;
-            }
-            reader.readAsDataURL(file);
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
         });
 
-        // Handle Processing Logic with Cache & Stream Progress
-        processBtn.addEventListener('click', async function() {
-            processBtn.innerText = "Initializing AI Engine...";
-            processBtn.disabled = true;
+        // Preprocess: Convert RGBA Canvas data to Planar RGB Tensor
+        function preprocessImageToTensor(imageData) {
+            const { width, height, data } = imageData;
+            const float32Data = new Float32Array(3 * width * height);
+            for (let i = 0; i < width * height; i++) {
+                float32Data[i] = data[i * 4] / 255.0;           // R
+                float32Data[width * height + i] = data[i * 4 + 1] / 255.0; // G
+                float32Data[width * height * 2 + i] = data[i * 4 + 2] / 255.0; // B
+            }
+            return new ort.Tensor('float32', float32Data, [1, 3, height, width]);
+        }
 
+        processBtn.addEventListener('click', async () => {
+            processBtn.disabled = true;
             try {
                 const modelUrl = 'https://huggingface.co/frankminors123/U2Net_Portrait_ONNX/resolve/main/u2net_portrait.onnx';
-                const cacheName = 'nav-ai-models-v1';
-                
-                // Cache API (a system that stores HTTP requests and responses for offline access)
-                const cache = await caches.open(cacheName);
+                const cache = await caches.open('nav-ai-models-v1');
                 let cachedResponse = await cache.match(modelUrl);
-                
                 let modelBuffer;
 
-                // Step 1: Check Local Cache vs Network Download
                 if (!cachedResponse) {
-                    // Show Progress UI
                     progressContainer.style.display = 'block';
-                    processBtn.innerText = "Downloading Model (Once)...";
-                    
-                    // Start network request
                     const response = await fetch(modelUrl);
-                    if (!response.ok) throw new Error("Failed to connect to Hugging Face.");
-
-                    // Extract total file size for percentage calculation
-                    const contentLength = response.headers.get('content-length');
-                    const totalBytes = parseInt(contentLength, 10);
-                    let loadedBytes = 0;
-
-                    // Initialize stream reader
                     const reader = response.body.getReader();
                     const chunks = [];
-
-                    // Read the stream chunk by chunk
+                    let loaded = 0;
                     while (true) {
                         const { done, value } = await reader.read();
                         if (done) break;
-                        
                         chunks.push(value);
-                        loadedBytes += value.length;
-                        
-                        // Update Progress Bar
-                        if (totalBytes) {
-                            const percent = Math.round((loadedBytes / totalBytes) * 100);
-                            progressBarFill.style.width = percent + '%';
-                            progressText.innerText = `Downloading... ${percent}% (${(loadedBytes / 1024 / 1024).toFixed(1)} MB)`;
-                        } else {
-                            // Fallback if the server hides the total size
-                            progressText.innerText = `Downloading... ${(loadedBytes / 1024 / 1024).toFixed(1)} MB`;
-                        }
+                        loaded += value.length;
+                        progressBarFill.style.width = '50%'; // Simplified progress
                     }
-
-                    // Assemble the chunks into a single Uint8Array (an array of 8-bit unsigned integers)
-                    const combinedArray = new Uint8Array(loadedBytes);
-                    let position = 0;
-                    for (const chunk of chunks) {
-                        combinedArray.set(chunk, position);
-                        position += chunk.length;
-                    }
-                    
-                    // Convert to ArrayBuffer for ONNX and Caching
-                    modelBuffer = combinedArray.buffer;
-
-                    // Save to local device storage forever
-                    progressText.innerText = "Saving to local device storage...";
+                    const blob = new Blob(chunks);
+                    modelBuffer = await blob.arrayBuffer();
                     await cache.put(modelUrl, new Response(modelBuffer));
-                    
-                    // Hide Progress UI
-                    setTimeout(() => progressContainer.style.display = 'none', 1000);
-
+                    progressContainer.style.display = 'none';
                 } else {
-                    processBtn.innerText = "Loading Local Model...";
-                    console.log("Found model in local cache! Bypassing internet.");
                     modelBuffer = await cachedResponse.arrayBuffer();
                 }
 
-                // Step 2: Start the ONNX Engine
                 const session = await ort.InferenceSession.create(modelBuffer, { executionProviders: ['wasm'] });
-                console.log("AI Model loaded successfully!");
+                const imageData = ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
+                const tensor = preprocessImageToTensor(imageData);
                 
-                processBtn.innerText = "Tracing Boundaries...";
-                
-                // Step 3: Format the Tensor
-                const floatData = Float32Array.from(rawPixelData);
-                const tensor = new ort.Tensor('float32', floatData, [1, 4, imageCanvas.height, imageCanvas.width]);
-                
-                // Step 4: Run AI Inference
-                const feeds = { input: tensor }; 
-                const results = await session.run(feeds);
-                
-                console.log("Boundary Tracing Complete!", results);
-                alert("AI Inference successful! Check your browser console for raw boundary array data.");
-                
-                // Reset UI
-                processBtn.innerText = "Sharpen Boundaries";
+                const results = await session.run({ [session.inputNames[0]]: tensor });
+                console.log("Inference successful:", results);
+                alert("AI Processing complete!");
+            } catch (err) {
+                alert("Error: " + err.message);
+            } finally {
                 processBtn.disabled = false;
-
-            } catch (error) {
-                console.error("AI Engine failed:", error);
-                alert("Error: " + error.message);
-                processBtn.innerText = "Sharpen Boundaries";
-                processBtn.disabled = false;
-                progressContainer.style.display = 'none';
             }
         });
     </script>
