@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAV AI Enhancer</title>
+    <!-- Importing Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Importing ONNX Runtime Web for Local AI Processing -->
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+    
+    <style>
+        /* --- STYLING (CSS) --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        /* Hide default file input to style custom label */
+        input[type="file"] {
+            display: none;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 15px 0;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            /* Smooth transition effect */
+            transition: all 0.3s ease-in-out; 
+        }
+
+        .btn:hover {
+            background-color: #d0d0d0;
+            transform: translateY(-2px);
+        }
+
+        .primary-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .primary-btn:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+
+        .primary-btn:disabled {
+            background-color: #a0c4ff;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .preview-area {
+            margin: 20px 0;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            min-height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background-color: #fafafa;
+        }
+
+        canvas {
+            max-width: 100%;
+            display: none; /* Hidden until image is uploaded */
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- --- STRUCTURE (HTML) --- -->
+    <div class="container">
+        <h1>NAV AI Enhancer</h1>
+        <p>100% Local AI Processing</p>
+        
+        <input type="file" id="imageUpload" accept="image/*">
+        <label for="imageUpload" class="btn">Select Image</label>
+        
+        <div class="preview-area">
+            <span id="placeholderText">No image selected</span>
+            <canvas id="imageCanvas"></canvas>
+        </div>
+        
+        <button id="processBtn" class="btn primary-btn" disabled>Sharpen Boundaries</button>
+    </div>
+
+    <!-- --- LOGIC (JAVASCRIPT) --- -->
+    <script>
+        const imageUpload = document.getElementById('imageUpload');
+        const imageCanvas = document.getElementById('imageCanvas');
+        const ctx = imageCanvas.getContext('2d');
+        const processBtn = document.getElementById('processBtn');
+        const placeholderText = document.getElementById('placeholderText');
+
+        let rawPixelData = null;
+
+        // Handle Image Upload
+        imageUpload.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    // Set canvas dimensions to match the actual image
+                    imageCanvas.width = img.width;
+                    imageCanvas.height = img.height;
+                    
+                    // Draw image on canvas
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Update UI
+                    imageCanvas.style.display = 'block';
+                    placeholderText.style.display = 'none';
+                    
+                    // Extract raw pixel data for the AI models
+                    const imageData = ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
+                    rawPixelData = imageData.data; 
+                    
+                    // Enable the process button
+                    processBtn.disabled = false;
+                }
+                img.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        // Handle Processing Logic with AI
+        processBtn.addEventListener('click', async function() {
+            processBtn.innerText = "Loading AI Engine...";
+            processBtn.disabled = true;
+
+            try {
+                console.log("Starting ONNX Runtime Web...");
+                
+                // Step 1: Load the local AI model
+                // Requires an actual model named 'edge_model.onnx' in the same directory
+                const session = await ort.InferenceSession.create('./edge_model.onnx', { executionProviders: ['wasm'] });
+                console.log("AI Model loaded successfully!");
+                
+                processBtn.innerText = "Tracing Boundaries...";
+                
+                // Step 2: Convert pixel data to a Tensor
+                // A Tensor (a multi-dimensional array of numbers used by AI to process math) is required
+                const floatData = Float32Array.from(rawPixelData);
+                // Note: Dimensions [batch, channels, height, width] must match the specific model
+                const tensor = new ort.Tensor('float32', floatData, [1, 4, imageCanvas.height, imageCanvas.width]);
+                
+                // Step 3: Run Inference
+                // Inference (running live data through a trained AI model to get a prediction)
+                const feeds = { input: tensor }; 
+                const results = await session.run(feeds);
+                
+                console.log("Boundary Tracing Complete!", results);
+                alert("AI Inference successful! Check your browser console for raw boundary array data.");
+                
+                processBtn.innerText = "Sharpen Boundaries";
+                processBtn.disabled = false;
+
+            } catch (error) {
+                console.error("AI Engine failed:", error);
+                alert("Error: Make sure 'edge_model.onnx' is downloaded and you are running a local server.");
+                processBtn.innerText = "Sharpen Boundaries";
+                processBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
