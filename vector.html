@@ -37,7 +37,7 @@
             max-width: 500px;
         }
 
-        /* Hide default file input to style custom label */
+        /* Hide default file input */
         input[type="file"] {
             display: none;
         }
@@ -50,7 +50,6 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            /* Smooth transition effect */
             transition: all 0.3s ease-in-out; 
         }
 
@@ -91,8 +90,37 @@
 
         canvas {
             max-width: 100%;
-            display: none; /* Hidden until image is uploaded */
+            display: none;
             border-radius: 4px;
+        }
+
+        /* --- PROGRESS BAR STYLING --- */
+        .progress-container {
+            display: none; /* Hidden by default */
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .progress-track {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            height: 10px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #007bff;
+            width: 0%; /* Starts at 0 */
+            transition: width 0.2s linear;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: #555;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -110,6 +138,14 @@
             <span id="placeholderText">No image selected</span>
             <canvas id="imageCanvas"></canvas>
         </div>
+
+        <!-- Progress Bar UI -->
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-track">
+                <div class="progress-fill" id="progressBarFill"></div>
+            </div>
+            <span class="progress-text" id="progressText">Initializing Download...</span>
+        </div>
         
         <button id="processBtn" class="btn primary-btn" disabled>Sharpen Boundaries</button>
     </div>
@@ -121,6 +157,11 @@
         const ctx = imageCanvas.getContext('2d');
         const processBtn = document.getElementById('processBtn');
         const placeholderText = document.getElementById('placeholderText');
+        
+        // Progress Bar Elements
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBarFill = document.getElementById('progressBarFill');
+        const progressText = document.getElementById('progressText');
 
         let rawPixelData = null;
 
@@ -133,22 +174,17 @@
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
-                    // Set canvas dimensions to match the actual image
                     imageCanvas.width = img.width;
                     imageCanvas.height = img.height;
                     
-                    // Draw image on canvas
                     ctx.drawImage(img, 0, 0);
                     
-                    // Update UI
                     imageCanvas.style.display = 'block';
                     placeholderText.style.display = 'none';
                     
-                    // Extract raw pixel data for the AI models
                     const imageData = ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
                     rawPixelData = imageData.data; 
                     
-                    // Enable the process button
                     processBtn.disabled = false;
                 }
                 img.src = e.target.result;
@@ -156,43 +192,110 @@
             reader.readAsDataURL(file);
         });
 
-        // Handle Processing Logic with AI
+        // Handle Processing Logic with Cache & Stream Progress
         processBtn.addEventListener('click', async function() {
-            processBtn.innerText = "Loading AI Engine...";
+            processBtn.innerText = "Initializing AI Engine...";
             processBtn.disabled = true;
 
             try {
-                console.log("Starting ONNX Runtime Web...");
+                const modelUrl = 'https://huggingface.co/frankminors123/U2Net_Portrait_ONNX/resolve/main/u2net_portrait.onnx';
+                const cacheName = 'nav-ai-models-v1';
                 
-                // Step 1: Load the local AI model
-                // Requires an actual model named 'edge_model.onnx' in the same directory
-                const session = await ort.InferenceSession.create('./edge_model.onnx', { executionProviders: ['wasm'] });
+                // Cache API (a system that stores HTTP requests and responses for offline access)
+                const cache = await caches.open(cacheName);
+                let cachedResponse = await cache.match(modelUrl);
+                
+                let modelBuffer;
+
+                // Step 1: Check Local Cache vs Network Download
+                if (!cachedResponse) {
+                    // Show Progress UI
+                    progressContainer.style.display = 'block';
+                    processBtn.innerText = "Downloading Model (Once)...";
+                    
+                    // Start network request
+                    const response = await fetch(modelUrl);
+                    if (!response.ok) throw new Error("Failed to connect to Hugging Face.");
+
+                    // Extract total file size for percentage calculation
+                    const contentLength = response.headers.get('content-length');
+                    const totalBytes = parseInt(contentLength, 10);
+                    let loadedBytes = 0;
+
+                    // Initialize stream reader
+                    const reader = response.body.getReader();
+                    const chunks = [];
+
+                    // Read the stream chunk by chunk
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        
+                        chunks.push(value);
+                        loadedBytes += value.length;
+                        
+                        // Update Progress Bar
+                        if (totalBytes) {
+                            const percent = Math.round((loadedBytes / totalBytes) * 100);
+                            progressBarFill.style.width = percent + '%';
+                            progressText.innerText = `Downloading... ${percent}% (${(loadedBytes / 1024 / 1024).toFixed(1)} MB)`;
+                        } else {
+                            // Fallback if the server hides the total size
+                            progressText.innerText = `Downloading... ${(loadedBytes / 1024 / 1024).toFixed(1)} MB`;
+                        }
+                    }
+
+                    // Assemble the chunks into a single Uint8Array (an array of 8-bit unsigned integers)
+                    const combinedArray = new Uint8Array(loadedBytes);
+                    let position = 0;
+                    for (const chunk of chunks) {
+                        combinedArray.set(chunk, position);
+                        position += chunk.length;
+                    }
+                    
+                    // Convert to ArrayBuffer for ONNX and Caching
+                    modelBuffer = combinedArray.buffer;
+
+                    // Save to local device storage forever
+                    progressText.innerText = "Saving to local device storage...";
+                    await cache.put(modelUrl, new Response(modelBuffer));
+                    
+                    // Hide Progress UI
+                    setTimeout(() => progressContainer.style.display = 'none', 1000);
+
+                } else {
+                    processBtn.innerText = "Loading Local Model...";
+                    console.log("Found model in local cache! Bypassing internet.");
+                    modelBuffer = await cachedResponse.arrayBuffer();
+                }
+
+                // Step 2: Start the ONNX Engine
+                const session = await ort.InferenceSession.create(modelBuffer, { executionProviders: ['wasm'] });
                 console.log("AI Model loaded successfully!");
                 
                 processBtn.innerText = "Tracing Boundaries...";
                 
-                // Step 2: Convert pixel data to a Tensor
-                // A Tensor (a multi-dimensional array of numbers used by AI to process math) is required
+                // Step 3: Format the Tensor
                 const floatData = Float32Array.from(rawPixelData);
-                // Note: Dimensions [batch, channels, height, width] must match the specific model
                 const tensor = new ort.Tensor('float32', floatData, [1, 4, imageCanvas.height, imageCanvas.width]);
                 
-                // Step 3: Run Inference
-                // Inference (running live data through a trained AI model to get a prediction)
+                // Step 4: Run AI Inference
                 const feeds = { input: tensor }; 
                 const results = await session.run(feeds);
                 
                 console.log("Boundary Tracing Complete!", results);
                 alert("AI Inference successful! Check your browser console for raw boundary array data.");
                 
+                // Reset UI
                 processBtn.innerText = "Sharpen Boundaries";
                 processBtn.disabled = false;
 
             } catch (error) {
                 console.error("AI Engine failed:", error);
-                alert("Error: Make sure 'edge_model.onnx' is downloaded and you are running a local server.");
+                alert("Error: " + error.message);
                 processBtn.innerText = "Sharpen Boundaries";
                 processBtn.disabled = false;
+                progressContainer.style.display = 'none';
             }
         });
     </script>
