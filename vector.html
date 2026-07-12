@@ -18,9 +18,11 @@
         .primary-btn:disabled { background-color: #a0c4ff; cursor: not-allowed; }
         .preview-area { margin: 20px 0; border: 2px dashed #ccc; border-radius: 8px; min-height: 200px; display: flex; justify-content: center; align-items: center; background-color: #fafafa; }
         canvas { max-width: 100%; display: none; border-radius: 4px; }
+        
+        /* Progress Bar UI */
         .progress-container { display: none; margin: 15px 0; text-align: left; }
         .progress-track { width: 100%; background-color: #e0e0e0; border-radius: 8px; height: 10px; overflow: hidden; margin-bottom: 5px; }
-        .progress-fill { height: 100%; background-color: #007bff; width: 0%; }
+        .progress-fill { height: 100%; background-color: #007bff; width: 0%; transition: width 0.1s linear; }
         .progress-text { font-size: 0.85rem; color: #555; font-weight: 600; }
     </style>
 </head>
@@ -40,7 +42,7 @@
 
         <div class="progress-container" id="progressContainer">
             <div class="progress-track"><div class="progress-fill" id="progressBarFill"></div></div>
-            <span class="progress-text" id="progressText">Initializing...</span>
+            <span class="progress-text" id="progressText">Connecting to Server...</span>
         </div>
         
         <button id="processBtn" class="btn primary-btn" disabled>Sharpen Boundaries</button>
@@ -55,6 +57,7 @@
         const progressBarFill = document.getElementById('progressBarFill');
         const progressText = document.getElementById('progressText');
 
+        // Handle Image Upload
         imageUpload.addEventListener('change', (e) => {
             const reader = new FileReader();
             reader.onload = (event) => {
@@ -72,20 +75,37 @@
             reader.readAsDataURL(e.target.files[0]);
         });
 
-        // Preprocess: Convert RGBA Canvas data to Planar RGB Tensor
-        function preprocessImageToTensor(imageData) {
-            const { width, height, data } = imageData;
-            const float32Data = new Float32Array(3 * width * height);
-            for (let i = 0; i < width * height; i++) {
-                float32Data[i] = data[i * 4] / 255.0;           // R
-                float32Data[width * height + i] = data[i * 4 + 1] / 255.0; // G
-                float32Data[width * height * 2 + i] = data[i * 4 + 2] / 255.0; // B
+        // Preprocess: Scale to exactly 320x320 and format to Planar RGB
+        function preprocessImageTo320x320Tensor(sourceCanvas) {
+            const size = 320;
+            
+            // Create an invisible temporary canvas for resizing
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = size;
+            tempCanvas.height = size;
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // Force the original image to squash into 320x320
+            tempCtx.drawImage(sourceCanvas, 0, 0, size, size);
+            const imageData = tempCtx.getImageData(0, 0, size, size);
+            const { data } = imageData;
+            
+            const float32Data = new Float32Array(3 * size * size);
+            
+            for (let i = 0; i < size * size; i++) {
+                float32Data[i] = data[i * 4] / 255.0;                   // Red
+                float32Data[size * size + i] = data[i * 4 + 1] / 255.0; // Green
+                float32Data[size * size * 2 + i] = data[i * 4 + 2] / 255.0; // Blue
             }
-            return new ort.Tensor('float32', float32Data, [1, 3, height, width]);
+            
+            return new ort.Tensor('float32', float32Data, [1, 3, size, size]);
         }
 
+        // Processing and Downloading Engine
         processBtn.addEventListener('click', async () => {
             processBtn.disabled = true;
+            processBtn.innerText = "Initializing Engine...";
+            
             try {
                 const modelUrl = 'https://huggingface.co/frankminors123/U2Net_Portrait_ONNX/resolve/main/u2net_portrait.onnx';
                 const cache = await caches.open('nav-ai-models-v1');
@@ -93,36 +113,62 @@
                 let modelBuffer;
 
                 if (!cachedResponse) {
-                    progressContainer.style.display = 'block';
+                    processBtn.innerText = "Downloading Model (Once)...";
+                    progressContainer.style.display = 'block'; // Unhide progress UI
+                    
                     const response = await fetch(modelUrl);
+                    if (!response.ok) throw new Error("Network response was not ok.");
+                    
+                    // Estimate size if server doesn't provide it (U2Net is ~178MB)
+                    const contentLength = response.headers.get('content-length') || 178000000;
+                    const total = parseInt(contentLength, 10);
+                    let loaded = 0;
+                    
                     const reader = response.body.getReader();
                     const chunks = [];
-                    let loaded = 0;
+                    
+                    // Live Streaming Download Track
                     while (true) {
                         const { done, value } = await reader.read();
                         if (done) break;
                         chunks.push(value);
                         loaded += value.length;
-                        progressBarFill.style.width = '50%'; // Simplified progress
+                        
+                        const percent = Math.min(100, Math.round((loaded / total) * 100));
+                        progressBarFill.style.width = percent + '%';
+                        progressText.innerText = `Downloading... ${percent}% (${(loaded / 1024 / 1024).toFixed(1)} MB)`;
                     }
+                    
+                    progressText.innerText = "Saving model to device...";
                     const blob = new Blob(chunks);
                     modelBuffer = await blob.arrayBuffer();
                     await cache.put(modelUrl, new Response(modelBuffer));
-                    progressContainer.style.display = 'none';
+                    progressContainer.style.display = 'none'; // Hide progress UI when done
+                    
                 } else {
+                    processBtn.innerText = "Loading Local Model...";
                     modelBuffer = await cachedResponse.arrayBuffer();
                 }
 
+                // AI Inference Execution
+                processBtn.innerText = "Processing Image...";
                 const session = await ort.InferenceSession.create(modelBuffer, { executionProviders: ['wasm'] });
-                const imageData = ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
-                const tensor = preprocessImageToTensor(imageData);
                 
+                // Format directly from the visible canvas to 320x320
+                const tensor = preprocessImageTo320x320Tensor(imageCanvas);
+                
+                // Run the heavy math
                 const results = await session.run({ [session.inputNames[0]]: tensor });
+                
                 console.log("Inference successful:", results);
-                alert("AI Processing complete!");
+                alert("AI Processing complete! Check console for raw arrays.");
+                
             } catch (err) {
+                console.error(err);
                 alert("Error: " + err.message);
+                progressContainer.style.display = 'none';
             } finally {
+                processBtn.innerText = "Sharpen Boundaries";
                 processBtn.disabled = false;
             }
         });
