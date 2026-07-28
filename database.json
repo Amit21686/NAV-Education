@@ -1,0 +1,33 @@
+[
+  {
+    "title": "NEET",
+    "subjects": [
+      {
+        "title": "Physics",
+        "chapters": [
+          {
+            "title": "Unit and Dimensions",
+            "resources": [
+              {
+                "type": "quiz",
+                "title": "Practice Test",
+                "data": [
+                  {
+                    "q": "All",
+                    "options": [
+                      "A",
+                      "B",
+                      "C",
+                      "D"
+                    ],
+                    "ans": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
